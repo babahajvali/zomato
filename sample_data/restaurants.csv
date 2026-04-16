@@ -1,0 +1,4 @@
+name,description,owner_email,cuisine_type,address,pin_code,is_veg_only,is_active
+Spicy Hub,Best biryani and kebabs in town,arjun.sharma@gmail.com,INDIAN,Banjara Hills Hyderabad,500034,False,True
+Dragon Bowl,Authentic Chinese cuisine,rahul.verma@gmail.com,CHINESE,Gachibowli Hyderabad,500032,False,True
+Tandoori Nights,North Indian food,arjun.sharma@gmail.com,INDIAN,Kukatpally Hyderabad,500072,False,True
