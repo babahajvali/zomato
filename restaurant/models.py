@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 from restaurant.enums import CuisineType
 
@@ -6,6 +7,7 @@ from restaurant.enums import CuisineType
 # Create your models here.
 
 class Restaurant(models.Model):
+    restaurant_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
     owner = models.ForeignKey("account.User", on_delete=models.CASCADE)

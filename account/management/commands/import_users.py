@@ -1,72 +1,70 @@
 import csv
-from django.core.management.base import BaseCommand
-from django.db import transaction
 from account.models import User, Address
 
 
-class Command(BaseCommand):
-    help = "Populate users and addresses from CSV (with rollback)"
+def import_users_and_addresses(
+    users_file='./sample_data/users.csv',
+    addresses_file='./sample_data/addresses.csv'
+):
+    created_users = updated_users = skipped_users = 0
+    created_addresses = updated_addresses = skipped_addresses = 0
 
-    def handle(self, *args, **kwargs):
+    with open(users_file, newline='', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
 
-        try:
-            with transaction.atomic():  # 🔥 ensures full rollback
+        for row in reader:
+            if not row['user_id'].strip():
+                skipped_users += 1
+                continue
 
-                # ---- Load Users ----
-                with open('./sample_data/users.csv', newline='') as file:
-                    reader = csv.DictReader(file)
+            user, created = User.objects.update_or_create(
+                user_id=row['user_id'],
+                defaults={
+                    'name': row['name'],
+                    'email': row['email'],
+                    'phone_number': row['phone_number'],
+                    'role': row['role'],
+                }
+            )
 
-                    for row in reader:
-                        user, created = User.objects.get_or_create(
-                            user_id=row['user_id'],
-                            defaults={
-                                'name': row['name'],
-                                'email': row['email'],
-                                'phone_number': row['phone_number'],
-                                'role': row['role'],
-                            }
-                        )
+            if created:
+                created_users += 1
+            else:
+                updated_users += 1
 
-                        if created:
-                            self.stdout.write(
-                                self.style.SUCCESS(f"User created: {user.name}")
-                            )
-                        else:
-                            self.stdout.write(
-                                self.style.WARNING(f"User exists: {user.name}")
-                            )
+    with open(addresses_file, newline='', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
 
-                # ---- Load Addresses ----
-                with open('./sample_data/addresses.csv', newline='') as file:
-                    reader = csv.DictReader(file)
+        for row in reader:
+            if not row['user_id'].strip():
+                skipped_addresses += 1
+                continue
 
-                    for row in reader:
-                        user = User.objects.get(user_id=row['user_id'])
+            # ⚠️ Important: handle missing user safely
+            user = User.objects.filter(user_id=row['user_id']).first()
+            if not user:
+                skipped_addresses += 1
+                continue
 
-                        # Prevent duplicate addresses
-                        address, created = Address.objects.get_or_create(
-                            user=user,
-                            label=row['label'],
-                            full_address=row['full_address'],
-                            defaults={
-                                'city': row['city'],
-                                'pin_code': row['pin_code'],
-                                'is_default': row['is_default'] == 'True'
-                            }
-                        )
+            address, created = Address.objects.update_or_create(
+                user=user,
+                label=row['label'],
+                full_address=row['full_address'],
+                defaults={
+                    'city': row['city'],
+                    'pin_code': row['pin_code'],
+                    'is_default': str(row['is_default']).lower() == 'true'
+                }
+            )
 
-                        if created:
-                            self.stdout.write(
-                                self.style.SUCCESS(f"Address added for {user.name}")
-                            )
-                        else:
-                            self.stdout.write(
-                                self.style.WARNING(f"Address already exists for {user.name}")
-                            )
+            if created:
+                created_addresses += 1
+            else:
+                updated_addresses += 1
 
-                self.stdout.write(self.style.SUCCESS("✅ Data population completed!"))
-
-        except Exception as e:
-            # 🔥 ANY error → FULL rollback
-            self.stdout.write(self.style.ERROR(f"❌ Error: {str(e)}"))
-            self.stdout.write(self.style.WARNING("⚠️ All changes rolled back!"))
+    print(
+        f"""
+Users -> Created: {created_users}, Updated: {updated_users}, Skipped: {skipped_users}
+Addresses -> Created: {created_addresses}, Updated: {updated_addresses}, Skipped: {skipped_addresses}
+"""
+    )
