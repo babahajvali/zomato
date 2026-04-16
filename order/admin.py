@@ -29,7 +29,8 @@ class PromoCodeAdmin(admin.ModelAdmin):
     
     def is_valid(self, obj):
         from django.utils import timezone
-        now = timezone.now()
+        now = timezone.localtime(timezone.now())
+
         return obj.valid_from <= now <= obj.valid_until
     is_valid.boolean = True
     is_valid.short_description = 'Currently Valid'
