@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Restaurant
+
+from restaurant.models.restaurant import Restaurant
 
 
 @admin.register(Restaurant)

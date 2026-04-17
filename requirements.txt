@@ -12,3 +12,4 @@ six==1.17.0
 asgiref==3.10.0
 structlog==22.3.0
 httpx
+factory-boy==3.3.3

@@ -1,0 +1,130 @@
+from unittest.mock import MagicMock, create_autospec, patch
+
+import pytest
+
+from restaurant.exception.custom_exceptions import (
+    AlreadyExistsRestaurant,
+    DuplicateRestaurants,
+)
+from restaurant.Interactors.populate_data.import_restaurants import (
+    ImportRestaurants,
+)
+from restaurant.Interactors.storage_interface.restaurant_storage_interface import (
+    RestaurantStorageInterface,
+)
+from restaurant.tests.factories.tests_factories import CreateRestaurantDTOFactory
+
+
+class TestImportRestaurants:
+    def setup_method(self):
+        self.restaurant_storage = create_autospec(RestaurantStorageInterface)
+        self.interactor = ImportRestaurants(
+            restaurant_storage_interface=self.restaurant_storage,
+        )
+
+    def test_import_restaurants_success(self):
+        rows = [
+            {
+                "name": " Spice Hub ",
+                "owner_email": " OWNER@EXAMPLE.COM ",
+                "description": "Popular spot",
+                "cuisine_type": "Indian",
+                "address": "12 Main Road",
+                "pin_code": "560001",
+                "is_veg_only": "True",
+                "is_active": "False",
+            }
+        ]
+        CreateRestaurantDTOFactory(
+            name="Spice Hub",
+            owner_email="owner@example.com",
+            description="Popular spot",
+            cuisine_type="Indian",
+            address="12 Main Road",
+            pin_code="560001",
+            is_veg_only=True,
+            is_active=False,
+        )
+        expected_result = ["created-restaurant"]
+        validate_row = MagicMock()
+
+        self.restaurant_storage.get_existing_restaurants.return_value = []
+        self.restaurant_storage.create_bulk_restaurants.return_value = expected_result
+
+        with patch(
+            "restaurant.Interactors.populate_data.import_restaurants.read_csv",
+            return_value=rows,
+        ), patch(
+            "restaurant.Interactors.populate_data.import_restaurants.validate_row",
+            validate_row,
+        ):
+            result = self.interactor.import_restaurants(file_path="restaurants.csv")
+
+        assert result == expected_result
+
+    def test_import_restaurants_duplicate_names(self):
+        rows = [
+            {
+                "name": " Spice Hub ",
+                "owner_email": "owner1@example.com",
+                "description": "Popular spot",
+                "cuisine_type": "Indian",
+                "address": "12 Main Road",
+                "pin_code": "560001",
+                "is_veg_only": "True",
+                "is_active": "True",
+            },
+            {
+                "name": "Spice Hub",
+                "owner_email": "owner2@example.com",
+                "description": "Another branch",
+                "cuisine_type": "Indian",
+                "address": "14 Main Road",
+                "pin_code": "560002",
+                "is_veg_only": "False",
+                "is_active": "True",
+            },
+        ]
+
+        with patch(
+            "restaurant.Interactors.populate_data.import_restaurants.read_csv",
+            return_value=rows,
+        ), patch(
+            "restaurant.Interactors.populate_data.import_restaurants.validate_row",
+            MagicMock(),
+        ):
+            with pytest.raises(DuplicateRestaurants) as exc:
+                self.interactor.import_restaurants(file_path="restaurants.csv")
+
+        assert exc.value.names == ["Spice Hub"]
+        self.restaurant_storage.get_existing_restaurants.assert_not_called()
+        self.restaurant_storage.create_bulk_restaurants.assert_not_called()
+
+    def test_import_restaurants_already_exists(self):
+        rows = [
+            {
+                "name": " Spice Hub ",
+                "owner_email": "owner@example.com",
+                "description": "Popular spot",
+                "cuisine_type": "Indian",
+                "address": "12 Main Road",
+                "pin_code": "560001",
+                "is_veg_only": "True",
+                "is_active": "True",
+            }
+        ]
+
+        self.restaurant_storage.get_existing_restaurants.return_value = ["Spice Hub"]
+
+        with patch(
+            "restaurant.Interactors.populate_data.import_restaurants.read_csv",
+            return_value=rows,
+        ), patch(
+            "restaurant.Interactors.populate_data.import_restaurants.validate_row",
+            MagicMock(),
+        ):
+            with pytest.raises(AlreadyExistsRestaurant) as exc:
+                self.interactor.import_restaurants(file_path="restaurants.csv")
+
+        assert exc.value.names == ["Spice Hub"]
+        self.restaurant_storage.create_bulk_restaurants.assert_not_called()
