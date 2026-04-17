@@ -5,6 +5,7 @@ class DuplicateUserEmails(Exception):
     def __init__(self, emails: List[str]):
         self.emails = emails
 
+
 class AlreadyExistsEmail(Exception):
     def __init__(self, emails: List[str]):
         self.emails = emails
@@ -13,16 +14,22 @@ class AlreadyExistsEmail(Exception):
 class UserNotFound(Exception):
     def __init__(self, email):
         self.email = email
-        super().__init__(f"User not found: {email}")
+
+    def __str__(self):
+        return f'User not found: {self.email}'
 
 
 class AlreadyExistsAddress(Exception):
     def __init__(self, addresses):
         self.addresses = addresses
-        super().__init__(f"Addresses already exist: {', '.join([f'{addr[0]} - {addr[1]}' for addr in addresses])}")
+
+    def __str__(self):
+        return f"Addresses already exist: {', '.join([f'{addr[0]} - {addr[1]}' for addr in self.addresses])}"
 
 
 class DuplicateAddresses(Exception):
     def __init__(self, addresses):
         self.addresses = addresses
-        super().__init__(f"Duplicate addresses found: {', '.join([f'{addr[0]} - {addr[1]}' for addr in addresses])}")
+
+    def __str__(self):
+        return "Duplicate addresses found: {', '.join([f'{addr[0]} - {addr[1]}' for addr in addresses])}"

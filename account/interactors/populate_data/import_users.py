@@ -3,7 +3,8 @@ from typing import List
 from account.exception.custom_exceptions import AlreadyExistsEmail, \
     DuplicateUserEmails
 from account.interactors.dtos import CreateUserDTO
-from account.interactors.storage_interface.user_storage_interface import UserStorageInterface
+from account.interactors.storage_interface.user_storage_interface import \
+    UserStorageInterface
 from utils.read_csv_util import read_csv, validate_row
 
 
@@ -43,7 +44,6 @@ class ImportUsers:
 
         return created_users
 
-
     def _check_existing_emails(self, emails: List[str]):
         existing_emails = self.user_storage_interface.get_existing_emails(
             emails)
@@ -59,8 +59,6 @@ class ImportUsers:
             if email in seen:
                 duplicates.append(email)
             seen.add(email)
-        
+
         if duplicates:
             raise DuplicateUserEmails(emails=duplicates)
-        
-        

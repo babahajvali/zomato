@@ -24,13 +24,14 @@ class ImportPromoCodes:
         codes = []
 
         for index, row in enumerate(rows, start=1):
-            self._validate_date_range(
+            self._check_date_range(
                 valid_from=row.get('valid_from'),
                 valid_until=row.get('valid_until'),
                 code=row['code'],
             )
             codes.append(row['code'])
 
+        self._check_empty_promo_codes(codes)
         self._check_duplicate_codes(codes)
         self._check_existing_codes(codes)
             
@@ -70,7 +71,7 @@ class ImportPromoCodes:
             raise DuplicatePromoCodes(codes=duplicates)
 
     @staticmethod
-    def check_empty_promo_codes(promo_codes: List[str]):
+    def _check_empty_promo_codes(promo_codes: List[str]):
         empty_promo_codes = [1 for each_promo in promo_codes if not each_promo]
 
         if empty_promo_codes:
@@ -78,7 +79,7 @@ class ImportPromoCodes:
                 message=f"{len(empty_promo_codes)} Empty promo codes found")
 
     @staticmethod
-    def _validate_date_range(valid_from, valid_until, code):
+    def _check_date_range(valid_from, valid_until, code):
         if not valid_from or not valid_until:
             return
 

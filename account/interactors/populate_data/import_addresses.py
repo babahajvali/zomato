@@ -1,8 +1,10 @@
 from typing import List
 
-from account.exception.custom_exceptions import AlreadyExistsAddress, DuplicateAddresses, UserNotFound
+from account.exception.custom_exceptions import AlreadyExistsAddress, \
+    DuplicateAddresses, UserNotFound
 from account.interactors.dtos import CreateAddressDTO
-from account.interactors.storage_interface.address_storage_interface import AddressStorageInterface
+from account.interactors.storage_interface.address_storage_interface import \
+    AddressStorageInterface
 from utils.read_csv_util import read_csv, validate_row
 
 
@@ -16,11 +18,12 @@ class ImportAddresses:
 
         email_label_pairs = []
         for index, row in enumerate(rows, start=1):
-            validate_row(row, ['email', 'label', 'full_address'], f"address row {index}")
+            validate_row(row, ['email', 'label', 'full_address'],
+                         f"address row {index}")
 
             email = row['email'].strip().lower()
             label = row['label'].strip()
-            
+
             row['email'] = email
             row['label'] = label
 
@@ -49,7 +52,7 @@ class ImportAddresses:
     def _check_existing_addresses(self, email_label_pairs: List[tuple]):
         emails = [pair[0] for pair in email_label_pairs]
         labels = [pair[1] for pair in email_label_pairs]
-        
+
         existing_addresses = self.address_storage_interface.get_existing_addresses(
             emails, labels)
 
@@ -64,6 +67,6 @@ class ImportAddresses:
             if (email, label) in seen:
                 duplicates.append((email, label))
             seen.add((email, label))
-        
+
         if duplicates:
             raise DuplicateAddresses(addresses=duplicates)

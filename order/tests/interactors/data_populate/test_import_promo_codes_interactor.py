@@ -112,7 +112,7 @@ class TestImportPromoCodes:
 
     def test_check_empty_promo_codes_raises_exception(self):
         with pytest.raises(EmptyPromoCodeFound) as exc:
-            self.interactor.check_empty_promo_codes(["SAVE50", ""])
+            self.interactor._check_empty_promo_codes(["SAVE50", ""])
 
         assert str(exc.value) == "1 Empty promo codes found"
 
