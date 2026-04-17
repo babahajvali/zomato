@@ -79,3 +79,4 @@ Addresses -> Created: {created_addresses}, Updated: {updated_addresses}
     except Exception as e:
         print(f"Error: {e}")
         print("Transaction rolled back!")
+        raise

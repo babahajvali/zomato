@@ -1,6 +1,6 @@
 import pytest
 from account.models import User, Address
-from account.management.commands.import_users import import_users_and_addresses
+from account.management.commands.import_users_and_addresses import import_users_and_addresses
 import uuid
 
 
@@ -119,3 +119,23 @@ class TestDataPopulateForUsersAndAddress:
 
         assert User.objects.count() == 2
         assert Address.objects.count() == 1
+
+    @pytest.mark.django_db
+    def test_rollback_when_invalid_user_or_address(self, tmp_path):
+        users_file = tmp_path / "users.csv"
+        addresses_file = tmp_path / "addresses.csv"
+
+        users_file.write_text(
+            "user_id,name,email,phone_number,role\n"
+            f"{uuid.uuid4()},John Doe,,9876543211,CUSTOMER\n"
+        )
+        addresses_file.write_text(
+            "email,label,full_address,city,pin_code\n"
+            "john@example.com,home,123 MG Road,Bangalore,560001\n"
+        )
+
+        with pytest.raises(Exception):
+            import_users_and_addresses(str(users_file), str(addresses_file))
+
+        assert User.objects.count() == 0
+        assert Address.objects.count() == 0

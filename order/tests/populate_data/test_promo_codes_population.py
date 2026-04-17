@@ -45,18 +45,6 @@ class TestPromoCodeImport:
         assert promo.discount_value == 20
         assert promo.min_order_value == 200
 
-    @pytest.mark.django_db
-    def test_skips_empty_code_rows(self, tmp_path):
-        file = tmp_path / "promo.csv"
-
-        file.write_text(
-            "code,discount_type,discount_value,min_order_value,max_usage,valid_from,valid_until\n"
-            ",PERCENTAGE,10,100,50,2026-04-01 00:00:00,2026-04-30 23:59:59\n"
-        )
-
-        import_promo_codes(str(file))
-
-        assert PromoCode.objects.count() == 0
 
     @pytest.mark.django_db
     def test_multiple_promos_created(self, tmp_path):
@@ -71,3 +59,20 @@ class TestPromoCodeImport:
         import_promo_codes(str(file))
 
         assert PromoCode.objects.count() == 2
+
+    @pytest.mark.django_db
+    def test_rollback_when_invalid_promo_row(self, tmp_path):
+        file = tmp_path / "promo.csv"
+
+        file.write_text(
+            "code,discount_type,discount_value,min_order_value,max_usage,valid_from,valid_until\n"
+            "SAVE10,PERCENTAGE,10,100,50,2026-04-01 00:00:00,2026-04-30 23:59:59\n"
+            ",FLAT,50,200,30,2026-04-01 00:00:00,2026-04-30 23:59:59\n"
+        )
+
+        with pytest.raises(Exception):
+            import_promo_codes(str(file))
+
+        assert PromoCode.objects.count() == 0
+
+

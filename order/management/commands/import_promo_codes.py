@@ -49,3 +49,4 @@ def import_promo_codes(file_path='./sample_data/promo_codes.csv'):
     except Exception as e:
         print(f"Error: {str(e)}")
         print("Transaction rolled back!")
+        raise
