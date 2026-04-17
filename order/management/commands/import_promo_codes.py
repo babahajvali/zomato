@@ -16,8 +16,7 @@ def import_promo_codes(file_path='./sample_data/promo_codes.csv'):
 
                 for row in reader:
                     if not row['code'].strip():
-                        skipped_count += 1
-                        continue
+                        raise ValueError(f"Invalid promo row: {row}")
 
                     valid_from = parse_datetime(row['valid_from'])
                     valid_until = parse_datetime(row['valid_until'])

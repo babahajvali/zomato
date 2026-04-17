@@ -1,8 +1,8 @@
-id,user_id,label,full_address,city,pin_code,is_default,created_at
-1,550e8400-e29b-41d4-a716-446655440000,Home,Flat 101 Sai Residency Ameerpet,Hyderabad,500016,True,2026-04-10 10:20:00
-2,550e8400-e29b-41d4-a716-446655440000,Work,Tech Park Building Hitech City,Hyderabad,500081,False,2026-04-10 10:25:00
-3,550e8400-e29b-41d4-a716-446655440001,Home,Plot 45 Jubilee Hills Road 36,Hyderabad,500033,True,2026-04-10 11:30:00
-4,550e8400-e29b-41d4-a716-446655440002,Office,DLF Cyber City Gachibowli,Hyderabad,500032,True,2026-04-11 09:10:00
-5,550e8400-e29b-41d4-a716-446655440003,Home,Apartment 202 Kukatpally Housing Board,Hyderabad,500072,True,2026-04-12 15:00:00
-6,550e8400-e29b-41d4-a716-446655440003,Parents,Near RTC Cross Road Ashok Nagar,Hyderabad,500020,False,2026-04-12 15:05:00
-7,550e8400-e29b-41d4-a716-446655440004,Home,House No 12 Banjara Hills Road 12,Hyderabad,500034,True,2026-04-13 16:20:00
+id,email,label,full_address,city,pin_code,created_at
+1,ravi.kumar@gmail.com,Home,Flat 101 Sai Residency Ameerpet,Hyderabad,500016,2026-04-10 10:20:00
+2,ravi.kumar@gmail.com,Work,Tech Park Building Hitech City,Hyderabad,500081,2026-04-10 10:25:00
+3,sneha.reddy@gmail.com,Home,Plot 45 Jubilee Hills Road 36,Hyderabad,500033,2026-04-10 11:30:00
+4,arjun.sharma@gmail.com,Office,DLF Cyber City Gachibowli,Hyderabad,500032,2026-04-11 09:10:00
+5,pooja.mehta@gmail.com,Home,Apartment 202 Kukatpally Housing Board,Hyderabad,500072,2026-04-12 15:00:00
+6,pooja.mehta@gmail.com,Parents,Near RTC Cross Road Ashok Nagar,Hyderabad,500020,2026-04-12 15:05:00
+7,rahul.verma@gmail.com,Home,House No 12 Banjara Hills Road 12,Hyderabad,500034,2026-04-13 16:20:00

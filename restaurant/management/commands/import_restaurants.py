@@ -5,7 +5,7 @@ from restaurant.models import Restaurant
 
 
 def import_restaurants(file_path='./sample_data/restaurants.csv'):
-    created_count = updated_count = skipped_count = 0
+    created_count = updated_count = 0
 
     try:
         with transaction.atomic():
@@ -16,8 +16,7 @@ def import_restaurants(file_path='./sample_data/restaurants.csv'):
                 for row in reader:
 
                     if not row['name'].strip():
-                        skipped_count += 1
-                        continue
+                        raise ValueError(f"Invalid restaurant row: {row}")
 
                     try:
                         owner = User.objects.get(
@@ -25,10 +24,8 @@ def import_restaurants(file_path='./sample_data/restaurants.csv'):
                             role='OWNER'
                         )
                     except User.DoesNotExist:
-                        skipped_count += 1
-                        print(
-                            f"Skipped (owner not found): {row['owner_email']}")
-                        continue
+                        raise ValueError(
+                            f"Owner not found: {row['owner_email']}")
 
                     restaurant, created = Restaurant.objects.update_or_create(
                         name=row['name'],
@@ -48,8 +45,7 @@ def import_restaurants(file_path='./sample_data/restaurants.csv'):
                     else:
                         updated_count += 1
 
-        print(
-            f"Done: Created {created_count}, Updated {updated_count}, Skipped {skipped_count}")
+        print(f"Done: Created {created_count}, Updated {updated_count}")
 
     except Exception as e:
         print(f"Error: {str(e)}")
