@@ -4,12 +4,13 @@ from .models import Restaurant
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ('name', 'owner', 'cuisine_type', 'is_veg_only', 'is_active', 'created_at')
+    list_display = ('restaurant_id', 'name', 'owner', 'cuisine_type',
+                    'is_veg_only', 'is_active', 'created_at')
     list_filter = ('cuisine_type', 'is_veg_only', 'is_active', 'created_at')
     search_fields = ('name', 'owner__name', 'address')
     ordering = ('-created_at',)
     raw_id_fields = ('owner',)
-    
+
     fieldsets = (
         ('Basic Information', {
             'fields': ('name', 'description', 'owner', 'cuisine_type')
@@ -25,5 +26,5 @@ class RestaurantAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     readonly_fields = ('created_at', 'updated_at')
