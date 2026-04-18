@@ -15,9 +15,17 @@ class UserIsNotRestaurantOwnerType(graphene.ObjectType):
 
 
 class RestaurantNotFoundType(graphene.ObjectType):
-    restaurant_id = graphene.Int(required=True)
+    restaurant_id = graphene.String(required=True)
 
 
 class InvalidCategoriesFoundType(graphene.ObjectType):
     categories = graphene.List(graphene.String, required=True)
+
+
+class InvalidCuisineTypeExceptionType(graphene.ObjectType):
+    cuisine_type = graphene.String(required=True)
+
+
+class InvalidMinRatingExceptionType(graphene.ObjectType):
+    min_rating = graphene.Float(required=True)
 

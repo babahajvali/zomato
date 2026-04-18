@@ -61,3 +61,27 @@ class RestaurantNotFound(Exception):
 
     def __str__(self):
         return str(self.restaurant_id)
+
+
+class DuplicateRestaurantTimings(Exception):
+    def __init__(self, restaurant_ids: List[str]):
+        self.restaurant_ids = restaurant_ids
+
+    def __str__(self):
+        return str(self.restaurant_ids)
+
+
+class InvalidCuisineTypeException(Exception):
+    def __init__(self, cuisine_type: str):
+        self.cuisine_type = cuisine_type
+
+    def __str__(self):
+        return str(self.cuisine_type)
+
+
+class InvalidMinRatingException(Exception):
+    def __init__(self, min_rating: float):
+        self.min_rating = min_rating
+
+    def __str__(self):
+        return str(self.min_rating)

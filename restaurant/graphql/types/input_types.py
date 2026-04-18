@@ -21,3 +21,13 @@ class CreateMenuItemInputParams(graphene.InputObjectType):
 
 class CreateMenuItemsInputParams(graphene.InputObjectType):
     menu_items = graphene.List(CreateMenuItemInputParams)
+
+
+class BrowseRestaurantsInputParams(graphene.InputObjectType):
+    cuisine_type = graphene.String()
+    is_veg_only = graphene.Boolean()
+    pincode = graphene.String()
+    min_rating = graphene.Float()
+    search = graphene.String()
+    limit = graphene.Int()
+    offset = graphene.Int()

@@ -24,3 +24,9 @@ class RestaurantTimingStorageInterface(ABC):
     @abstractmethod
     def get_restaurant_owner_id(self, id: int) -> str | None:
         pass
+
+    @abstractmethod
+    def get_operating_hours_for_restaurants(
+            self, restaurant_ids: List[str]) -> List[RestaurantTimingDTO]:
+        pass
+

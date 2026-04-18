@@ -1,16 +1,19 @@
+from datetime import datetime
 from typing import List
 
-from restaurant.enums import Category
+from restaurant.enums import Category, CuisineType
 from restaurant.exception.custom_exceptions import UserIsNotRestaurantOwner, \
-    InvalidCategoriesFound, RestaurantNotFound
+    InvalidCategoriesFound, RestaurantNotFound, InvalidCuisineTypeException, \
+    InvalidMinRatingException
 from restaurant.interactors.storage_interface.restaurant_storage_interface import \
     RestaurantStorageInterface
 
 
 class RestaurantMixin:
 
-    def __init__(self, restaurant_storage: RestaurantStorageInterface):
+    def __init__(self, restaurant_storage: RestaurantStorageInterface, **kwargs):
         self.restaurant_storage = restaurant_storage
+        super().__init__(**kwargs)
 
     def check_user_is_restaurant_owner(
             self, user_id: str, restaurant_id: str):
@@ -42,5 +45,20 @@ class RestaurantMixin:
 
         if not is_restaurant_exists:
             raise RestaurantNotFound(restaurant_id=restaurant_id)
+
+    @staticmethod
+    def check_cuisine_type_is_valid(cuisine_type: str):
+        valid_cuisines = [c.value for c in CuisineType]
+        if cuisine_type not in valid_cuisines:
+            raise InvalidCuisineTypeException(
+                f"Invalid cuisine_type '{cuisine_type}'."
+                f" Valid options: {valid_cuisines}"
+            )
+
+    @staticmethod
+    def check_min_rating_is_valid(min_rating: float):
+        if not (0.0 <= min_rating <= 5.0):
+            raise InvalidMinRatingException(min_rating=min_rating)
+
 
 

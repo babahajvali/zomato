@@ -1,10 +1,11 @@
 from typing import List
 
 from account.models import User
+from django.db.models import Avg, Count, Q
 from restaurant.interactors.storage_interface.restaurant_storage_interface import \
     RestaurantStorageInterface
 from restaurant.interactors.dtos import CreateRestaurantDTO, CreateMenuItemDTO, \
-    MenuItemDTO
+    MenuItemDTO, BrowseRestaurantDTO, BrowseRestaurantFiltersDTO
 from restaurant.exception.custom_exceptions import OwnerNotFound
 from restaurant.models.restaurant import Restaurant, MenuItem
 
@@ -69,7 +70,7 @@ class RestaurantStorage(RestaurantStorageInterface):
                 name=item.name,
                 description=item.description,
                 price=item.price,
-                category=item.category,
+                category=item.category.value,
                 is_veg=item.is_veg,
                 is_available=item.is_available,
                 tags=item.tags,
@@ -92,3 +93,55 @@ class RestaurantStorage(RestaurantStorageInterface):
 
     def check_restaurant_is_exist(self, restaurant_id: str) -> bool:
         return Restaurant.objects.filter(restaurant_id=restaurant_id).exists()
+
+    def get_restaurants(self, filters_dto: BrowseRestaurantFiltersDTO) -> List[
+        BrowseRestaurantDTO]:
+        queryset = Restaurant.objects.filter(is_active=True).select_related("owner")
+
+        if filters_dto.cuisine_type:
+            cuisine_type = (
+                filters_dto.cuisine_type.value
+                if hasattr(filters_dto.cuisine_type, "value")
+                else str(filters_dto.cuisine_type)
+            )
+            queryset = queryset.filter(cuisine_type=cuisine_type)
+
+        if filters_dto.is_veg_only is not None:
+            queryset = queryset.filter(is_veg_only=filters_dto.is_veg_only)
+
+        if filters_dto.pincode:
+            queryset = queryset.filter(pin_code=filters_dto.pincode)
+
+        if filters_dto.search:
+            queryset = queryset.filter(
+                Q(name__icontains=filters_dto.search)
+                | Q(description__icontains=filters_dto.search)
+            )
+
+        queryset = queryset.annotate(
+            average_rating=Avg("restaurantreview__rating"),
+            total_reviews=Count("restaurantreview"),
+        )
+
+        if filters_dto.min_rating is not None:
+            queryset = queryset.filter(average_rating__gte=filters_dto.min_rating)
+
+        queryset = queryset.order_by("name")[
+            filters_dto.offset: filters_dto.offset + filters_dto.limit
+        ]
+
+        return [
+            BrowseRestaurantDTO(
+                restaurant_id=str(restaurant.restaurant_id),
+                name=restaurant.name,
+                description=restaurant.description,
+                cuisine_type=restaurant.cuisine_type,
+                address=restaurant.address,
+                pin_code=restaurant.pin_code,
+                is_veg_only=restaurant.is_veg_only,
+                is_active=restaurant.is_active,
+                average_rating=float(restaurant.average_rating or 0.0),
+                total_reviews=int(restaurant.total_reviews or 0),
+            )
+            for restaurant in queryset
+        ]

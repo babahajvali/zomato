@@ -82,6 +82,26 @@ class MenuItemDTO:
     category: Category
 
 
+@dataclass
+class BrowseRestaurantFiltersDTO:
+    cuisine_type: Optional[CuisineType] = None
+    is_veg_only: Optional[bool] = None
+    pincode: Optional[str] = None
+    min_rating: Optional[float] = None
+    search: Optional[str] = None
+    limit: int = 10
+    offset: int = 0
 
-
-
+@dataclass
+class BrowseRestaurantDTO:
+    restaurant_id: str
+    name: str
+    description: str
+    cuisine_type: CuisineType
+    address: str
+    pin_code: str
+    is_veg_only: bool
+    is_active: bool
+    average_rating: float
+    total_reviews: int
+    is_open: bool = False

@@ -2,10 +2,10 @@ import graphene
 
 from restaurant.graphql.mutations import UpdateRestaurantTiming, \
     CreateMenuItems
-from restaurant.graphql.queries import Query as BaseQuery
+from restaurant.graphql.queries import BrowseRestaurantsQuery
 
 QUERY_CLASSES = [
-    BaseQuery,
+    BrowseRestaurantsQuery,
 ]
 
 MUTATION_CLASSES = [

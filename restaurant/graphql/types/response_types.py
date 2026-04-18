@@ -3,9 +3,10 @@ import graphene
 from restaurant.graphql.types.error_types import \
     RestaurantTimingNoFoundTpe, OpenTimeGreaterThanCloseTimeType, \
     UserIsNotRestaurantOwnerType, RestaurantNotFoundType, \
-    InvalidCategoriesFoundType
+    InvalidCategoriesFoundType, InvalidCuisineTypeExceptionType, \
+    InvalidMinRatingExceptionType
 from restaurant.graphql.types.types import \
-    RestaurantTimingType, MenuItemsType
+    RestaurantTimingType, MenuItemsType, BrowseRestaurantsType
 
 
 class UpdateRestaurantTimingResponse(graphene.Union):
@@ -25,4 +26,13 @@ class CreateMenuItemsResponse(graphene.Union):
             RestaurantNotFoundType,
             InvalidCategoriesFoundType,
             UserIsNotRestaurantOwnerType,
+        )
+
+
+class BrowseRestaurantsResponse(graphene.Union):
+    class Meta:
+        types = (
+            BrowseRestaurantsType,
+            InvalidCuisineTypeExceptionType,
+            InvalidMinRatingExceptionType,
         )

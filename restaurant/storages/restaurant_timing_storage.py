@@ -55,7 +55,6 @@ class RestaurantTimingStorage(RestaurantTimingStorageInterface):
 
         return self.get_restaurant_timing(id=update_restaurant_timing_dto.id)
 
-
     def get_restaurant_timing(self, id: int) -> RestaurantTimingDTO | None:
         timing = RestaurantTiming.objects.filter(pk=id).first()
 
@@ -65,10 +64,19 @@ class RestaurantTimingStorage(RestaurantTimingStorageInterface):
         return self.convert_to_timing_dto(timing_obj=timing)
 
     def get_restaurant_owner_id(self, id: int) -> str | None:
-        timing_data =  RestaurantTiming.objects.filter(
+        timing_data = RestaurantTiming.objects.filter(
             pk=id).first()
 
         if timing_data is None:
             return None
 
         return str(timing_data.restaurant.owner.user_id)
+
+    def get_operating_hours_for_restaurants(
+            self, restaurant_ids: List[str]) -> List[RestaurantTimingDTO]:
+
+        timings = RestaurantTiming.objects.filter(
+            restaurant_id__in=restaurant_ids)
+
+        return [self.convert_to_timing_dto(timing_obj=data) for data in
+                timings]

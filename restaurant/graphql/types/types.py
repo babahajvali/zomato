@@ -23,3 +23,21 @@ class MenuItemType(graphene.ObjectType):
 
 class MenuItemsType(graphene.ObjectType):
     menu_items = graphene.List(MenuItemType)
+
+
+class BrowseRestaurantType(graphene.ObjectType):
+    restaurant_id = graphene.String(required=True)
+    name = graphene.String(required=True)
+    description = graphene.String(required=True)
+    cuisine_type = graphene.String(required=True)
+    address = graphene.String(required=True)
+    pin_code = graphene.String(required=True)
+    is_veg_only = graphene.Boolean(required=True)
+    is_active = graphene.Boolean(required=True)
+    average_rating = graphene.Float(required=True)
+    total_reviews = graphene.Int(required=True)
+    is_open = graphene.Boolean(required=True)
+
+
+class BrowseRestaurantsType(graphene.ObjectType):
+    restaurants = graphene.List(BrowseRestaurantType, required=True)
