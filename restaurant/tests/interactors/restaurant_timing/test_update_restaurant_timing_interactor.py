@@ -3,10 +3,10 @@ from unittest.mock import create_autospec
 
 import pytest
 
-from restaurant.Interactors.dtos import RestaurantTimingDTO, UpdateRestaurantTimingDTO
-from restaurant.Interactors.restaurant_timing.update_restaurant_timing_interactor import \
+from restaurant.interactors.dtos import RestaurantTimingDTO, UpdateRestaurantTimingDTO
+from restaurant.interactors.restaurant_timing.update_restaurant_timing_interactor import \
     UpdateRestaurantTimingInteractor
-from restaurant.Interactors.storage_interface.restaurant_timing_storage_interface import \
+from restaurant.interactors.storage_interface.restaurant_timing_storage_interface import \
     RestaurantTimingStorageInterface
 from restaurant.exception.custom_exceptions import (
     OpenTimeGreaterThanCloseTime,
@@ -52,7 +52,7 @@ class TestUpdateRestaurantTimingInteractor:
                 close_time_value=existing_close_time,
             ) if timing_exists else None
         )
-        self.restaurant_timing_storage.is_restaurant_owner.return_value = owner_id
+        self.restaurant_timing_storage.get_restaurant_owner_id.return_value = owner_id
         self.restaurant_timing_storage.update_restaurant_timing.return_value = (
             storage_result if storage_result is not None else self._get_timing_dto()
         )
@@ -100,7 +100,7 @@ class TestUpdateRestaurantTimingInteractor:
             repr(exc.value),
             "update_restaurant_timing_not_found.txt",
         )
-        self.restaurant_timing_storage.is_restaurant_owner.assert_not_called()
+        self.restaurant_timing_storage.get_restaurant_owner_id.assert_not_called()
         self.restaurant_timing_storage.update_restaurant_timing.assert_not_called()
 
     def test_update_restaurant_timing_non_owner(self, snapshot):

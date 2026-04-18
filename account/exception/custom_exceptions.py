@@ -11,12 +11,17 @@ class AlreadyExistsEmail(Exception):
         self.emails = emails
 
 
-class UserNotFound(Exception):
+class EmailNotFound(Exception):
     def __init__(self, email):
         self.email = email
 
     def __str__(self):
         return f'User not found: {self.email}'
+
+
+class UserNotFound(Exception):
+    def __init__(self, user_id: str):
+        self.user_id = user_id
 
 
 class AlreadyExistsAddress(Exception):

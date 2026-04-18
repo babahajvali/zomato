@@ -1,8 +1,8 @@
 from typing import List
 
-from restaurant.Interactors.dtos import CreateRestaurantTimingDTO, \
+from restaurant.interactors.dtos import CreateRestaurantTimingDTO, \
     UpdateRestaurantTimingDTO, RestaurantTimingDTO
-from restaurant.Interactors.storage_interface.restaurant_timing_storage_interface import \
+from restaurant.interactors.storage_interface.restaurant_timing_storage_interface import \
     RestaurantTimingStorageInterface
 from restaurant.models.restaurant_timing import RestaurantTiming
 
@@ -64,8 +64,11 @@ class RestaurantTimingStorage(RestaurantTimingStorageInterface):
 
         return self.convert_to_timing_dto(timing_obj=timing)
 
-    def is_restaurant_owner(self, id: int) -> str:
+    def get_restaurant_owner_id(self, id: int) -> str | None:
         timing_data =  RestaurantTiming.objects.filter(
             pk=id).first()
+
+        if timing_data is None:
+            return None
 
         return str(timing_data.restaurant.owner.user_id)

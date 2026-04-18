@@ -15,8 +15,8 @@ from utils.read_csv_util import read_csv
 class ImportPromoCodes:
 
     def __init__(self,
-                 promo_code_storage_interface: PromoCodeStorageInterface):
-        self.promo_code_storage_interface = promo_code_storage_interface
+                 promo_code_storage: PromoCodeStorageInterface):
+        self.promo_code_storage = promo_code_storage
 
     def import_promo_codes(self, file_path="./sample_data/promo_codes.csv"):
         rows = read_csv(file_path=file_path)
@@ -47,11 +47,11 @@ class ImportPromoCodes:
         )
             for row in rows]
 
-        return self.promo_code_storage_interface.create_bulk_promo_codes(
+        return self.promo_code_storage.create_bulk_promo_codes(
             promo_codes_dto)
 
     def _check_existing_codes(self, codes: List[str]):
-        existing_codes = self.promo_code_storage_interface.get_existing_codes(
+        existing_codes = self.promo_code_storage.get_existing_codes(
             codes)
 
         if existing_codes:

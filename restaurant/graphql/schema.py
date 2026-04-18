@@ -1,6 +1,7 @@
 import graphene
 
-from restaurant.graphql.mutations import UpdateRestaurantTiming
+from restaurant.graphql.mutations import UpdateRestaurantTiming, \
+    CreateMenuItems
 from restaurant.graphql.queries import Query as BaseQuery
 
 QUERY_CLASSES = [
@@ -8,7 +9,7 @@ QUERY_CLASSES = [
 ]
 
 MUTATION_CLASSES = [
-    UpdateRestaurantTiming,
+    UpdateRestaurantTiming, CreateMenuItems
 ]
 
 

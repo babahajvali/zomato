@@ -1,0 +1,26 @@
+import factory
+from factory.django import DjangoModelFactory
+
+from account.models import Address, User
+
+
+class UserFactory(DjangoModelFactory):
+    class Meta:
+        model = User
+
+    name = factory.Faker("name")
+    email = factory.Sequence(lambda n: f"user{n}@example.com")
+    phone_number = factory.Sequence(lambda n: f"900000{n:04d}")
+    role = "CUSTOMER"
+
+
+class AddressFactory(DjangoModelFactory):
+    class Meta:
+        model = Address
+
+    user = factory.SubFactory(UserFactory)
+    label = factory.Sequence(lambda n: f"label-{n}")
+    full_address = factory.Faker("address")
+    city = factory.Faker("city")
+    pin_code = factory.Sequence(lambda n: f"500{n:03d}")
+    is_default = False

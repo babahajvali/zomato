@@ -55,11 +55,11 @@ class MenuItemAdmin(admin.ModelAdmin):
 @admin.register(DeliveryZone)
 class DeliveryZoneAdmin(admin.ModelAdmin):
     list_display = (
-        'restaurant', 'pincode', 'delivery_fee', 'estimated_delivery_mins',
+        'restaurant', 'pin_code', 'delivery_fee', 'estimated_delivery_mins',
         'created_at'
     )
     list_filter = ('created_at', 'updated_at')
-    search_fields = ('restaurant__name', 'pincode')
+    search_fields = ('restaurant__name', 'pin_code')
     ordering = ('-created_at',)
     raw_id_fields = ('restaurant',)
     readonly_fields = ('created_at', 'updated_at')

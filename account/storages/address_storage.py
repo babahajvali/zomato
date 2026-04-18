@@ -3,7 +3,7 @@ from typing import List
 from account.interactors.storage_interface.address_storage_interface import AddressStorageInterface
 from account.interactors.dtos import CreateAddressDTO
 from account.models import User, Address
-from account.exception.custom_exceptions import UserNotFound
+from account.exception.custom_exceptions import EmailNotFound
 
 
 class AddressStorage(AddressStorageInterface):
@@ -15,7 +15,7 @@ class AddressStorage(AddressStorageInterface):
             try:
                 user = User.objects.get(email=dto.email)
             except User.DoesNotExist:
-                raise UserNotFound(email=dto.email)
+                raise EmailNotFound(email=dto.email)
             
             address = Address(
                 user=user,

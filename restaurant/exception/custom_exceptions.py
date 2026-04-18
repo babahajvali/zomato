@@ -1,3 +1,6 @@
+from typing import List
+
+
 class AlreadyExistsRestaurant(Exception):
     def __init__(self, names):
         self.names = names
@@ -42,3 +45,19 @@ class UserIsNotRestaurantOwner(Exception):
 
     def __str__(self):
         return str(self.user_id)
+
+
+class InvalidCategoriesFound(Exception):
+    def __init__(self, categories: List[str]):
+        self.categories = categories
+
+    def __str__(self):
+        return str(self.categories)
+
+
+class RestaurantNotFound(Exception):
+    def __init__(self, restaurant_id: str):
+        self.restaurant_id = restaurant_id
+
+    def __str__(self):
+        return str(self.restaurant_id)

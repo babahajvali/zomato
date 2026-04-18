@@ -1,23 +1,23 @@
 import graphene
 
-from restaurant.Interactors.dtos import UpdateRestaurantTimingDTO
-from restaurant.Interactors.restaurant_timing.update_restaurant_timing_interactor import \
+from restaurant.interactors.dtos import UpdateRestaurantTimingDTO
+from restaurant.interactors.restaurant_timing.update_restaurant_timing_interactor import \
     UpdateRestaurantTimingInteractor
 from restaurant.exception.custom_exceptions import (
     OpenTimeGreaterThanCloseTime,
     RestaurantTimingNotFound,
     UserIsNotRestaurantOwner,
 )
-from restaurant.graphql.types.restaurant_timing.error_types import (
+from restaurant.graphql.types.error_types import (
     OpenTimeGreaterThanCloseTimeType,
     RestaurantTimingNoFoundTpe,
     UserIsNotRestaurantOwnerType,
 )
-from restaurant.graphql.types.restaurant_timing.input_types import \
+from restaurant.graphql.types.input_types import \
     UpdateRestaurantTimingInputParams
-from restaurant.graphql.types.restaurant_timing.response_types import \
+from restaurant.graphql.types.response_types import \
     UpdateRestaurantTimingResponse
-from restaurant.graphql.types.restaurant_timing.types import \
+from restaurant.graphql.types.types import \
     RestaurantTimingType
 from restaurant.storages.restaurant_timing_storage import \
     RestaurantTimingStorage
@@ -40,12 +40,8 @@ class UpdateRestaurantTimingMutation(graphene.Mutation):
             update_restaurant_timing_dto = UpdateRestaurantTimingDTO(
                 id=params.id,
                 user_id=info.context.user_id,
-                open_time=UpdateRestaurantTimingMutation._get_time_value(
-                    params.open_time
-                ),
-                close_time=UpdateRestaurantTimingMutation._get_time_value(
-                    params.close_time
-                ),
+                open_time=params.open_time,
+                close_time=params.close_time,
             )
             result = interactor.update_restaurant_timing(
                 update_restaurant_timing_dto=update_restaurant_timing_dto
@@ -71,12 +67,3 @@ class UpdateRestaurantTimingMutation(graphene.Mutation):
         except UserIsNotRestaurantOwner as exc:
             return UserIsNotRestaurantOwnerType(user_id=exc.user_id)
 
-    @staticmethod
-    def _get_time_value(value):
-        if value is None:
-            return None
-
-        if hasattr(value, "time"):
-            return value.time()
-
-        return value

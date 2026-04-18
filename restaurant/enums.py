@@ -30,3 +30,7 @@ class Category(Enum):
     @classmethod
     def get_list_of_tuples(cls):
         return [(member.value, member.value.capitalize()) for member in cls]
+
+    @classmethod
+    def get_categories(cls):
+        return [member.value for member in cls]

@@ -19,7 +19,7 @@ class TestImportPromoCodes:
     def setup_method(self):
         self.promo_code_storage = create_autospec(PromoCodeStorageInterface)
         self.interactor = ImportPromoCodes(
-            promo_code_storage_interface=self.promo_code_storage,
+            promo_code_storage=self.promo_code_storage,
         )
 
     def test_import_promo_codes_success(self):

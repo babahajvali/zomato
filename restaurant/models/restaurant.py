@@ -8,7 +8,7 @@ from restaurant.enums import CuisineType, Category
 # Create your models here.
 
 class Restaurant(models.Model):
-    restaurant_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    restaurant_id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
     owner = models.ForeignKey("account.User", on_delete=models.CASCADE)
@@ -31,7 +31,7 @@ class Restaurant(models.Model):
 
 
 class MenuItem(models.Model):
-    item_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    item_id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='menu_items')
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
@@ -40,9 +40,10 @@ class MenuItem(models.Model):
     is_veg = models.BooleanField(default=False)
     is_available = models.BooleanField(default=True)
     preparation_time_in_minutes = models.IntegerField(validators=[MinValueValidator(1)])
+    tags = models.JSONField(default=list, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    tags = models.JSONField(default=list, blank=True)
+
 
     def __str__(self):
         return self.name

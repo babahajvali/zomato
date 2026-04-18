@@ -23,3 +23,6 @@ class UserStorage(UserStorageInterface):
 
         return list(User.objects.filter(email__in=emails).
                     values_list('email', flat=True))
+
+    def check_user_exists(self, user_id: str) -> bool:
+        return User.objects.filter(user_id=user_id).exists()

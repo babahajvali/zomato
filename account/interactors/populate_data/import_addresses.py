@@ -1,7 +1,7 @@
 from typing import List
 
 from account.exception.custom_exceptions import AlreadyExistsAddress, \
-    DuplicateAddresses, UserNotFound
+    DuplicateAddresses, EmailNotFound
 from account.interactors.dtos import CreateAddressDTO
 from account.interactors.storage_interface.address_storage_interface import \
     AddressStorageInterface

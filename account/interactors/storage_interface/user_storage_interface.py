@@ -13,3 +13,7 @@ class UserStorageInterface(ABC):
     @abstractmethod
     def get_existing_emails(self, emails: List[str]) -> List[str]:
         pass
+
+    @abstractmethod
+    def check_user_exists(self, user_id: str) -> bool:
+        pass

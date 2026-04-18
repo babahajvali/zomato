@@ -10,8 +10,8 @@ from utils.read_csv_util import read_csv, validate_row
 
 class ImportUsers:
 
-    def __init__(self, user_storage_interface: UserStorageInterface):
-        self.user_storage_interface = user_storage_interface
+    def __init__(self, user_storage: UserStorageInterface):
+        self.user_storage = user_storage
 
     def import_users(self, file_path="./sample_data/users.csv"):
         rows = read_csv(file_path=file_path)
@@ -39,13 +39,13 @@ class ImportUsers:
             for row in rows
         ]
 
-        created_users = self.user_storage_interface.create_bulk_users(
+        created_users = self.user_storage.create_bulk_users(
             users_dto)
 
         return created_users
 
     def _check_existing_emails(self, emails: List[str]):
-        existing_emails = self.user_storage_interface.get_existing_emails(
+        existing_emails = self.user_storage.get_existing_emails(
             emails)
 
         if existing_emails:
