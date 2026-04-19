@@ -43,7 +43,7 @@ class UpdateRestaurantTimingDTO:
     id: int
     user_id: str
     open_time: Optional[time]
-    close_time:Optional[time]
+    close_time: Optional[time]
 
 
 @dataclass
@@ -92,6 +92,7 @@ class BrowseRestaurantFiltersDTO:
     limit: int = 10
     offset: int = 0
 
+
 @dataclass
 class BrowseRestaurantDTO:
     restaurant_id: str
@@ -105,3 +106,28 @@ class BrowseRestaurantDTO:
     average_rating: float
     total_reviews: int
     is_open: bool = False
+
+
+@dataclass
+class MenuItemWithTagsDTO:
+    item_id: str
+    name: str
+    description: str
+    price: float
+    category: Category
+    is_veg: bool
+    is_available: bool
+    preparation_time_in_minutes: int
+    tags: List[str]
+
+
+@dataclass
+class CategoryMenuDTO:
+    category: Category
+    items: List[MenuItemWithTagsDTO]
+
+
+@dataclass
+class RestaurantMenuDTO:
+    restaurant_id: str
+    categories: List[CategoryMenuDTO]

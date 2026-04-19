@@ -2,10 +2,13 @@ from typing import List
 
 from account.models import User
 from django.db.models import Avg, Count, Q
+
+from restaurant.enums import Category
 from restaurant.interactors.storage_interface.restaurant_storage_interface import \
     RestaurantStorageInterface
 from restaurant.interactors.dtos import CreateRestaurantDTO, CreateMenuItemDTO, \
-    MenuItemDTO, BrowseRestaurantDTO, BrowseRestaurantFiltersDTO
+    MenuItemDTO, BrowseRestaurantDTO, BrowseRestaurantFiltersDTO, \
+    MenuItemWithTagsDTO
 from restaurant.exception.custom_exceptions import OwnerNotFound
 from restaurant.models.restaurant import Restaurant, MenuItem
 
@@ -25,6 +28,22 @@ class RestaurantStorage(RestaurantStorageInterface):
             is_available=item_obj.is_available,
             tags=item_obj.tags,
             preparation_time_in_minutes=item_obj.preparation_time_in_minutes,
+        )
+
+    @staticmethod
+    def _convert_to_menu_item_with_tags_dto(
+            item: MenuItem,
+    ) -> MenuItemWithTagsDTO:
+        return MenuItemWithTagsDTO(
+            item_id=str(item.item_id),
+            name=item.name,
+            description=item.description,
+            price=float(item.price),
+            category=Category(item.category),
+            is_veg=item.is_veg,
+            is_available=item.is_available,
+            preparation_time_in_minutes=item.preparation_time_in_minutes,
+            tags=item.tags,
         )
 
     def create_bulk_restaurants(self,
@@ -145,3 +164,23 @@ class RestaurantStorage(RestaurantStorageInterface):
             )
             for restaurant in queryset
         ]
+
+    def get_available_menu_items_by_restaurant(
+            self,
+            restaurant_id: str,
+    ) -> List[MenuItemWithTagsDTO]:
+
+        items = (
+            MenuItem.objects
+            .filter(
+                restaurant_id=restaurant_id,
+                is_available=True,
+            )
+            .order_by('category', 'name')
+        )
+
+        return [
+            self._convert_to_menu_item_with_tags_dto(item=item)
+            for item in items
+        ]
+

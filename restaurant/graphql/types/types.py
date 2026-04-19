@@ -41,3 +41,25 @@ class BrowseRestaurantType(graphene.ObjectType):
 
 class BrowseRestaurantsType(graphene.ObjectType):
     restaurants = graphene.List(BrowseRestaurantType, required=True)
+
+
+class ViewMenuItemType(graphene.ObjectType):
+    item_id = graphene.String()
+    name = graphene.String()
+    description = graphene.String()
+    price = graphene.Float()
+    category = graphene.String()
+    is_veg = graphene.Boolean()
+    is_available = graphene.Boolean()
+    preparation_time_in_minutes = graphene.Int()
+    tags = graphene.List(graphene.String)
+
+
+class CategoryMenuType(graphene.ObjectType):
+    category = graphene.String()
+    items    = graphene.List(MenuItemType)
+
+
+class RestaurantMenuType(graphene.ObjectType):
+    restaurant_id = graphene.String(required=True)
+    categories    = graphene.List(CategoryMenuType)

@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from restaurant.interactors.dtos import CreateRestaurantDTO, CreateMenuItemDTO, \
-    MenuItemDTO, BrowseRestaurantDTO, BrowseRestaurantFiltersDTO
+    MenuItemDTO, BrowseRestaurantDTO, BrowseRestaurantFiltersDTO, \
+    MenuItemWithTagsDTO
 
 
 class RestaurantStorageInterface(ABC):
@@ -33,4 +34,9 @@ class RestaurantStorageInterface(ABC):
     @abstractmethod
     def get_restaurants(self, filters_dto: BrowseRestaurantFiltersDTO) -> List[
         BrowseRestaurantDTO]:
+        pass
+
+    @abstractmethod
+    def get_available_menu_items_by_restaurant(
+            self, restaurant_id: str) -> List[MenuItemWithTagsDTO]:
         pass

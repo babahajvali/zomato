@@ -1,14 +1,25 @@
 import graphene
 
 from restaurant.graphql.resolvers import resolve_browse_restaurants
-from restaurant.graphql.types.input_types import BrowseRestaurantsInputParams
-from restaurant.graphql.types.response_types import BrowseRestaurantsResponse
+from restaurant.graphql.resolvers.restaurant_menu_resolver import \
+    resolve_view_restaurant_menu
+from restaurant.graphql.types.input_types import BrowseRestaurantsInputParams, \
+    ViewRestaurantMenuInputParams
+from restaurant.graphql.types.response_types import BrowseRestaurantsResponse, \
+    ViewRestaurantMenuResponse
 
 
 class BrowseRestaurantsQuery(graphene.ObjectType):
     browse_restaurants = graphene.Field(
         BrowseRestaurantsResponse,
-        params=BrowseRestaurantsInputParams(required=False),
+        params=BrowseRestaurantsInputParams(required=True),
         resolver=resolve_browse_restaurants,
     )
 
+
+class ViewRestaurantMenu(graphene.ObjectType):
+    view_restaurant_manu = graphene.Field(
+        ViewRestaurantMenuResponse,
+        params=ViewRestaurantMenuInputParams(required=True),
+        resolver=resolve_view_restaurant_menu
+    )

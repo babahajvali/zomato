@@ -6,7 +6,8 @@ from restaurant.graphql.types.error_types import \
     InvalidCategoriesFoundType, InvalidCuisineTypeExceptionType, \
     InvalidMinRatingExceptionType
 from restaurant.graphql.types.types import \
-    RestaurantTimingType, MenuItemsType, BrowseRestaurantsType
+    RestaurantTimingType, MenuItemsType, BrowseRestaurantsType, \
+    RestaurantMenuType
 
 
 class UpdateRestaurantTimingResponse(graphene.Union):
@@ -35,4 +36,11 @@ class BrowseRestaurantsResponse(graphene.Union):
             BrowseRestaurantsType,
             InvalidCuisineTypeExceptionType,
             InvalidMinRatingExceptionType,
+        )
+
+class ViewRestaurantMenuResponse(graphene.Union):
+    class Meta:
+        types = (
+            RestaurantMenuType,
+            RestaurantNotFoundType,
         )

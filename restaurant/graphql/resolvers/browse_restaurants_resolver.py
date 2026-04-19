@@ -15,17 +15,6 @@ from restaurant.storages.restaurant_storage import RestaurantStorage
 from restaurant.storages.restaurant_timing_storage import RestaurantTimingStorage
 
 
-def _build_filters_dto(params) -> BrowseRestaurantFiltersDTO:
-    return BrowseRestaurantFiltersDTO(
-        cuisine_type=getattr(params, "cuisine_type", None),
-        is_veg_only=getattr(params, "is_veg_only", None),
-        pincode=getattr(params, "pincode", None),
-        min_rating=getattr(params, "min_rating", None),
-        search=getattr(params, "search", None),
-        limit=getattr(params, "limit", 10) or 10,
-        offset=getattr(params, "offset", 0) or 0,
-    )
-
 
 def _map_browse_restaurants_response(restaurants):
     response = [
@@ -33,11 +22,7 @@ def _map_browse_restaurants_response(restaurants):
             restaurant_id=str(each.restaurant_id),
             name=each.name,
             description=each.description,
-            cuisine_type=(
-                each.cuisine_type.value
-                if hasattr(each.cuisine_type, "value")
-                else str(each.cuisine_type)
-            ),
+            cuisine_type=each.cuisine_type,
             address=each.address,
             pin_code=each.pin_code,
             is_veg_only=each.is_veg_only,
@@ -52,7 +37,15 @@ def _map_browse_restaurants_response(restaurants):
 
 
 def resolve_browse_restaurants(root, info, params=None):
-    filters_dto = _build_filters_dto(params=params)
+    filters_dto = BrowseRestaurantFiltersDTO(
+        cuisine_type=params.cuisine_type if params.cuisine_type else None,
+        is_veg_only=params.is_veg_only,
+        pincode=params.pincode if params.pincode else None,
+        min_rating=params.min_rating,
+        search=params.search if params.search else None,
+        limit=params.limit,
+        offset=params.offset,
+    )
 
     interactor = BrowseRestaurantsInteractor(
         restaurant_storage=RestaurantStorage(),

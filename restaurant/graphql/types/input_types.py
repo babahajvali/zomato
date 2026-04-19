@@ -31,3 +31,7 @@ class BrowseRestaurantsInputParams(graphene.InputObjectType):
     search = graphene.String()
     limit = graphene.Int()
     offset = graphene.Int()
+
+
+class ViewRestaurantMenuInputParams(graphene.InputObjectType):
+    restaurant_id = graphene.String(required=True)
