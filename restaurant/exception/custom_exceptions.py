@@ -63,6 +63,13 @@ class RestaurantNotFound(Exception):
         return str(self.restaurant_id)
 
 
+class InvalidRestaurantIdsFound(Exception):
+    def __init__(self, restaurant_ids: List[str]):
+        self.restaurant_ids = restaurant_ids
+
+    def __str__(self):
+        return str(self.restaurant_ids)
+
 class DuplicateRestaurantTimings(Exception):
     def __init__(self, restaurant_ids: List[str]):
         self.restaurant_ids = restaurant_ids

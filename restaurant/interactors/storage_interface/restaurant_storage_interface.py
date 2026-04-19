@@ -40,3 +40,7 @@ class RestaurantStorageInterface(ABC):
     def get_available_menu_items_by_restaurant(
             self, restaurant_id: str) -> List[MenuItemWithTagsDTO]:
         pass
+
+    @abstractmethod
+    def get_restaurants_by_ids(self, restaurant_ids: List[str]) -> List[str]:
+        pass

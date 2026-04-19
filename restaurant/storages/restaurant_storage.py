@@ -115,7 +115,8 @@ class RestaurantStorage(RestaurantStorageInterface):
 
     def get_restaurants(self, filters_dto: BrowseRestaurantFiltersDTO) -> List[
         BrowseRestaurantDTO]:
-        queryset = Restaurant.objects.filter(is_active=True).select_related("owner")
+        queryset = Restaurant.objects.filter(is_active=True).select_related(
+            "owner")
 
         if filters_dto.cuisine_type:
             cuisine_type = (
@@ -143,7 +144,8 @@ class RestaurantStorage(RestaurantStorageInterface):
         )
 
         if filters_dto.min_rating is not None:
-            queryset = queryset.filter(average_rating__gte=filters_dto.min_rating)
+            queryset = queryset.filter(
+                average_rating__gte=filters_dto.min_rating)
 
         queryset = queryset.order_by("name")[
             filters_dto.offset: filters_dto.offset + filters_dto.limit
@@ -183,4 +185,9 @@ class RestaurantStorage(RestaurantStorageInterface):
             self._convert_to_menu_item_with_tags_dto(item=item)
             for item in items
         ]
+
+    def get_restaurants_by_ids(self, restaurant_ids: List[str]) -> List[str]:
+        return list(Restaurant.objects.filter(restaurant_id__in=restaurant_ids).
+                values_list('restaurant_id', flat=True))
+
 

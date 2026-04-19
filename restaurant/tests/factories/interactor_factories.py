@@ -2,10 +2,13 @@ import factory
 
 from restaurant.enums import Category
 from restaurant.interactors.dtos import (
+    CategoryMenuDTO,
     CreateMenuItemDTO,
     CreateRestaurantTimingDTO,
     CreateRestaurantDTO,
     MenuItemDTO,
+    MenuItemWithTagsDTO,
+    RestaurantMenuDTO,
 )
 
 
@@ -62,4 +65,35 @@ class CreateRestaurantTimingDTOFactory(factory.Factory):
     day_of_week = 1
     open_time = "09:00:00"
     close_time = "21:00:00"
+
+
+class MenuItemWithTagsDTOFactory(factory.Factory):
+    class Meta:
+        model = MenuItemWithTagsDTO
+
+    item_id = factory.Sequence(lambda n: f"item-{n}")
+    name = factory.Sequence(lambda n: f"Item {n}")
+    description = factory.Faker("sentence")
+    price = 199.0
+    category = Category.STARTER
+    is_veg = True
+    is_available = True
+    preparation_time_in_minutes = 15
+    tags = factory.LazyFunction(list)
+
+
+class CategoryMenuDTOFactory(factory.Factory):
+    class Meta:
+        model = CategoryMenuDTO
+
+    category = Category.STARTER
+    items = factory.LazyFunction(list)
+
+
+class RestaurantMenuDTOFactory(factory.Factory):
+    class Meta:
+        model = RestaurantMenuDTO
+
+    restaurant_id = factory.Sequence(lambda n: f"restaurant-{n}")
+    categories = factory.LazyFunction(list)
 

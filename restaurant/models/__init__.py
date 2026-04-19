@@ -1,3 +1,4 @@
+from restaurant.models.cart import Cart, CartItem
 from restaurant.models.delivery_zone import DeliveryZone
 from restaurant.models.restaurant import Restaurant, MenuItem
 from restaurant.models.restaurant_review import RestaurantReview
@@ -10,6 +11,8 @@ __all__ = [
     "MenuItem",
     "RestaurantTiming",
     "DeliveryZone",
-    "RestaurantReview"
+    "RestaurantReview",
+    "Cart",
+    "CartItem"
 ]
 

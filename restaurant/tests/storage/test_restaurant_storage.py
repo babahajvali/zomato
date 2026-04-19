@@ -1,12 +1,15 @@
 from django.test import TestCase
 
 from account.tests.factories.storage_factories import UserFactory
-from restaurant.enums import CuisineType
+from restaurant.enums import Category, CuisineType
 from restaurant.interactors.dtos import CreateRestaurantDTO
 from restaurant.exception.custom_exceptions import OwnerNotFound
 from restaurant.models import Restaurant
 from restaurant.storages.restaurant_storage import RestaurantStorage
-from restaurant.tests.factories.storage_factories import RestaurantFactory
+from restaurant.tests.factories.storage_factories import (
+    MenuItemFactory,
+    RestaurantFactory,
+)
 
 
 class TestRestaurantStorage(TestCase):
@@ -62,3 +65,52 @@ class TestRestaurantStorage(TestCase):
         )
 
         assert result == ["Spice Hub"]
+
+    def test_get_available_menu_items_by_restaurant(self):
+        restaurant = RestaurantFactory()
+        available_item = MenuItemFactory(
+            restaurant=restaurant,
+            name="Paneer Tikka",
+            category="STARTER",
+            is_available=True,
+            tags=["spicy", "veg"],
+        )
+        MenuItemFactory(
+            restaurant=restaurant,
+            name="Hidden Item",
+            is_available=False,
+        )
+        other_restaurant = RestaurantFactory()
+        MenuItemFactory(
+            restaurant=other_restaurant,
+            name="Other Restaurant Item",
+            is_available=True,
+        )
+
+        result = self.storage.get_available_menu_items_by_restaurant(
+            restaurant_id=str(restaurant.restaurant_id),
+        )
+
+        assert len(result) == 1
+        assert result[0].item_id == str(available_item.item_id)
+        assert result[0].name == "Paneer Tikka"
+        assert result[0].category == Category.STARTER
+
+    def test_get_available_menu_items_by_restaurant_returns_sorted_items(self):
+        restaurant = RestaurantFactory()
+        MenuItemFactory(
+            restaurant=restaurant,
+            name="B Item",
+            category="STARTER",
+        )
+        MenuItemFactory(
+            restaurant=restaurant,
+            name="A Item",
+            category="STARTER",
+        )
+
+        result = self.storage.get_available_menu_items_by_restaurant(
+            restaurant_id=str(restaurant.restaurant_id),
+        )
+
+        assert [item.name for item in result] == ["A Item", "B Item"]

@@ -4,7 +4,7 @@ import factory
 from factory.django import DjangoModelFactory
 
 from account.tests.factories.storage_factories import UserFactory
-from restaurant.models import Restaurant, RestaurantTiming
+from restaurant.models import MenuItem, Restaurant, RestaurantTiming
 
 
 class RestaurantFactory(DjangoModelFactory):
@@ -29,3 +29,18 @@ class RestaurantTimingFactory(DjangoModelFactory):
     day_of_week = 1
     open_time = time(9, 0)
     close_time = time(21, 0)
+
+
+class MenuItemFactory(DjangoModelFactory):
+    class Meta:
+        model = MenuItem
+
+    restaurant = factory.SubFactory(RestaurantFactory)
+    name = factory.Sequence(lambda n: f"Item {n}")
+    description = factory.Faker("sentence")
+    price = 199.0
+    category = "STARTER"
+    is_veg = True
+    is_available = True
+    preparation_time_in_minutes = 15
+    tags = factory.LazyFunction(list)
