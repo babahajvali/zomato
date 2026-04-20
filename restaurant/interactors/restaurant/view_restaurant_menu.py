@@ -14,14 +14,9 @@ class ViewRestaurantMenuInteractor(RestaurantMixin):
         super().__init__(restaurant_storage=restaurant_storage)
         self.restaurant_storage = restaurant_storage
 
-    def view_restaurant_menu(
-            self,
-            restaurant_id: str,
-    ) -> RestaurantMenuDTO:
+    def view_restaurant_menu(self, restaurant_id: str) -> RestaurantMenuDTO:
 
-        self.check_restaurant_is_exists(
-            restaurant_id=restaurant_id
-        )
+        self.check_restaurant_is_exists(restaurant_id=restaurant_id)
 
         items = self.restaurant_storage.get_available_menu_items_by_restaurant(
             restaurant_id=restaurant_id

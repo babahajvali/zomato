@@ -1,15 +1,13 @@
 from typing import List
 
-from account.models import User
 from django.db.models import Avg, Count, Q
 
-from restaurant.enums import Category
+from restaurant.constants.enums import Category
 from restaurant.interactors.storage_interface.restaurant_storage_interface import \
     RestaurantStorageInterface
 from restaurant.interactors.dtos import CreateRestaurantDTO, CreateMenuItemDTO, \
-    MenuItemDTO, BrowseRestaurantDTO, BrowseRestaurantFiltersDTO, \
-    MenuItemWithTagsDTO
-from restaurant.exception.custom_exceptions import OwnerNotFound
+    MenuItemDTO, BrowseRestaurantFiltersDTO, \
+    MenuItemWithTagsDTO, RestaurantDTO
 from restaurant.models.restaurant import Restaurant, MenuItem
 from utils.uuid_util import generate_uuid
 
@@ -20,7 +18,7 @@ class RestaurantStorage(RestaurantStorageInterface):
     def _convert_to_menu_item_dto(item_obj: MenuItem) -> MenuItemDTO:
         return MenuItemDTO(
             id=item_obj.id,
-            restaurant_id=item_obj.restaurant.id,
+            restaurant_id=item_obj.restaurant.timing_id,
             name=item_obj.name,
             description=item_obj.description,
             price=item_obj.price,
@@ -47,12 +45,11 @@ class RestaurantStorage(RestaurantStorageInterface):
             tags=item.tags,
         )
 
-    def create_bulk_restaurants(self,
-                                restaurants_dto: List[CreateRestaurantDTO]):
+    def create_bulk_restaurants(
+            self, restaurants_dto: List[CreateRestaurantDTO]):
         restaurants = []
 
         for dto in restaurants_dto:
-
             restaurant = Restaurant(
                 id=generate_uuid(),
                 name=dto.name,
@@ -110,7 +107,7 @@ class RestaurantStorage(RestaurantStorageInterface):
         return Restaurant.objects.filter(id=restaurant_id).exists()
 
     def get_restaurants(self, filters_dto: BrowseRestaurantFiltersDTO) -> List[
-        BrowseRestaurantDTO]:
+        RestaurantDTO]:
         queryset = Restaurant.objects.filter(is_deleted=False)
 
         if filters_dto.cuisine_type:
@@ -130,7 +127,6 @@ class RestaurantStorage(RestaurantStorageInterface):
         if filters_dto.search:
             queryset = queryset.filter(
                 Q(name__icontains=filters_dto.search)
-                | Q(description__icontains=filters_dto.search)
             )
 
         queryset = queryset.annotate(
@@ -147,8 +143,8 @@ class RestaurantStorage(RestaurantStorageInterface):
         ]
 
         return [
-            BrowseRestaurantDTO(
-                restaurant_id=str(restaurant.id),
+            RestaurantDTO(
+                id=str(restaurant.id),
                 name=restaurant.name,
                 description=restaurant.description,
                 cuisine_type=restaurant.cuisine_type,
@@ -156,16 +152,13 @@ class RestaurantStorage(RestaurantStorageInterface):
                 pin_code=restaurant.pin_code,
                 is_veg_only=restaurant.is_veg_only,
                 is_deleted=not restaurant.is_deleted,
-                average_rating=float(restaurant.average_rating or 0.0),
-                total_reviews=int(restaurant.total_reviews or 0),
+                owner_id=restaurant.owner_id
             )
             for restaurant in queryset
         ]
 
     def get_available_menu_items_by_restaurant(
-            self,
-            restaurant_id: str,
-    ) -> List[MenuItemWithTagsDTO]:
+            self, restaurant_id: str) -> List[MenuItemWithTagsDTO]:
 
         items = (
             MenuItem.objects
@@ -183,6 +176,4 @@ class RestaurantStorage(RestaurantStorageInterface):
 
     def get_restaurants_by_ids(self, restaurant_ids: List[str]) -> List[str]:
         return list(Restaurant.objects.filter(id__in=restaurant_ids).
-                values_list('id', flat=True))
-
-
+                    values_list('id', flat=True))

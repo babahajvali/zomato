@@ -1,8 +1,6 @@
-import uuid
-
 from django.db import models
 
-from account.enums import Role
+from account.constants.enums import Role
 from utils.uuid_util import generate_uuid
 
 

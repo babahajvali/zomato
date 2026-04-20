@@ -2,7 +2,7 @@ from typing import List
 
 from restaurant.interactors.dtos import (
     BrowseRestaurantDTO,
-    BrowseRestaurantFiltersDTO,
+    BrowseRestaurantFiltersDTO, RestaurantDTO,
 )
 from restaurant.interactors.storage_interface.restaurant_storage_interface import (
     RestaurantStorageInterface,
@@ -36,15 +36,11 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
             filters_dto=filters_dto
         )
 
-        return self._attach_is_open(restaurants=restaurants)
+        return self._check_and_get_browse_restaurants(restaurants=restaurants)
 
     def _validate_filters(self, filters_dto: BrowseRestaurantFiltersDTO):
         if filters_dto.cuisine_type:
-            cuisine_type = (
-                filters_dto.cuisine_type.value
-                if hasattr(filters_dto.cuisine_type, "value")
-                else str(filters_dto.cuisine_type)
-            )
+            cuisine_type = filters_dto.cuisine_type.value
             self.check_cuisine_type_is_valid(cuisine_type=cuisine_type)
 
         if filters_dto.min_rating is not None:
@@ -52,16 +48,16 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
                 min_rating=filters_dto.min_rating
             )
 
-    def _attach_is_open(
-            self, restaurants: List[BrowseRestaurantDTO],
+    def _check_and_get_browse_restaurants(
+            self, restaurants: List[RestaurantDTO],
     ) -> List[BrowseRestaurantDTO]:
-        restaurant_ids = [str(restaurant.restaurant_id) for restaurant in restaurants]
+        restaurant_ids = [str(restaurant.id) for restaurant in restaurants]
 
         timings = self.restaurant_timing_storage.get_operating_hours_for_restaurants(
             restaurant_ids=restaurant_ids
         )
 
-        self.compute_is_open_bulk(
+        restaurants = self.compute_is_open_bulk(
             restaurants=restaurants,
             timings=timings,
         )

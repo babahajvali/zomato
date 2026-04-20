@@ -1,9 +1,8 @@
 from django.test import TestCase
 
 from account.tests.factories.storage_factories import UserFactory
-from restaurant.enums import Category, CuisineType
+from restaurant.constants.enums import Category, CuisineType
 from restaurant.interactors.dtos import CreateRestaurantDTO
-from restaurant.exception.custom_exceptions import OwnerNotFound
 from restaurant.models import Restaurant
 from restaurant.storages.restaurant_storage import RestaurantStorage
 from restaurant.tests.factories.storage_factories import (

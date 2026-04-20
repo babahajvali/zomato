@@ -11,5 +11,5 @@ class UserMixin:
     def check_user_exists(self, user_id: str):
         is_user_exists = self.user_storage.check_user_exists(user_id=user_id)
 
-        if is_user_exists:
+        if not is_user_exists:
             raise UserNotFound(user_id=user_id)

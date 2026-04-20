@@ -1,6 +1,6 @@
 import graphene
 
-from restaurant.enums import Category
+from restaurant.constants.enums import Category
 from restaurant.exception.custom_exceptions import (
     InvalidCategoriesFound,
     RestaurantNotFound,
@@ -36,7 +36,6 @@ class CreateMenuItemsMutation(graphene.Mutation):
 
         create_items_dto = [
             CreateMenuItemDTO(
-                restaurant_id=item.restaurant_id,
                 name=item.name,
                 description=item.description,
                 price=item.price,
@@ -53,6 +52,7 @@ class CreateMenuItemsMutation(graphene.Mutation):
             created_items = interactor.create_menu_item(
                 create_items_dto=create_items_dto,
                 user_id=info.context.user_id,
+                restaurant_id=params.restaurant_id,
             )
 
             menu_items = [

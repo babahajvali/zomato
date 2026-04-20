@@ -3,7 +3,7 @@ from typing import List
 
 from restaurant.interactors.dtos import CreateRestaurantDTO, CreateMenuItemDTO, \
     MenuItemDTO, BrowseRestaurantDTO, BrowseRestaurantFiltersDTO, \
-    MenuItemWithTagsDTO
+    MenuItemWithTagsDTO, RestaurantDTO
 
 
 class RestaurantStorageInterface(ABC):
@@ -33,7 +33,7 @@ class RestaurantStorageInterface(ABC):
 
     @abstractmethod
     def get_restaurants(self, filters_dto: BrowseRestaurantFiltersDTO) -> List[
-        BrowseRestaurantDTO]:
+        RestaurantDTO]:
         pass
 
     @abstractmethod

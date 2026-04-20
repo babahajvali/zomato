@@ -2,7 +2,7 @@ import factory
 from datetime import time
 
 from restaurant.interactors.dtos import RestaurantTimingDTO
-from restaurant.enums import Category
+from restaurant.constants.enums import Category
 
 
 class UserDTOFactory(factory.Factory):

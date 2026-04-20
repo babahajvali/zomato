@@ -1,6 +1,6 @@
 from django.db import models
 
-from order.enums import PromoCodeType
+from order.constants.enums import PromoCodeType
 
 
 class PromoCode(models.Model):

@@ -1,8 +1,7 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-import uuid
 
-from restaurant.enums import CuisineType, Category
+from restaurant.constants.enums import CuisineType, Category
 from utils.uuid_util import generate_uuid
 
 

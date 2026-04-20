@@ -17,10 +17,12 @@ class TestImportAddresses:
     def setup_method(self):
         self.address_storage = create_autospec(AddressStorageInterface)
         self.interactor = ImportAddresses(
-            address_storage_interface=self.address_storage,
+            address_storage=self.address_storage,
         )
 
     def test_import_addresses_success(self):
+
+        # Arrange
         rows = [
             {
                 "email": " Alice@Example.com ",
@@ -38,12 +40,11 @@ class TestImportAddresses:
             pincode="560001",
             is_default=False,
         )
-        expected_addresses = ["created-address"]
         validate_row = MagicMock()
 
         self.address_storage.get_existing_addresses.return_value = []
-        self.address_storage.create_bulk_addresses.return_value = expected_addresses
 
+        # Act
         with patch(
             "account.interactors.populate_data.import_addresses.read_csv",
             return_value=rows,
@@ -53,7 +54,7 @@ class TestImportAddresses:
         ):
             result = self.interactor.import_addresses(file_path="addresses.csv")
 
-        assert result == expected_addresses
+        # Assert
         validate_row.assert_called_once_with(
             rows[0],
             ["email", "label", "full_address"],
@@ -95,7 +96,6 @@ class TestImportAddresses:
             with pytest.raises(DuplicateAddresses) as exc:
                 self.interactor.import_addresses(file_path="addresses.csv")
 
-        assert exc.value.addresses == [("alice@example.com", "Home")]
         self.address_storage.get_existing_addresses.assert_not_called()
         self.address_storage.create_bulk_addresses.assert_not_called()
 

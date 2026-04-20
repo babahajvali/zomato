@@ -2,7 +2,7 @@ from unittest.mock import create_autospec
 
 import pytest
 
-from restaurant.enums import Category
+from restaurant.constants.enums import Category
 from restaurant.exception.custom_exceptions import RestaurantNotFound
 from restaurant.interactors.restaurant.view_restaurant_menu import (
     ViewRestaurantMenuInteractor,

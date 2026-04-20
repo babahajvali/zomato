@@ -1,7 +1,7 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
-from order.enums import OrderStatus
+from order.constants.enums import OrderStatus
 from order.models import PromoCode
 from utils.uuid_util import generate_uuid
 

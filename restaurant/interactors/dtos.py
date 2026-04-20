@@ -2,7 +2,7 @@ from datetime import time
 from dataclasses import dataclass
 from typing import Optional, List
 
-from restaurant.enums import CuisineType, Category
+from restaurant.constants.enums import CuisineType, Category
 
 
 @dataclass
@@ -40,7 +40,7 @@ class CreateRestaurantTimingDTO:
 
 @dataclass
 class UpdateRestaurantTimingDTO:
-    id: int
+    timing_id: int
     user_id: str
     open_time: Optional[time]
     close_time: Optional[time]
@@ -54,7 +54,7 @@ class DeleteRestaurantTimingDTO:
 
 @dataclass
 class RestaurantTimingDTO:
-    id: int
+    timing_id: int
     restaurant_id: str
     day_of_week: int
     open_time: time
@@ -65,7 +65,6 @@ class RestaurantTimingDTO:
 class CreateMenuItemDTO:
     name: str
     description: str
-    restaurant_id: str
     category: Category
     price: float
     is_veg: bool

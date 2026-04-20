@@ -13,7 +13,7 @@ class RestaurantTimingStorage(RestaurantTimingStorageInterface):
     def convert_to_timing_dto(
             timing_obj: RestaurantTiming) -> RestaurantTimingDTO:
         return RestaurantTimingDTO(
-            id=timing_obj.pk,
+            timing_id=timing_obj.pk,
             day_of_week=timing_obj.day_of_week,
             restaurant_id=timing_obj.restaurant_id,
             open_time=timing_obj.open_time,
@@ -49,14 +49,15 @@ class RestaurantTimingStorage(RestaurantTimingStorageInterface):
                 'close_time'] = update_restaurant_timing_dto.close_time
 
         RestaurantTiming.objects.filter(
-            pk=update_restaurant_timing_dto.id).update(
+            pk=update_restaurant_timing_dto.timing_id).update(
             **timing_properties
         )
 
-        return self.get_restaurant_timing(id=update_restaurant_timing_dto.id)
+        return self.get_restaurant_timing(
+            timing_id=update_restaurant_timing_dto.timing_id)
 
-    def get_restaurant_timing(self, id: int) -> RestaurantTimingDTO | None:
-        timing = RestaurantTiming.objects.filter(pk=id).first()
+    def get_restaurant_timing(self, timing_id: int) -> RestaurantTimingDTO | None:
+        timing = RestaurantTiming.objects.filter(pk=timing_id).first()
 
         if timing is None:
             return None

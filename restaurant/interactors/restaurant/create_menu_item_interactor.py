@@ -13,14 +13,12 @@ class CreateMenuItemInteractor(RestaurantMixin):
         self.restaurant_storage = restaurant_storage
 
     def create_menu_item(
-            self, create_items_dto: List[CreateMenuItemDTO], user_id: str) \
-            -> List[MenuItemDTO]:
-
-        restaurant_id = create_items_dto[0].restaurant_id
+            self, create_items_dto: List[CreateMenuItemDTO], user_id: str,
+            restaurant_id: str) -> List[MenuItemDTO]:
         self.check_restaurant_is_exists(
             restaurant_id=restaurant_id)
         self.check_user_is_restaurant_owner(
-            user_id=user_id,restaurant_id=restaurant_id)
+            user_id=user_id, restaurant_id=restaurant_id)
 
         categories = [each.category.value for each in create_items_dto]
 
@@ -28,4 +26,3 @@ class CreateMenuItemInteractor(RestaurantMixin):
 
         return self.restaurant_storage.create_menu_items(
             create_items_dto=create_items_dto)
-

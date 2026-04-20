@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from account.enums import Role
+from account.constants.enums import Role
 
 
 @dataclass

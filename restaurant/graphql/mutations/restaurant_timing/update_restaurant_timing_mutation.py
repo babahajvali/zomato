@@ -38,7 +38,7 @@ class UpdateRestaurantTimingMutation(graphene.Mutation):
         )
         try:
             update_restaurant_timing_dto = UpdateRestaurantTimingDTO(
-                id=params.id,
+                timing_id=params.timing_id,
                 user_id=info.context.user_id,
                 open_time=params.open_time,
                 close_time=params.close_time,
@@ -48,7 +48,7 @@ class UpdateRestaurantTimingMutation(graphene.Mutation):
             )
 
             return RestaurantTimingType(
-                id=result.id,
+                id=result.timing_id,
                 restaurant_id=result.restaurant_id,
                 day_of_week=result.day_of_week,
                 open_time=result.open_time,

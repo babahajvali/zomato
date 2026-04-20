@@ -10,8 +10,8 @@ from utils.read_csv_util import read_csv, validate_row
 
 class ImportAddresses:
 
-    def __init__(self, address_storage_interface: AddressStorageInterface):
-        self.address_storage_interface = address_storage_interface
+    def __init__(self, address_storage: AddressStorageInterface):
+        self.address_storage = address_storage
 
     def import_addresses(self, file_path="./sample_data/addresses.csv"):
         rows = read_csv(file_path=file_path)
@@ -44,7 +44,7 @@ class ImportAddresses:
             for row in rows
         ]
 
-        created_addresses = self.address_storage_interface.create_bulk_addresses(
+        created_addresses = self.address_storage.create_bulk_addresses(
             addresses_dto)
 
         return created_addresses
@@ -53,7 +53,7 @@ class ImportAddresses:
         emails = [pair[0] for pair in email_label_pairs]
         labels = [pair[1] for pair in email_label_pairs]
 
-        existing_addresses = self.address_storage_interface.get_existing_addresses(
+        existing_addresses = self.address_storage.get_existing_addresses(
             emails, labels)
 
         if existing_addresses:

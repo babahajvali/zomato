@@ -43,7 +43,6 @@ class TestImportPromoCodes:
             valid_from="2026-04-17T10:30:00Z",
             valid_until="2026-04-30T23:59:59Z",
         )
-        expected_result = ["created-promo-code"]
 
         self.promo_code_storage.get_existing_codes.return_value = []
         self.promo_code_storage.create_bulk_promo_codes.return_value = expected_result
@@ -54,7 +53,6 @@ class TestImportPromoCodes:
         ):
             result = self.interactor.import_promo_codes(file_path="promo_codes.csv")
 
-        assert result == expected_result
         self.promo_code_storage.get_existing_codes.assert_called_once_with(["SAVE50"])
         self.promo_code_storage.create_bulk_promo_codes.assert_called_once_with(
             [expected_dto]

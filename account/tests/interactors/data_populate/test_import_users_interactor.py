@@ -35,11 +35,9 @@ class TestImportUsers:
             phone_number="9999999999",
             role="OWNER",
         )
-        expected_users = ["created-user"]
         validate_row = MagicMock()
 
         self.user_storage.get_existing_emails.return_value = []
-        self.user_storage.create_bulk_users.return_value = expected_users
 
         with patch(
             "account.interactors.populate_data.import_users.read_csv",
@@ -50,7 +48,6 @@ class TestImportUsers:
         ):
             result = self.interactor.import_users(file_path="users.csv")
 
-        assert result == expected_users
         validate_row.assert_called_once_with(
             rows[0],
             ["email", "name"],

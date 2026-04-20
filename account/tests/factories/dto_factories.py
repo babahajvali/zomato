@@ -1,5 +1,6 @@
 import factory
 
+from account.constants.enums import Role
 from account.interactors.dtos import CreateAddressDTO, CreateUserDTO, UserDTO
 
 
@@ -10,7 +11,7 @@ class CreateUserDTOFactory(factory.Factory):
     name = factory.Faker("name")
     email = factory.Sequence(lambda n: f"user{n}@example.com")
     phone_number = factory.Sequence(lambda n: f"900000{n:04d}")
-    role = "CUSTOMER"
+    role = Role.CUSTOMER.value
 
 
 class CreateAddressDTOFactory(factory.Factory):
@@ -32,4 +33,4 @@ class UserDTOFactory(factory.Factory):
     email = factory.Sequence(lambda n: f"user{n}@example.com")
     name = factory.Faker("name")
     phone_number = factory.Sequence(lambda n: f"900000{n:04d}")
-    role = "CUSTOMER"
+    role = Role.CUSTOMER.value

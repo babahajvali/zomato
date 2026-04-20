@@ -47,16 +47,16 @@ class TestRestaurantTimingStorage(TestCase):
             close_time=time(20, 0),
         )
 
-        result = self.storage.get_restaurant_timing(id=timing.id)
+        result = self.storage.get_restaurant_timing(timing_id=timing.id)
 
         assert result is not None
-        assert result.id == timing.id
+        assert result.timing_id == timing.id
         assert result.day_of_week == 2
         assert result.open_time == time(10, 0)
         assert result.close_time == time(20, 0)
 
     def test_get_restaurant_timing_not_found(self):
-        result = self.storage.get_restaurant_timing(id=99999)
+        result = self.storage.get_restaurant_timing(timing_id=99999)
 
         assert result is None
 
@@ -66,7 +66,7 @@ class TestRestaurantTimingStorage(TestCase):
             close_time=time(21, 0),
         )
         update_dto = UpdateRestaurantTimingDTO(
-            id=timing.id,
+            timing_id=timing.id,
             user_id=str(timing.restaurant.owner_id),
             open_time=time(11, 0),
             close_time=time(22, 0),

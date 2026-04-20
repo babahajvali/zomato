@@ -22,7 +22,7 @@ class TestUpdateRestaurantTimingInteractor:
             open_time_value=time(9, 0),
             close_time_value=time(21, 0)):
         return RestaurantTimingDTO(
-            id=1,
+            timing_id=1,
             restaurant_id="restaurant-1",
             day_of_week=1,
             open_time=open_time_value,
@@ -59,7 +59,7 @@ class TestUpdateRestaurantTimingInteractor:
 
     def test_update_restaurant_timing_success(self, snapshot):
         update_dto = UpdateRestaurantTimingDTO(
-            id=1,
+            timing_id=1,
             user_id="user-123",
             open_time=time(10, 0),
             close_time=time(20, 0),
@@ -84,7 +84,7 @@ class TestUpdateRestaurantTimingInteractor:
 
     def test_update_restaurant_timing_not_found(self, snapshot):
         update_dto = UpdateRestaurantTimingDTO(
-            id=1,
+            timing_id=1,
             user_id="user-123",
             open_time=time(10, 0),
             close_time=time(20, 0),
@@ -105,7 +105,7 @@ class TestUpdateRestaurantTimingInteractor:
 
     def test_update_restaurant_timing_non_owner(self, snapshot):
         update_dto = UpdateRestaurantTimingDTO(
-            id=1,
+            timing_id=1,
             user_id="user-123",
             open_time=time(10, 0),
             close_time=time(20, 0),
@@ -126,7 +126,7 @@ class TestUpdateRestaurantTimingInteractor:
     def test_update_restaurant_timing_open_time_greater_than_close_time(
             self, snapshot):
         update_dto = UpdateRestaurantTimingDTO(
-            id=1,
+            timing_id=1,
             user_id="user-123",
             open_time=time(22, 0),
             close_time=time(10, 0),
@@ -147,7 +147,7 @@ class TestUpdateRestaurantTimingInteractor:
     def test_update_restaurant_timing_open_time_equal_to_existing_close_time(
             self, snapshot):
         update_dto = UpdateRestaurantTimingDTO(
-            id=1,
+            timing_id=1,
             user_id="user-123",
             open_time=time(21, 0),
             close_time=None,
@@ -168,7 +168,7 @@ class TestUpdateRestaurantTimingInteractor:
     def test_update_restaurant_timing_close_time_equal_to_existing_open_time(
             self, snapshot):
         update_dto = UpdateRestaurantTimingDTO(
-            id=1,
+            timing_id=1,
             user_id="user-123",
             open_time=None,
             close_time=time(9, 0),
@@ -188,7 +188,7 @@ class TestUpdateRestaurantTimingInteractor:
 
     def test_update_restaurant_timing_only_open_time_success(self, snapshot):
         update_dto = UpdateRestaurantTimingDTO(
-            id=1,
+            timing_id=1,
             user_id="user-123",
             open_time=time(10, 0),
             close_time=None,
@@ -213,7 +213,7 @@ class TestUpdateRestaurantTimingInteractor:
 
     def test_update_restaurant_timing_only_close_time_success(self, snapshot):
         update_dto = UpdateRestaurantTimingDTO(
-            id=1,
+            timing_id=1,
             user_id="user-123",
             open_time=None,
             close_time=time(20, 0),

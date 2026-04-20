@@ -1,7 +1,6 @@
-from datetime import datetime
 from typing import List
 
-from restaurant.enums import Category, CuisineType
+from restaurant.constants.enums import Category, CuisineType
 from restaurant.exception.custom_exceptions import UserIsNotRestaurantOwner, \
     InvalidCategoriesFound, RestaurantNotFound, InvalidCuisineTypeException, \
     InvalidMinRatingException

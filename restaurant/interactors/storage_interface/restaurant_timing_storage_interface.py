@@ -18,7 +18,7 @@ class RestaurantTimingStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def get_restaurant_timing(self, id: int) -> RestaurantTimingDTO | None:
+    def get_restaurant_timing(self, timing_id: int) -> RestaurantTimingDTO | None:
         pass
 
     @abstractmethod

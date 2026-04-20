@@ -1,6 +1,6 @@
 import factory
 
-from restaurant.enums import Category
+from restaurant.constants.enums import Category, CuisineType
 from restaurant.interactors.dtos import (
     CategoryMenuDTO,
     CreateMenuItemDTO,
@@ -19,7 +19,7 @@ class CreateRestaurantDTOFactory(factory.Factory):
     name = factory.Sequence(lambda n: f"Restaurant {n}")
     owner_id = factory.Sequence(lambda n: f"00000000-0000-0000-0000-{n:012d}")
     description = factory.Faker("sentence")
-    cuisine_type = "Indian"
+    cuisine_type = CuisineType.NORTH_INDIAN.value
     address = factory.Faker("address")
     pin_code = factory.Sequence(lambda n: f"500{n:03d}")
     is_veg_only = False
