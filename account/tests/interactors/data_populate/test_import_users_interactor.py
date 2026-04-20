@@ -17,7 +17,7 @@ class TestImportUsers:
     def setup_method(self):
         self.user_storage = create_autospec(UserStorageInterface)
         self.interactor = ImportUsers(
-            user_storage_interface=self.user_storage,
+            user_storage=self.user_storage,
         )
 
     def test_import_users_success(self):

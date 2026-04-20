@@ -10,7 +10,7 @@ from restaurant.exception.custom_exceptions import (
 )
 from restaurant.graphql.types.error_types import (
     OpenTimeGreaterThanCloseTimeType,
-    RestaurantTimingNoFoundTpe,
+    RestaurantTimingNotFoundType,
     UserIsNotRestaurantOwnerType,
 )
 from restaurant.graphql.types.input_types import \
@@ -56,7 +56,7 @@ class UpdateRestaurantTimingMutation(graphene.Mutation):
             )
 
         except RestaurantTimingNotFound as exc:
-            return RestaurantTimingNoFoundTpe(id=exc.id)
+            return RestaurantTimingNotFoundType(id=exc.id)
 
         except OpenTimeGreaterThanCloseTime as exc:
             return OpenTimeGreaterThanCloseTimeType(

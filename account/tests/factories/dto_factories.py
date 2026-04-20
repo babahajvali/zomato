@@ -1,6 +1,6 @@
 import factory
 
-from account.interactors.dtos import CreateAddressDTO, CreateUserDTO
+from account.interactors.dtos import CreateAddressDTO, CreateUserDTO, UserDTO
 
 
 class CreateUserDTOFactory(factory.Factory):
@@ -24,3 +24,12 @@ class CreateAddressDTOFactory(factory.Factory):
     pincode = factory.Sequence(lambda n: f"500{n:03d}")
     is_default = False
 
+class UserDTOFactory(factory.Factory):
+    class Meta:
+        model = UserDTO
+
+    id = factory.Sequence(lambda n: n)
+    email = factory.Sequence(lambda n: f"user{n}@example.com")
+    name = factory.Faker("name")
+    phone_number = factory.Sequence(lambda n: f"900000{n:04d}")
+    role = "CUSTOMER"

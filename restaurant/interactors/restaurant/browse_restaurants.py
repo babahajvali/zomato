@@ -28,8 +28,7 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
         self.restaurant_timing_storage = restaurant_timing_storage
 
     def browse_restaurants(
-            self,
-            filters_dto: BrowseRestaurantFiltersDTO,
+            self, filters_dto: BrowseRestaurantFiltersDTO,
     ) -> List[BrowseRestaurantDTO]:
         self._validate_filters(filters_dto=filters_dto)
 
@@ -54,8 +53,7 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
             )
 
     def _attach_is_open(
-            self,
-            restaurants: List[BrowseRestaurantDTO],
+            self, restaurants: List[BrowseRestaurantDTO],
     ) -> List[BrowseRestaurantDTO]:
         restaurant_ids = [str(restaurant.restaurant_id) for restaurant in restaurants]
 

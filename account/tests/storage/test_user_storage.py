@@ -45,7 +45,7 @@ class TestUserStorage(TestCase):
     def test_check_user_exists(self):
         user = UserFactory()
 
-        assert self.storage.check_user_exists(user_id=str(user.user_id)) is True
+        assert self.storage.check_user_exists(user_id=str(user.id)) is True
         assert self.storage.check_user_exists(
             user_id="00000000-0000-0000-0000-000000000000"
         ) is False

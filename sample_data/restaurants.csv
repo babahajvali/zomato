@@ -1,4 +1,6 @@
-name,description,owner_email,cuisine_type,address,pin_code,is_veg_only,is_active
-Spicy Hub,Best biryani and kebabs in town,arjun.sharma@gmail.com,SOUTH_INDIAN,Banjara Hills Hyderabad,500034,False,True
-Dragon Bowl,Authentic Chinese cuisine,rahul.verma@gmail.com,CHINESE,Gachibowli Hyderabad,500032,False,True
-Tandoori Nights,North Indian food,arjun.sharma@gmail.com,SOUTH_INDIAN,Kukatpally Hyderabad,500072,False,True
+name,description,owner_id,cuisine_type,address,pin_code,is_veg_only,is_deleted
+Spicy Hub,Best biryani and kebabs in town,09008c11-8823-4e35-9cbe-bfe3b500f46a,SOUTH_INDIAN,Banjara Hills Hyderabad,500034,False,False
+Dragon Bowl,Authentic Chinese cuisine,0a2841e5-8844-4e2f-b07a-c8279de90f5b,CHINESE,Gachibowli Hyderabad,500032,False,False
+Tandoori Nights,North Indian food,09008c11-8823-4e35-9cbe-bfe3b500f46a,NORTH_INDIAN,Kukatpally Hyderabad,500072,False,False
+Royal Tadka,Premium North Indian dishes,0a2841e5-8844-4e2f-b07a-c8279de90f5b,NORTH_INDIAN,Secunderabad Hyderabad,500003,False,False
+Spice Garden,Traditional South Indian meals,09008c11-8823-4e35-9cbe-bfe3b500f46a,SOUTH_INDIAN,LB Nagar Hyderabad,500074,True,False

@@ -11,6 +11,7 @@ from restaurant.interactors.dtos import CreateRestaurantDTO, CreateMenuItemDTO, 
     MenuItemWithTagsDTO
 from restaurant.exception.custom_exceptions import OwnerNotFound
 from restaurant.models.restaurant import Restaurant, MenuItem
+from utils.uuid_util import generate_uuid
 
 
 class RestaurantStorage(RestaurantStorageInterface):
@@ -18,7 +19,7 @@ class RestaurantStorage(RestaurantStorageInterface):
     @staticmethod
     def _convert_to_menu_item_dto(item_obj: MenuItem) -> MenuItemDTO:
         return MenuItemDTO(
-            item_id=item_obj.id,
+            id=item_obj.id,
             restaurant_id=item_obj.restaurant.id,
             name=item_obj.name,
             description=item_obj.description,
@@ -51,22 +52,17 @@ class RestaurantStorage(RestaurantStorageInterface):
         restaurants = []
 
         for dto in restaurants_dto:
-            try:
-                owner = User.objects.get(
-                    email=dto.owner_email,
-                    role='OWNER'
-                )
-            except User.DoesNotExist:
-                raise OwnerNotFound(email=dto.owner_email)
 
             restaurant = Restaurant(
+                id=generate_uuid(),
                 name=dto.name,
-                owner_id=owner.id,
+                owner_id=dto.owner_id,
                 description=dto.description,
                 cuisine_type=dto.cuisine_type,
                 address=dto.address,
                 pin_code=dto.pin_code,
-                is_veg_only=dto.is_veg_only
+                is_veg_only=dto.is_veg_only,
+                is_deleted=dto.is_deleted
             )
             restaurants.append(restaurant)
 
@@ -84,11 +80,12 @@ class RestaurantStorage(RestaurantStorageInterface):
 
         menu_items = [
             MenuItem(
+                id=generate_uuid(),
                 restaurant_id=item.restaurant_id,
                 name=item.name,
                 description=item.description,
                 price=item.price,
-                category=item.category.value,
+                category=item.category,
                 is_veg=item.is_veg,
                 is_available=item.is_available,
                 tags=item.tags,
@@ -114,8 +111,7 @@ class RestaurantStorage(RestaurantStorageInterface):
 
     def get_restaurants(self, filters_dto: BrowseRestaurantFiltersDTO) -> List[
         BrowseRestaurantDTO]:
-        queryset = Restaurant.objects.filter(is_deleted=False).select_related(
-            "owner")
+        queryset = Restaurant.objects.filter(is_deleted=False)
 
         if filters_dto.cuisine_type:
             cuisine_type = (
@@ -138,8 +134,8 @@ class RestaurantStorage(RestaurantStorageInterface):
             )
 
         queryset = queryset.annotate(
-            average_rating=Avg("restaurantreview__rating"),
-            total_reviews=Count("restaurantreview"),
+            average_rating=Avg("restaurant_reviews__rating"),
+            total_reviews=Count("restaurant_reviews"),
         )
 
         if filters_dto.min_rating is not None:
@@ -159,7 +155,7 @@ class RestaurantStorage(RestaurantStorageInterface):
                 address=restaurant.address,
                 pin_code=restaurant.pin_code,
                 is_veg_only=restaurant.is_veg_only,
-                is_active=not restaurant.is_deleted,
+                is_deleted=not restaurant.is_deleted,
                 average_rating=float(restaurant.average_rating or 0.0),
                 total_reviews=int(restaurant.total_reviews or 0),
             )

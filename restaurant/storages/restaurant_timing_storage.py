@@ -70,7 +70,7 @@ class RestaurantTimingStorage(RestaurantTimingStorageInterface):
         if timing_data is None:
             return None
 
-        return str(timing_data.restaurant.owner.user_id)
+        return str(timing_data.restaurant.owner_id)
 
     def get_operating_hours_for_restaurants(
             self, restaurant_ids: List[str]) -> List[RestaurantTimingDTO]:
@@ -78,5 +78,14 @@ class RestaurantTimingStorage(RestaurantTimingStorageInterface):
         timings = RestaurantTiming.objects.filter(
             restaurant_id__in=restaurant_ids)
 
+        return [self.convert_to_timing_dto(timing_obj=data) for data in
+                timings]
+
+    def delete_restaurant_timing(self, id: int):
+        return RestaurantTiming.objects.filter(id=id).delete()
+
+    def get_restaurant_timings(
+            self, restaurant_id: str) -> List[RestaurantTimingDTO]:
+        timings = RestaurantTiming.objects.filter(restaurant_id=restaurant_id)
         return [self.convert_to_timing_dto(timing_obj=data) for data in
                 timings]

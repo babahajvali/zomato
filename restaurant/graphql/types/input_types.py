@@ -7,6 +7,14 @@ class UpdateRestaurantTimingInputParams(graphene.InputObjectType):
     close_time = graphene.Time()
 
 
+class DeleteRestaurantTimingInputParams(graphene.InputObjectType):
+    timing_id = graphene.Int(required=True)
+
+
+class GetRestaurantTimingsInputParams(graphene.InputObjectType):
+    restaurant_id = graphene.String(required=True)
+
+
 class CreateMenuItemInputParams(graphene.InputObjectType):
     restaurant_id = graphene.String(required=True)
     name = graphene.String(required=True)

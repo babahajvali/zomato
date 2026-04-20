@@ -26,7 +26,7 @@ def _map_browse_restaurants_response(restaurants):
             address=each.address,
             pin_code=each.pin_code,
             is_veg_only=each.is_veg_only,
-            is_active=each.is_active,
+            is_deleted=each.is_deleted,
             average_rating=float(each.average_rating),
             total_reviews=each.total_reviews,
             is_open=each.is_open,

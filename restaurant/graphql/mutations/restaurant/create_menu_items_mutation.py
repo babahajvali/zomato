@@ -57,7 +57,7 @@ class CreateMenuItemsMutation(graphene.Mutation):
 
             menu_items = [
                 MenuItemType(
-                    item_id=item.item_id,
+                    item_id=item.id,
                     restaurant_id=item.restaurant_id,
                     name=item.name,
                     description=item.description,

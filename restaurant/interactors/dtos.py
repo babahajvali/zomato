@@ -8,26 +8,26 @@ from restaurant.enums import CuisineType, Category
 @dataclass
 class CreateRestaurantDTO:
     name: str
-    owner_email: str
+    owner_id: str
     description: str
     cuisine_type: CuisineType
     address: str
     pin_code: str
     is_veg_only: bool
-    is_active: bool
+    is_deleted: bool
 
 
 @dataclass
 class RestaurantDTO:
     id: str
     name: str
-    owner_email: str
+    owner_id: str
     description: str
     cuisine_type: CuisineType
     address: str
     pin_code: str
     is_veg_only: bool
-    is_active: bool
+    is_deleted: bool
 
 
 @dataclass
@@ -44,6 +44,12 @@ class UpdateRestaurantTimingDTO:
     user_id: str
     open_time: Optional[time]
     close_time: Optional[time]
+
+
+@dataclass
+class DeleteRestaurantTimingDTO:
+    timing_id: int
+    user_id: str
 
 
 @dataclass
@@ -102,7 +108,7 @@ class BrowseRestaurantDTO:
     address: str
     pin_code: str
     is_veg_only: bool
-    is_active: bool
+    is_deleted: bool
     average_rating: float
     total_reviews: int
     is_open: bool = False

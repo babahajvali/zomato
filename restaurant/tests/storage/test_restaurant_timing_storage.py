@@ -1,4 +1,5 @@
 from datetime import time
+from unittest import result
 
 from django.test import TestCase
 
@@ -6,7 +7,8 @@ from restaurant.interactors.dtos import (
     CreateRestaurantTimingDTO,
     UpdateRestaurantTimingDTO,
 )
-from restaurant.storages.restaurant_timing_storage import RestaurantTimingStorage
+from restaurant.storages.restaurant_timing_storage import \
+    RestaurantTimingStorage
 from restaurant.tests.factories.storage_factories import (
     RestaurantFactory,
     RestaurantTimingFactory,
@@ -65,7 +67,7 @@ class TestRestaurantTimingStorage(TestCase):
         )
         update_dto = UpdateRestaurantTimingDTO(
             id=timing.id,
-            user_id=str(timing.restaurant.owner.user_id),
+            user_id=str(timing.restaurant.owner_id),
             open_time=time(11, 0),
             close_time=time(22, 0),
         )
@@ -82,4 +84,25 @@ class TestRestaurantTimingStorage(TestCase):
 
         result = self.storage.get_restaurant_owner_id(id=timing.id)
 
-        assert result == str(timing.restaurant.owner.user_id)
+        assert result == str(timing.restaurant.owner_id)
+
+    def test_delete_restaurant_timing_success(self):
+        id = 1
+        RestaurantTimingFactory(id=id)
+
+        self.storage.delete_restaurant_timing(id=id)
+
+        from restaurant.models import RestaurantTiming
+
+        assert not RestaurantTiming.objects.filter(id=id).exists()
+
+    def test_get_restaurant_timings_success(self):
+        restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
+        RestaurantFactory(id=restaurant_id)
+        RestaurantTimingFactory.create_batch(
+            3, restaurant_id=restaurant_id)
+
+        result = self.storage.get_restaurant_timings(
+            restaurant_id=restaurant_id)
+
+        assert len(result) == 3

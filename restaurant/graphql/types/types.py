@@ -8,6 +8,16 @@ class RestaurantTimingType(graphene.ObjectType):
     open_time = graphene.Time(required=True)
     close_time = graphene.Time(required=True)
 
+
+class DeleteRestaurantTimingSuccessType(graphene.ObjectType):
+    timing_id = graphene.Int(required=True)
+    success = graphene.Boolean(required=True)
+
+
+class RestaurantTimingsListType(graphene.ObjectType):
+    restaurant_id = graphene.String(required=True)
+    timings = graphene.List(RestaurantTimingType, required=True)
+
 class MenuItemType(graphene.ObjectType):
     item_id = graphene.String(required=True)
     restaurant_id = graphene.String(required=True)
@@ -33,7 +43,7 @@ class BrowseRestaurantType(graphene.ObjectType):
     address = graphene.String(required=True)
     pin_code = graphene.String(required=True)
     is_veg_only = graphene.Boolean(required=True)
-    is_active = graphene.Boolean(required=True)
+    is_deleted = graphene.Boolean(required=True)
     average_rating = graphene.Float(required=True)
     total_reviews = graphene.Int(required=True)
     is_open = graphene.Boolean(required=True)

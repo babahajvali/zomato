@@ -3,16 +3,25 @@ import uuid
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
+from utils.uuid_util import generate_uuid
+
 
 class Cart(models.Model):
-    cart_id = models.UUIDField(default=uuid.uuid4, editable=False,
-                               primary_key=True)
-    customer = models.OneToOneField("account.User", on_delete=models.CASCADE)
+    id = models.CharField(
+        max_length=36,
+        default=generate_uuid(),
+        editable=False,
+        primary_key=True
+    )
+    customer_id = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.customer.name
+        return self.customer_id
+
+    class Meta:
+        unique_together = ('id', 'customer_id')
 
 
 class CartItem(models.Model):

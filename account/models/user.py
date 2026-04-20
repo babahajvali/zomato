@@ -3,13 +3,14 @@ import uuid
 from django.db import models
 
 from account.enums import Role
+from utils.uuid_util import generate_uuid
 
 
 class User(models.Model):
     id = models.CharField(
         max_length=36,
         primary_key=True,
-        default=lambda: str(uuid.uuid4()),
+        default=generate_uuid(),
         editable=False
     )
     name = models.CharField(max_length=255)

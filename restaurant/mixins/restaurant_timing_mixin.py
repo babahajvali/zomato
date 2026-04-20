@@ -17,14 +17,15 @@ class TimingMixin:
         self.restaurant_timing_storage = restaurant_timing_storage
         super().__init__(**kwargs)
 
-    def check_restaurant_timing_valid(self, id: int):
+    def check_restaurant_timing_exists(self, id: int):
         timing_data = self.restaurant_timing_storage.get_restaurant_timing(
             id=id)
 
         if timing_data is None:
             raise RestaurantTimingNotFound(id=id)
 
-    def check_user_is_restaurant_owner(self, id: int, user_id: str):
+    def check_user_is_restaurant_owner_through_timing_id(
+            self, id: int, user_id: str):
 
         owner_id = self.restaurant_timing_storage.get_restaurant_owner_id(id=id)
         if owner_id != user_id:

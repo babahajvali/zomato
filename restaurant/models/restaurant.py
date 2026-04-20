@@ -3,6 +3,7 @@ from django.db import models
 import uuid
 
 from restaurant.enums import CuisineType, Category
+from utils.uuid_util import generate_uuid
 
 
 # Create your models here.
@@ -10,7 +11,7 @@ from restaurant.enums import CuisineType, Category
 class Restaurant(models.Model):
     id = models.CharField(
         max_length=36,
-        default=lambda: str(uuid.uuid4()),
+        default=generate_uuid(),
         editable=False,
         primary_key=True
     )
@@ -29,11 +30,14 @@ class Restaurant(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        indexes = [models.Index(fields=['is_deleted', 'cuisine_type'])]
+
 
 class MenuItem(models.Model):
     id = models.CharField(
         max_length=36,
-        default=lambda: str(uuid.uuid4()),
+        default=generate_uuid(),
         editable=False,
         primary_key=True
     )
@@ -54,8 +58,3 @@ class MenuItem(models.Model):
 
     def __str__(self):
         return self.name
-
-    class Meta:
-        indexes = [
-            models.Index(fields=['restaurant']),
-        ]

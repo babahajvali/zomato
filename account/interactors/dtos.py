@@ -19,3 +19,12 @@ class CreateAddressDTO:
     city: str
     pincode: str
     is_default: bool
+
+
+@dataclass
+class UserDTO:
+    id: str
+    name: str
+    email: str
+    phone_number: str
+    role: Role

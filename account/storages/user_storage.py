@@ -3,12 +3,14 @@ from account.interactors.storage_interface.user_storage_interface import \
     UserStorageInterface
 from account.interactors.dtos import CreateUserDTO
 from account.models.user import User
+from utils.uuid_util import generate_uuid
 
 
 class UserStorage(UserStorageInterface):
 
     def create_bulk_users(self, create_users_dto: List[CreateUserDTO]):
         users = [User(
+            id=generate_uuid(),
             name=dto.name,
             email=dto.email,
             phone_number=dto.phone_number,

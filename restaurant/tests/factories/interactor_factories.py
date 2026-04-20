@@ -8,7 +8,7 @@ from restaurant.interactors.dtos import (
     CreateRestaurantDTO,
     MenuItemDTO,
     MenuItemWithTagsDTO,
-    RestaurantMenuDTO,
+    RestaurantMenuDTO, RestaurantTimingDTO, RestaurantDTO,
 )
 
 
@@ -17,13 +17,13 @@ class CreateRestaurantDTOFactory(factory.Factory):
         model = CreateRestaurantDTO
 
     name = factory.Sequence(lambda n: f"Restaurant {n}")
-    owner_email = factory.Sequence(lambda n: f"owner{n}@example.com")
+    owner_id = factory.Sequence(lambda n: f"00000000-0000-0000-0000-{n:012d}")
     description = factory.Faker("sentence")
     cuisine_type = "Indian"
     address = factory.Faker("address")
     pin_code = factory.Sequence(lambda n: f"500{n:03d}")
     is_veg_only = False
-    is_active = True
+    is_deleted = False
 
 
 class CreateMenuItemDTOFactory(factory.Factory):
@@ -45,7 +45,7 @@ class MenuItemDTOFactory(factory.Factory):
     class Meta:
         model = MenuItemDTO
 
-    item_id = factory.Sequence(lambda n: f"item-{n}")
+    id = factory.Sequence(lambda n: f"item-{n}")
     restaurant_id = factory.Sequence(lambda n: f"restaurant-{n}")
     name = factory.Sequence(lambda n: f"Item {n}")
     description = factory.Faker("sentence")
@@ -97,3 +97,29 @@ class RestaurantMenuDTOFactory(factory.Factory):
     restaurant_id = factory.Sequence(lambda n: f"restaurant-{n}")
     categories = factory.LazyFunction(list)
 
+
+
+class RestaurantTimingDTOFactory(factory.Factory):
+    class Meta:
+        model = RestaurantTimingDTO
+
+    id = factory.Sequence(lambda n: f"timing-{n}")
+    restaurant_id = factory.Sequence(lambda n: f"restaurant-{n}")
+    day_of_week = 1
+    open_time = "09:00:00"
+    close_time = "21:00:00"
+
+
+class RestaurantDTOFactory(factory.Factory):
+    class Meta:
+        model = RestaurantDTO
+
+    id = factory.Sequence(lambda n: f"restaurant-{n}")
+    name = factory.Sequence(lambda n: f"Restaurant {n}")
+    description = factory.Faker("sentence")
+    owner_id = factory.Sequence(lambda n: f"00000000-0000-0000-0000-{n:012d}")
+    cuisine_type = "NORTH_INDIAN"
+    address = factory.Faker("address")
+    pin_code = factory.Sequence(lambda n: f"500{n:03d}")
+    is_veg_only = False
+    is_deleted = False

@@ -30,3 +30,12 @@ class RestaurantTimingStorageInterface(ABC):
             self, restaurant_ids: List[str]) -> List[RestaurantTimingDTO]:
         pass
 
+    @abstractmethod
+    def delete_restaurant_timing(self, id: int):
+        pass
+
+    @abstractmethod
+    def get_restaurant_timings(
+            self, restaurant_id: str) -> List[RestaurantTimingDTO]:
+        pass
+

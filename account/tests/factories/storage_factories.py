@@ -1,4 +1,5 @@
 import factory
+import uuid
 from factory.django import DjangoModelFactory
 
 from account.models import Address, User
@@ -8,6 +9,7 @@ class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
 
+    id = factory.LazyFunction(uuid.uuid4)
     name = factory.Faker("name")
     email = factory.Sequence(lambda n: f"user{n}@example.com")
     phone_number = factory.Sequence(lambda n: f"900000{n:04d}")

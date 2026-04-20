@@ -17,17 +17,17 @@ class TestRestaurantStorage(TestCase):
         self.storage = RestaurantStorage()
 
     def test_create_bulk_restaurants_success(self):
-        UserFactory(email="owner@example.com", role="OWNER")
+        user = UserFactory(email="owner@example.com", role="OWNER")
         restaurants_dto = [
             CreateRestaurantDTO(
                 name="Spice Hub",
-                owner_email="owner@example.com",
+                owner_id=str(user.id),
                 description="Popular spot",
                 cuisine_type=CuisineType.NORTH_INDIAN,
                 address="12 Main Road",
                 pin_code="560001",
                 is_veg_only=True,
-                is_active=True,
+                is_deleted=False,
             )
         ]
 
@@ -36,25 +36,25 @@ class TestRestaurantStorage(TestCase):
         assert len(result) == 1
         assert Restaurant.objects.filter(name="Spice Hub").exists()
 
-    def test_create_bulk_restaurants_owner_not_found(self):
-        UserFactory(email="owner@example.com", role="CUSTOMER")
+    def test_create_bulk_restaurants_with_owner_id(self):
         restaurants_dto = [
             CreateRestaurantDTO(
                 name="Spice Hub",
-                owner_email="owner@example.com",
+                owner_id="00000000-0000-0000-0000-000000000001",
                 description="Popular spot",
                 cuisine_type=CuisineType.NORTH_INDIAN,
                 address="12 Main Road",
                 pin_code="560001",
                 is_veg_only=True,
-                is_active=True,
+                is_deleted=False,
             )
         ]
 
-        with self.assertRaises(OwnerNotFound) as exc:
-            self.storage.create_bulk_restaurants(restaurants_dto=restaurants_dto)
+        result = self.storage.create_bulk_restaurants(restaurants_dto=restaurants_dto)
 
-        assert exc.exception.email == "owner@example.com"
+        assert len(result) == 1
+        assert Restaurant.objects.filter(name="Spice Hub").exists()
+        assert Restaurant.objects.filter(owner_id="00000000-0000-0000-0000-000000000001").exists()
 
     def test_get_existing_restaurants(self):
         RestaurantFactory(name="Spice Hub")
@@ -88,11 +88,11 @@ class TestRestaurantStorage(TestCase):
         )
 
         result = self.storage.get_available_menu_items_by_restaurant(
-            restaurant_id=str(restaurant.restaurant_id),
+            restaurant_id=str(restaurant.id),
         )
 
         assert len(result) == 1
-        assert result[0].item_id == str(available_item.item_id)
+        assert result[0].item_id == str(available_item.id)
         assert result[0].name == "Paneer Tikka"
         assert result[0].category == Category.STARTER
 
@@ -110,7 +110,7 @@ class TestRestaurantStorage(TestCase):
         )
 
         result = self.storage.get_available_menu_items_by_restaurant(
-            restaurant_id=str(restaurant.restaurant_id),
+            restaurant_id=str(restaurant.id),
         )
 
         assert [item.name for item in result] == ["A Item", "B Item"]

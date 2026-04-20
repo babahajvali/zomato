@@ -1,7 +1,7 @@
 import graphene
 
 
-class RestaurantTimingNoFoundTpe(graphene.ObjectType):
+class RestaurantTimingNotFoundType(graphene.ObjectType):
     id = graphene.Int(required=True)
 
 

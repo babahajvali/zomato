@@ -8,25 +8,30 @@ from utils.read_csv_util import read_csv, validate_row
 
 class ImportRestaurants:
 
-    def __init__(self, restaurant_storage_interface: RestaurantStorageInterface):
+    def __init__(self, restaurant_storage_interface):
         self.restaurant_storage_interface = restaurant_storage_interface
 
     def import_restaurants(self, file_path="./sample_data/restaurants.csv"):
         rows = read_csv(file_path=file_path)
 
         names = []
-        owner_emails = []
+        owner_ids = []
+
         for index, row in enumerate(rows, start=1):
-            validate_row(row, ['name', 'owner_email'], f"restaurant row {index}")
+            validate_row(
+                row,
+                ['name', 'owner_id', 'cuisine_type', 'address', 'pin_code'],
+                f"restaurant row {index}"
+            )
 
             name = row['name'].strip()
-            owner_email = row['owner_email'].strip().lower()
-            
+            owner_id = row['owner_id'].strip()
+
             row['name'] = name
-            row['owner_email'] = owner_email
+            row['owner_id'] = owner_id
 
             names.append(name)
-            owner_emails.append(owner_email)
+            owner_ids.append(owner_id)
 
         self._check_duplicate_names(names)
         self._check_existing_restaurants(names)
@@ -34,21 +39,20 @@ class ImportRestaurants:
         restaurants_dto = [
             CreateRestaurantDTO(
                 name=row['name'],
-                owner_email=row['owner_email'],
-                description=row['description'],
+                owner_id=row['owner_id'],
+                description=row.get('description'),
                 cuisine_type=row['cuisine_type'],
                 address=row['address'],
                 pin_code=row['pin_code'],
-                is_veg_only=row['is_veg_only'] == 'True',
-                is_active=row['is_active'] == 'True'
+                is_veg_only=row['is_veg_only'].strip().lower() == 'true',
+                is_deleted=row['is_deleted'].strip().lower() != 'true'
             )
             for row in rows
         ]
 
-        created_restaurants = self.restaurant_storage_interface.create_bulk_restaurants(
-            restaurants_dto)
-
-        return created_restaurants
+        return self.restaurant_storage_interface.create_bulk_restaurants(
+            restaurants_dto
+        )
 
     def _check_existing_restaurants(self, names: List[str]):
         existing_restaurants = self.restaurant_storage_interface.get_existing_restaurants(names)
@@ -64,6 +68,6 @@ class ImportRestaurants:
             if name in seen:
                 duplicates.append(name)
             seen.add(name)
-        
+
         if duplicates:
             raise DuplicateRestaurants(names=duplicates)

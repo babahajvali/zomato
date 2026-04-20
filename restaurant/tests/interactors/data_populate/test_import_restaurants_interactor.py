@@ -26,24 +26,24 @@ class TestImportRestaurants:
         rows = [
             {
                 "name": " Spice Hub ",
-                "owner_email": " OWNER@EXAMPLE.COM ",
+                "owner_id": " 00000000-0000-0000-0000-000000000001 ",
                 "description": "Popular spot",
                 "cuisine_type": "Indian",
                 "address": "12 Main Road",
                 "pin_code": "560001",
-                "is_veg_only": "True",
-                "is_active": "False",
+                "is_veg_only": "true",
+                "is_deleted": "false",
             }
         ]
         CreateRestaurantDTOFactory(
             name="Spice Hub",
-            owner_email="owner@example.com",
+            owner_id="00000000-0000-0000-0000-000000000001",
             description="Popular spot",
             cuisine_type="Indian",
             address="12 Main Road",
             pin_code="560001",
             is_veg_only=True,
-            is_active=False,
+            is_deleted=False,
         )
         expected_result = ["created-restaurant"]
         validate_row = MagicMock()
@@ -66,23 +66,23 @@ class TestImportRestaurants:
         rows = [
             {
                 "name": " Spice Hub ",
-                "owner_email": "owner1@example.com",
+                "owner_id": "00000000-0000-0000-0000-000000000001",
                 "description": "Popular spot",
                 "cuisine_type": "Indian",
                 "address": "12 Main Road",
                 "pin_code": "560001",
-                "is_veg_only": "True",
-                "is_active": "True",
+                "is_veg_only": "true",
+                "is_deleted": "false",
             },
             {
                 "name": "Spice Hub",
-                "owner_email": "owner2@example.com",
+                "owner_id": "00000000-0000-0000-0000-000000000002",
                 "description": "Another branch",
                 "cuisine_type": "Indian",
                 "address": "14 Main Road",
                 "pin_code": "560002",
-                "is_veg_only": "False",
-                "is_active": "True",
+                "is_veg_only": "false",
+                "is_deleted": "false",
             },
         ]
 
@@ -104,13 +104,13 @@ class TestImportRestaurants:
         rows = [
             {
                 "name": " Spice Hub ",
-                "owner_email": "owner@example.com",
+                "owner_id": "00000000-0000-0000-0000-000000000001",
                 "description": "Popular spot",
                 "cuisine_type": "Indian",
                 "address": "12 Main Road",
                 "pin_code": "560001",
-                "is_veg_only": "True",
-                "is_active": "True",
+                "is_veg_only": "true",
+                "is_deleted": "false",
             }
         ]
 
