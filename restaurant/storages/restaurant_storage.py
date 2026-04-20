@@ -18,8 +18,8 @@ class RestaurantStorage(RestaurantStorageInterface):
     @staticmethod
     def _convert_to_menu_item_dto(item_obj: MenuItem) -> MenuItemDTO:
         return MenuItemDTO(
-            item_id=item_obj.item_id,
-            restaurant_id=item_obj.restaurant.restaurant_id,
+            item_id=item_obj.id,
+            restaurant_id=item_obj.restaurant.id,
             name=item_obj.name,
             description=item_obj.description,
             price=item_obj.price,
@@ -35,7 +35,7 @@ class RestaurantStorage(RestaurantStorageInterface):
             item: MenuItem,
     ) -> MenuItemWithTagsDTO:
         return MenuItemWithTagsDTO(
-            item_id=str(item.item_id),
+            item_id=str(item.id),
             name=item.name,
             description=item.description,
             price=float(item.price),
@@ -61,13 +61,12 @@ class RestaurantStorage(RestaurantStorageInterface):
 
             restaurant = Restaurant(
                 name=dto.name,
-                owner=owner,
+                owner_id=owner.id,
                 description=dto.description,
                 cuisine_type=dto.cuisine_type,
                 address=dto.address,
                 pin_code=dto.pin_code,
-                is_veg_only=dto.is_veg_only,
-                is_active=dto.is_active
+                is_veg_only=dto.is_veg_only
             )
             restaurants.append(restaurant)
 
@@ -106,16 +105,16 @@ class RestaurantStorage(RestaurantStorageInterface):
         ]
 
     def get_restaurant_owner_id(self, restaurant_id: str) -> str:
-        restaurant_data = Restaurant.objects.get(restaurant_id=restaurant_id)
+        restaurant_data = Restaurant.objects.get(id=restaurant_id)
 
-        return restaurant_data.owner.user_id
+        return restaurant_data.owner_id
 
     def check_restaurant_is_exist(self, restaurant_id: str) -> bool:
-        return Restaurant.objects.filter(restaurant_id=restaurant_id).exists()
+        return Restaurant.objects.filter(id=restaurant_id).exists()
 
     def get_restaurants(self, filters_dto: BrowseRestaurantFiltersDTO) -> List[
         BrowseRestaurantDTO]:
-        queryset = Restaurant.objects.filter(is_active=True).select_related(
+        queryset = Restaurant.objects.filter(is_deleted=False).select_related(
             "owner")
 
         if filters_dto.cuisine_type:
@@ -153,14 +152,14 @@ class RestaurantStorage(RestaurantStorageInterface):
 
         return [
             BrowseRestaurantDTO(
-                restaurant_id=str(restaurant.restaurant_id),
+                restaurant_id=str(restaurant.id),
                 name=restaurant.name,
                 description=restaurant.description,
                 cuisine_type=restaurant.cuisine_type,
                 address=restaurant.address,
                 pin_code=restaurant.pin_code,
                 is_veg_only=restaurant.is_veg_only,
-                is_active=restaurant.is_active,
+                is_active=not restaurant.is_deleted,
                 average_rating=float(restaurant.average_rating or 0.0),
                 total_reviews=int(restaurant.total_reviews or 0),
             )
@@ -187,7 +186,7 @@ class RestaurantStorage(RestaurantStorageInterface):
         ]
 
     def get_restaurants_by_ids(self, restaurant_ids: List[str]) -> List[str]:
-        return list(Restaurant.objects.filter(restaurant_id__in=restaurant_ids).
-                values_list('restaurant_id', flat=True))
+        return list(Restaurant.objects.filter(id__in=restaurant_ids).
+                values_list('id', flat=True))
 
 

@@ -1,8 +1,8 @@
 from typing import List
 from account.interactors.storage_interface.user_storage_interface import \
     UserStorageInterface
-from account.models import User
 from account.interactors.dtos import CreateUserDTO
+from account.models.user import User
 
 
 class UserStorage(UserStorageInterface):
@@ -25,4 +25,4 @@ class UserStorage(UserStorageInterface):
                     values_list('email', flat=True))
 
     def check_user_exists(self, user_id: str) -> bool:
-        return User.objects.filter(user_id=user_id).exists()
+        return User.objects.filter(id=user_id).exists()

@@ -11,22 +11,21 @@ from restaurant.models import (
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ('restaurant_id', 'name', 'owner', 'cuisine_type',
-                    'is_veg_only', 'is_active', 'created_at')
-    list_filter = ('cuisine_type', 'is_veg_only', 'is_active', 'created_at')
-    search_fields = ('name', 'owner__name', 'address')
+    list_display = ('id', 'name', 'owner_id', 'cuisine_type',
+                    'is_veg_only', 'is_deleted', 'created_at')
+    list_filter = ('cuisine_type', 'is_veg_only', 'is_deleted', 'created_at')
+    search_fields = ('name', 'address')
     ordering = ('-created_at',)
-    raw_id_fields = ('owner',)
 
     fieldsets = (
         ('Basic Information', {
-            'fields': ('name', 'description', 'owner', 'cuisine_type')
+            'fields': ('name', 'description', 'owner_id', 'cuisine_type')
         }),
         ('Location Information', {
             'fields': ('address', 'pin_code')
         }),
         ('Settings', {
-            'fields': ('is_veg_only', 'is_active')
+            'fields': ('is_veg_only', 'is_deleted')
         }),
         ('System Information', {
             'fields': ('created_at', 'updated_at'),
@@ -40,7 +39,7 @@ class RestaurantAdmin(admin.ModelAdmin):
 @admin.register(MenuItem)
 class MenuItemAdmin(admin.ModelAdmin):
     list_display = (
-        'item_id', 'name', 'restaurant', 'category', 'price', 'is_veg',
+        'id', 'name', 'restaurant', 'category', 'price', 'is_veg',
         'is_available', 'preparation_time_in_minutes', 'created_at'
     )
     list_filter = (
@@ -49,7 +48,7 @@ class MenuItemAdmin(admin.ModelAdmin):
     search_fields = ('name', 'restaurant__name', 'description')
     ordering = ('-created_at',)
     raw_id_fields = ('restaurant',)
-    readonly_fields = ('item_id', 'created_at', 'updated_at')
+    readonly_fields = ('id', 'created_at', 'updated_at')
 
 
 @admin.register(DeliveryZone)
@@ -67,11 +66,10 @@ class DeliveryZoneAdmin(admin.ModelAdmin):
 
 @admin.register(RestaurantReview)
 class RestaurantReviewAdmin(admin.ModelAdmin):
-    list_display = ('restaurant', 'customer', 'rating', 'created_at')
+    list_display = ('restaurant', 'customer_id', 'rating', 'created_at')
     list_filter = ('rating', 'created_at')
-    search_fields = ('restaurant__name', 'customer__name', 'review_text')
+    search_fields = ('restaurant__name', 'customer_id', 'review_text')
     ordering = ('-created_at',)
-    raw_id_fields = ('restaurant', 'customer')
     readonly_fields = ('created_at',)
 
 

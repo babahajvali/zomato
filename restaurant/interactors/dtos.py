@@ -19,7 +19,7 @@ class CreateRestaurantDTO:
 
 @dataclass
 class RestaurantDTO:
-    restaurant_id: str
+    id: str
     name: str
     owner_email: str
     description: str
@@ -70,7 +70,7 @@ class CreateMenuItemDTO:
 
 @dataclass
 class MenuItemDTO:
-    item_id: str
+    id: str
     restaurant_id: str
     name: str
     description: str

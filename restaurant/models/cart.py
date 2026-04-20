@@ -1,10 +1,12 @@
 import uuid
 
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
 class Cart(models.Model):
-    cart_id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    cart_id = models.UUIDField(default=uuid.uuid4, editable=False,
+                               primary_key=True)
     customer = models.OneToOneField("account.User", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -16,7 +18,8 @@ class Cart(models.Model):
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     menu_item = models.ForeignKey("MenuItem", on_delete=models.CASCADE)
-    quantity = models.IntegerField()
+    quantity = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

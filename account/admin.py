@@ -4,19 +4,19 @@ from .models import User, Address
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('user_id', 'name', 'email', 'phone_number', 'role',
+    list_display = ('id', 'name', 'email', 'phone_number', 'role',
                     'created_at')
     list_filter = ('role', 'created_at')
-    search_fields = ('name', 'email', 'user_id')
+    search_fields = ('name', 'email', 'id')
     ordering = ('-created_at',)
-    readonly_fields = ('user_id', 'created_at')
+    readonly_fields = ('id', 'created_at')
 
     fieldsets = (
         ('Basic Information', {
             'fields': ('name', 'email', 'phone_number', 'role')
         }),
         ('System Information', {
-            'fields': ('user_id', 'created_at'),
+            'fields': ('id', 'created_at'),
             'classes': ('collapse',)
         }),
     )
