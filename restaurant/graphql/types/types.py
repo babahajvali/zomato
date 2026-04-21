@@ -18,6 +18,7 @@ class RestaurantTimingsListType(graphene.ObjectType):
     restaurant_id = graphene.String(required=True)
     timings = graphene.List(RestaurantTimingType, required=True)
 
+
 class MenuItemType(graphene.ObjectType):
     item_id = graphene.String(required=True)
     restaurant_id = graphene.String(required=True)
@@ -67,9 +68,31 @@ class ViewMenuItemType(graphene.ObjectType):
 
 class CategoryMenuType(graphene.ObjectType):
     category = graphene.String()
-    items    = graphene.List(MenuItemType)
+    items = graphene.List(ViewMenuItemType)
 
 
 class RestaurantMenuType(graphene.ObjectType):
     restaurant_id = graphene.String(required=True)
-    categories    = graphene.List(CategoryMenuType)
+    categories = graphene.List(CategoryMenuType)
+
+
+class CartItemType(graphene.ObjectType):
+    cart_item_id = graphene.Int(required=True)
+    cart_id = graphene.String(required=True)
+    menu_item_id = graphene.String(required=True)
+    quantity = graphene.Int(required=True)
+    item_price = graphene.Float(required=True)
+
+
+class CartItemsType(graphene.ObjectType):
+    cart_items = graphene.List(CartItemType)
+
+
+class RemoveCartItemSuccessType(graphene.ObjectType):
+    success = graphene.Boolean(required=True)
+    cart_item_id = graphene.Int(required=True)
+
+
+class ClearCartItemsSuccessType(graphene.ObjectType):
+    success = graphene.Boolean(required=True)
+    cart_id = graphene.String(required=True)

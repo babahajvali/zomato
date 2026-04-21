@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PromoCode
+from .models import Order, OrderItem, PromoCode
 
 
 @admin.register(PromoCode)
@@ -34,3 +34,27 @@ class PromoCodeAdmin(admin.ModelAdmin):
         return obj.valid_from <= now <= obj.valid_until
     is_valid.boolean = True
     is_valid.short_description = 'Currently Valid'
+
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'customer_id', 'restaurant_id', 'status', 'items_total',
+        'delivery_fee', 'tax_fee', 'final_amount', 'created_at'
+    )
+    list_filter = ('status', 'created_at', 'updated_at')
+    search_fields = ('id', 'customer_id', 'restaurant_id', 'address_id')
+    ordering = ('-created_at',)
+    raw_id_fields = ('promo_code',)
+    readonly_fields = ('id', 'created_at', 'updated_at')
+
+
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = ('id', 'order', 'item_id', 'quantity', 'item_price',
+                    'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('order__id', 'item_id')
+    ordering = ('-created_at',)
+    raw_id_fields = ('order',)
+    readonly_fields = ('created_at',)

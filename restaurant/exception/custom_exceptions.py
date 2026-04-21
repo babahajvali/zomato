@@ -120,7 +120,7 @@ class InvalidQuantityFound(Exception):
 
 
 class CartItemNotFound(Exception):
-    def __init__(self, cart_item_id: str):
+    def __init__(self, cart_item_id: int):
         self.cart_item_id = cart_item_id
 
     def __str__(self):

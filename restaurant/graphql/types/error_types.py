@@ -29,3 +29,18 @@ class InvalidCuisineTypeExceptionType(graphene.ObjectType):
 class InvalidMinRatingExceptionType(graphene.ObjectType):
     min_rating = graphene.Float(required=True)
 
+
+class CartNotFound(graphene.ObjectType):
+    cart_id = graphene.String(required=True)
+
+
+class MenuItemNotFound(graphene.ObjectType):
+    menu_item_id = graphene.String(required=True)
+
+
+class InvalidQuantity(graphene.ObjectType):
+    quantity = graphene.Int(required=True)
+
+
+class CartItemNotFound(graphene.ObjectType):
+    cart_item_id = graphene.Int(required=True)

@@ -16,7 +16,7 @@ class CartMixin:
         if not cart_dto:
             raise CartNotFound(cart_id=cart_id)
 
-    def check_cart_item_exists(self, cart_item_id: str):
+    def check_cart_item_exists(self, cart_item_id: int):
 
         cart_item_dto = self.cart_storage.get_cart_item_by_id(cart_item_id=cart_item_id)
 

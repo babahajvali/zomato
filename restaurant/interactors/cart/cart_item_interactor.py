@@ -39,7 +39,7 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
             item_price=menu_item_dto.price,
         )
 
-    def remove_cart_item(self, cart_item_id: str):
+    def remove_cart_item(self, cart_item_id: int):
 
         self.check_cart_item_exists(cart_item_id=cart_item_id)
 
@@ -49,6 +49,11 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
         self.check_cart_exists(cart_id=cart_id)
 
         return self.cart_storage.clear_cart_items(cart_id=cart_id)
+
+    def get_cart_items(self, cart_id: str):
+        self.check_cart_exists(cart_id=cart_id)
+
+        return self.cart_storage.get_cart_items(cart_id=cart_id)
 
     @staticmethod
     def _check_quantity(quantity: int):

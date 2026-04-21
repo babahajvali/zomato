@@ -1,14 +1,30 @@
 import graphene
 
-from restaurant.graphql.types.error_types import \
-    RestaurantTimingNotFoundType, OpenTimeGreaterThanCloseTimeType, \
-    UserIsNotRestaurantOwnerType, RestaurantNotFoundType, \
-    InvalidCategoriesFoundType, InvalidCuisineTypeExceptionType, \
-    InvalidMinRatingExceptionType
-from restaurant.graphql.types.types import \
-    RestaurantTimingType, MenuItemsType, BrowseRestaurantsType, \
-    RestaurantMenuType, DeleteRestaurantTimingSuccessType, \
-    RestaurantTimingsListType
+from restaurant.graphql.types.error_types import (
+    RestaurantTimingNotFoundType,
+    OpenTimeGreaterThanCloseTimeType,
+    UserIsNotRestaurantOwnerType,
+    RestaurantNotFoundType,
+    InvalidCategoriesFoundType,
+    InvalidCuisineTypeExceptionType,
+    InvalidMinRatingExceptionType,
+    CartNotFound,
+    MenuItemNotFound,
+    InvalidQuantity,
+    CartItemNotFound,
+)
+from restaurant.graphql.types.types import (
+    RestaurantTimingType,
+    MenuItemsType,
+    BrowseRestaurantsType,
+    RestaurantMenuType,
+    DeleteRestaurantTimingSuccessType,
+    RestaurantTimingsListType,
+    CartItemType,
+    CartItemsType,
+    RemoveCartItemSuccessType,
+    ClearCartItemsSuccessType,
+)
 
 
 class UpdateRestaurantTimingResponse(graphene.Union):
@@ -56,9 +72,39 @@ class BrowseRestaurantsResponse(graphene.Union):
             InvalidMinRatingExceptionType,
         )
 
+
 class ViewRestaurantMenuResponse(graphene.Union):
     class Meta:
         types = (
             RestaurantMenuType,
             RestaurantNotFoundType,
+        )
+
+
+class UpdateCartItemResponse(graphene.Union):
+    class Meta:
+        types = (CartItemType, CartNotFound, MenuItemNotFound, InvalidQuantity)
+
+
+class RemoveCartItemResponse(graphene.Union):
+    class Meta:
+        types = (
+            RemoveCartItemSuccessType,
+            CartItemNotFound,
+        )
+
+
+class ClearCartItemsResponse(graphene.Union):
+    class Meta:
+        types = (
+            ClearCartItemsSuccessType,
+            CartNotFound,
+        )
+
+
+class GetCartItemsResponse(graphene.Union):
+    class Meta:
+        types = (
+            CartItemsType,
+            CartNotFound,
         )
