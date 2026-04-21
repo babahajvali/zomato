@@ -1,13 +1,17 @@
 import graphene
 
 from restaurant.graphql.types.error_types import (
-    RestaurantTimingNotFound,
-    OpenTimeGreaterThanCloseTime,
-    UserIsNotRestaurantOwner,
-    RestaurantNotFound,
-    InvalidCategoriesFound,
+    RestaurantTimingNotFoundType,
+    OpenTimeGreaterThanCloseTimeType,
+    UserIsNotRestaurantOwnerType,
+    RestaurantNotFoundType,
+    InvalidCategoriesFoundType,
     InvalidCuisineTypeExceptionType,
     InvalidMinRatingExceptionType,
+    CartNotFound,
+    MenuItemNotFound,
+    InvalidQuantity,
+    CartItemNotFound,
 )
 from restaurant.graphql.types.types import (
     RestaurantTimingType,
@@ -16,6 +20,10 @@ from restaurant.graphql.types.types import (
     RestaurantMenuType,
     DeleteRestaurantTimingSuccessType,
     RestaurantTimingsListType,
+    CartItemType,
+    CartItemsType,
+    RemoveCartItemSuccessType,
+    ClearCartItemsSuccessType,
 )
 
 
@@ -23,9 +31,9 @@ class UpdateRestaurantTimingResponse(graphene.Union):
     class Meta:
         types = (
             RestaurantTimingType,
-            RestaurantTimingNotFound,
-            OpenTimeGreaterThanCloseTime,
-            UserIsNotRestaurantOwner,
+            RestaurantTimingNotFoundType,
+            OpenTimeGreaterThanCloseTimeType,
+            UserIsNotRestaurantOwnerType,
         )
 
 
@@ -33,8 +41,8 @@ class DeleteRestaurantTimingResponse(graphene.Union):
     class Meta:
         types = (
             DeleteRestaurantTimingSuccessType,
-            RestaurantTimingNotFound,
-            UserIsNotRestaurantOwner,
+            RestaurantTimingNotFoundType,
+            UserIsNotRestaurantOwnerType,
         )
 
 
@@ -42,7 +50,7 @@ class GetRestaurantTimingsResponse(graphene.Union):
     class Meta:
         types = (
             RestaurantTimingsListType,
-            RestaurantNotFound,
+            RestaurantNotFoundType,
         )
 
 
@@ -50,9 +58,9 @@ class CreateMenuItemsResponse(graphene.Union):
     class Meta:
         types = (
             MenuItemsType,
-            RestaurantNotFound,
-            InvalidCategoriesFound,
-            UserIsNotRestaurantOwner,
+            RestaurantNotFoundType,
+            InvalidCategoriesFoundType,
+            UserIsNotRestaurantOwnerType,
         )
 
 
@@ -69,5 +77,34 @@ class ViewRestaurantMenuResponse(graphene.Union):
     class Meta:
         types = (
             RestaurantMenuType,
-            RestaurantNotFound,
+            RestaurantNotFoundType,
+        )
+
+
+class UpdateCartItemResponse(graphene.Union):
+    class Meta:
+        types = (CartItemType, CartNotFound, MenuItemNotFound, InvalidQuantity)
+
+
+class RemoveCartItemResponse(graphene.Union):
+    class Meta:
+        types = (
+            RemoveCartItemSuccessType,
+            CartItemNotFound,
+        )
+
+
+class ClearCartItemsResponse(graphene.Union):
+    class Meta:
+        types = (
+            ClearCartItemsSuccessType,
+            CartNotFound,
+        )
+
+
+class GetCartItemsResponse(graphene.Union):
+    class Meta:
+        types = (
+            CartItemsType,
+            CartNotFound,
         )

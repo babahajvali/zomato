@@ -30,3 +30,7 @@ class CartStorageInterface(ABC):
     @abstractmethod
     def clear_cart_items(self, cart_id: str):
         pass
+
+    @abstractmethod
+    def get_cart_items(self, cart_id: str) -> List[CartItemDTO]:
+        pass

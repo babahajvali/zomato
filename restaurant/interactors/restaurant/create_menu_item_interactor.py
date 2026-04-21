@@ -18,15 +18,15 @@ class CreateMenuItemInteractor(RestaurantMixin):
         user_id: str,
         restaurant_id: str,
     ) -> List[MenuItemDTO]:
-        self.validate_restaurant_is_exists(restaurant_id=restaurant_id)
-        self.validate_user_is_restaurant_owner(
+        self.check_restaurant_is_exists(restaurant_id=restaurant_id)
+        self.check_user_is_restaurant_owner(
             user_id=user_id, restaurant_id=restaurant_id
         )
 
         categories = [each.category.value for each in create_items_dto]
 
-        self.validate_categories(categories=categories)
+        self.check_categories_are_valid(categories=categories)
 
         return self.restaurant_storage.create_menu_items(
-            create_items_dto=create_items_dto
+            create_items_dto=create_items_dto, restaurant_id=restaurant_id
         )

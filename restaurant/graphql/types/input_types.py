@@ -43,3 +43,21 @@ class BrowseRestaurantsInputParams(graphene.InputObjectType):
 
 class ViewRestaurantMenuInputParams(graphene.InputObjectType):
     restaurant_id = graphene.String(required=True)
+
+
+class UpdateCartItemInputParams(graphene.InputObjectType):
+    cart_id = graphene.String(required=True)
+    menu_item_id = graphene.String(required=True)
+    quantity = graphene.Int(required=True)
+
+
+class RemoveCartItemInputParams(graphene.InputObjectType):
+    cart_item_id = graphene.Int(required=True)
+
+
+class ClearCartItemsInputParams(graphene.InputObjectType):
+    cart_id = graphene.String(required=True)
+
+
+class GetCartItemsInputParams(graphene.InputObjectType):
+    cart_id = graphene.String(required=True)

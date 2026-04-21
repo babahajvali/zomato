@@ -74,3 +74,10 @@ class CartStorage(CartStorageInterface):
 
     def clear_cart_items(self, cart_id: str):
         return CartItem.objects.filter(cart_id=cart_id).delete()
+
+    def get_cart_items(self, cart_id: str) -> List[CartItemDTO]:
+        cart_items = CartItem.objects.filter(cart_id=cart_id)
+
+        return [
+            self._convert_to_cart_item_dto(cart_item_obj=each) for each in cart_items
+        ]

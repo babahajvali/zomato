@@ -24,7 +24,7 @@ class RestaurantStorageInterface(ABC):
 
     @abstractmethod
     def create_menu_items(
-        self, create_items_dto: List[CreateMenuItemDTO]
+        self, create_items_dto: List[CreateMenuItemDTO], restaurant_id: str
     ) -> List[MenuItemDTO]:
         pass
 

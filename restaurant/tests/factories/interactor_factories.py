@@ -8,7 +8,11 @@ from restaurant.interactors.dtos import (
     CreateRestaurantDTO,
     MenuItemDTO,
     MenuItemWithTagsDTO,
-    RestaurantMenuDTO, RestaurantTimingDTO, RestaurantDTO,
+    RestaurantMenuDTO,
+    RestaurantTimingDTO,
+    RestaurantDTO,
+    CartDTO,
+    CartItemDTO,
 )
 
 
@@ -98,7 +102,6 @@ class RestaurantMenuDTOFactory(factory.Factory):
     categories = factory.LazyFunction(list)
 
 
-
 class RestaurantTimingDTOFactory(factory.Factory):
     class Meta:
         model = RestaurantTimingDTO
@@ -123,3 +126,22 @@ class RestaurantDTOFactory(factory.Factory):
     pin_code = factory.Sequence(lambda n: f"500{n:03d}")
     is_veg_only = False
     is_deleted = False
+
+
+class CartDTOFactory(factory.Factory):
+    class Meta:
+        model = CartDTO
+
+    cart_id = factory.Sequence(lambda n: f"cart-{n}")
+    customer_id = factory.Sequence(lambda n: f"customer-{n}")
+
+
+class CartItemDTOFactory(factory.Factory):
+    class Meta:
+        model = CartItemDTO
+
+    cart_item_id = factory.Sequence(lambda n: n)
+    cart_id = factory.Sequence(lambda n: f"cart-{n}")
+    menu_item_id = factory.Sequence(lambda n: f"item-{n}")
+    quantity = 2
+    item_price = 350.0

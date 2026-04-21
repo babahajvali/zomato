@@ -4,7 +4,7 @@ import uuid
 import factory
 from factory.django import DjangoModelFactory
 
-from restaurant.models import MenuItem, Restaurant, RestaurantTiming
+from restaurant.models import MenuItem, Restaurant, RestaurantTiming, Cart, CartItem
 
 
 class RestaurantFactory(DjangoModelFactory):
@@ -25,6 +25,7 @@ class RestaurantFactory(DjangoModelFactory):
 class RestaurantTimingFactory(DjangoModelFactory):
     class Meta:
         model = RestaurantTiming
+
     id = factory.Sequence(lambda n: n)
     restaurant = factory.SubFactory(RestaurantFactory)
     day_of_week = factory.Sequence(lambda n: (n % 7) + 1)
@@ -46,3 +47,22 @@ class MenuItemFactory(DjangoModelFactory):
     is_available = True
     preparation_time_in_minutes = 15
     tags = factory.LazyFunction(list)
+
+
+class CartFactory(DjangoModelFactory):
+    class Meta:
+        model = Cart
+
+    id = factory.LazyFunction(lambda: str(uuid.uuid4()))
+    customer_id = factory.Sequence(lambda n: f"00000000-0000-0000-0000-{n:012d}")
+
+
+class CartItemFactory(DjangoModelFactory):
+    class Meta:
+        model = CartItem
+
+    id = factory.sequence(lambda n: n)
+    cart = factory.SubFactory(CartFactory)
+    menu_item = factory.SubFactory(MenuItemFactory)
+    quantity = 2
+    item_price = 199.0
