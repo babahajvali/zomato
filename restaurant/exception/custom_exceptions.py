@@ -70,6 +70,7 @@ class InvalidRestaurantIdsFound(Exception):
     def __str__(self):
         return str(self.restaurant_ids)
 
+
 class DuplicateRestaurantTimings(Exception):
     def __init__(self, restaurant_ids: List[str]):
         self.restaurant_ids = restaurant_ids
@@ -92,3 +93,35 @@ class InvalidMinRatingException(Exception):
 
     def __str__(self):
         return str(self.min_rating)
+
+
+class CartNotFound(Exception):
+    def __init__(self, cart_id: str):
+        self.cart_id = cart_id
+
+    def __str__(self):
+        return f"{self.cart_id} cart not found"
+
+
+class MenuItemNotFound(Exception):
+    def __init__(self, menu_item_id: str):
+        self.menu_item_id = menu_item_id
+
+    def __str__(self):
+        return f"{self.menu_item_id} menu item not found"
+
+
+class InvalidQuantityFound(Exception):
+    def __init__(self, quantity: int):
+        self.quantity = quantity
+
+    def __str__(self):
+        return f"Invalid quantity: {self.quantity}"
+
+
+class CartItemNotFound(Exception):
+    def __init__(self, cart_item_id: str):
+        self.cart_item_id = cart_item_id
+
+    def __str__(self):
+        return f"{self.cart_item_id} cart item not found"

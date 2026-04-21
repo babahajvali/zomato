@@ -2,20 +2,18 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from order.constants.enums import OrderStatus
-from order.models import PromoCode
 from utils.uuid_util import generate_uuid
 
 
 class Order(models.Model):
-    id = models.CharField(primary_key=True, max_length=255, default=generate_uuid())
+    id = models.CharField(primary_key=True, max_length=255,
+                          default=generate_uuid())
     customer_id = models.CharField(max_length=255)
     restaurant_id = models.CharField(max_length=255)
-    promo_code = models.ForeignKey(PromoCode, on_delete=models.CASCADE)
-    status = models.CharField(
-        max_length=255,
-        choices=OrderStatus.get_list_of_tuples(),
-        default=OrderStatus.PLACED,
-    )
+    promo_code = models.ForeignKey("PromoCode", on_delete=models.CASCADE)
+    status = models.CharField(max_length=255,
+                              choices=OrderStatus.get_list_of_tuples(),
+                              default=OrderStatus.PLACED)
     items_total = models.DecimalField(max_digits=10, decimal_places=2)
     delivery_fee = models.DecimalField(max_digits=10, decimal_places=2)
     tax_fee = models.DecimalField(max_digits=10, decimal_places=2)
@@ -28,18 +26,15 @@ class Order(models.Model):
         return f"{self.restaurant_id} - {self.customer_id}"
 
     class Meta:
-        indexes = [
-            models.Index(fields=["restaurant_id"]),
-            models.Index(fields=["status"]),
-        ]
+        indexes = [models.Index(fields=['restaurant_id']),
+                   models.Index(fields=['status'])]
 
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     item_id = models.CharField(max_length=255)
     quantity = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(10)]
-    )
+        validators=[MinValueValidator(0), MaxValueValidator(10)])
     item_price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -47,4 +42,4 @@ class OrderItem(models.Model):
         return f"{self.order} - {self.item_id}"
 
     class Meta:
-        unique_together = (("order", "item_id"),)
+        unique_together = (('order', 'item_id'),)

@@ -52,7 +52,7 @@ class TestImportAddresses:
             "account.interactors.populate_data.import_addresses.validate_row",
             validate_row,
         ):
-            result = self.interactor.import_addresses(file_path="addresses.csv")
+            self.interactor.import_addresses(file_path="addresses.csv")
 
         # Assert
         validate_row.assert_called_once_with(
@@ -93,7 +93,7 @@ class TestImportAddresses:
             "account.interactors.populate_data.import_addresses.validate_row",
             MagicMock(),
         ):
-            with pytest.raises(DuplicateAddresses) as exc:
+            with pytest.raises(DuplicateAddresses):
                 self.interactor.import_addresses(file_path="addresses.csv")
 
         self.address_storage.get_existing_addresses.assert_not_called()

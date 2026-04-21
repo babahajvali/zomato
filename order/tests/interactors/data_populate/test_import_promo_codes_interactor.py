@@ -45,13 +45,12 @@ class TestImportPromoCodes:
         )
 
         self.promo_code_storage.get_existing_codes.return_value = []
-        self.promo_code_storage.create_bulk_promo_codes.return_value = expected_result
 
         with patch(
             "order.interactors.populate_data.import_promo_codes.read_csv",
             return_value=rows,
         ):
-            result = self.interactor.import_promo_codes(file_path="promo_codes.csv")
+            self.interactor.import_promo_codes(file_path="promo_codes.csv")
 
         self.promo_code_storage.get_existing_codes.assert_called_once_with(["SAVE50"])
         self.promo_code_storage.create_bulk_promo_codes.assert_called_once_with(
@@ -136,5 +135,8 @@ class TestImportPromoCodes:
             with pytest.raises(InvalidPromoCodeDateRange) as exc:
                 self.interactor.import_promo_codes(file_path="promo_codes.csv")
 
-        assert str(exc.value) == "valid_until should be greater than valid_from in row SAVE50"
+        assert (
+            str(exc.value)
+            == "valid_until should be greater than valid_from in row SAVE50"
+        )
         self.promo_code_storage.create_bulk_promo_codes.assert_not_called()
