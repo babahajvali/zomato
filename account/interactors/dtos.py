@@ -22,6 +22,17 @@ class CreateAddressDTO:
 
 
 @dataclass
+class AddressDTO:
+    address_id: int
+    full_address: str
+    city: str
+    pincode: str
+    label: str
+    is_default: bool
+    user_id: str
+
+
+@dataclass
 class UserDTO:
     id: str
     name: str
