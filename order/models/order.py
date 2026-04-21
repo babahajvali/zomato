@@ -2,7 +2,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from order.constants.enums import OrderStatus
-from order.models import PromoCode
 from utils.uuid_util import generate_uuid
 
 
@@ -11,7 +10,7 @@ class Order(models.Model):
                           default=generate_uuid())
     customer_id = models.CharField(max_length=255)
     restaurant_id = models.CharField(max_length=255)
-    promo_code = models.ForeignKey(PromoCode, on_delete=models.CASCADE)
+    promo_code = models.ForeignKey("PromoCode", on_delete=models.CASCADE)
     status = models.CharField(max_length=255,
                               choices=OrderStatus.get_list_of_tuples(),
                               default=OrderStatus.PLACED)
@@ -28,7 +27,6 @@ class Order(models.Model):
 
     class Meta:
         indexes = [models.Index(fields=['restaurant_id']),
-                   models.Index(fields=['promo_code']),
                    models.Index(fields=['status'])]
 
 
@@ -45,4 +43,3 @@ class OrderItem(models.Model):
 
     class Meta:
         unique_together = (('order', 'item_id'),)
-        indexes = [models.Index(fields=['order'])]

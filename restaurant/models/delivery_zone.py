@@ -17,4 +17,3 @@ class DeliveryZone(models.Model):
 
     class Meta:
         unique_together = (('restaurant', 'pin_code'),)
-        indexes = [models.Index(fields=['restaurant']),]

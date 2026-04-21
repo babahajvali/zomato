@@ -1,8 +1,7 @@
 from typing import List
 
-from restaurant.exception.custom_exceptions import AlreadyExistsRestaurant, DuplicateRestaurants, OwnerNotFound
+from restaurant.exception.custom_exceptions import AlreadyExistsRestaurant, DuplicateRestaurants
 from restaurant.interactors.dtos import CreateRestaurantDTO
-from restaurant.interactors.storage_interface.restaurant_storage_interface import RestaurantStorageInterface
 from utils.read_csv_util import read_csv, validate_row
 
 

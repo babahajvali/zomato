@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any
 
 from account.exception.custom_exceptions import AlreadyExistsEmail, \
     DuplicateUserEmails
@@ -15,21 +15,12 @@ class ImportUsers:
 
     def import_users(self, file_path="./sample_data/users.csv"):
         rows = read_csv(file_path=file_path)
-
-        emails = []
-        for index, row in enumerate(rows, start=1):
-            validate_row(row, ['email', 'name'], f"user row {index}")
-
-            email = row['email'].strip().lower()
-            row['email'] = email
-
-            emails.append(email)
-
+        
+        emails = self.validate_row_and_get_emails(rows=rows)
         self._check_duplicate_emails(emails)
-
         self._check_existing_emails(emails)
 
-        users_dto = [
+        user_dtos = [
             CreateUserDTO(
                 name=row['name'],
                 email=row['email'],
@@ -39,10 +30,9 @@ class ImportUsers:
             for row in rows
         ]
 
-        created_users = self.user_storage.create_bulk_users(
-            users_dto)
+        created_users = self.user_storage.create_bulk_users(user_dtos)
 
-        return created_users
+        return f"imported {len(created_users)} users"
 
     def _check_existing_emails(self, emails: List[str]):
         existing_emails = self.user_storage.get_existing_emails(
@@ -62,3 +52,16 @@ class ImportUsers:
 
         if duplicates:
             raise DuplicateUserEmails(emails=duplicates)
+
+    @staticmethod
+    def validate_row_and_get_emails(rows: list[dict[Any, str | Any]]) -> List[str]:
+        emails = []
+        for index, row in enumerate(rows, start=1):
+            validate_row(row, ['email', 'name'], f"user row {index}")
+
+            email = row['email'].strip().lower()
+            row['email'] = email
+
+            emails.append(email)
+
+        return emails

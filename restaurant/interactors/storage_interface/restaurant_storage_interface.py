@@ -1,26 +1,31 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from restaurant.interactors.dtos import CreateRestaurantDTO, CreateMenuItemDTO, \
-    MenuItemDTO, BrowseRestaurantDTO, BrowseRestaurantFiltersDTO, \
-    MenuItemWithTagsDTO, RestaurantDTO
+from restaurant.interactors.dtos import (
+    CreateRestaurantDTO,
+    CreateMenuItemDTO,
+    MenuItemDTO,
+    BrowseRestaurantFiltersDTO,
+    MenuItemWithTagsDTO,
+    RestaurantDTO,
+)
 
 
 class RestaurantStorageInterface(ABC):
-
     @abstractmethod
     def get_existing_restaurants(self, names: List[str]) -> List[str]:
         pass
 
     @abstractmethod
-    def create_bulk_restaurants(self, restaurants_dto: List[
-        CreateRestaurantDTO]) -> List:
+    def create_bulk_restaurants(
+        self, restaurants_dto: List[CreateRestaurantDTO]
+    ) -> List:
         pass
 
     @abstractmethod
     def create_menu_items(
-            self, create_items_dto: List[CreateMenuItemDTO]) -> List[
-        MenuItemDTO]:
+        self, create_items_dto: List[CreateMenuItemDTO]
+    ) -> List[MenuItemDTO]:
         pass
 
     @abstractmethod
@@ -32,15 +37,21 @@ class RestaurantStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def get_restaurants(self, filters_dto: BrowseRestaurantFiltersDTO) -> List[
-        RestaurantDTO]:
+    def get_restaurants(
+        self, filters_dto: BrowseRestaurantFiltersDTO
+    ) -> List[RestaurantDTO]:
         pass
 
     @abstractmethod
     def get_available_menu_items_by_restaurant(
-            self, restaurant_id: str) -> List[MenuItemWithTagsDTO]:
+        self, restaurant_id: str
+    ) -> List[MenuItemWithTagsDTO]:
         pass
 
     @abstractmethod
     def get_restaurants_by_ids(self, restaurant_ids: List[str]) -> List[str]:
+        pass
+
+    @abstractmethod
+    def get_menu_item(self, menu_item_id: str) -> MenuItemDTO:
         pass

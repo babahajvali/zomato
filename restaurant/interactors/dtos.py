@@ -136,3 +136,18 @@ class CategoryMenuDTO:
 class RestaurantMenuDTO:
     restaurant_id: str
     categories: List[CategoryMenuDTO]
+
+
+@dataclass
+class CartDTO:
+    cart_id: str
+    customer_id: str
+
+
+@dataclass
+class CartItemDTO:
+    cart_item_id: int
+    cart_id: str
+    menu_item_id: str
+    quantity: int
+    item_price: float

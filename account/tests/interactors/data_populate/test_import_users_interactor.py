@@ -46,7 +46,7 @@ class TestImportUsers:
             "account.interactors.populate_data.import_users.validate_row",
             validate_row,
         ):
-            result = self.interactor.import_users(file_path="users.csv")
+            self.interactor.import_users(file_path="users.csv")
 
         validate_row.assert_called_once_with(
             rows[0],
