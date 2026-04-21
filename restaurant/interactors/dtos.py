@@ -151,3 +151,20 @@ class CartItemDTO:
     menu_item_id: str
     quantity: int
     item_price: float
+
+
+@dataclass
+class CreateDeliveryZoneDTO:
+    restaurant_id: str
+    pin_code: str
+    delivery_fee: float
+    estimated_delivery_mins: int
+
+
+@dataclass
+class DeliveryZoneDTO:
+    delivery_zone_id: int
+    restaurant_id: str
+    pin_code: str
+    delivery_fee: float
+    estimated_delivery_mins: int
