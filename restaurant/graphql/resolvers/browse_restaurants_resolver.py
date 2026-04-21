@@ -1,7 +1,5 @@
-from restaurant.exception.custom_exceptions import (
-    InvalidCuisineTypeException,
-    InvalidMinRatingException,
-)
+from restaurant.exception import custom_exceptions
+
 from restaurant.graphql.types.error_types import (
     InvalidCuisineTypeExceptionType,
     InvalidMinRatingExceptionType,
@@ -13,7 +11,6 @@ from restaurant.interactors.restaurant.browse_restaurants import (
 )
 from restaurant.storages.restaurant_storage import RestaurantStorage
 from restaurant.storages.restaurant_timing_storage import RestaurantTimingStorage
-
 
 
 def _map_browse_restaurants_response(restaurants):
@@ -55,7 +52,7 @@ def resolve_browse_restaurants(root, info, params=None):
     try:
         restaurants = interactor.browse_restaurants(filters_dto=filters_dto)
         return _map_browse_restaurants_response(restaurants=restaurants)
-    except InvalidCuisineTypeException as exc:
+    except custom_exceptions.InvalidCuisineTypeException as exc:
         return InvalidCuisineTypeExceptionType(cuisine_type=str(exc.cuisine_type))
-    except InvalidMinRatingException as exc:
+    except custom_exceptions.InvalidMinRatingException as exc:
         return InvalidMinRatingExceptionType(min_rating=exc.min_rating)

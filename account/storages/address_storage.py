@@ -1,24 +1,23 @@
 from typing import List
 
-from account.interactors.storage_interface.address_storage_interface import AddressStorageInterface
+from account.interactors.storage_interface.address_storage_interface import (
+    AddressStorageInterface,
+)
 from account.interactors.dtos import CreateAddressDTO
 from account.models import User, Address
-from account.exception.custom_exceptions import EmailNotFound
 
 
 class AddressStorage(AddressStorageInterface):
-
     def create_bulk_addresses(self, addresses_dto: List[CreateAddressDTO]):
         addresses = []
-        
+        emails = [dto.email for dto in addresses_dto]
+        users = User.objects.filter(email__in=emails)
+
+        user_map = {user.email: user for user in users}
+
         for dto in addresses_dto:
-            try:
-                user = User.objects.get(email=dto.email)
-            except User.DoesNotExist:
-                raise EmailNotFound(email=dto.email)
-            
             address = Address(
-                user=user,
+                user=user_map[dto.email],
                 label=dto.label,
                 full_address=dto.full_address,
                 city=dto.city,
@@ -31,8 +30,11 @@ class AddressStorage(AddressStorageInterface):
 
         return created_addresses
 
-    def get_existing_addresses(self, emails: List[str], labels: List[str]) -> List[tuple]:
-        return list(Address.objects.filter(
-            user__email__in=emails,
-            label__in=labels
-        ).values_list('user__email', 'label'))
+    def get_existing_addresses(
+        self, emails: List[str], labels: List[str]
+    ) -> List[tuple]:
+        return list(
+            Address.objects.filter(
+                user__email__in=emails, label__in=labels
+            ).values_list("user__email", "label")
+        )

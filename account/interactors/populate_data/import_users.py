@@ -1,15 +1,14 @@
 from typing import List
 
-from account.exception.custom_exceptions import AlreadyExistsEmail, \
-    DuplicateUserEmails
+from account.exception.custom_exceptions import AlreadyExistsEmail, DuplicateUserEmails
 from account.interactors.dtos import CreateUserDTO
-from account.interactors.storage_interface.user_storage_interface import \
-    UserStorageInterface
+from account.interactors.storage_interface.user_storage_interface import (
+    UserStorageInterface,
+)
 from utils.read_csv_util import read_csv, validate_row
 
 
 class ImportUsers:
-
     def __init__(self, user_storage: UserStorageInterface):
         self.user_storage = user_storage
 
@@ -18,12 +17,9 @@ class ImportUsers:
 
         emails = []
         for index, row in enumerate(rows, start=1):
-            validate_row(row, ['email', 'name'], f"user row {index}")
+            validate_row(row, ["email", "name"], f"user row {index}")
 
-            email = row['email'].strip().lower()
-            row['email'] = email
-
-            emails.append(email)
+            emails.append(row["email"])
 
         self._check_duplicate_emails(emails)
 
@@ -31,22 +27,20 @@ class ImportUsers:
 
         users_dto = [
             CreateUserDTO(
-                name=row['name'],
-                email=row['email'],
-                phone_number=row['phone_number'],
-                role=row['role']
+                name=row["name"],
+                email=row["email"],
+                phone_number=row["phone_number"],
+                role=row["role"],
             )
             for row in rows
         ]
 
-        created_users = self.user_storage.create_bulk_users(
-            users_dto)
+        created_users = self.user_storage.create_bulk_users(users_dto)
 
         return created_users
 
     def _check_existing_emails(self, emails: List[str]):
-        existing_emails = self.user_storage.get_existing_emails(
-            emails)
+        existing_emails = self.user_storage.get_existing_emails(emails)
 
         if existing_emails:
             raise AlreadyExistsEmail(emails=existing_emails)

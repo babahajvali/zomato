@@ -1,17 +1,14 @@
 import graphene
 
 from restaurant.constants.enums import Category
-from restaurant.exception.custom_exceptions import (
-    InvalidCategoriesFound,
-    RestaurantNotFound,
-    UserIsNotRestaurantOwner,
-)
+from restaurant.exception import custom_exceptions
+
 from restaurant.graphql.types.input_types import CreateMenuItemsInputParams
 from restaurant.graphql.types.response_types import CreateMenuItemsResponse
 from restaurant.graphql.types.error_types import (
-    InvalidCategoriesFoundType,
-    RestaurantNotFoundType,
-    UserIsNotRestaurantOwnerType,
+    InvalidCategoriesFound,
+    RestaurantNotFound,
+    UserIsNotRestaurantOwner,
 )
 from restaurant.graphql.types.types import MenuItemsType, MenuItemType
 from restaurant.interactors.dtos import CreateMenuItemDTO
@@ -72,10 +69,9 @@ class CreateMenuItemsMutation(graphene.Mutation):
             ]
             return MenuItemsType(menu_items=menu_items)
 
-        except RestaurantNotFound as exc:
-            return RestaurantNotFoundType(restaurant_id=exc.restaurant_id)
-        except InvalidCategoriesFound as exc:
-            return InvalidCategoriesFoundType(categories=exc.categories)
-        except UserIsNotRestaurantOwner as exc:
-            return UserIsNotRestaurantOwnerType(user_id=exc.user_id)
-
+        except custom_exceptions.RestaurantNotFound as exc:
+            return RestaurantNotFound(restaurant_id=exc.restaurant_id)
+        except custom_exceptions.InvalidCategoriesFound as exc:
+            return InvalidCategoriesFound(categories=exc.categories)
+        except custom_exceptions.UserIsNotRestaurantOwner as exc:
+            return UserIsNotRestaurantOwner(user_id=exc.user_id)

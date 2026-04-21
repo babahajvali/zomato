@@ -1,12 +1,13 @@
-from restaurant.exception.custom_exceptions import RestaurantNotFound
-from restaurant.graphql.types.error_types import RestaurantNotFoundType
+from restaurant.exception import custom_exceptions
+from restaurant.graphql.types.error_types import RestaurantNotFound
 from restaurant.graphql.types.types import (
     CategoryMenuType,
     MenuItemType,
     RestaurantMenuType,
 )
-from restaurant.interactors.restaurant.view_restaurant_menu import \
-    ViewRestaurantMenuInteractor
+from restaurant.interactors.restaurant.view_restaurant_menu import (
+    ViewRestaurantMenuInteractor,
+)
 from restaurant.storages.restaurant_storage import RestaurantStorage
 
 
@@ -29,10 +30,10 @@ def _map_menu_response(menu_dto) -> RestaurantMenuType:
                         tags=each_item.tags,
                     )
                     for each_item in each_category.items
-                ]
+                ],
             )
             for each_category in menu_dto.categories
-        ]
+        ],
     )
 
 
@@ -46,7 +47,5 @@ def resolve_view_restaurant_menu(root, info, params):
             restaurant_id=params.restaurant_id,
         )
         return _map_menu_response(menu_dto=menu)
-    except RestaurantNotFound as exc:
-        return RestaurantNotFoundType(
-            restaurant_id=str(exc.restaurant_id)
-        )
+    except custom_exceptions.RestaurantNotFound as exc:
+        return RestaurantNotFound(restaurant_id=str(exc.restaurant_id))

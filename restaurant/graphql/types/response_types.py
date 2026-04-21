@@ -1,23 +1,31 @@
 import graphene
 
-from restaurant.graphql.types.error_types import \
-    RestaurantTimingNotFoundType, OpenTimeGreaterThanCloseTimeType, \
-    UserIsNotRestaurantOwnerType, RestaurantNotFoundType, \
-    InvalidCategoriesFoundType, InvalidCuisineTypeExceptionType, \
-    InvalidMinRatingExceptionType
-from restaurant.graphql.types.types import \
-    RestaurantTimingType, MenuItemsType, BrowseRestaurantsType, \
-    RestaurantMenuType, DeleteRestaurantTimingSuccessType, \
-    RestaurantTimingsListType
+from restaurant.graphql.types.error_types import (
+    RestaurantTimingNotFound,
+    OpenTimeGreaterThanCloseTime,
+    UserIsNotRestaurantOwner,
+    RestaurantNotFound,
+    InvalidCategoriesFound,
+    InvalidCuisineTypeExceptionType,
+    InvalidMinRatingExceptionType,
+)
+from restaurant.graphql.types.types import (
+    RestaurantTimingType,
+    MenuItemsType,
+    BrowseRestaurantsType,
+    RestaurantMenuType,
+    DeleteRestaurantTimingSuccessType,
+    RestaurantTimingsListType,
+)
 
 
 class UpdateRestaurantTimingResponse(graphene.Union):
     class Meta:
         types = (
             RestaurantTimingType,
-            RestaurantTimingNotFoundType,
-            OpenTimeGreaterThanCloseTimeType,
-            UserIsNotRestaurantOwnerType,
+            RestaurantTimingNotFound,
+            OpenTimeGreaterThanCloseTime,
+            UserIsNotRestaurantOwner,
         )
 
 
@@ -25,8 +33,8 @@ class DeleteRestaurantTimingResponse(graphene.Union):
     class Meta:
         types = (
             DeleteRestaurantTimingSuccessType,
-            RestaurantTimingNotFoundType,
-            UserIsNotRestaurantOwnerType,
+            RestaurantTimingNotFound,
+            UserIsNotRestaurantOwner,
         )
 
 
@@ -34,7 +42,7 @@ class GetRestaurantTimingsResponse(graphene.Union):
     class Meta:
         types = (
             RestaurantTimingsListType,
-            RestaurantNotFoundType,
+            RestaurantNotFound,
         )
 
 
@@ -42,9 +50,9 @@ class CreateMenuItemsResponse(graphene.Union):
     class Meta:
         types = (
             MenuItemsType,
-            RestaurantNotFoundType,
-            InvalidCategoriesFoundType,
-            UserIsNotRestaurantOwnerType,
+            RestaurantNotFound,
+            InvalidCategoriesFound,
+            UserIsNotRestaurantOwner,
         )
 
 
@@ -56,9 +64,10 @@ class BrowseRestaurantsResponse(graphene.Union):
             InvalidMinRatingExceptionType,
         )
 
+
 class ViewRestaurantMenuResponse(graphene.Union):
     class Meta:
         types = (
             RestaurantMenuType,
-            RestaurantNotFoundType,
+            RestaurantNotFound,
         )

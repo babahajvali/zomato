@@ -6,10 +6,7 @@ from utils.uuid_util import generate_uuid
 
 class User(models.Model):
     id = models.CharField(
-        max_length=36,
-        primary_key=True,
-        default=generate_uuid(),
-        editable=False
+        max_length=36, primary_key=True, default=generate_uuid, editable=False
     )
     name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True)
@@ -32,3 +29,6 @@ class Address(models.Model):
 
     def __str__(self):
         return self.label
+
+    class Meta:
+        unique_together = ("user", "label")

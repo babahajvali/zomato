@@ -1,17 +1,11 @@
 import graphene
 
-from restaurant.graphql.mutations import UpdateRestaurantTiming, \
-    CreateMenuItems, DeleteRestaurantTiming
-from restaurant.graphql.queries import BrowseRestaurantsQuery, \
-    ViewRestaurantMenu, GetRestaurantTimingsQuery
+from restaurant.graphql.mutations import RestaurantMutations
+from restaurant.graphql.queries import RestaurantQueries
 
-QUERY_CLASSES = [
-    BrowseRestaurantsQuery, ViewRestaurantMenu, GetRestaurantTimingsQuery
-]
+QUERY_CLASSES = [RestaurantQueries]
 
-MUTATION_CLASSES = [
-    UpdateRestaurantTiming, CreateMenuItems, DeleteRestaurantTiming
-]
+MUTATION_CLASSES = [RestaurantMutations]
 
 
 class Query(*QUERY_CLASSES, graphene.ObjectType):

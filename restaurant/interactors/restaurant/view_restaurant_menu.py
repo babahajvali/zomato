@@ -1,22 +1,25 @@
-
+from collections import defaultdict
 from typing import List
 
-from restaurant.interactors.dtos import RestaurantMenuDTO, CategoryMenuDTO, \
-    MenuItemWithTagsDTO
-from restaurant.interactors.storage_interface.restaurant_storage_interface import \
-    RestaurantStorageInterface
+from restaurant.interactors.dtos import (
+    RestaurantMenuDTO,
+    CategoryMenuDTO,
+    MenuItemWithTagsDTO,
+)
+from restaurant.interactors.storage_interface.restaurant_storage_interface import (
+    RestaurantStorageInterface,
+)
 from restaurant.mixins.restaurant_mixin import RestaurantMixin
 
 
 class ViewRestaurantMenuInteractor(RestaurantMixin):
-
     def __init__(self, restaurant_storage: RestaurantStorageInterface):
         super().__init__(restaurant_storage=restaurant_storage)
         self.restaurant_storage = restaurant_storage
 
     def view_restaurant_menu(self, restaurant_id: str) -> RestaurantMenuDTO:
 
-        self.check_restaurant_is_exists(restaurant_id=restaurant_id)
+        self.validate_restaurant_is_exists(restaurant_id=restaurant_id)
 
         items = self.restaurant_storage.get_available_menu_items_by_restaurant(
             restaurant_id=restaurant_id
@@ -31,9 +34,10 @@ class ViewRestaurantMenuInteractor(RestaurantMixin):
 
     @staticmethod
     def group_menu_items_by_category(
-            items: List[MenuItemWithTagsDTO]) -> List[CategoryMenuDTO]:
+        items: List[MenuItemWithTagsDTO],
+    ) -> List[CategoryMenuDTO]:
 
-        category_map = {}
+        category_map = defaultdict()
 
         for item in items:
             category = item.category
@@ -42,7 +46,6 @@ class ViewRestaurantMenuInteractor(RestaurantMixin):
                 category_map[category] = []
 
             category_map[category].append(item)
-
 
         return [
             CategoryMenuDTO(category=category, items=items)

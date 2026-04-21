@@ -2,7 +2,8 @@ from typing import List
 
 from restaurant.interactors.dtos import (
     BrowseRestaurantDTO,
-    BrowseRestaurantFiltersDTO, RestaurantDTO,
+    BrowseRestaurantFiltersDTO,
+    RestaurantDTO,
 )
 from restaurant.interactors.storage_interface.restaurant_storage_interface import (
     RestaurantStorageInterface,
@@ -16,9 +17,9 @@ from restaurant.mixins.restaurant_timing_mixin import TimingMixin
 
 class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
     def __init__(
-            self,
-            restaurant_storage: RestaurantStorageInterface,
-            restaurant_timing_storage: RestaurantTimingStorageInterface,
+        self,
+        restaurant_storage: RestaurantStorageInterface,
+        restaurant_timing_storage: RestaurantTimingStorageInterface,
     ):
         super().__init__(
             restaurant_storage=restaurant_storage,
@@ -28,28 +29,23 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
         self.restaurant_timing_storage = restaurant_timing_storage
 
     def browse_restaurants(
-            self, filters_dto: BrowseRestaurantFiltersDTO,
+        self,
+        filters_dto: BrowseRestaurantFiltersDTO,
     ) -> List[BrowseRestaurantDTO]:
         self._validate_filters(filters_dto=filters_dto)
 
-        restaurants = self.restaurant_storage.get_restaurants(
-            filters_dto=filters_dto
-        )
+        restaurants = self.restaurant_storage.get_restaurants(filters_dto=filters_dto)
 
         return self._check_and_get_browse_restaurants(restaurants=restaurants)
 
     def _validate_filters(self, filters_dto: BrowseRestaurantFiltersDTO):
-        if filters_dto.cuisine_type:
-            cuisine_type = filters_dto.cuisine_type.value
-            self.check_cuisine_type_is_valid(cuisine_type=cuisine_type)
 
         if filters_dto.min_rating is not None:
-            self.check_min_rating_is_valid(
-                min_rating=filters_dto.min_rating
-            )
+            self.validate_min_rating(min_rating=filters_dto.min_rating)
 
     def _check_and_get_browse_restaurants(
-            self, restaurants: List[RestaurantDTO],
+        self,
+        restaurants: List[RestaurantDTO],
     ) -> List[BrowseRestaurantDTO]:
         restaurant_ids = [str(restaurant.id) for restaurant in restaurants]
 
