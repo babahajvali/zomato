@@ -7,6 +7,7 @@ from restaurant.interactors.dtos import (
 )
 from restaurant.storages.cart_storage import CartStorage
 from restaurant.storages.delivery_zone_storage import DeliveryZoneStorage
+from restaurant.storages.restaurant_storage import RestaurantStorage
 from restaurant.storages.restaurant_timing_storage import RestaurantTimingStorage
 
 
@@ -15,6 +16,7 @@ class ServiceInterface:
         self.cart_storage = CartStorage()
         self.delivery_zone_storage = DeliveryZoneStorage()
         self.restaurant_timing_storage = RestaurantTimingStorage()
+        self.restaurant_storage = RestaurantStorage()
 
     def get_delivery_zone_by_restaurant_id(
         self, restaurant_id: str, pin_code: str
@@ -50,3 +52,8 @@ class ServiceInterface:
 
     def get_customer_cart_id(self, customer_id: str) -> str:
         return self.cart_storage.get_customer_cart_id(customer_id=customer_id)
+
+    def get_restaurant_owner_id(self, restaurant_id: str) -> str:
+        return self.restaurant_storage.get_restaurant_owner_id(
+            restaurant_id=restaurant_id
+        )

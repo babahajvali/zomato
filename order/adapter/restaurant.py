@@ -42,3 +42,6 @@ class RestaurantAdapter:
 
     def get_customer_cart_items(self, cart_id: str) -> List[CartItemDTO]:
         return self.interface.get_cart_items(cart_id=cart_id)
+
+    def get_restaurant_owner_id(self, restaurant_id: str):
+        return self.interface.get_restaurant_owner_id(restaurant_id=restaurant_id)

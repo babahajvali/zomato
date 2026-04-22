@@ -92,3 +92,41 @@ class ResourceLocked(Exception):
 
     def __str__(self):
         return self.message
+
+
+class EmptyCartItemsFound(Exception):
+    def __init__(self, cart_id: str):
+        self.cart_id = cart_id
+
+    def __str__(self):
+        return f"Empty cart items found for {self.cart_id}"
+
+
+class OrderNotFound(Exception):
+    def __init__(self, order_id: str):
+        self.order_id = order_id
+
+    def __str__(self):
+        return f"Order {self.order_id} not found"
+
+
+class UserIsNotRestaurantOwner(Exception):
+    def __init__(self, user_id: str):
+        self.user_id = user_id
+
+    def __str__(self):
+        return str(self.user_id)
+
+class InvalidOrderStatusTransition(Exception):
+    def __init__(
+            self,
+            current_status: str,
+            new_status: str,
+            allowed: list,
+    ):
+        self.current_status = current_status
+        self.new_status     = new_status
+        self.allowed        = allowed
+
+    def __str__(self):
+        return str(self.new_status)

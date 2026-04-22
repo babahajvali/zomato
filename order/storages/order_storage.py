@@ -1,5 +1,6 @@
 from typing import List
 
+
 from order.constants.enums import OrderStatus
 from order.interactors.dtos import (
     CreateOrderDTO,
@@ -72,3 +73,10 @@ class OrderStorage(OrderStorageInterface):
         ]
 
         OrderItem.objects.bulk_create(order_items)
+
+    def update_order_status(
+        self, order_id: str, status: OrderStatus
+    ) -> OrderDTO | None:
+        Order.objects.filter(id=order_id).update(status=status)
+
+        return self.get_order(order_id=order_id)

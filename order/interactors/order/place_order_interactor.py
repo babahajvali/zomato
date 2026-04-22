@@ -16,6 +16,7 @@ from order.exception.custom_exceptions import (
     InvalidAddressFound,
     RestaurantDayTimingNotFound,
     RestaurantClosed,
+    EmptyCartItemsFound,
 )
 from order.interactors.dtos import (
     PlaceOrderDTO,
@@ -52,7 +53,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
             customer_id=order_data.customer_id
         )
 
-        cart_items = self.restaurant_adapter.get_customer_cart_items(cart_id=cart_id)
+        cart_items = self._validate_cart_items_and_get_items(cart_id=cart_id)
 
         items_total = self._calculate_items_total(cart_items=cart_items)
         if order_data.promo_code_id:
@@ -220,3 +221,11 @@ class PlaceOrderInteractor(PromoCodeMixin):
     @staticmethod
     def _calculate_items_total(cart_items: List[CartItemDTO]) -> float:
         return sum(float(item.item_price) * float(item.quantity) for item in cart_items)
+
+    def _validate_cart_items_and_get_items(self, cart_id: str) -> List[CartItemDTO]:
+        cart_items = self.restaurant_adapter.get_customer_cart_items(cart_id=cart_id)
+
+        if cart_items is None or len(cart_items) == 0:
+            raise EmptyCartItemsFound(cart_id=cart_id)
+
+        return cart_items
