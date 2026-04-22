@@ -54,7 +54,7 @@ class TestCreateMenuItemInteractor:
             restaurant_id="restaurant-1"
         )
         self.restaurant_storage.create_menu_items.assert_called_once_with(
-            create_items_dto=create_items_dto,
+            create_item_dtos=create_items_dto,
             restaurant_id="restaurant-1"
         )
 

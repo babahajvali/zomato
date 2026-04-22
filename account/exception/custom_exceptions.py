@@ -12,7 +12,7 @@ class AlreadyExistsEmail(Exception):
 
 
 class EmailNotFound(Exception):
-    def __init__(self, email):
+    def __init__(self, email: str):
         self.email = email
 
     def __str__(self):
@@ -25,7 +25,7 @@ class UserNotFound(Exception):
 
 
 class AlreadyExistsAddress(Exception):
-    def __init__(self, addresses):
+    def __init__(self, addresses: List[tuple]):
         self.addresses = addresses
 
     def __str__(self):
@@ -33,7 +33,7 @@ class AlreadyExistsAddress(Exception):
 
 
 class DuplicateAddresses(Exception):
-    def __init__(self, addresses):
+    def __init__(self, addresses: List[tuple]):
         self.addresses = addresses
 
     def __str__(self):

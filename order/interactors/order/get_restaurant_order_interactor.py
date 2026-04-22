@@ -45,6 +45,7 @@ class GetRestaurantOrderInteractor(OrderMixin):
     def _filter_orders_after_cancellation_window(
         orders: List[OrderDTO],
     ) -> List[OrderDTO]:
+
         now = timezone.now()
         five_minutes_ago = now - timedelta(minutes=5)
 

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from account.interactors.storage_interface.address_storage_interface import (
     AddressStorageInterface,
@@ -9,17 +9,18 @@ from account.exception.custom_exceptions import EmailNotFound
 
 
 class AddressStorage(AddressStorageInterface):
-    def create_bulk_addresses(self, addresses_dto: List[CreateAddressDTO]):
+    def create_bulk_addresses(self, address_dtos: List[CreateAddressDTO]):
         addresses = []
 
-        for dto in addresses_dto:
-            try:
-                user = User.objects.get(email=dto.email)
-            except User.DoesNotExist:
-                raise EmailNotFound(email=dto.email)
+        emails = [dto.email for dto in address_dtos]
+        users = User.objects.filter(email__in=emails)
+
+        user_map = {user.email: user for user in users}
+
+        for dto in address_dtos:
 
             address = Address(
-                user=user,
+                user=user_map[dto.email],
                 label=dto.label,
                 full_address=dto.full_address,
                 city=dto.city,
@@ -41,7 +42,7 @@ class AddressStorage(AddressStorageInterface):
             ).values_list("user__email", "label")
         )
 
-    def get_address_by_id(self, address_id: int) -> AddressDTO | None:
+    def get_address_by_id(self, address_id: int) -> Optional[AddressDTO]:
         address_obj = Address.objects.filter(id=address_id).first()
 
         if address_obj is None:

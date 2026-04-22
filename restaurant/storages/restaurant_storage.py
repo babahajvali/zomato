@@ -50,10 +50,10 @@ class RestaurantStorage(RestaurantStorageInterface):
             tags=item.tags,
         )
 
-    def create_bulk_restaurants(self, restaurants_dto: List[CreateRestaurantDTO]):
+    def create_bulk_restaurants(self, restaurant_dtos: List[CreateRestaurantDTO]):
         restaurants = []
 
-        for dto in restaurants_dto:
+        for dto in restaurant_dtos:
             restaurant = Restaurant(
                 id=generate_uuid(),
                 name=dto.name,
@@ -77,7 +77,7 @@ class RestaurantStorage(RestaurantStorageInterface):
         )
 
     def create_menu_items(
-        self, create_items_dto: List[CreateMenuItemDTO], restaurant_id: str
+        self, create_item_dtos: List[CreateMenuItemDTO], restaurant_id: str
     ) -> List[MenuItemDTO]:
 
         menu_items = [
@@ -93,7 +93,7 @@ class RestaurantStorage(RestaurantStorageInterface):
                 tags=item.tags,
                 preparation_time_in_minutes=item.preparation_time_in_minutes,
             )
-            for item in create_items_dto
+            for item in create_item_dtos
         ]
 
         created_items = MenuItem.objects.bulk_create(menu_items)

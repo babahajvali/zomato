@@ -27,7 +27,8 @@ class TestPromoCodeStorage(TestCase):
             )
         ]
 
-        result = self.storage.create_bulk_promo_codes(promo_codes_dto=promo_codes_dto)
+        result = self.storage.create_bulk_promo_codes(
+            promo_code_dtos=promo_codes_dto)
 
         assert len(result) == 1
         assert PromoCode.objects.filter(code="SAVE50").exists()

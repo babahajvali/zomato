@@ -21,7 +21,7 @@ class PromoCodeStorage(PromoCodeStorageInterface):
             valid_until=promo_code_obj.valid_until,
         )
 
-    def create_bulk_promo_codes(self, promo_codes_dto: List[CreatePromoCodeDTO]):
+    def create_bulk_promo_codes(self, promo_code_dtos: List[CreatePromoCodeDTO]):
         promo_codes = [
             PromoCode(
                 code=dto.code,
@@ -32,7 +32,7 @@ class PromoCodeStorage(PromoCodeStorageInterface):
                 valid_from=dto.valid_from,
                 valid_until=dto.valid_until,
             )
-            for dto in promo_codes_dto
+            for dto in promo_code_dtos
         ]
 
         created_promo_codes = PromoCode.objects.bulk_create(promo_codes)

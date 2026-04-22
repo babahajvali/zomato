@@ -22,9 +22,9 @@ class ImportPromoCodes:
         rows = read_csv(file_path=file_path)
 
         codes = self._validate_promo_date_ranges(rows=rows)
-        self._check_empty_promo_codes(codes)
-        self._check_duplicate_codes(codes)
-        self._check_existing_codes(codes)
+        self._validate_empty_promo_codes(codes)
+        self._validate_duplicate_codes(codes)
+        self._validate_existing_codes(codes)
             
 
         promo_codes_dto = [CreatePromoCodeDTO(
@@ -43,7 +43,7 @@ class ImportPromoCodes:
 
         return f"imported {len(created_promos)} promo codes"
 
-    def _check_existing_codes(self, codes: List[str]):
+    def _validate_existing_codes(self, codes: List[str]):
         existing_codes = self.promo_code_storage.get_existing_codes(
             codes)
 
@@ -51,7 +51,7 @@ class ImportPromoCodes:
             raise AlreadyExistsPromoCode(codes=existing_codes)
 
     @staticmethod
-    def _check_duplicate_codes(codes: List[str]):
+    def _validate_duplicate_codes(codes: List[str]):
         seen = set()
         duplicates = []
 
@@ -64,7 +64,7 @@ class ImportPromoCodes:
             raise DuplicatePromoCodes(codes=duplicates)
 
     @staticmethod
-    def _check_empty_promo_codes(promo_codes: List[str]):
+    def _validate_empty_promo_codes(promo_codes: List[str]):
         empty_promo_codes = [1 for each_promo in promo_codes if not each_promo]
 
         if empty_promo_codes:
@@ -103,6 +103,4 @@ class ImportPromoCodes:
             raise InvalidPromoCodeDateRange(
                 message="; ".join(invalid_codes)
             )
-
-
         return codes

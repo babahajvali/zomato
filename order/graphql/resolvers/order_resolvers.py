@@ -43,7 +43,7 @@ def resolve_get_order(root, info, params):
 
 def resolve_user_orders(root, info):
     interactor = OrderInteractor(order_storage=OrderStorage())
-    order_dtos = interactor.user_orders(user_id=info.context.user_id)
+    order_dtos = interactor.get_user_orders(user_id=info.context.user_id)
 
     return map_orders_response(order_dtos=order_dtos)
 

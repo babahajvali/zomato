@@ -1,8 +1,9 @@
+import datetime
 from typing import List
 
 
 class AlreadyExistsRestaurant(Exception):
-    def __init__(self, names):
+    def __init__(self, names: List[str]):
         self.names = names
 
     def __str__(self):
@@ -10,7 +11,7 @@ class AlreadyExistsRestaurant(Exception):
 
 
 class DuplicateRestaurants(Exception):
-    def __init__(self, names):
+    def __init__(self, names: List[str]):
         self.names = names
 
     def __str__(self):
@@ -18,7 +19,7 @@ class DuplicateRestaurants(Exception):
 
 
 class OwnerNotFound(Exception):
-    def __init__(self, email):
+    def __init__(self, email:List[str]):
         self.email = email
 
     def __str__(self):
@@ -26,7 +27,7 @@ class OwnerNotFound(Exception):
 
 
 class OpenTimeGreaterThanCloseTime(Exception):
-    def __init__(self, open_time, close_time):
+    def __init__(self, open_time: datetime.time, close_time: datetime.time):
         self.open_time = open_time
         self.close_time = close_time
 

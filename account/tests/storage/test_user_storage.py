@@ -26,7 +26,7 @@ class TestUserStorage(TestCase):
             ),
         ]
 
-        result = self.storage.create_bulk_users(create_users_dto=users_dto)
+        result = self.storage.create_bulk_users(create_user_dtos=users_dto)
 
         assert len(result) == 2
         assert User.objects.filter(email="alice@example.com").exists()

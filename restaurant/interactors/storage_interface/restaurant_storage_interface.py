@@ -18,13 +18,13 @@ class RestaurantStorageInterface(ABC):
 
     @abstractmethod
     def create_bulk_restaurants(
-        self, restaurants_dto: List[CreateRestaurantDTO]
+        self, restaurant_dtos: List[CreateRestaurantDTO]
     ) -> List:
         pass
 
     @abstractmethod
     def create_menu_items(
-        self, create_items_dto: List[CreateMenuItemDTO], restaurant_id: str
+        self, create_item_dtos: List[CreateMenuItemDTO], restaurant_id: str
     ) -> List[MenuItemDTO]:
         pass
 

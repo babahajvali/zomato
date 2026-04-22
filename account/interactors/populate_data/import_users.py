@@ -15,7 +15,7 @@ class ImportUsers:
     def import_users(self, file_path="./sample_data/users.csv"):
         rows = read_csv(file_path=file_path)
 
-        emails = self._validate_row_and_get_emails(rows=rows)
+        emails = self._validate_rows(rows=rows)
         self._validate_duplicate_emails(emails)
         self._validate_existing_emails(emails)
 
@@ -52,7 +52,7 @@ class ImportUsers:
             raise DuplicateUserEmails(emails=duplicates)
 
     @staticmethod
-    def _validate_row_and_get_emails(rows: list[dict[Any, str | Any]]) -> List[str]:
+    def _validate_rows(rows: list[dict[Any, str | Any]]) -> List[str]:
         emails = []
         for index, row in enumerate(rows, start=1):
             validate_row(row, ["email", "name"], f"user row {index}")

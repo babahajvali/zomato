@@ -30,7 +30,8 @@ class TestRestaurantStorage(TestCase):
             )
         ]
 
-        result = self.storage.create_bulk_restaurants(restaurants_dto=restaurants_dto)
+        result = self.storage.create_bulk_restaurants(
+            restaurant_dtos=restaurants_dto)
 
         assert len(result) == 1
         assert Restaurant.objects.filter(name="Spice Hub").exists()
@@ -49,7 +50,8 @@ class TestRestaurantStorage(TestCase):
             )
         ]
 
-        result = self.storage.create_bulk_restaurants(restaurants_dto=restaurants_dto)
+        result = self.storage.create_bulk_restaurants(
+            restaurant_dtos=restaurants_dto)
 
         assert len(result) == 1
         assert Restaurant.objects.filter(name="Spice Hub").exists()

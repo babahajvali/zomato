@@ -25,8 +25,8 @@ class CreateMenuItemInteractor(RestaurantMixin):
 
         categories = [each.category.value for each in create_items_dto]
 
-        self.check_categories_are_valid(categories=categories)
+        self.validate_categories(categories=categories)
 
         return self.restaurant_storage.create_menu_items(
-            create_items_dto=create_items_dto, restaurant_id=restaurant_id
+            create_item_dtos=create_items_dto, restaurant_id=restaurant_id
         )

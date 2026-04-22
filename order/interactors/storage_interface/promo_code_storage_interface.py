@@ -11,7 +11,7 @@ class PromoCodeStorageInterface(ABC):
 
     @abstractmethod
     def create_bulk_promo_codes(
-        self, promo_codes_dto: List[CreatePromoCodeDTO]
+        self, promo_code_dtos: List[CreatePromoCodeDTO]
     ) -> List:
         pass
 

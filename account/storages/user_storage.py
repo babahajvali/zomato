@@ -8,14 +8,14 @@ from utils.uuid_util import generate_uuid
 
 class UserStorage(UserStorageInterface):
 
-    def create_bulk_users(self, create_users_dto: List[CreateUserDTO]):
+    def create_bulk_users(self, create_user_dtos: List[CreateUserDTO]):
         users = [User(
             id=generate_uuid(),
             name=dto.name,
             email=dto.email,
             phone_number=dto.phone_number,
             role=dto.role
-        ) for dto in create_users_dto]
+        ) for dto in create_user_dtos]
 
         created_users = User.objects.bulk_create(users)
 

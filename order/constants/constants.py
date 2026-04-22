@@ -1,1 +1,1 @@
-Tax_percentage = 5
+TAX_PERCENTAGE = 5

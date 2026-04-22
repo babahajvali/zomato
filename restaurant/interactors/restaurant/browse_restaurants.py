@@ -36,14 +36,14 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
 
         restaurants = self.restaurant_storage.get_restaurants(filters_dto=filters_dto)
 
-        return self._check_and_get_browse_restaurants(restaurants=restaurants)
+        return self._get_browse_restaurants(restaurants=restaurants)
 
     def _validate_filters(self, filters_dto: BrowseRestaurantFiltersDTO):
 
         if filters_dto.min_rating is not None:
             self.validate_min_rating(min_rating=filters_dto.min_rating)
 
-    def _check_and_get_browse_restaurants(
+    def _get_browse_restaurants(
         self,
         restaurants: List[RestaurantDTO],
     ) -> List[BrowseRestaurantDTO]:

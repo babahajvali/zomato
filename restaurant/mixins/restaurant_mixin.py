@@ -30,7 +30,7 @@ class RestaurantMixin:
             raise UserIsNotRestaurantOwner(user_id=user_id)
 
     @staticmethod
-    def check_categories_are_valid(categories: List[str]):
+    def validate_categories(categories: List[str]):
 
         existed_categories = Category.get_categories()
         invalid_categories = []

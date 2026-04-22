@@ -24,7 +24,7 @@ class TestAddressStorage(TestCase):
             )
         ]
 
-        result = self.storage.create_bulk_addresses(addresses_dto=addresses_dto)
+        result = self.storage.create_bulk_addresses(address_dtos=addresses_dto)
 
         assert len(result) == 1
         created = Address.objects.get(user__email="alice@example.com", label="Home")
@@ -40,7 +40,7 @@ class TestAddressStorage(TestCase):
         ]
 
         with self.assertRaises(EmailNotFound) as exc:
-            self.storage.create_bulk_addresses(addresses_dto=addresses_dto)
+            self.storage.create_bulk_addresses(address_dtos=addresses_dto)
 
         assert exc.exception.email == "missing@example.com"
 

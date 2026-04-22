@@ -7,7 +7,7 @@ from account.interactors.dtos import CreateUserDTO
 class UserStorageInterface(ABC):
 
     @abstractmethod
-    def create_bulk_users(self, create_users_dto: List[CreateUserDTO]):
+    def create_bulk_users(self, create_user_dtos: List[CreateUserDTO]):
         pass
 
     @abstractmethod

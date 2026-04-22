@@ -142,7 +142,7 @@ class TestOrderInteractor:
         ]
         self.order_storage.get_user_orders.return_value = order_dtos
 
-        result = self.interactor.user_orders(user_id="customer-1")
+        result = self.interactor.get_user_orders(user_id="customer-1")
 
         assert result == order_dtos
         self.order_storage.get_user_orders.assert_called_once_with(
