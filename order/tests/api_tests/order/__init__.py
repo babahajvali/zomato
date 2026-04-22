@@ -51,3 +51,117 @@ class BasePlaceOrderTestCase(GraphQLBaseTestCase):
       }
     }
     """
+
+
+class BaseUpdateOrderStatusTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    mutation UpdateOrderStatus($params: UpdateOrderStatusInputParams!) {
+      updateOrderStatus(params: $params) {
+        ... on OrderType {
+          __typename
+          orderId
+          customerId
+          restaurantId
+          promoCodeId
+          status
+          itemsTotal
+          deliveryFee
+          taxFee
+          finalAmount
+          addressId
+        }
+        ... on OrderNotFound {
+          __typename
+          orderId
+        }
+        ... on UserIsNotRestaurantOwner {
+          __typename
+          userId
+        }
+        ... on InvalidOrderStatusTransition {
+          __typename
+          currentStatus
+          newStatus
+          allowed
+        }
+      }
+    }
+    """
+
+
+class BaseGetOrderTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    query GetOrder($params: GetOrderInputParams!) {
+      getOrder(params: $params) {
+        ... on OrderType {
+          __typename
+          orderId
+          customerId
+          restaurantId
+          promoCodeId
+          status
+          itemsTotal
+          deliveryFee
+          taxFee
+          finalAmount
+          addressId
+        }
+        ... on OrderNotFound {
+          __typename
+          orderId
+        }
+      }
+    }
+    """
+
+
+class BaseUserOrdersTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    query UserOrders {
+      userOrders {
+        ... on OrdersType {
+          __typename
+          orders {
+            orderId
+            customerId
+            restaurantId
+            promoCodeId
+            status
+            itemsTotal
+            deliveryFee
+            taxFee
+            finalAmount
+            addressId
+          }
+        }
+      }
+    }
+    """
+
+
+class BaseRestaurantOrdersTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    query RestaurantOrders($params: GetRestaurantOrdersInputParams!) {
+      restaurantOrders(params: $params) {
+        ... on OrdersType {
+          __typename
+          orders {
+            orderId
+            customerId
+            restaurantId
+            promoCodeId
+            status
+            itemsTotal
+            deliveryFee
+            taxFee
+            finalAmount
+            addressId
+          }
+        }
+        ... on UserIsNotRestaurantOwner {
+          __typename
+          userId
+        }
+      }
+    }
+    """

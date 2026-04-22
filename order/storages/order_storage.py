@@ -1,3 +1,4 @@
+from datetime import datetime, date
 from typing import List
 
 
@@ -27,6 +28,7 @@ class OrderStorage(OrderStorageInterface):
             tax_fee=float(order_obj.tax_fee),
             final_amount=float(order_obj.final_amount),
             address_id=order_obj.address_id,
+            placed_at=order_obj.created_at,
         )
 
     def get_order(self, order_id: str) -> OrderDTO | None:
@@ -77,6 +79,38 @@ class OrderStorage(OrderStorageInterface):
     def update_order_status(
         self, order_id: str, status: OrderStatus
     ) -> OrderDTO | None:
-        Order.objects.filter(id=order_id).update(status=status)
+        Order.objects.filter(id=order_id).update(status=status.value)
 
         return self.get_order(order_id=order_id)
+
+    def cancel_order(self, order_id: str) -> OrderDTO | None:
+        Order.objects.filter(id=order_id).update(status=OrderStatus.CANCELLED.value)
+        return self.get_order(order_id=order_id)
+
+    def get_user_orders(self, user_id: str) -> List[OrderDTO]:
+        user_order_objs = Order.objects.filter(customer_id=user_id)
+
+        return [self._convert_to_order_dto(order_obj=each) for each in user_order_objs]
+
+    def get_order_placed_at(self, order_id: str) -> datetime:
+        order_obj = Order.objects.get(id=order_id)
+
+        return order_obj.created_at
+
+    def get_restaurant_orders(self, restaurant_id: str) -> List[OrderDTO]:
+        order_objs = Order.objects.filter(restaurant_id=restaurant_id).exclude(
+            status=OrderStatus.CANCELLED.value
+        )
+
+        return [self._convert_to_order_dto(order_obj=each) for each in order_objs]
+
+    def get_today_restaurant_orders(self, restaurant_id: str) -> List[OrderDTO]:
+
+        today = date.today()
+
+        orders = Order.objects.filter(
+            restaurant_id=restaurant_id,
+            created_at__date=today,
+        ).order_by("-created_at")
+
+        return [self._convert_to_order_dto(order_obj=order) for order in orders]

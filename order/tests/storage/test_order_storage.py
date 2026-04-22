@@ -113,3 +113,23 @@ class TestOrderStorage:
         assert order_items[1].item_id == "item-2"
         assert order_items[1].quantity == 1
         assert float(order_items[1].item_price) == 150.0
+
+    def test_update_order_status_successfully(self):
+        OrderFactory(id="order-1", status=OrderStatus.PLACED.value)
+
+        result = self.storage.update_order_status(
+            order_id="order-1",
+            status=OrderStatus.CONFIRMED,
+        )
+
+        assert result is not None
+        assert result.order_id == "order-1"
+        assert result.status == OrderStatus.CONFIRMED.value
+
+    def test_update_order_status_returns_none_when_order_not_found(self):
+        result = self.storage.update_order_status(
+            order_id="invalid-order",
+            status=OrderStatus.CONFIRMED,
+        )
+
+        assert result is None

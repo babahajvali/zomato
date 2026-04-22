@@ -117,16 +117,42 @@ class UserIsNotRestaurantOwner(Exception):
     def __str__(self):
         return str(self.user_id)
 
+
 class InvalidOrderStatusTransition(Exception):
     def __init__(
-            self,
-            current_status: str,
-            new_status: str,
-            allowed: list,
+        self,
+        current_status: str,
+        new_status: str,
+        allowed: list,
     ):
         self.current_status = current_status
-        self.new_status     = new_status
-        self.allowed        = allowed
+        self.new_status = new_status
+        self.allowed = allowed
 
     def __str__(self):
         return str(self.new_status)
+
+
+class OrderDoesNotBelongToUser(Exception):
+    def __init__(self, user_id: str, order_id: str):
+        self.user_id = user_id
+        self.order_id = order_id
+
+    def __str__(self):
+        return f"Order {self.order_id} does not belong to user {self.user_id}"
+
+
+class OrderCancellationTimeExceeded(Exception):
+    def __init__(self, order_id: str):
+        self.order_id = order_id
+
+    def __str__(self):
+        return f"Order {self.order_id} cancellation time exceeded"
+
+
+class OrderCannotBeCancelled(Exception):
+    def __init__(self, order_id: str):
+        self.order_id = order_id
+
+    def __str__(self):
+        return f"Order {self.order_id} can't be cancelled"

@@ -12,3 +12,8 @@ class OrderType(graphene.ObjectType):
     tax_fee = graphene.Float()
     final_amount = graphene.Float()
     address_id = graphene.Int()
+    placed_at = graphene.String()
+
+
+class OrdersType(graphene.ObjectType):
+    orders = graphene.List(OrderType)

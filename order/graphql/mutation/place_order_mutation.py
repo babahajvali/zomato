@@ -90,4 +90,5 @@ def _map_order_response(order_dto) -> OrderType:
         tax_fee=float(order_dto.tax_fee),
         final_amount=float(order_dto.final_amount),
         address_id=order_dto.address_id,
+        placed_at=order_dto.placed_at,
     )
