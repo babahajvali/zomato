@@ -81,3 +81,6 @@ class CartStorage(CartStorageInterface):
         return [
             self._convert_to_cart_item_dto(cart_item_obj=each) for each in cart_items
         ]
+
+    def get_customer_cart_id(self, customer_id: str) -> str:
+        return Cart.objects.get(customer_id=customer_id).id

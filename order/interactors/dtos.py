@@ -32,9 +32,7 @@ class PromoCodeDTO:
 class PlaceOrderDTO:
     customer_id: str
     restaurant_id: str
-    promo_code_id: int
-    status: OrderStatus
-    items_total: float
+    promo_code_id: Optional[int]
     address_id: int
 
 
@@ -42,7 +40,7 @@ class PlaceOrderDTO:
 class CreateOrderDTO:
     customer_id: str
     restaurant_id: str
-    promo_code_id: int
+    promo_code_id: Optional[int]
     status: OrderStatus
     items_total: float
     delivery_fee: float
@@ -51,14 +49,23 @@ class CreateOrderDTO:
     address_id: int
 
 
+@dataclass
 class OrderDTO:
     order_id: str
     customer_id: str
     restaurant_id: str
-    promo_code_id: int
+    promo_code_id: Optional[int]
     status: OrderStatus
     items_total: float
     delivery_fee: float
     tax_fee: float
     final_amount: float
     address_id: int
+
+
+@dataclass
+class CreateOrderItemDTO:
+    order_id: str
+    item_id: str
+    quantity: int
+    item_price: float

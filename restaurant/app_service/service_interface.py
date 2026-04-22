@@ -1,4 +1,10 @@
-from restaurant.interactors.dtos import DeliveryZoneDTO, RestaurantTimingDTO
+from typing import List
+
+from restaurant.interactors.dtos import (
+    DeliveryZoneDTO,
+    RestaurantTimingDTO,
+    CartItemDTO,
+)
 from restaurant.storages.cart_storage import CartStorage
 from restaurant.storages.delivery_zone_storage import DeliveryZoneStorage
 from restaurant.storages.restaurant_timing_storage import RestaurantTimingStorage
@@ -24,5 +30,23 @@ class ServiceInterface:
 
     def get_restaurant_timing(
         self, restaurant_id: str, day_of_week: int
-    ) -> RestaurantTimingDTO:
-        pass
+    ) -> RestaurantTimingDTO | None:
+        restaurant_day_timing = (
+            self.restaurant_timing_storage.get_day_restaurant_timing(
+                restaurant_id=restaurant_id, day_of_week=day_of_week
+            )
+        )
+        if restaurant_day_timing is None:
+            return None
+
+        return restaurant_day_timing
+
+    def get_cart_items(self, cart_id: str) -> List[CartItemDTO]:
+        return self.cart_storage.get_cart_items(cart_id=cart_id)
+
+    def clear_cart_items(self, cart_id: str):
+
+        return self.cart_storage.clear_cart_items(cart_id=cart_id)
+
+    def get_customer_cart_id(self, customer_id: str) -> str:
+        return self.cart_storage.get_customer_cart_id(customer_id=customer_id)

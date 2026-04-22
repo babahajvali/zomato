@@ -125,3 +125,20 @@ class CartItemNotFound(Exception):
 
     def __str__(self):
         return f"{self.cart_item_id} cart item not found"
+
+
+class DuplicateDeliveryZones(Exception):
+    def __init__(self, combinations):
+        self.combinations = combinations
+        self.message = self._build_message(combinations)
+
+    @staticmethod
+    def _build_message(combinations):
+        formatted = [
+            f"(restaurant_id={restaurant_id}, pin_code={pin_code})"
+            for restaurant_id, pin_code in combinations
+        ]
+        return f"Duplicate delivery zones found for: {', '.join(formatted)}"
+
+    def __str__(self):
+        return self.message

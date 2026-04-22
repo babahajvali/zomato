@@ -4,7 +4,14 @@ import uuid
 import factory
 from factory.django import DjangoModelFactory
 
-from restaurant.models import MenuItem, Restaurant, RestaurantTiming, Cart, CartItem
+from restaurant.models import (
+    MenuItem,
+    Restaurant,
+    RestaurantTiming,
+    Cart,
+    CartItem,
+    DeliveryZone,
+)
 
 
 class RestaurantFactory(DjangoModelFactory):
@@ -66,3 +73,13 @@ class CartItemFactory(DjangoModelFactory):
     menu_item = factory.SubFactory(MenuItemFactory)
     quantity = 2
     item_price = 199.0
+
+
+class DeliveryZoneFactory(DjangoModelFactory):
+    class Meta:
+        model = DeliveryZone
+
+    restaurant = factory.SubFactory(RestaurantFactory)
+    pin_code = factory.Sequence(lambda n: f"500{n:03d}")
+    delivery_fee = 30.0
+    estimated_delivery_mins = 30
