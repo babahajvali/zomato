@@ -34,3 +34,45 @@ class PromoCodeNotFound(graphene.ObjectType):
 
 class EmptyCartItemsFound(graphene.ObjectType):
     cart_id = graphene.String()
+
+
+class OrderNotFound(graphene.ObjectType):
+    order_id = graphene.String()
+
+
+class UserIsNotRestaurantOwner(graphene.ObjectType):
+    user_id = graphene.String()
+
+
+class InvalidOrderStatusTransition(graphene.ObjectType):
+    current_status = graphene.String()
+    new_status = graphene.String()
+    allowed = graphene.List(graphene.String)
+
+
+class OrderCancellationTimeExceeded(graphene.ObjectType):
+    order_id = graphene.String()
+
+
+class OrderCannotBeCancelled(graphene.ObjectType):
+    order_id = graphene.String()
+
+
+class OrderNotBelongsToUser(graphene.ObjectType):
+    order_id = graphene.String()
+
+
+class OrderCancellationTimeExceededType(graphene.ObjectType):
+    order_id = graphene.String()
+
+
+class OrderCannotBeCancelledType(graphene.ObjectType):
+    order_id = graphene.String()
+
+
+class OrderNotBelongsToUserType(graphene.ObjectType):
+    order_id = graphene.String()
+
+
+class OrderNotFoundType(graphene.ObjectType):
+    order_id = graphene.String()

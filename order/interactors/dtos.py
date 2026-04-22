@@ -61,6 +61,7 @@ class OrderDTO:
     tax_fee: float
     final_amount: float
     address_id: int
+    placed_at: datetime
 
 
 @dataclass
