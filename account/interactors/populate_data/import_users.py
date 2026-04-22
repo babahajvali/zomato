@@ -1,31 +1,30 @@
 from typing import List, Any
 
-from account.exception.custom_exceptions import AlreadyExistsEmail, \
-    DuplicateUserEmails
+from account.exception.custom_exceptions import AlreadyExistsEmail, DuplicateUserEmails
 from account.interactors.dtos import CreateUserDTO
-from account.interactors.storage_interface.user_storage_interface import \
-    UserStorageInterface
+from account.interactors.storage_interface.user_storage_interface import (
+    UserStorageInterface,
+)
 from utils.read_csv_util import read_csv, validate_row
 
 
 class ImportUsers:
-
     def __init__(self, user_storage: UserStorageInterface):
         self.user_storage = user_storage
 
     def import_users(self, file_path="./sample_data/users.csv"):
         rows = read_csv(file_path=file_path)
-        
-        emails = self.validate_row_and_get_emails(rows=rows)
-        self._check_duplicate_emails(emails)
-        self._check_existing_emails(emails)
+
+        emails = self._validate_row_and_get_emails(rows=rows)
+        self._validate_duplicate_emails(emails)
+        self._validate_existing_emails(emails)
 
         user_dtos = [
             CreateUserDTO(
-                name=row['name'],
-                email=row['email'],
-                phone_number=row['phone_number'],
-                role=row['role']
+                name=row["name"],
+                email=row["email"],
+                phone_number=row["phone_number"],
+                role=row["role"],
             )
             for row in rows
         ]
@@ -34,15 +33,14 @@ class ImportUsers:
 
         return f"imported {len(created_users)} users"
 
-    def _check_existing_emails(self, emails: List[str]):
-        existing_emails = self.user_storage.get_existing_emails(
-            emails)
+    def _validate_existing_emails(self, emails: List[str]):
+        existing_emails = self.user_storage.get_existing_emails(emails)
 
         if existing_emails:
             raise AlreadyExistsEmail(emails=existing_emails)
 
     @staticmethod
-    def _check_duplicate_emails(emails: List[str]):
+    def _validate_duplicate_emails(emails: List[str]):
         seen = set()
         duplicates = []
         for email in emails:
@@ -54,13 +52,13 @@ class ImportUsers:
             raise DuplicateUserEmails(emails=duplicates)
 
     @staticmethod
-    def validate_row_and_get_emails(rows: list[dict[Any, str | Any]]) -> List[str]:
+    def _validate_row_and_get_emails(rows: list[dict[Any, str | Any]]) -> List[str]:
         emails = []
         for index, row in enumerate(rows, start=1):
-            validate_row(row, ['email', 'name'], f"user row {index}")
+            validate_row(row, ["email", "name"], f"user row {index}")
 
-            email = row['email'].strip().lower()
-            row['email'] = email
+            email = row["email"].strip().lower()
+            row["email"] = email
 
             emails.append(email)
 

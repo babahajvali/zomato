@@ -53,9 +53,9 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
             restaurant_ids=restaurant_ids
         )
 
-        restaurants = self.compute_is_open_bulk(
+        restaurant_dtos = self.compute_is_open_bulk(
             restaurants=restaurants,
             timings=timings,
         )
 
-        return restaurants
+        return restaurant_dtos

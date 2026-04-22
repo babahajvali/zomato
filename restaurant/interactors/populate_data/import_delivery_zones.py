@@ -34,8 +34,8 @@ class ImportDeliveryZones:
 
             combinations.append((restaurant_id, pin_code))
 
-        self._check_duplicate_combinations(combinations)
-        self._check_existing_delivery_zones(combinations)
+        self._validate_duplicate_combinations(combinations)
+        self._validate_existing_delivery_zones(combinations)
 
         delivery_zones_dto = [
             CreateDeliveryZoneDTO(
@@ -55,7 +55,7 @@ class ImportDeliveryZones:
 
         return f"{len(created_delivery_zones)} delivery zones created"
 
-    def _check_existing_delivery_zones(self, combinations: List[Tuple[str, str]]):
+    def _validate_existing_delivery_zones(self, combinations: List[Tuple[str, str]]):
         existing = self.delivery_zone_storage_interface.get_existing_delivery_zones(
             combinations
         )
@@ -64,7 +64,7 @@ class ImportDeliveryZones:
             raise DuplicateDeliveryZones(combinations=existing)
 
     @staticmethod
-    def _check_duplicate_combinations(combinations: List[Tuple[str, str]]):
+    def _validate_duplicate_combinations(combinations: List[Tuple[str, str]]):
         seen = set()
         duplicates = []
 

@@ -18,8 +18,8 @@ class CreateMenuItemInteractor(RestaurantMixin):
         user_id: str,
         restaurant_id: str,
     ) -> List[MenuItemDTO]:
-        self.check_restaurant_is_exists(restaurant_id=restaurant_id)
-        self.check_user_is_restaurant_owner(
+        self.validate_restaurant_is_exists(restaurant_id=restaurant_id)
+        self.validate_user_is_restaurant_owner(
             user_id=user_id, restaurant_id=restaurant_id
         )
 

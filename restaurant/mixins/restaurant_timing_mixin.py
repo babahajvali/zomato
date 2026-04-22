@@ -57,11 +57,11 @@ class TimingMixin:
                 open_time=open_time, close_time=close_time
             )
         elif open_time is not None:
-            self.check_open_time_valid(timing_id=timing_id, open_time=open_time)
+            self.validate_open_time_valid(timing_id=timing_id, open_time=open_time)
         elif close_time is not None:
-            self.check_close_time_valid(timing_id=timing_id, close_time=close_time)
+            self.validate_close_time_valid(timing_id=timing_id, close_time=close_time)
 
-    def check_open_time_valid(self, timing_id: int, open_time: datetime.time):
+    def validate_open_time_valid(self, timing_id: int, open_time: datetime.time):
         timing_data = self.restaurant_timing_storage.get_restaurant_timing(
             timing_id=timing_id
         )
@@ -71,7 +71,7 @@ class TimingMixin:
                 open_time=open_time, close_time=timing_data.close_time
             )
 
-    def check_close_time_valid(self, timing_id: int, close_time: datetime.time):
+    def validate_close_time_valid(self, timing_id: int, close_time: datetime.time):
 
         timing_data = self.restaurant_timing_storage.get_restaurant_timing(
             timing_id=timing_id
