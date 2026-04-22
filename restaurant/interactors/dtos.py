@@ -168,3 +168,20 @@ class DeliveryZoneDTO:
     pin_code: str
     delivery_fee: float
     estimated_delivery_mins: int
+
+
+@dataclass
+class CreateReviewDTO:
+    restaurant_id: str
+    customer_id: str
+    rating: int
+    review: str
+
+
+@dataclass
+class ReviewDTO:
+    review_id: int
+    restaurant_id: str
+    customer_id: str
+    rating: int
+    review: str

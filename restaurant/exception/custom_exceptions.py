@@ -142,3 +142,11 @@ class DuplicateDeliveryZones(Exception):
 
     def __str__(self):
         return self.message
+
+
+class UserAlreadyReviewedRestaurant(Exception):
+    def __init__(self, user_id: str):
+        self.user_id = user_id
+
+    def __str__(self):
+        return f"{self.user_id} user already reviewed"
