@@ -9,6 +9,7 @@ class PromoCodeType(Enum):
     def get_list_of_tuples(cls):
         return [(member.value, member.value.capitalize()) for member in cls]
 
+
 class OrderStatus(Enum):
     PLACED = "PLACED"
     CONFIRMED = "CONFIRMED"
@@ -20,3 +21,7 @@ class OrderStatus(Enum):
     @classmethod
     def get_list_of_tuples(cls):
         return [(member.value, member.value.capitalize()) for member in cls]
+
+    @classmethod
+    def get_status(cls):
+        return [member.value for member in cls]
