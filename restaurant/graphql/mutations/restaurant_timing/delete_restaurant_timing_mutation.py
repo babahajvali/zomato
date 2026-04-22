@@ -3,7 +3,6 @@ import graphene
 from restaurant.exception import custom_exceptions
 from restaurant.graphql.types.error_types import (
     RestaurantTimingNotFound,
-    UserIsNotRestaurantOwner,
 )
 from restaurant.graphql.types.input_types import DeleteRestaurantTimingInputParams
 from restaurant.graphql.types.response_types import DeleteRestaurantTimingResponse
@@ -12,7 +11,9 @@ from restaurant.interactors.restaurant_timing.restaurant_timing_interactor impor
     RestaurantTimingInteractor,
 )
 from restaurant.storages.restaurant_storage import RestaurantStorage
+
 from restaurant.storages.restaurant_timing_storage import RestaurantTimingStorage
+from utils.graphql_types import UserIsNotRestaurantOwner
 
 
 class DeleteRestaurantTimingMutation(graphene.Mutation):

@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, create_autospec
 
 import pytest
 
-from order.exception.custom_exceptions import UserIsNotRestaurantOwner
+from order.exception.custom_exceptions import UserIsNotRestaurantOwnerInOrder
 from order.interactors.order.get_restaurant_order_interactor import (
     GetRestaurantOrderInteractor,
 )
@@ -45,7 +45,7 @@ class TestGetRestaurantOrderInteractor:
             "owner-1"
         )
 
-        with pytest.raises(UserIsNotRestaurantOwner) as exc:
+        with pytest.raises(UserIsNotRestaurantOwnerInOrder) as exc:
             self.interactor.get_restaurant_order(
                 restaurant_id="restaurant-1",
                 user_id="other-user",

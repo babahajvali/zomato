@@ -1,5 +1,5 @@
 from order.exception import custom_exceptions
-from order.graphql.types.error_types import OrderNotFound, UserIsNotRestaurantOwner
+from utils.graphql_types import UserIsNotRestaurantOwner
 from order.graphql.types.types import OrderType, OrdersType
 from order.interactors.order.get_restaurant_order_interactor import (
     GetRestaurantOrderInteractor,
@@ -38,5 +38,5 @@ def resolve_today_restaurant_orders(root, info, params):
             user_id=info.context.user_id,
         )
         return map_orders_response(order_dtos=order_dtos)
-    except custom_exceptions.UserIsNotRestaurantOwner as exc:
+    except custom_exceptions.UserIsNotRestaurantOwnerInOrder as exc:
         return UserIsNotRestaurantOwner(user_id=exc.user_id)

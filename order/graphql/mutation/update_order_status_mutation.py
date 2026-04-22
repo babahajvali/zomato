@@ -2,10 +2,10 @@ import graphene
 
 from order.constants.enums import OrderStatus
 from order.exception import custom_exceptions
+from order.exception.custom_exceptions import UserIsNotRestaurantOwner
 from order.graphql.types.error_types import (
     InvalidOrderStatusTransition,
     OrderNotFound,
-    UserIsNotRestaurantOwner,
 )
 from order.graphql.types.input_types import UpdateOrderStatusInputParams
 from order.graphql.types.response_types import UpdateOrderStatusResponse
@@ -51,7 +51,7 @@ class UpdateOrderStatusMutation(graphene.Mutation):
         except custom_exceptions.OrderNotFound as exc:
             return OrderNotFound(order_id=exc.order_id)
 
-        except custom_exceptions.UserIsNotRestaurantOwner as exc:
+        except custom_exceptions.UserIsNotRestaurantOwnerInOrder as exc:
             return UserIsNotRestaurantOwner(user_id=exc.user_id)
 
         except custom_exceptions.InvalidOrderStatusTransition as exc:

@@ -11,13 +11,13 @@ from order.graphql.types.error_types import (
     EmptyCartItemsFound,
     InvalidOrderStatusTransition,
     OrderNotFound,
-    UserIsNotRestaurantOwner,
     OrderCancellationTimeExceededType,
     OrderCannotBeCancelledType,
     OrderNotBelongsToUserType,
     OrderNotFoundType,
 )
 from order.graphql.types.types import OrderType, OrdersType
+from utils.graphql_types import UserIsNotRestaurantOwner
 
 
 class PlaceOrderResponse(graphene.Union):

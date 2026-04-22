@@ -1,32 +1,28 @@
 import graphene
 
 
-class RestaurantTimingNotFoundType(graphene.ObjectType):
+class RestaurantTimingNotFound(graphene.ObjectType):
     id = graphene.Int(required=True)
 
 
-class OpenTimeGreaterThanCloseTimeType(graphene.ObjectType):
+class OpenTimeGreaterThanCloseTime(graphene.ObjectType):
     open_time = graphene.Time(required=True)
     close_time = graphene.Time(required=True)
 
 
-class UserIsNotRestaurantOwnerType(graphene.ObjectType):
-    user_id = graphene.String(required=True)
-
-
-class RestaurantNotFoundType(graphene.ObjectType):
+class RestaurantNotFound(graphene.ObjectType):
     restaurant_id = graphene.String(required=True)
 
 
-class InvalidCategoriesFoundType(graphene.ObjectType):
+class InvalidCategoriesFound(graphene.ObjectType):
     categories = graphene.List(graphene.String, required=True)
 
 
-class InvalidCuisineTypeExceptionType(graphene.ObjectType):
+class InvalidCuisineTypeException(graphene.ObjectType):
     cuisine_type = graphene.String(required=True)
 
 
-class InvalidMinRatingExceptionType(graphene.ObjectType):
+class InvalidMinRatingException(graphene.ObjectType):
     min_rating = graphene.Float(required=True)
 
 

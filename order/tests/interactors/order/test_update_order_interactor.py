@@ -7,7 +7,7 @@ from order.constants.enums import OrderStatus
 from order.exception.custom_exceptions import (
     InvalidOrderStatusTransition,
     OrderNotFound,
-    UserIsNotRestaurantOwner,
+    UserIsNotRestaurantOwnerInOrder,
 )
 from order.interactors.order.update_order_interactor import UpdateOrderStatusInteractor
 from order.interactors.storage_interface.order_storage_interface import (
@@ -92,7 +92,7 @@ class TestUpdateOrderStatusInteractor:
             "owner-1"
         )
 
-        with pytest.raises(UserIsNotRestaurantOwner) as exc:
+        with pytest.raises(UserIsNotRestaurantOwnerInOrder) as exc:
             self.interactor.update_order_status(
                 order_id="order-1",
                 status=OrderStatus.CONFIRMED,

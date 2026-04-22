@@ -40,10 +40,6 @@ class OrderNotFound(graphene.ObjectType):
     order_id = graphene.String()
 
 
-class UserIsNotRestaurantOwner(graphene.ObjectType):
-    user_id = graphene.String()
-
-
 class InvalidOrderStatusTransition(graphene.ObjectType):
     current_status = graphene.String()
     new_status = graphene.String()

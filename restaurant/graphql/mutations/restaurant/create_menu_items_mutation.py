@@ -8,7 +8,7 @@ from restaurant.graphql.types.response_types import CreateMenuItemsResponse
 from restaurant.graphql.types.error_types import (
     InvalidCategoriesFound,
     RestaurantNotFound,
-    UserIsNotRestaurantOwner,
+
 )
 from restaurant.graphql.types.types import MenuItemsType, MenuItemType
 from restaurant.interactors.dtos import CreateMenuItemDTO
@@ -16,6 +16,7 @@ from restaurant.interactors.restaurant.create_menu_item_interactor import (
     CreateMenuItemInteractor,
 )
 from restaurant.storages.restaurant_storage import RestaurantStorage
+from utils.graphql_types import UserIsNotRestaurantOwner
 
 
 class CreateMenuItemsMutation(graphene.Mutation):
