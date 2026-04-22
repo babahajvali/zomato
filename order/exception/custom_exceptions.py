@@ -64,3 +64,31 @@ class InvalidAddressFound(Exception):
 
     def __str__(self):
         return f"Invalid address {self.address_id}"
+
+
+class RestaurantDayTimingNotFound(Exception):
+    def __init__(self, restaurant_id: str, day_of_week: int):
+        self.restaurant_id = restaurant_id
+        self.day_of_week = day_of_week
+
+    def __str__(self):
+        return f"Restaurant {self.restaurant_id} timing not found at this day {self.day_of_week}"
+
+
+class RestaurantClosed(Exception):
+    def __init__(self, restaurant_id: str):
+        self.restaurant_id = restaurant_id
+
+    def __str__(self):
+        return f"Restaurant {self.restaurant_id} closed"
+
+
+class ResourceLocked(Exception):
+    def __init__(self, lock_key: str):
+        self.lock_key = lock_key
+        self.message = (
+            "This resource is currently being modified. Please try again in a moment."
+        )
+
+    def __str__(self):
+        return self.message

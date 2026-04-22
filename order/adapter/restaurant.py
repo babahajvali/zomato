@@ -1,4 +1,6 @@
-from order.adapter.dtos import DeliveryZoneDTO
+from typing import List
+
+from order.adapter.dtos import DeliveryZoneDTO, RestaurantTimingDTO, CartItemDTO
 from restaurant.app_service.service_interface import ServiceInterface
 
 
@@ -20,3 +22,23 @@ class RestaurantAdapter:
             return None
 
         return zones
+
+    def get_restaurant_timing(
+        self, restaurant_id: str, day_of_week: int
+    ) -> RestaurantTimingDTO | None:
+        restaurant_day_timing = self.interface.get_restaurant_timing(
+            restaurant_id=restaurant_id, day_of_week=day_of_week
+        )
+        if restaurant_day_timing is None:
+            return None
+
+        return restaurant_day_timing
+
+    def get_customer_cart_id(self, customer_id: str) -> str:
+        return self.interface.get_customer_cart_id(customer_id=customer_id)
+
+    def clear_customer_cart_items(self, cart_id: str):
+        return self.interface.clear_cart_items(cart_id=cart_id)
+
+    def get_customer_cart_items(self, cart_id: str) -> List[CartItemDTO]:
+        return self.interface.get_cart_items(cart_id=cart_id)

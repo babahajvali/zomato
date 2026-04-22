@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import time
 
 
 @dataclass
@@ -19,3 +20,21 @@ class DeliveryZoneDTO:
     pin_code: str
     delivery_fee: float
     estimated_delivery_mins: int
+
+
+@dataclass
+class RestaurantTimingDTO:
+    timing_id: int
+    restaurant_id: str
+    day_of_week: int
+    open_time: time
+    close_time: time
+
+
+@dataclass
+class CartItemDTO:
+    cart_item_id: int
+    cart_id: str
+    menu_item_id: str
+    quantity: int
+    item_price: float

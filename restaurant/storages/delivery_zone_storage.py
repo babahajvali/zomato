@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 from restaurant.interactors.dtos import CreateDeliveryZoneDTO, DeliveryZoneDTO
 from restaurant.interactors.storage_interface.delivery_zone_storage_interface import (
@@ -10,11 +10,11 @@ from restaurant.models import DeliveryZone
 class DeliveryZoneStorage(DeliveryZoneStorageInterface):
     @staticmethod
     def _convert_to_delivery_zone_dto(zone_obj: DeliveryZone) -> DeliveryZoneDTO:
-        DeliveryZoneDTO(
+        return DeliveryZoneDTO(
             delivery_zone_id=zone_obj.pk,
             restaurant_id=zone_obj.restaurant.id,
             pin_code=zone_obj.pin_code,
-            delivery_fee=zone_obj.delivery_fee,
+            delivery_fee=float(zone_obj.delivery_fee),
             estimated_delivery_mins=zone_obj.estimated_delivery_mins,
         )
 
@@ -46,11 +46,32 @@ class DeliveryZoneStorage(DeliveryZoneStorageInterface):
         return self._convert_to_delivery_zone_dto(zone_obj=delivery_zone_obj)
 
     def get_restaurant_delivery_zones(
-        self, restaurant_id: str , pin_code: str
+        self, restaurant_id: str, pin_code: str
     ) -> DeliveryZoneDTO | None:
-        zone_obj = DeliveryZone.objects.filter(restaurant_id=restaurant_id, pin_code=pin_code).first()
+        zone_obj = DeliveryZone.objects.filter(
+            restaurant_id=restaurant_id, pin_code=pin_code
+        ).first()
 
         if zone_obj is None:
             return None
 
         return self._convert_to_delivery_zone_dto(zone_obj=zone_obj)
+
+    def get_existing_delivery_zones(self, combinations: List[Tuple[str, str]]):
+        if not combinations:
+            return []
+
+        restaurant_ids = [restaurant_id for restaurant_id, _ in combinations]
+        pin_codes = [pin_code for _, pin_code in combinations]
+
+        existing_zones = DeliveryZone.objects.filter(
+            restaurant_id__in=restaurant_ids, pin_code__in=pin_codes
+        ).values_list("restaurant_id", "pin_code")
+
+        existing_set = set(existing_zones)
+
+        return [
+            (restaurant_id, pin_code)
+            for restaurant_id, pin_code in combinations
+            if (restaurant_id, pin_code) in existing_set
+        ]

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Tuple
 
 from restaurant.interactors.dtos import CreateDeliveryZoneDTO, DeliveryZoneDTO
 
@@ -19,4 +19,8 @@ class DeliveryZoneStorageInterface(ABC):
     def get_restaurant_delivery_zones(
         self, restaurant_id: str, pin_code: str
     ) -> DeliveryZoneDTO:
+        pass
+
+    @abstractmethod
+    def get_existing_delivery_zones(self, combinations: List[Tuple[str, str]]):
         pass

@@ -16,7 +16,7 @@ class EmailNotFound(Exception):
         self.email = email
 
     def __str__(self):
-        return f'User not found: {self.email}'
+        return f"User not found: {self.email}"
 
 
 class UserNotFound(Exception):

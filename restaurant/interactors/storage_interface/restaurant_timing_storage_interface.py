@@ -39,3 +39,8 @@ class RestaurantTimingStorageInterface(ABC):
             self, restaurant_id: str) -> List[RestaurantTimingDTO]:
         pass
 
+    @abstractmethod
+    def get_day_restaurant_timing(self, restaurant_id: str, day_of_week: int) -> RestaurantTimingDTO:
+        pass
+
+
