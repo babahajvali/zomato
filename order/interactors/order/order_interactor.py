@@ -3,6 +3,7 @@ from typing import List
 
 from django.utils import timezone
 
+from order.constants.enums import OrderStatus
 from order.exception.custom_exceptions import (
     OrderCancellationTimeExceeded,
     OrderCannotBeCancelled,
@@ -50,5 +51,5 @@ class OrderInteractor(OrderMixin):
     def _validate_order_is_cancellable(self, order_id: str):
         order_dto = self.order_storage.get_order(order_id=order_id)
 
-        if order_dto.status not in ["PLACED"]:
+        if order_dto.status != OrderStatus.PLACED.value:
             raise OrderCannotBeCancelled(order_id=order_id)

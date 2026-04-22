@@ -65,6 +65,8 @@ class TestImportPromoCodes:
                 "discount_value": "50",
                 "min_order_value": "299",
                 "max_usage": "100",
+                "valid_from": "2026-04-17T10:30:00Z",
+                "valid_until": "2026-04-30T23:59:59Z",
             },
             {
                 "code": "SAVE50",
@@ -72,6 +74,8 @@ class TestImportPromoCodes:
                 "discount_value": "10",
                 "min_order_value": "199",
                 "max_usage": "50",
+                "valid_from": "2026-04-18T10:30:00Z",
+                "valid_until": "2026-05-01T23:59:59Z",
             },
         ]
 
@@ -92,6 +96,8 @@ class TestImportPromoCodes:
                 "discount_value": "50",
                 "min_order_value": "299",
                 "max_usage": "100",
+                "valid_from": "2026-04-17T10:30:00Z",
+                "valid_until": "2026-04-30T23:59:59Z",
             }
         ]
 
@@ -137,6 +143,6 @@ class TestImportPromoCodes:
 
         assert (
             str(exc.value)
-            == "valid_until should be greater than valid_from in row SAVE50"
+            == "valid_until should be greater than valid_from in row 1 (code: SAVE50)"
         )
         self.promo_code_storage.create_bulk_promo_codes.assert_not_called()

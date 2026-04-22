@@ -165,3 +165,71 @@ class BaseRestaurantOrdersTestCase(GraphQLBaseTestCase):
       }
     }
     """
+
+
+class BaseCancelOrderTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    mutation CancelOrder($params: CancelOrderInputParams!) {
+      cancelOrder(params: $params) {
+        ... on OrderType {
+          __typename
+          orderId
+          customerId
+          restaurantId
+          promoCodeId
+          status
+          itemsTotal
+          deliveryFee
+          taxFee
+          finalAmount
+          addressId
+        }
+        ... on OrderNotFoundType {
+          __typename
+          orderId
+        }
+        ... on OrderNotBelongsToUserType {
+          __typename
+          orderId
+        }
+        ... on OrderCancellationTimeExceededType {
+          __typename
+          orderId
+        }
+        ... on OrderCannotBeCancelledType {
+          __typename
+          orderId
+        }
+      }
+    }
+    """
+
+
+class BaseAutoCancelOrderTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    mutation AutoCancelOrder($params: AutoCancelOrderInputParams!) {
+      autoCancelOrder(params: $params) {
+        ... on OrderType {
+          __typename
+          orderId
+          customerId
+          restaurantId
+          promoCodeId
+          status
+          itemsTotal
+          deliveryFee
+          taxFee
+          finalAmount
+          addressId
+        }
+        ... on OrderNotFoundType {
+          __typename
+          orderId
+        }
+        ... on OrderCannotBeCancelledType {
+          __typename
+          orderId
+        }
+      }
+    }
+    """

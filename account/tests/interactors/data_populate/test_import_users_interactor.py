@@ -10,7 +10,7 @@ from account.interactors.populate_data.import_users import ImportUsers
 from account.interactors.storage_interface.user_storage_interface import (
     UserStorageInterface,
 )
-from account.tests.factories import CreateUserDTOFactory
+from account.tests.factories.dto_factories import CreateUserDTOFactory
 
 
 class TestImportUsers:
@@ -39,12 +39,15 @@ class TestImportUsers:
 
         self.user_storage.get_existing_emails.return_value = []
 
-        with patch(
-            "account.interactors.populate_data.import_users.read_csv",
-            return_value=rows,
-        ), patch(
-            "account.interactors.populate_data.import_users.validate_row",
-            validate_row,
+        with (
+            patch(
+                "account.interactors.populate_data.import_users.read_csv",
+                return_value=rows,
+            ),
+            patch(
+                "account.interactors.populate_data.import_users.validate_row",
+                validate_row,
+            ),
         ):
             self.interactor.import_users(file_path="users.csv")
 
@@ -74,12 +77,15 @@ class TestImportUsers:
             },
         ]
 
-        with patch(
-            "account.interactors.populate_data.import_users.read_csv",
-            return_value=rows,
-        ), patch(
-            "account.interactors.populate_data.import_users.validate_row",
-            MagicMock(),
+        with (
+            patch(
+                "account.interactors.populate_data.import_users.read_csv",
+                return_value=rows,
+            ),
+            patch(
+                "account.interactors.populate_data.import_users.validate_row",
+                MagicMock(),
+            ),
         ):
             with pytest.raises(DuplicateUserEmails) as exc:
                 self.interactor.import_users(file_path="users.csv")
@@ -100,12 +106,15 @@ class TestImportUsers:
 
         self.user_storage.get_existing_emails.return_value = ["alice@example.com"]
 
-        with patch(
-            "account.interactors.populate_data.import_users.read_csv",
-            return_value=rows,
-        ), patch(
-            "account.interactors.populate_data.import_users.validate_row",
-            MagicMock(),
+        with (
+            patch(
+                "account.interactors.populate_data.import_users.read_csv",
+                return_value=rows,
+            ),
+            patch(
+                "account.interactors.populate_data.import_users.validate_row",
+                MagicMock(),
+            ),
         ):
             with pytest.raises(AlreadyExistsEmail) as exc:
                 self.interactor.import_users(file_path="users.csv")

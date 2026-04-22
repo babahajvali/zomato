@@ -5,8 +5,9 @@ from order.graphql.resolvers.order_resolvers import (
     resolve_restaurant_orders,
     resolve_user_orders,
 )
-from order.graphql.resolvers.today_restaurant_orders_resolver import \
-    resolve_today_restaurant_orders
+from order.graphql.resolvers.today_restaurant_orders_resolver import (
+    resolve_today_restaurant_orders,
+)
 from order.graphql.types.input_types import (
     GetOrderInputParams,
     GetRestaurantOrdersInputParams,
@@ -28,7 +29,6 @@ class OrderQueries(graphene.ObjectType):
     )
     user_orders = graphene.Field(
         UserOrdersResponse,
-        params=GetRestaurantOrdersInputParams(required=True),
         resolver=resolve_user_orders,
     )
     restaurant_orders = graphene.Field(
@@ -41,5 +41,3 @@ class OrderQueries(graphene.ObjectType):
         params=GetTodayRestaurantOrdersInputParams(required=True),
         resolver=resolve_today_restaurant_orders,
     )
-
-    

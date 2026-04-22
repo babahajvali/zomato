@@ -10,7 +10,7 @@ from account.interactors.populate_data.import_addresses import ImportAddresses
 from account.interactors.storage_interface.address_storage_interface import (
     AddressStorageInterface,
 )
-from account.tests.factories import CreateAddressDTOFactory
+from account.tests.factories.dto_factories import CreateAddressDTOFactory
 
 
 class TestImportAddresses:
@@ -45,12 +45,15 @@ class TestImportAddresses:
         self.address_storage.get_existing_addresses.return_value = []
 
         # Act
-        with patch(
-            "account.interactors.populate_data.import_addresses.read_csv",
-            return_value=rows,
-        ), patch(
-            "account.interactors.populate_data.import_addresses.validate_row",
-            validate_row,
+        with (
+            patch(
+                "account.interactors.populate_data.import_addresses.read_csv",
+                return_value=rows,
+            ),
+            patch(
+                "account.interactors.populate_data.import_addresses.validate_row",
+                validate_row,
+            ),
         ):
             self.interactor.import_addresses(file_path="addresses.csv")
 
@@ -86,12 +89,15 @@ class TestImportAddresses:
             },
         ]
 
-        with patch(
-            "account.interactors.populate_data.import_addresses.read_csv",
-            return_value=rows,
-        ), patch(
-            "account.interactors.populate_data.import_addresses.validate_row",
-            MagicMock(),
+        with (
+            patch(
+                "account.interactors.populate_data.import_addresses.read_csv",
+                return_value=rows,
+            ),
+            patch(
+                "account.interactors.populate_data.import_addresses.validate_row",
+                MagicMock(),
+            ),
         ):
             with pytest.raises(DuplicateAddresses):
                 self.interactor.import_addresses(file_path="addresses.csv")
@@ -114,15 +120,17 @@ class TestImportAddresses:
             ("alice@example.com", "Home")
         ]
 
-        with patch(
-            "account.interactors.populate_data.import_addresses.read_csv",
-            return_value=rows,
-        ), patch(
-            "account.interactors.populate_data.import_addresses.validate_row",
-            MagicMock(),
+        with (
+            patch(
+                "account.interactors.populate_data.import_addresses.read_csv",
+                return_value=rows,
+            ),
+            patch(
+                "account.interactors.populate_data.import_addresses.validate_row",
+                MagicMock(),
+            ),
         ):
             with pytest.raises(AlreadyExistsAddress) as exc:
                 self.interactor.import_addresses(file_path="addresses.csv")
 
         assert exc.value.addresses == [("alice@example.com", "Home")]
-

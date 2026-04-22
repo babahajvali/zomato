@@ -25,7 +25,8 @@ class CancelOrderMutation(graphene.Mutation):
 
     Output = CancelOrderResponse
 
-    def mutate(self, root, info, params):
+    @staticmethod
+    def mutate(root, info, params):
         interactor = OrderInteractor(order_storage=OrderStorage())
 
         try:
@@ -38,7 +39,7 @@ class CancelOrderMutation(graphene.Mutation):
                 customer_id=str(order_dto.customer_id),
                 restaurant_id=str(order_dto.restaurant_id),
                 promo_code_id=order_dto.promo_code_id,
-                status=order_dto.status,
+                status=order_dto.status.value,
                 items_total=float(order_dto.items_total),
                 delivery_fee=float(order_dto.delivery_fee),
                 tax_fee=float(order_dto.tax_fee),

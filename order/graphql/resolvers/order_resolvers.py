@@ -15,7 +15,7 @@ def map_order_response(order_dto) -> OrderType:
         customer_id=str(order_dto.customer_id),
         restaurant_id=str(order_dto.restaurant_id),
         promo_code_id=order_dto.promo_code_id,
-        status=order_dto.status,
+        status=order_dto.status.value,
         items_total=float(order_dto.items_total),
         delivery_fee=float(order_dto.delivery_fee),
         tax_fee=float(order_dto.tax_fee),
@@ -57,5 +57,5 @@ def resolve_restaurant_orders(root, info, params):
             user_id=info.context.user_id,
         )
         return map_orders_response(order_dtos=order_dtos)
-    except custom_exceptions.UserIsNotRestaurantOwnerInOrder as exc:
+    except custom_exceptions.UserIsNotRestaurantOwner as exc:
         return UserIsNotRestaurantOwner(user_id=exc.user_id)

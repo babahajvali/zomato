@@ -37,7 +37,7 @@ class TestDeleteRestaurantTiming:
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         RestaurantDTOFactory(id=restaurant_id, owner_id=user_id)
 
-        RestaurantTimingDTOFactory(id=id, restaurant_id=restaurant_id)
+        RestaurantTimingDTOFactory(timing_id=id, restaurant_id=restaurant_id)
         self.restaurant_timing_storage.get_restaurant_owner_id.return_value = user_id
         self.interactor.delete_restaurant_timing(id=id, user_id=user_id)
 

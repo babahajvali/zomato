@@ -36,7 +36,6 @@ class CreateMenuItemDTOFactory(factory.Factory):
 
     name = factory.Sequence(lambda n: f"Item {n}")
     description = factory.Faker("sentence")
-    restaurant_id = factory.Sequence(lambda n: f"restaurant-{n}")
     category = Category.STARTER
     price = 199.0
     is_veg = True
@@ -106,7 +105,7 @@ class RestaurantTimingDTOFactory(factory.Factory):
     class Meta:
         model = RestaurantTimingDTO
 
-    id = factory.Sequence(lambda n: f"timing-{n}")
+    timing_id = factory.Sequence(lambda n: n)
     restaurant_id = factory.Sequence(lambda n: f"restaurant-{n}")
     day_of_week = 1
     open_time = "09:00:00"

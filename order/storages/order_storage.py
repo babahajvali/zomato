@@ -22,7 +22,7 @@ class OrderStorage(OrderStorageInterface):
             customer_id=str(order_obj.customer_id),
             restaurant_id=str(order_obj.restaurant_id),
             promo_code_id=order_obj.promo_code.id if order_obj.promo_code else None,
-            status=order_obj.status,
+            status=OrderStatus(order_obj.status),
             items_total=float(order_obj.items_total),
             delivery_fee=float(order_obj.delivery_fee),
             tax_fee=float(order_obj.tax_fee),

@@ -1,4 +1,5 @@
 import factory
+from datetime import datetime
 
 from order.constants.enums import OrderStatus
 from order.interactors.dtos import (
@@ -77,6 +78,7 @@ class OrderDTOFactory(factory.Factory):
     tax_fee = 20.0
     final_amount = 450.0
     address_id = 1
+    placed_at = factory.LazyFunction(datetime.now)
 
 
 class CreateOrderItemDTOFactory(factory.Factory):
