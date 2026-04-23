@@ -4,9 +4,10 @@ from utils.test_utils import GraphQLBaseTestCase
 class BaseGetUserAddressesTestCase(GraphQLBaseTestCase):
     QUERY = """
     query GetUserAddresses {
-      userAddresses {
-        ... on AddressesType {
+      getUserAddress {
+        ... on UserAddressesType {
           __typename
+          userId
           addresses {
             addressId
             fullAddress
@@ -14,8 +15,11 @@ class BaseGetUserAddressesTestCase(GraphQLBaseTestCase):
             pincode
             label
             isDefault
-            userId
           }
+        }
+        ... on UserNotFound {
+          __typename
+          userId
         }
       }
     }

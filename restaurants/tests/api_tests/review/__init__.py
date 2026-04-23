@@ -13,15 +13,15 @@ class BaseCreateReviewTestCase(GraphQLBaseTestCase):
           rating
           review
         }
-        ... on RestaurantNotFoundType {
+        ... on RestaurantNotFound {
           __typename
           restaurantId
         }
-        ... on InvalidRatingType {
+        ... on InvalidRatingFound {
           __typename
-          rating
+          userRating
         }
-        ... on UserAlreadyReviewedRestaurantType {
+        ... on UserAlreadyReviewedRestaurant {
           __typename
           userId
         }

@@ -1,16 +1,13 @@
 import graphene
+from decimal import Decimal
 
-from orders.exception.custom_exceptions import (
-    OrderCancellationTimeExceeded,
+from orders.exception import custom_exceptions
+
+from orders.graphql.types.error_types import (
     OrderCannotBeCancelled,
     OrderNotFound,
-    OrderDoesNotBelongToUser,
-)
-from orders.graphql.types.error_types import (
-    OrderCancellationTimeExceededType,
-    OrderCannotBeCancelledType,
-    OrderNotFoundType,
-    OrderNotBelongsToUserType,
+    OrderNotBelongsToUser,
+    OrderCancellationTimeExceeded,
 )
 from orders.graphql.types.input_types import CancelOrderInputParams
 from orders.graphql.types.response_types import CancelOrderResponse
@@ -37,17 +34,17 @@ class CancelOrderMutation(graphene.Mutation):
 
             return _map_order_response(order_dto=order_dto)
 
-        except OrderNotFound as exc:
-            return OrderNotFoundType(order_id=exc.order_id)
+        except custom_exceptions.OrderNotFound as exc:
+            return OrderNotFound(order_id=exc.order_id)
 
-        except OrderDoesNotBelongToUser as exc:
-            return OrderNotBelongsToUserType(order_id=exc.order_id)
+        except custom_exceptions.OrderDoesNotBelongToUser as exc:
+            return OrderNotBelongsToUser(order_id=exc.order_id)
 
-        except OrderCancellationTimeExceeded as exc:
-            return OrderCancellationTimeExceededType(order_id=exc.order_id)
+        except custom_exceptions.OrderCancellationTimeExceeded as exc:
+            return OrderCancellationTimeExceeded(order_id=exc.order_id)
 
-        except OrderCannotBeCancelled as exc:
-            return OrderCannotBeCancelledType(order_id=exc.order_id)
+        except custom_exceptions.OrderCannotBeCancelled as exc:
+            return OrderCannotBeCancelled(order_id=exc.order_id)
 
 
 def _map_order_response(order_dto: OrderDTO) -> OrderType:
@@ -57,10 +54,10 @@ def _map_order_response(order_dto: OrderDTO) -> OrderType:
         restaurant_id=str(order_dto.restaurant_id),
         promo_code_id=order_dto.promo_code_id,
         status=order_dto.status,
-        items_total=float(order_dto.items_total),
-        delivery_fee=float(order_dto.delivery_fee),
-        tax_fee=float(order_dto.tax_fee),
-        final_amount=float(order_dto.final_amount),
+        items_total=Decimal(order_dto.items_total),
+        delivery_fee=Decimal(order_dto.delivery_fee),
+        tax_fee=Decimal(order_dto.tax_fee),
+        final_amount=Decimal(order_dto.final_amount),
         address_id=order_dto.address_id,
         placed_at=order_dto.placed_at,
     )

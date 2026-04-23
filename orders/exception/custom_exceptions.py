@@ -176,3 +176,11 @@ class PromoCodeExpired(Exception):
 
     def __str__(self):
         return f"PromoCode {self.code} expired"
+
+
+class OrderAlreadyCancelled(Exception):
+    def __init__(self, order_id: str):
+        self.order_id = order_id
+
+    def __str__(self):
+        return f"Order {self.order_id} already cancelled"

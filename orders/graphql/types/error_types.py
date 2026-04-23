@@ -10,7 +10,7 @@ class PromoCodeNotEligible(graphene.ObjectType):
     items_total = graphene.Float(required=True)
 
 
-class InvalidDeliveryZoneFound(graphene.ObjectType):
+class DeliveryNotAvailableForAddress(graphene.ObjectType):
     restaurant_id = graphene.String(required=True)
     pin_code = graphene.String(required=True)
 
@@ -19,7 +19,7 @@ class InvalidAddressFound(graphene.ObjectType):
     address_id = graphene.Int(required=True)
 
 
-class RestaurantDayTimingNotFound(graphene.ObjectType):
+class RestaurantNotOpenNow(graphene.ObjectType):
     restaurant_id = graphene.String(required=True)
     day_of_week = graphene.Int(required=True)
 
@@ -55,20 +55,4 @@ class OrderCannotBeCancelled(graphene.ObjectType):
 
 
 class OrderNotBelongsToUser(graphene.ObjectType):
-    order_id = graphene.String(required=True)
-
-
-class OrderCancellationTimeExceededType(graphene.ObjectType):
-    order_id = graphene.String(required=True)
-
-
-class OrderCannotBeCancelledType(graphene.ObjectType):
-    order_id = graphene.String(required=True)
-
-
-class OrderNotBelongsToUserType(graphene.ObjectType):
-    order_id = graphene.String(required=True)
-
-
-class OrderNotFoundType(graphene.ObjectType):
     order_id = graphene.String(required=True)

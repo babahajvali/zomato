@@ -3,18 +3,17 @@ import graphene
 from orders.graphql.types.error_types import (
     PromoCodeMaximumUsed,
     PromoCodeNotEligible,
-    InvalidDeliveryZoneFound,
+    DeliveryNotAvailableForAddress,
     InvalidAddressFound,
-    RestaurantDayTimingNotFound,
+    RestaurantNotOpenNow,
     RestaurantClosed,
     PromoCodeNotFound,
     EmptyCartItemsFound,
     InvalidOrderStatusTransition,
     OrderNotFound,
-    OrderCancellationTimeExceededType,
-    OrderCannotBeCancelledType,
-    OrderNotBelongsToUserType,
-    OrderNotFoundType,
+    OrderCannotBeCancelled,
+    OrderNotBelongsToUser,
+    OrderCancellationTimeExceeded,
 )
 from orders.graphql.types.types import OrderType, OrdersType
 from utils.graphql_types import UserIsNotRestaurantOwner
@@ -26,9 +25,9 @@ class PlaceOrderResponse(graphene.Union):
             OrderType,
             PromoCodeMaximumUsed,
             PromoCodeNotEligible,
-            InvalidDeliveryZoneFound,
+            DeliveryNotAvailableForAddress,
             InvalidAddressFound,
-            RestaurantDayTimingNotFound,
+            RestaurantNotOpenNow,
             RestaurantClosed,
             PromoCodeNotFound,
             EmptyCartItemsFound,
@@ -78,10 +77,10 @@ class CancelOrderResponse(graphene.Union):
     class Meta:
         types = (
             OrderType,
-            OrderNotFoundType,
-            OrderNotBelongsToUserType,
-            OrderCancellationTimeExceededType,
-            OrderCannotBeCancelledType,
+            OrderNotFound,
+            OrderNotBelongsToUser,
+            OrderCancellationTimeExceeded,
+            OrderCannotBeCancelled,
         )
 
 
@@ -89,6 +88,6 @@ class AutoCancelOrderResponse(graphene.Union):
     class Meta:
         types = (
             OrderType,
-            OrderNotFoundType,
-            OrderCannotBeCancelledType,
+            OrderNotFound,
+            OrderCannotBeCancelled,
         )

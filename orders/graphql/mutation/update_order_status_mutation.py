@@ -1,4 +1,5 @@
 import graphene
+from decimal import Decimal
 
 from orders.constants.enums import OrderStatus
 from orders.exception import custom_exceptions
@@ -54,10 +55,10 @@ def _map_order_response(order_dto: OrderDTO) -> OrderType:
         restaurant_id=str(order_dto.restaurant_id),
         promo_code_id=order_dto.promo_code_id,
         status=order_dto.status.value,
-        items_total=float(order_dto.items_total),
-        delivery_fee=float(order_dto.delivery_fee),
-        tax_fee=float(order_dto.tax_fee),
-        final_amount=float(order_dto.final_amount),
+        items_total=Decimal(order_dto.items_total),
+        delivery_fee=Decimal(order_dto.delivery_fee),
+        tax_fee=Decimal(order_dto.tax_fee),
+        final_amount=Decimal(order_dto.final_amount),
         address_id=order_dto.address_id,
         placed_at=order_dto.placed_at,
     )

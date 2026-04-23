@@ -1,12 +1,13 @@
 import graphene
+from decimal import Decimal
 
 from orders.exception import custom_exceptions
 from orders.graphql.types.error_types import (
     PromoCodeMaximumUsed,
     PromoCodeNotEligible,
-    InvalidDeliveryZoneFound,
+    DeliveryNotAvailableForAddress,
     InvalidAddressFound,
-    RestaurantDayTimingNotFound,
+    RestaurantNotOpenNow,
     RestaurantClosed,
     PromoCodeNotFound,
     EmptyCartItemsFound,
@@ -61,13 +62,13 @@ class PlaceOrderMutation(graphene.Mutation):
             return InvalidAddressFound(address_id=exc.address_id)
 
         except custom_exceptions.DeliveryNotAvailableForAddress as exc:
-            return InvalidDeliveryZoneFound(
+            return DeliveryNotAvailableForAddress(
                 restaurant_id=exc.restaurant_id,
                 pin_code=exc.pin_code,
             )
 
         except custom_exceptions.RestaurantNotOpenNow as exc:
-            return RestaurantDayTimingNotFound(
+            return RestaurantNotOpenNow(
                 restaurant_id=exc.restaurant_id,
                 day_of_week=exc.day_of_week,
             )
@@ -85,10 +86,10 @@ def _map_order_response(order_dto) -> OrderType:
         restaurant_id=str(order_dto.restaurant_id),
         promo_code_id=order_dto.promo_code_id,
         status=order_dto.status.value,
-        items_total=float(order_dto.items_total),
-        delivery_fee=float(order_dto.delivery_fee),
-        tax_fee=float(order_dto.tax_fee),
-        final_amount=float(order_dto.final_amount),
+        items_total=Decimal(order_dto.items_total),
+        delivery_fee=Decimal(order_dto.delivery_fee),
+        tax_fee=Decimal(order_dto.tax_fee),
+        final_amount=Decimal(order_dto.final_amount),
         address_id=order_dto.address_id,
         placed_at=order_dto.placed_at,
     )

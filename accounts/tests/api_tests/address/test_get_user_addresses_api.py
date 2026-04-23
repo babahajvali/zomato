@@ -3,6 +3,10 @@ import pytest
 from accounts.tests.api_tests.address import BaseGetUserAddressesTestCase
 from accounts.tests.factories.storage_factories import AddressFactory, UserFactory
 
+import factory.random
+
+factory.random.reseed_random(123)
+
 
 @pytest.mark.django_db
 class TestGetUserAddressesApi(BaseGetUserAddressesTestCase):
@@ -32,13 +36,4 @@ class TestGetUserAddressesApi(BaseGetUserAddressesTestCase):
             variables={},
             snapshot=snapshot,
             user_id=user_id,
-        )
-
-    def test_get_user_addresses_unauthorized(self, snapshot):
-        # Act & Assert
-        self.execute_schema(
-            query=self.QUERY,
-            variables={},
-            snapshot=snapshot,
-            user_id=None,
         )

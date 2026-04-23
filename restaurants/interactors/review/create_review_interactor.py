@@ -45,6 +45,5 @@ class CreateReviewInteractor(RestaurantMixin):
 
     @staticmethod
     def _validate_rating(rating: int):
-        print(rating)
         if rating < 1 or rating > 5:
             raise InvalidRatingFound(rating=rating)
