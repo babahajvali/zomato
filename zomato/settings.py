@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "graphene_django",
-    "account",
-    "restaurant",
-    "order",
+    "accounts",
+    "restaurants",
+    "orders",
 ]
 
 MIDDLEWARE = [
