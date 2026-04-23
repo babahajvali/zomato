@@ -54,5 +54,5 @@ def get_browse_restaurants_resolver(root, info, params=None):
         return _map_browse_restaurants_response(restaurants=restaurants)
     except custom_exceptions.InvalidCuisineTypeException as exc:
         return InvalidCuisineTypeException(cuisine_type=str(exc.cuisine_type))
-    except custom_exceptions.InvalidMinRatingException as exc:
+    except custom_exceptions.InvalidMinRating as exc:
         return InvalidMinRatingException(min_rating=exc.min_rating)

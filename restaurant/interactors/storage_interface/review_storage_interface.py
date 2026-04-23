@@ -13,5 +13,5 @@ class ReviewStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def check_user_review_exists(self, user_id: str) -> bool:
+    def check_user_review_exists(self, user_id: str, restaurant_id: str) -> bool:
         pass

@@ -5,10 +5,21 @@ from account.interactors.storage_interface.address_storage_interface import (
 )
 from account.interactors.dtos import CreateAddressDTO, AddressDTO
 from account.models import User, Address
-from account.exception.custom_exceptions import EmailNotFound
 
 
 class AddressStorage(AddressStorageInterface):
+    @staticmethod
+    def _convert_to_address_dto(address_obj: Address) -> AddressDTO:
+        return AddressDTO(
+            address_id=address_obj.pk,
+            label=address_obj.label,
+            user_id=address_obj.user.id,
+            full_address=address_obj.full_address,
+            city=address_obj.city,
+            pincode=address_obj.pin_code,
+            is_default=address_obj.is_default,
+        )
+
     def create_bulk_addresses(self, address_dtos: List[CreateAddressDTO]):
         addresses = []
 
@@ -18,7 +29,6 @@ class AddressStorage(AddressStorageInterface):
         user_map = {user.email: user for user in users}
 
         for dto in address_dtos:
-
             address = Address(
                 user=user_map[dto.email],
                 label=dto.label,
@@ -47,12 +57,12 @@ class AddressStorage(AddressStorageInterface):
 
         if address_obj is None:
             return None
-        return AddressDTO(
-            address_id=address_obj.pk,
-            label=address_obj.label,
-            user_id=address_obj.user.id,
-            full_address=address_obj.full_address,
-            city=address_obj.city,
-            pincode=address_obj.pin_code,
-            is_default=address_obj.is_default,
-        )
+        return self._convert_to_address_dto(address_obj=address_obj)
+
+    def get_user_addresses(self, user_id: str) -> List[AddressDTO]:
+        address_objs = Address.objects.filter(user_id=user_id)
+
+        return [
+            self._convert_to_address_dto(address_obj=address_obj)
+            for address_obj in address_objs
+        ]

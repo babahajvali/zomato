@@ -5,7 +5,7 @@ from restaurant.exception.custom_exceptions import (
     UserIsNotRestaurantOwner,
     InvalidCategoriesFound,
     RestaurantNotFound,
-    InvalidMinRatingException,
+    InvalidMinRating,
     MenuItemNotFound,
 )
 from restaurant.interactors.storage_interface.restaurant_storage_interface import (
@@ -51,7 +51,7 @@ class RestaurantMixin:
     @staticmethod
     def validate_min_rating(min_rating: float):
         if not (0.0 <= min_rating <= 5.0):
-            raise InvalidMinRatingException(min_rating=min_rating)
+            raise InvalidMinRating(min_rating=min_rating)
 
     def validate_menu_item_exists(self, menu_item_id: str):
 

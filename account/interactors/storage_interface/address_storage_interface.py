@@ -18,3 +18,7 @@ class AddressStorageInterface(ABC):
     @abstractmethod
     def get_address_by_id(self, address_id: int) -> AddressDTO:
         pass
+
+    @abstractmethod
+    def get_user_addresses(self, user_id: str) -> List[AddressDTO]:
+        pass

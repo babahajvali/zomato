@@ -29,7 +29,7 @@ class RestaurantClosed(graphene.ObjectType):
 
 
 class PromoCodeNotFound(graphene.ObjectType):
-    promo_code_id = graphene.Int(required=True)
+    promo_code_id = graphene.Int()
 
 
 class EmptyCartItemsFound(graphene.ObjectType):

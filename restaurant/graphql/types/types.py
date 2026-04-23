@@ -96,3 +96,11 @@ class RemoveCartItemSuccessType(graphene.ObjectType):
 class ClearCartItemsSuccessType(graphene.ObjectType):
     success = graphene.Boolean(required=True)
     cart_id = graphene.String(required=True)
+
+
+class ReviewType(graphene.ObjectType):
+    review_id = graphene.Int(required=True)
+    restaurant_id = graphene.String(required=True)
+    customer_id = graphene.String(required=True)
+    rating = graphene.Float(required=True)
+    review = graphene.String()

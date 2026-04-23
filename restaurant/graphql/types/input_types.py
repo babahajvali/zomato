@@ -61,3 +61,9 @@ class ClearCartItemsInputParams(graphene.InputObjectType):
 
 class GetCartItemsInputParams(graphene.InputObjectType):
     cart_id = graphene.String(required=True)
+
+
+class CreateReviewInputParams(graphene.InputObjectType):
+    restaurant_id = graphene.String(required=True)
+    rating = graphene.Int(required=True)
+    review = graphene.String()

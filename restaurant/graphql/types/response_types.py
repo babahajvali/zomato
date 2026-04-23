@@ -11,6 +11,8 @@ from restaurant.graphql.types.error_types import (
     MenuItemNotFound,
     InvalidQuantity,
     CartItemNotFound,
+    UserAlreadyReviewedRestaurant,
+    InvalidRatingFound,
 )
 from restaurant.graphql.types.types import (
     RestaurantTimingType,
@@ -23,6 +25,7 @@ from restaurant.graphql.types.types import (
     CartItemsType,
     RemoveCartItemSuccessType,
     ClearCartItemsSuccessType,
+    ReviewType,
 )
 from utils.graphql_types import UserIsNotRestaurantOwner
 
@@ -107,4 +110,14 @@ class GetCartItemsResponse(graphene.Union):
         types = (
             CartItemsType,
             CartNotFound,
+        )
+
+
+class CreateReviewResponse(graphene.Union):
+    class Meta:
+        types = (
+            ReviewType,
+            RestaurantNotFound,
+            UserAlreadyReviewedRestaurant,
+            InvalidRatingFound,
         )

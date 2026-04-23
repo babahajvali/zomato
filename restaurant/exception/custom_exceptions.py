@@ -19,7 +19,7 @@ class DuplicateRestaurants(Exception):
 
 
 class OwnerNotFound(Exception):
-    def __init__(self, email:List[str]):
+    def __init__(self, email: List[str]):
         self.email = email
 
     def __str__(self):
@@ -88,7 +88,7 @@ class InvalidCuisineTypeException(Exception):
         return str(self.cuisine_type)
 
 
-class InvalidMinRatingException(Exception):
+class InvalidMinRating(Exception):
     def __init__(self, min_rating: float):
         self.min_rating = min_rating
 
@@ -151,3 +151,11 @@ class UserAlreadyReviewedRestaurant(Exception):
 
     def __str__(self):
         return f"{self.user_id} user already reviewed"
+
+
+class InvalidRatingFound(Exception):
+    def __init__(self, rating: int):
+        self.rating = rating
+
+    def __str__(self):
+        return f" Invalid rating: {self.rating} found "

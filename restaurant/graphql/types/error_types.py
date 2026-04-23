@@ -40,3 +40,11 @@ class InvalidQuantity(graphene.ObjectType):
 
 class CartItemNotFound(graphene.ObjectType):
     cart_item_id = graphene.Int(required=True)
+
+
+class UserAlreadyReviewedRestaurant(graphene.ObjectType):
+    user_id = graphene.String(required=True)
+
+
+class InvalidRatingFound(graphene.ObjectType):
+    user_rating = graphene.Int(required=True)
