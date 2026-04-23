@@ -83,10 +83,6 @@ class OrderStorage(OrderStorageInterface):
 
         return self.get_order(order_id=order_id)
 
-    def cancel_order(self, order_id: str) -> OrderDTO | None:
-        Order.objects.filter(id=order_id).update(status=OrderStatus.CANCELLED.value)
-        return self.get_order(order_id=order_id)
-
     def get_user_orders(self, user_id: str) -> List[OrderDTO]:
         user_order_objs = Order.objects.filter(customer_id=user_id)
 

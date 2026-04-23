@@ -29,7 +29,7 @@ def map_orders_response(order_dtos) -> OrdersType:
     )
 
 
-def resolve_today_restaurant_orders(root, info, params):
+def get_today_restaurant_orders_resolver(root, info, params):
     interactor = GetRestaurantOrderInteractor(order_storage=OrderStorage())
 
     try:

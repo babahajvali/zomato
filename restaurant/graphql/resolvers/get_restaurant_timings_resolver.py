@@ -12,7 +12,7 @@ from restaurant.storages.restaurant_storage import RestaurantStorage
 from restaurant.storages.restaurant_timing_storage import RestaurantTimingStorage
 
 
-def resolve_get_restaurant_timings(self, info, params):
+def get_restaurant_timings_resolver(self, info, params):
     restaurant_timing_storage = RestaurantTimingStorage()
     restaurant_storage = RestaurantStorage()
     interactor = RestaurantTimingInteractor(

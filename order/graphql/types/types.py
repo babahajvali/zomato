@@ -2,17 +2,17 @@ import graphene
 
 
 class OrderType(graphene.ObjectType):
-    order_id = graphene.String()
-    customer_id = graphene.String()
-    restaurant_id = graphene.String()
+    order_id = graphene.String(required=True)
+    customer_id = graphene.String(required=True)
+    restaurant_id = graphene.String(required=True)
     promo_code_id = graphene.Int()
-    status = graphene.String()
-    items_total = graphene.Float()
-    delivery_fee = graphene.Float()
-    tax_fee = graphene.Float()
-    final_amount = graphene.Float()
-    address_id = graphene.Int()
-    placed_at = graphene.String()
+    status = graphene.String(required=True)
+    items_total = graphene.Float(required=True)
+    delivery_fee = graphene.Float(required=True)
+    tax_fee = graphene.Float(required=True)
+    final_amount = graphene.Float(required=True)
+    address_id = graphene.Int(required=True)
+    placed_at = graphene.String(required=True)
 
 
 class OrdersType(graphene.ObjectType):

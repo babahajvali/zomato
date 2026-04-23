@@ -23,7 +23,7 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
             id="order-1",
             customer_id=user_id,
             restaurant_id=restaurant_id,
-            status=OrderStatus.PLACED,
+            status=OrderStatus.PLACED.value,
             created_at=created_at,
         )
 
@@ -70,7 +70,7 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
             id="order-1",
             customer_id=user_id,
             restaurant_id=restaurant_id,
-            status=OrderStatus.PLACED,
+            status=OrderStatus.PLACED.value,
             created_at=created_at,
         )
 
@@ -99,7 +99,7 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
             id="order-1",
             customer_id=user_id,
             restaurant_id=restaurant_id,
-            status=OrderStatus.PLACED,
+            status=OrderStatus.PLACED.value,
             created_at=created_at,
         )
 
@@ -127,7 +127,7 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
             id="order-1",
             customer_id=user_id,
             restaurant_id=restaurant_id,
-            status=OrderStatus.CANCELLED,
+            status=OrderStatus.CANCELLED.value,
             created_at=created_at,
         )
 

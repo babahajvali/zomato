@@ -37,7 +37,7 @@ def _map_menu_response(menu_dto) -> RestaurantMenuType:
     )
 
 
-def resolve_view_restaurant_menu(root, info, params):
+def get_restaurant_menu_resolver(root, info, params):
     interactor = ViewRestaurantMenuInteractor(
         restaurant_storage=RestaurantStorage(),
     )

@@ -33,7 +33,7 @@ def _map_browse_restaurants_response(restaurants):
     return BrowseRestaurantsType(restaurants=response)
 
 
-def resolve_browse_restaurants(root, info, params=None):
+def get_browse_restaurants_resolver(root, info, params=None):
     filters_dto = BrowseRestaurantFiltersDTO(
         cuisine_type=params.cuisine_type if params.cuisine_type else None,
         is_veg_only=params.is_veg_only,

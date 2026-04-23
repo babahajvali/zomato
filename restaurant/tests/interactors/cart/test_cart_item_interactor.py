@@ -120,7 +120,7 @@ class TestCartItemInteractor:
         cart_item = CartItemDTOFactory(
             cart_id="cart-123",
             menu_item_id="item-123",
-            quantity=9,  # ← max valid quantity
+            quantity=9,
             item_price=350.0,
         )
 

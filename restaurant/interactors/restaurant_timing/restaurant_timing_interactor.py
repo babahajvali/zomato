@@ -31,8 +31,12 @@ class RestaurantTimingInteractor(RestaurantMixin, TimingMixin):
             restaurant_id=restaurant_id
         )
 
-    def delete_restaurant_timing(self, id: int, user_id: str):
-        self.validate_restaurant_timing_exists(id=id)
-        self.validate_user_is_restaurant_owner_through_timing_id(id=id, user_id=user_id)
+    def delete_restaurant_timing(self, timing_id: int, user_id: str):
+        self.validate_restaurant_timing_exists(timing_id=timing_id)
+        self.validate_user_is_restaurant_owner_through_timing_id(
+            timing_id=timing_id, user_id=user_id
+        )
 
-        return self.restaurant_timing_storage.delete_restaurant_timing(id=id)
+        return self.restaurant_timing_storage.delete_restaurant_timing(
+            timing_id=timing_id
+        )

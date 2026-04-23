@@ -31,7 +31,7 @@ def map_orders_response(order_dtos) -> OrdersType:
     )
 
 
-def resolve_get_order(root, info, params):
+def get_order_resolver(root, info, params):
     interactor = OrderInteractor(order_storage=OrderStorage())
 
     try:
@@ -41,18 +41,18 @@ def resolve_get_order(root, info, params):
         return OrderNotFound(order_id=exc.order_id)
 
 
-def resolve_user_orders(root, info):
+def get_user_order_resolver(root, info):
     interactor = OrderInteractor(order_storage=OrderStorage())
     order_dtos = interactor.get_user_orders(user_id=info.context.user_id)
 
     return map_orders_response(order_dtos=order_dtos)
 
 
-def resolve_restaurant_orders(root, info, params):
+def get_restaurant_order_resolver(root, info, params):
     interactor = GetRestaurantOrderInteractor(order_storage=OrderStorage())
 
     try:
-        order_dtos = interactor.get_restaurant_order(
+        order_dtos = interactor.get_restaurant_orders(
             restaurant_id=params.restaurant_id,
             user_id=info.context.user_id,
         )

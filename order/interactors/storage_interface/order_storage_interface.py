@@ -28,10 +28,6 @@ class OrderStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def cancel_order(self, order_id: str) -> OrderDTO:
-        pass
-
-    @abstractmethod
     def get_user_orders(self, user_id: str) -> List[OrderDTO]:
         pass
 

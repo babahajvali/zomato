@@ -14,10 +14,10 @@ class UpdateRestaurantTimingInteractor(TimingMixin):
         self, update_restaurant_timing_dto: UpdateRestaurantTimingDTO
     ) -> RestaurantTimingDTO:
         self.validate_restaurant_timing_exists(
-            id=update_restaurant_timing_dto.timing_id
+            timing_id=update_restaurant_timing_dto.timing_id
         )
         self.validate_user_is_restaurant_owner_through_timing_id(
-            id=update_restaurant_timing_dto.timing_id,
+            timing_id=update_restaurant_timing_dto.timing_id,
             user_id=update_restaurant_timing_dto.user_id,
         )
 

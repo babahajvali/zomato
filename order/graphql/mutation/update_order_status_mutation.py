@@ -10,24 +10,9 @@ from order.graphql.types.error_types import (
 from order.graphql.types.input_types import UpdateOrderStatusInputParams
 from order.graphql.types.response_types import UpdateOrderStatusResponse
 from order.graphql.types.types import OrderType
+from order.interactors.dtos import OrderDTO
 from order.interactors.order.update_order_interactor import UpdateOrderStatusInteractor
 from order.storages.order_storage import OrderStorage
-
-
-def _map_order_response(order_dto) -> OrderType:
-    return OrderType(
-        order_id=str(order_dto.order_id),
-        customer_id=str(order_dto.customer_id),
-        restaurant_id=str(order_dto.restaurant_id),
-        promo_code_id=order_dto.promo_code_id,
-        status=order_dto.status.value,
-        items_total=float(order_dto.items_total),
-        delivery_fee=float(order_dto.delivery_fee),
-        tax_fee=float(order_dto.tax_fee),
-        final_amount=float(order_dto.final_amount),
-        address_id=order_dto.address_id,
-        placed_at=order_dto.placed_at,
-    )
 
 
 class UpdateOrderStatusMutation(graphene.Mutation):
@@ -60,3 +45,19 @@ class UpdateOrderStatusMutation(graphene.Mutation):
                 new_status=exc.new_status,
                 allowed=exc.allowed,
             )
+
+
+def _map_order_response(order_dto: OrderDTO) -> OrderType:
+    return OrderType(
+        order_id=str(order_dto.order_id),
+        customer_id=str(order_dto.customer_id),
+        restaurant_id=str(order_dto.restaurant_id),
+        promo_code_id=order_dto.promo_code_id,
+        status=order_dto.status.value,
+        items_total=float(order_dto.items_total),
+        delivery_fee=float(order_dto.delivery_fee),
+        tax_fee=float(order_dto.tax_fee),
+        final_amount=float(order_dto.final_amount),
+        address_id=order_dto.address_id,
+        placed_at=order_dto.placed_at,
+    )

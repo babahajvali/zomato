@@ -32,7 +32,7 @@ class DeleteRestaurantTimingMutation(graphene.Mutation):
         )
         try:
             interactor.delete_restaurant_timing(
-                id=params.timing_id, user_id=info.context.user_id
+                timing_id=params.timing_id, user_id=info.context.user_id
             )
 
             return DeleteRestaurantTimingSuccessType(

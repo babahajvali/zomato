@@ -27,16 +27,16 @@ class TestOrderInteractor:
         order_dto = OrderDTOFactory(
             order_id="order-1",
             customer_id="customer-1",
-            status=OrderStatus.PLACED.value,
+            status=OrderStatus.PLACED,
         )
         cancelled_order_dto = OrderDTOFactory(
             order_id="order-1",
             customer_id="customer-1",
-            status=OrderStatus.CANCELLED.value,
+            status=OrderStatus.CANCELLED,
         )
         self.order_storage.get_order.side_effect = [order_dto, order_dto]
         self.order_storage.get_order_placed_at.return_value = timezone.now()
-        self.order_storage.cancel_order.return_value = cancelled_order_dto
+        self.order_storage.update_order_status.return_value = cancelled_order_dto
 
         result = self.interactor.cancel_order(
             order_id="order-1",
@@ -44,8 +44,8 @@ class TestOrderInteractor:
         )
 
         assert result.order_id == "order-1"
-        assert result.status == OrderStatus.CANCELLED.value
-        self.order_storage.cancel_order.assert_called_once_with(order_id="order-1")
+        assert result.status == OrderStatus.CANCELLED
+        self.order_storage.update_order_status.assert_called_once_with(order_id="order-1", status=OrderStatus.CANCELLED)
 
     def test_cancel_order_raises_order_not_found(self):
         self.order_storage.get_order.return_value = None
@@ -57,7 +57,7 @@ class TestOrderInteractor:
             )
 
         assert exc.value.order_id == "invalid-order"
-        self.order_storage.cancel_order.assert_not_called()
+        self.order_storage.update_order_status.assert_not_called()
 
     def test_cancel_order_raises_order_does_not_belong_to_user(self):
         order_dto = OrderDTOFactory(
@@ -74,7 +74,7 @@ class TestOrderInteractor:
 
         assert exc.value.order_id == "order-1"
         assert exc.value.user_id == "other-user"
-        self.order_storage.cancel_order.assert_not_called()
+        self.order_storage.update_order_status.assert_not_called()
 
     def test_cancel_order_raises_cancellation_time_exceeded(self):
         order_dto = OrderDTOFactory(
@@ -93,25 +93,25 @@ class TestOrderInteractor:
             )
 
         assert exc.value.order_id == "order-1"
-        self.order_storage.cancel_order.assert_not_called()
+        self.order_storage.update_order_status.assert_not_called()
 
     def test_auto_cancel_order_successfully(self):
         order_dto = OrderDTOFactory(
             order_id="order-1",
-            status=OrderStatus.PLACED.value,
+            status=OrderStatus.PLACED,
         )
         cancelled_order_dto = OrderDTOFactory(
             order_id="order-1",
-            status=OrderStatus.CANCELLED.value,
+            status=OrderStatus.CANCELLED,
         )
         self.order_storage.get_order.side_effect = [order_dto, order_dto]
-        self.order_storage.cancel_order.return_value = cancelled_order_dto
+        self.order_storage.update_order_status.return_value = cancelled_order_dto
 
         result = self.interactor.auto_cancel_order(order_id="order-1")
 
         assert result.order_id == "order-1"
-        assert result.status == OrderStatus.CANCELLED.value
-        self.order_storage.cancel_order.assert_called_once_with(order_id="order-1")
+        assert result.status == OrderStatus.CANCELLED
+        self.order_storage.update_order_status.assert_called_once_with(order_id="order-1", status=OrderStatus.CANCELLED)
 
     def test_auto_cancel_order_raises_order_not_found(self):
         self.order_storage.get_order.return_value = None
@@ -120,12 +120,12 @@ class TestOrderInteractor:
             self.interactor.auto_cancel_order(order_id="invalid-order")
 
         assert exc.value.order_id == "invalid-order"
-        self.order_storage.cancel_order.assert_not_called()
+        self.order_storage.update_order_status.assert_not_called()
 
     def test_auto_cancel_order_raises_order_cannot_be_cancelled(self):
         order_dto = OrderDTOFactory(
             order_id="order-1",
-            status=OrderStatus.CONFIRMED.value,
+            status=OrderStatus.CONFIRMED,
         )
         self.order_storage.get_order.side_effect = [order_dto, order_dto]
 
@@ -133,7 +133,7 @@ class TestOrderInteractor:
             self.interactor.auto_cancel_order(order_id="order-1")
 
         assert exc.value.order_id == "order-1"
-        self.order_storage.cancel_order.assert_not_called()
+        self.order_storage.update_order_status.assert_not_called()
 
     def test_user_orders_successfully(self):
         order_dtos = [

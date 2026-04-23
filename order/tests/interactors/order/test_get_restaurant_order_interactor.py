@@ -30,7 +30,7 @@ class TestGetRestaurantOrderInteractor:
         )
         self.order_storage.get_restaurant_orders.return_value = order_dtos
 
-        result = self.interactor.get_restaurant_order(
+        result = self.interactor.get_restaurant_orders(
             restaurant_id="restaurant-1",
             user_id="owner-1",
         )
@@ -46,7 +46,7 @@ class TestGetRestaurantOrderInteractor:
         )
 
         with pytest.raises(UserIsNotRestaurantOwner) as exc:
-            self.interactor.get_restaurant_order(
+            self.interactor.get_restaurant_orders(
                 restaurant_id="restaurant-1",
                 user_id="other-user",
             )

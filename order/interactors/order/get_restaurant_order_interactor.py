@@ -15,16 +15,12 @@ class GetRestaurantOrderInteractor(OrderMixin):
         super().__init__(order_storage=order_storage)
         self.order_storage = order_storage
 
-    def get_restaurant_order(self, restaurant_id: str, user_id: str) -> List[OrderDTO]:
+    def get_restaurant_orders(self, restaurant_id: str, user_id: str) -> List[OrderDTO]:
         self.validate_user_is_restaurant_owner(
             restaurant_id=restaurant_id, user_id=user_id
         )
 
-        restaurant_orders = self.order_storage.get_restaurant_orders(
-            restaurant_id=restaurant_id
-        )
-
-        return restaurant_orders
+        return self.order_storage.get_restaurant_orders(restaurant_id=restaurant_id)
 
     def get_today_restaurant_orders(
         self, restaurant_id: str, user_id: str

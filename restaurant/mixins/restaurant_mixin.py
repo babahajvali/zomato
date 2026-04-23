@@ -24,15 +24,13 @@ class RestaurantMixin:
             restaurant_id=restaurant_id
         )
 
-        # print(owner_id , user_id, str(owner_id)==user_id)
-
         if str(owner_id) != user_id:
             raise UserIsNotRestaurantOwner(user_id=user_id)
 
     @staticmethod
     def validate_categories(categories: List[str]):
 
-        existed_categories = Category.get_categories()
+        existed_categories = Category.get_values()
         invalid_categories = []
         for category in categories:
             if category not in existed_categories:

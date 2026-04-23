@@ -23,5 +23,5 @@ class OrderStatus(Enum):
         return [(member.value, member.value.capitalize()) for member in cls]
 
     @classmethod
-    def get_status(cls):
+    def get_values(cls):
         return [member.value for member in cls]

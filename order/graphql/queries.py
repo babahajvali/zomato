@@ -1,12 +1,12 @@
 import graphene
 
 from order.graphql.resolvers.order_resolvers import (
-    resolve_get_order,
-    resolve_restaurant_orders,
-    resolve_user_orders,
+    get_order_resolver,
+    get_restaurant_order_resolver,
+    get_user_order_resolver,
 )
 from order.graphql.resolvers.today_restaurant_orders_resolver import (
-    resolve_today_restaurant_orders,
+    get_today_restaurant_orders_resolver,
 )
 from order.graphql.types.input_types import (
     GetOrderInputParams,
@@ -25,19 +25,19 @@ class OrderQueries(graphene.ObjectType):
     get_order = graphene.Field(
         GetOrderResponse,
         params=GetOrderInputParams(required=True),
-        resolver=resolve_get_order,
+        resolver=get_order_resolver,
     )
     user_orders = graphene.Field(
         UserOrdersResponse,
-        resolver=resolve_user_orders,
+        resolver=get_user_order_resolver,
     )
     restaurant_orders = graphene.Field(
         RestaurantOrdersResponse,
         params=GetRestaurantOrdersInputParams(required=True),
-        resolver=resolve_restaurant_orders,
+        resolver=get_restaurant_order_resolver,
     )
     today_restaurant_orders = graphene.Field(
         TodayRestaurantOrdersResponse,
         params=GetTodayRestaurantOrdersInputParams(required=True),
-        resolver=resolve_today_restaurant_orders,
+        resolver=get_today_restaurant_orders_resolver,
     )
