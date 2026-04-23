@@ -38,6 +38,8 @@ def get_today_restaurant_orders_resolver(root, info, params):
         order_dtos = interactor.get_today_restaurant_orders(
             restaurant_id=params.restaurant_id,
             user_id=info.context.user_id,
+            limit=params.limit,
+            offset=params.offset,
         )
         return map_orders_response(order_dtos=order_dtos)
     except custom_exceptions.UserIsNotRestaurantOwner as exc:

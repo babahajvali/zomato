@@ -184,3 +184,11 @@ class OrderAlreadyCancelled(Exception):
 
     def __str__(self):
         return f"Order {self.order_id} already cancelled"
+
+
+class CustomerCartNotFound(Exception):
+    def __init__(self, customer_id: str):
+        self.customer_id = customer_id
+
+    def __str__(self):
+        return f"Customer {self.customer_id} not found"

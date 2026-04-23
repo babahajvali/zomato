@@ -28,7 +28,7 @@ class OrderStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def get_user_orders(self, user_id: str) -> List[OrderDTO]:
+    def get_user_orders(self, user_id: str, limit: int, offset: int) -> List[OrderDTO]:
         pass
 
     @abstractmethod
@@ -36,9 +36,13 @@ class OrderStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def get_restaurant_orders(self, restaurant_id: str) -> List[OrderDTO]:
+    def get_restaurant_orders(
+        self, restaurant_id: str, limit: int, offset: int
+    ) -> List[OrderDTO]:
         pass
 
     @abstractmethod
-    def get_today_restaurant_orders(self, restaurant_id: str) -> List[OrderDTO]:
+    def get_today_restaurant_orders(
+        self, restaurant_id: str, limit: int, offset: int
+    ) -> List[OrderDTO]:
         pass

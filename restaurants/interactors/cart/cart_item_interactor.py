@@ -54,6 +54,10 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
 
         return self.cart_storage.get_cart_items(cart_id=cart_id)
 
+    def get_customer_cart_id(self, customer_id: str) -> str:
+
+        return self.cart_storage.get_customer_cart_id(customer_id=customer_id)
+
     @staticmethod
     def _validate_quantity(quantity: int):
         if quantity <= 0 or quantity > 9:

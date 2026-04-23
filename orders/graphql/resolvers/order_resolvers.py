@@ -43,9 +43,11 @@ def get_order_resolver(root, info, params):
         return OrderNotFound(order_id=exc.order_id)
 
 
-def get_user_order_resolver(root, info):
+def get_user_order_resolver(root, info, params):
     interactor = OrderInteractor(order_storage=OrderStorage())
-    order_dtos = interactor.get_user_orders(user_id=info.context.user_id)
+    order_dtos = interactor.get_user_orders(
+        user_id=info.context.user_id, limit=params.limit, offset=params.offset
+    )
 
     return map_orders_response(order_dtos=order_dtos)
 
@@ -57,6 +59,8 @@ def get_restaurant_order_resolver(root, info, params):
         order_dtos = interactor.get_restaurant_orders(
             restaurant_id=params.restaurant_id,
             user_id=info.context.user_id,
+            limit=params.limit,
+            offset=params.offset,
         )
         return map_orders_response(order_dtos=order_dtos)
     except custom_exceptions.UserIsNotRestaurantOwner as exc:

@@ -40,3 +40,12 @@ class RestaurantTimingInteractor(RestaurantMixin, TimingMixin):
         return self.restaurant_timing_storage.delete_restaurant_timing(
             timing_id=timing_id
         )
+
+    def get_day_restaurant_timing(
+        self, restaurant_id: str, day_of_week: int
+    ) -> RestaurantTimingDTO:
+        self.validate_restaurant_is_exists(restaurant_id=restaurant_id)
+
+        return self.restaurant_timing_storage.get_day_restaurant_timing(
+            restaurant_id=restaurant_id, day_of_week=day_of_week
+        )

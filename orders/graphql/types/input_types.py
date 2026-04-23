@@ -18,10 +18,19 @@ class GetOrderInputParams(graphene.InputObjectType):
 
 class GetRestaurantOrdersInputParams(graphene.InputObjectType):
     restaurant_id = graphene.String(required=True)
+    limit = graphene.Int(required=True)
+    offset = graphene.Int(required=True)
+
+
+class GetUserOrdersInputParams(graphene.InputObjectType):
+    limit = graphene.Int(required=True)
+    offset = graphene.Int(required=True)
 
 
 class GetTodayRestaurantOrdersInputParams(graphene.InputObjectType):
     restaurant_id = graphene.String(required=True)
+    limit = graphene.Int(required=True)
+    offset = graphene.Int(required=True)
 
 
 class CancelOrderInputParams(graphene.InputObjectType):

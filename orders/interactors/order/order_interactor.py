@@ -57,9 +57,11 @@ class OrderInteractor(OrderMixin):
             order_id=order_id, status=OrderStatus.CANCELLED
         )
 
-    def get_user_orders(self, user_id: str) -> List[OrderDTO]:
+    def get_user_orders(self, user_id: str, limit: int, offset: int) -> List[OrderDTO]:
 
-        return self.order_storage.get_user_orders(user_id=user_id)
+        return self.order_storage.get_user_orders(
+            user_id=user_id, limit=limit, offset=offset
+        )
 
     def get_order(self, order_id: str) -> OrderDTO:
         self.validate_order_exists(order_id=order_id)

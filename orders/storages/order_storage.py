@@ -84,8 +84,10 @@ class OrderStorage(OrderStorageInterface):
 
         return self.get_order(order_id=order_id)
 
-    def get_user_orders(self, user_id: str) -> List[OrderDTO]:
-        user_order_objs = Order.objects.filter(customer_id=user_id)
+    def get_user_orders(self, user_id: str, limit: int, offset: int) -> List[OrderDTO]:
+        user_order_objs = Order.objects.filter(customer_id=user_id).order_by(
+            "-created_at"
+        )[offset : offset + limit]
 
         return [self._convert_to_order_dto(order_obj=each) for each in user_order_objs]
 
@@ -94,20 +96,30 @@ class OrderStorage(OrderStorageInterface):
 
         return order_obj.created_at
 
-    def get_restaurant_orders(self, restaurant_id: str) -> List[OrderDTO]:
-        order_objs = Order.objects.filter(restaurant_id=restaurant_id).exclude(
-            status=OrderStatus.CANCELLED.value
-        )
+    def get_restaurant_orders(
+        self,
+        restaurant_id: str,
+        limit: int,
+        offset: int,
+    ) -> List[OrderDTO]:
+
+        order_objs = (
+            Order.objects.filter(restaurant_id=restaurant_id)
+            .exclude(status=OrderStatus.CANCELLED.value)
+            .order_by("-created_at")
+        )[offset : offset + limit]
 
         return [self._convert_to_order_dto(order_obj=each) for each in order_objs]
 
-    def get_today_restaurant_orders(self, restaurant_id: str) -> List[OrderDTO]:
+    def get_today_restaurant_orders(
+        self, restaurant_id: str, limit: int, offset: int
+    ) -> List[OrderDTO]:
 
         today = date.today()
 
         orders = Order.objects.filter(
             restaurant_id=restaurant_id,
             created_at__date=today,
-        ).order_by("-created_at")
+        ).order_by("-created_at")[offset : offset + limit]
 
         return [self._convert_to_order_dto(order_obj=order) for order in orders]

@@ -12,6 +12,7 @@ from orders.graphql.types.input_types import (
     GetOrderInputParams,
     GetRestaurantOrdersInputParams,
     GetTodayRestaurantOrdersInputParams,
+    GetUserOrdersInputParams,
 )
 from orders.graphql.types.response_types import (
     GetOrderResponse,
@@ -29,6 +30,7 @@ class OrderQueries(graphene.ObjectType):
     )
     user_orders = graphene.Field(
         UserOrdersResponse,
+        params=GetUserOrdersInputParams(required=True),
         resolver=get_user_order_resolver,
     )
     restaurant_orders = graphene.Field(

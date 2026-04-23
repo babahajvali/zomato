@@ -5,8 +5,9 @@ class BasePlaceOrderTestCase(GraphQLBaseTestCase):
     QUERY = """
     mutation PlaceOrder($params: PlaceOrderInputParams!) {
       placeOrder(params: $params) {
-        ... on OrderType {
+        ... on OrderSummaryType {
           __typename
+          orderId
           customerId
           restaurantId
           promoCodeId
@@ -16,6 +17,13 @@ class BasePlaceOrderTestCase(GraphQLBaseTestCase):
           taxFee
           finalAmount
           addressId
+          placedAt
+          items {
+            itemId
+            quantity
+            itemPrice
+            subtotal
+          }
         }
         ... on PromoCodeNotFound {
           __typename
@@ -30,16 +38,16 @@ class BasePlaceOrderTestCase(GraphQLBaseTestCase):
           minOrderValue
           itemsTotal
         }
-        ... on InvalidAddressFound {
+        ... on AddressIdNotFound {
           __typename
           addressId
         }
-        ... on InvalidDeliveryZoneFound {
+        ... on DeliveryNotAvailableForAddress {
           __typename
           restaurantId
           pinCode
         }
-        ... on RestaurantDayTimingNotFound {
+        ... on RestaurantNotOpenNow {
           __typename
           restaurantId
           dayOfWeek
@@ -47,6 +55,10 @@ class BasePlaceOrderTestCase(GraphQLBaseTestCase):
         ... on RestaurantClosed {
           __typename
           restaurantId
+        }
+        ... on EmptyCartItemsFound {
+          __typename
+          cartId
         }
       }
     }

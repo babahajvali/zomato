@@ -4,7 +4,7 @@ from orders.graphql.types.error_types import (
     PromoCodeMaximumUsed,
     PromoCodeNotEligible,
     DeliveryNotAvailableForAddress,
-    InvalidAddressFound,
+    AddressIdNotFound,
     RestaurantNotOpenNow,
     RestaurantClosed,
     PromoCodeNotFound,
@@ -14,23 +14,25 @@ from orders.graphql.types.error_types import (
     OrderCannotBeCancelled,
     OrderNotBelongsToUser,
     OrderCancellationTimeExceeded,
+    CustomerCartNotFound,
 )
-from orders.graphql.types.types import OrderType, OrdersType
+from orders.graphql.types.types import OrderType, OrdersType, OrderSummaryType
 from utils.graphql_types import UserIsNotRestaurantOwner
 
 
 class PlaceOrderResponse(graphene.Union):
     class Meta:
         types = (
-            OrderType,
+            OrderSummaryType,
             PromoCodeMaximumUsed,
             PromoCodeNotEligible,
             DeliveryNotAvailableForAddress,
-            InvalidAddressFound,
+            AddressIdNotFound,
             RestaurantNotOpenNow,
             RestaurantClosed,
             PromoCodeNotFound,
             EmptyCartItemsFound,
+            CustomerCartNotFound,
         )
 
 

@@ -7,7 +7,7 @@ class PromoCodeMaximumUsed(graphene.ObjectType):
 
 class PromoCodeNotEligible(graphene.ObjectType):
     min_order_value = graphene.Float(required=True)
-    items_total = graphene.Float(required=True)
+    items_total = graphene.Decimal(required=True)
 
 
 class DeliveryNotAvailableForAddress(graphene.ObjectType):
@@ -15,7 +15,7 @@ class DeliveryNotAvailableForAddress(graphene.ObjectType):
     pin_code = graphene.String(required=True)
 
 
-class InvalidAddressFound(graphene.ObjectType):
+class AddressIdNotFound(graphene.ObjectType):
     address_id = graphene.Int(required=True)
 
 
@@ -56,3 +56,7 @@ class OrderCannotBeCancelled(graphene.ObjectType):
 
 class OrderNotBelongsToUser(graphene.ObjectType):
     order_id = graphene.String(required=True)
+
+
+class CustomerCartNotFound(graphene.ObjectType):
+    customer_id = graphene.Int(required=True)

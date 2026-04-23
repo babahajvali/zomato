@@ -20,6 +20,7 @@ from orders.exception.custom_exceptions import (
     EmptyCartItemsFound,
     PromoCodeNotYetValid,
     PromoCodeExpired,
+    CustomerCartNotFound,
 )
 from orders.interactors.dtos import (
     PlaceOrderDTO,
@@ -27,6 +28,8 @@ from orders.interactors.dtos import (
     CreateOrderDTO,
     CreateOrderItemDTO,
     PromoCodeDTO,
+    OrderSummaryDTO,
+    OrderItemSummaryDTO,
 )
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
@@ -50,7 +53,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
         self.account_adapter = AccountAdapter()
         self.restaurant_adapter = RestaurantAdapter()
 
-    def place_order(self, order_data: PlaceOrderDTO) -> OrderDTO:
+    def place_order(self, order_data: PlaceOrderDTO) -> OrderSummaryDTO:
 
         cart_id = self.restaurant_adapter.get_customer_cart_id(
             customer_id=order_data.customer_id
@@ -181,7 +184,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
         cart_id: str,
         items_total: Decimal,
         delivery_fee: Decimal,
-    ) -> OrderDTO:
+    ) -> OrderSummaryDTO:
 
         discount_price = self._get_discount_price(
             promo_code_id=order_data.promo_code_id,
@@ -206,7 +209,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
         )
         self.restaurant_adapter.clear_customer_cart_items(cart_id=cart_id)
 
-        return order_dto
+        return self._build_order_summary_dto(order_dto=order_dto, cart_items=cart_items)
 
     def _get_discount_price(
         self,
@@ -328,3 +331,39 @@ class PlaceOrderInteractor(PromoCodeMixin):
             )
             for cart_item in cart_items
         ]
+
+    @staticmethod
+    def _build_order_summary_dto(
+        cart_items: List[CartItemDTO],
+        order_dto: OrderDTO,
+    ) -> OrderSummaryDTO:
+        return OrderSummaryDTO(
+            order_id=order_dto.order_id,
+            customer_id=order_dto.customer_id,
+            restaurant_id=order_dto.restaurant_id,
+            status=order_dto.status,
+            items=[
+                OrderItemSummaryDTO(
+                    item_id=item.menu_item_id,
+                    quantity=item.quantity,
+                    item_price=Decimal(str(item.item_price)),
+                    subtotal=Decimal(str(item.item_price)) * item.quantity,
+                )
+                for item in cart_items
+            ],
+            items_total=order_dto.items_total,
+            delivery_fee=order_dto.delivery_fee,
+            tax_fee=order_dto.tax_fee,
+            final_amount=order_dto.final_amount,
+            address_id=order_dto.address_id,
+            promo_code_id=order_dto.promo_code_id,
+            placed_at=order_dto.placed_at,
+        )
+
+    def _validate_customer_cart(self, customer_id: str) -> str:
+        cart_id = self.restaurant_adapter.get_customer_cart_id(customer_id=customer_id)
+
+        if cart_id is None:
+            raise CustomerCartNotFound(customer_id=customer_id)
+
+        return cart_id

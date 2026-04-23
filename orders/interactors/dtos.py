@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 from orders.constants.enums import OrderStatus
@@ -72,3 +72,27 @@ class CreateOrderItemDTO:
     item_id: str
     quantity: int
     item_price: float
+
+
+@dataclass
+class OrderItemSummaryDTO:
+    item_id: str
+    quantity: int
+    item_price: Decimal
+    subtotal: Decimal
+
+
+@dataclass
+class OrderSummaryDTO:
+    order_id: str
+    customer_id: str
+    restaurant_id: str
+    promo_code_id: Optional[int]
+    status: OrderStatus
+    items: List[OrderItemSummaryDTO]
+    items_total: Decimal
+    delivery_fee: Decimal
+    tax_fee: Decimal
+    final_amount: Decimal
+    placed_at: datetime
+    address_id: int
