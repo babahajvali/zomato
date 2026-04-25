@@ -26,7 +26,7 @@ class TestImportRestaurantTimings:
     def test_import_restaurant_timings_success(self):
         rows = [
             {
-                "restaurants": " restaurants-1 ",
+                "restaurant": " restaurants-1 ",
                 "day_of_week": "1",
                 "open_time": "09:00:00",
                 "close_time": "21:00:00",
@@ -61,7 +61,7 @@ class TestImportRestaurantTimings:
         assert result == expected_result
         validate_row.assert_called_once_with(
             rows[0],
-            ["restaurants", "day_of_week", "open_time", "close_time"],
+            ["restaurant", "day_of_week", "open_time", "close_time"],
             "restaurants timing row 1",
         )
         self.restaurant_timing_storage.create_bulk_restaurant_timing.assert_called_once_with(
@@ -71,13 +71,13 @@ class TestImportRestaurantTimings:
     def test_import_restaurant_timings_duplicate_combination(self):
         rows = [
             {
-                "restaurants": " restaurants-1 ",
+                "restaurant": " restaurants-1 ",
                 "day_of_week": "1",
                 "open_time": "09:00:00",
                 "close_time": "21:00:00",
             },
             {
-                "restaurants": "restaurants-1",
+                "restaurant": "restaurants-1",
                 "day_of_week": "1",
                 "open_time": "10:00:00",
                 "close_time": "22:00:00",

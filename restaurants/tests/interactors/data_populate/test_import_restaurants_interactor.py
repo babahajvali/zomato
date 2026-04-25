@@ -25,6 +25,7 @@ class TestImportRestaurants:
     def test_import_restaurants_success(self):
         rows = [
             {
+                "id": "restaurant-1",
                 "name": " Spice Hub ",
                 "owner_id": " 00000000-0000-0000-0000-000000000001 ",
                 "description": "Popular spot",
@@ -36,6 +37,7 @@ class TestImportRestaurants:
             }
         ]
         CreateRestaurantDTOFactory(
+            id="restaurant-1",
             name="Spice Hub",
             owner_id="00000000-0000-0000-0000-000000000001",
             description="Popular spot",
@@ -68,6 +70,7 @@ class TestImportRestaurants:
     def test_import_restaurants_duplicate_names(self):
         rows = [
             {
+                "id": "restaurant-1",
                 "name": " Spice Hub ",
                 "owner_id": "00000000-0000-0000-0000-000000000001",
                 "description": "Popular spot",
@@ -78,6 +81,7 @@ class TestImportRestaurants:
                 "is_deleted": "false",
             },
             {
+                "id": "restaurant-2",
                 "name": "Spice Hub",
                 "owner_id": "00000000-0000-0000-0000-000000000002",
                 "description": "Another branch",
@@ -109,6 +113,7 @@ class TestImportRestaurants:
     def test_import_restaurants_already_exists(self):
         rows = [
             {
+                "id": "restaurant-1",
                 "name": " Spice Hub ",
                 "owner_id": "00000000-0000-0000-0000-000000000001",
                 "description": "Popular spot",

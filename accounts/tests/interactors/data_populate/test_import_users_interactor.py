@@ -18,6 +18,7 @@ VALIDATE_ROW = "accounts.interactors.populate_data.import_users.validate_row"
 
 
 ALICE_ROW = {
+    "id": "user-1",
     "name": "Alice",
     "email": " Alice@Example.com ",
     "phone_number": "9999999999",
@@ -25,6 +26,7 @@ ALICE_ROW = {
 }
 
 BOB_ROW_DUPLICATE = {
+    "id": "user-2",
     "name": "Bob",
     "email": "alice@example.com",
     "phone_number": "8888888888",
@@ -47,6 +49,7 @@ class TestImportUsers:
         self.user_storage.get_existing_emails.return_value = []
 
         expected_dto = CreateUserDTOFactory(
+            id="user-1",
             name="Alice",
             email="alice@example.com",
             phone_number="9999999999",
@@ -59,7 +62,7 @@ class TestImportUsers:
         # Assert
         mock_validate_row.assert_called_once_with(
             ALICE_ROW,
-            ["email", "name"],
+            ["id", "email", "name"],
             "user row 1",
         )
         self.user_storage.get_existing_emails.assert_called_once_with(

@@ -25,6 +25,7 @@ class TestImportPromoCodes:
     def test_import_promo_codes_success(self):
         rows = [
             {
+                "id": "1",
                 "code": "SAVE50",
                 "discount_type": "FLAT",
                 "discount_value": "50",
@@ -35,6 +36,7 @@ class TestImportPromoCodes:
             }
         ]
         expected_dto = CreatePromoCodeDTOFactory(
+            id=1,
             code="SAVE50",
             discount_type="FLAT",
             discount_value=50.0,
@@ -60,6 +62,7 @@ class TestImportPromoCodes:
     def test_import_promo_codes_duplicate_codes(self):
         rows = [
             {
+                "id": "1",
                 "code": "SAVE50",
                 "discount_type": "FLAT",
                 "discount_value": "50",
@@ -69,6 +72,7 @@ class TestImportPromoCodes:
                 "valid_until": "2026-04-30T23:59:59Z",
             },
             {
+                "id": "2",
                 "code": "SAVE50",
                 "discount_type": "PERCENTAGE",
                 "discount_value": "10",
@@ -91,6 +95,7 @@ class TestImportPromoCodes:
     def test_import_promo_codes_already_exists(self):
         rows = [
             {
+                "id": "1",
                 "code": "SAVE50",
                 "discount_type": "FLAT",
                 "discount_value": "50",
@@ -122,6 +127,7 @@ class TestImportPromoCodes:
     def test_import_promo_codes_invalid_date_range(self):
         rows = [
             {
+                "id": "1",
                 "code": "SAVE50",
                 "discount_type": "FLAT",
                 "discount_value": "50",

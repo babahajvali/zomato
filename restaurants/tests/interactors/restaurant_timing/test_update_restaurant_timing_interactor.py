@@ -22,7 +22,7 @@ class TestUpdateRestaurantTimingInteractor:
     def _get_timing_dto(*, open_time_value=time(9, 0), close_time_value=time(21, 0)):
         return RestaurantTimingDTO(
             timing_id=1,
-            restaurant_id="restaurants-1",
+            restaurant_id="restaurant-1",
             day_of_week=1,
             open_time=open_time_value,
             close_time=close_time_value,
@@ -124,7 +124,7 @@ class TestUpdateRestaurantTimingInteractor:
         )
         self.restaurant_timing_storage.update_restaurant_timing.assert_not_called()
 
-    def test_update_restaurant_timing_open_time_greater_than_close_time(self, snapshot):
+    def test_update_restaurant_timing_open_time_greater_than_close_time(self):
         update_dto = UpdateRestaurantTimingDTO(
             timing_id=1,
             user_id="user-123",
@@ -138,15 +138,10 @@ class TestUpdateRestaurantTimingInteractor:
                 update_restaurant_timing_dto=update_dto
             )
 
-        snapshot.assert_match(
-            repr(exc.value),
-            "update_restaurant_timing_open_time_greater_than_close_time.txt",
-        )
+        assert str(exc.value) == "22:00:00 --> 10:00:00"
         self.restaurant_timing_storage.update_restaurant_timing.assert_not_called()
 
-    def test_update_restaurant_timing_open_time_equal_to_existing_close_time(
-        self, snapshot
-    ):
+    def test_update_restaurant_timing_open_time_equal_to_existing_close_time(self):
         update_dto = UpdateRestaurantTimingDTO(
             timing_id=1,
             user_id="user-123",
@@ -160,15 +155,10 @@ class TestUpdateRestaurantTimingInteractor:
                 update_restaurant_timing_dto=update_dto
             )
 
-        snapshot.assert_match(
-            repr(exc.value),
-            "update_restaurant_timing_open_time_equal_to_existing_close_time.txt",
-        )
+        assert str(exc.value) == "21:00:00 --> 21:00:00"
         self.restaurant_timing_storage.update_restaurant_timing.assert_not_called()
 
-    def test_update_restaurant_timing_close_time_equal_to_existing_open_time(
-        self, snapshot
-    ):
+    def test_update_restaurant_timing_close_time_equal_to_existing_open_time(self):
         update_dto = UpdateRestaurantTimingDTO(
             timing_id=1,
             user_id="user-123",
@@ -182,10 +172,7 @@ class TestUpdateRestaurantTimingInteractor:
                 update_restaurant_timing_dto=update_dto
             )
 
-        snapshot.assert_match(
-            repr(exc.value),
-            "update_restaurant_timing_close_time_equal_to_existing_open_time.txt",
-        )
+        assert str(exc.value) == "09:00:00 --> 09:00:00"
         self.restaurant_timing_storage.update_restaurant_timing.assert_not_called()
 
     def test_update_restaurant_timing_only_open_time_success(self, snapshot):

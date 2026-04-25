@@ -12,7 +12,9 @@ from orders.adapter.dtos import (
 )
 from orders.exception.custom_exceptions import (
     AddressNotFound,
+    CustomerCartNotFound,
     DeliveryNotAvailableForAddress,
+    EmptyCartItemsFound,
     PromoCodeMaximumUsed,
     PromoCodeNotEligible,
     PromoCodeNotFound,
@@ -87,10 +89,10 @@ class TestPlaceOrderInteractor:
         )
 
     @patch(
-        "orders.interactors.orders.place_order_interactor.transaction.atomic",
+        "orders.interactors.order.place_order_interactor.transaction.atomic",
         no_op_lock,
     )
-    @patch("orders.interactors.orders.place_order_interactor.redis_lock", no_op_lock)
+    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
     def test_place_order_successfully_with_flat_promo_code(self):
         self._setup_valid_adapters()
         promo_code = PromoCodeDTOFactory(
@@ -135,10 +137,10 @@ class TestPlaceOrderInteractor:
         )
 
     @patch(
-        "orders.interactors.orders.place_order_interactor.transaction.atomic",
+        "orders.interactors.order.place_order_interactor.transaction.atomic",
         no_op_lock,
     )
-    @patch("orders.interactors.orders.place_order_interactor.redis_lock", no_op_lock)
+    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
     def test_place_order_successfully_without_promo_code(self):
         self._setup_valid_adapters()
         self.order_storage.create_order.return_value = OrderDTOFactory(
@@ -196,10 +198,10 @@ class TestPlaceOrderInteractor:
         self.order_storage.create_order.assert_not_called()
 
     @patch(
-        "orders.interactors.orders.place_order_interactor.transaction.atomic",
+        "orders.interactors.order.place_order_interactor.transaction.atomic",
         no_op_lock,
     )
-    @patch("orders.interactors.orders.place_order_interactor.redis_lock", no_op_lock)
+    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
     def test_place_order_raises_promo_code_maximum_used(self):
         self._setup_valid_adapters()
         self.promo_code_storage.get_promo_code_by_id.return_value = PromoCodeDTOFactory(
@@ -214,6 +216,30 @@ class TestPlaceOrderInteractor:
             )
 
         assert exc.value.max_usage_count == 2
+        self.order_storage.create_order.assert_not_called()
+
+    def test_place_order_raises_customer_cart_not_found(self):
+        self._setup_valid_adapters()
+        self.interactor.restaurant_adapter.get_customer_cart_id.return_value = None
+
+        with pytest.raises(CustomerCartNotFound) as exc:
+            self.interactor.place_order(
+                order_data=PlaceOrderDTOFactory(customer_id="customer-404")
+            )
+
+        assert exc.value.customer_id == "customer-404"
+        self.order_storage.create_order.assert_not_called()
+
+    def test_place_order_raises_empty_cart_items_found(self):
+        self._setup_valid_adapters()
+        self.interactor.restaurant_adapter.get_customer_cart_items.return_value = []
+
+        with pytest.raises(EmptyCartItemsFound) as exc:
+            self.interactor.place_order(
+                order_data=PlaceOrderDTOFactory(customer_id="customer-1")
+            )
+
+        assert exc.value.cart_id == "cart-1"
         self.order_storage.create_order.assert_not_called()
 
     def test_place_order_raises_restaurant_day_timing_not_found(self):

@@ -19,6 +19,7 @@ class TestRestaurantStorage(TestCase):
         user = UserFactory(email="owner@example.com", role="OWNER")
         restaurants_dto = [
             CreateRestaurantDTO(
+                id="restaurant-1",
                 name="Spice Hub",
                 owner_id=str(user.id),
                 description="Popular spot",
@@ -38,6 +39,7 @@ class TestRestaurantStorage(TestCase):
     def test_create_bulk_restaurants_with_owner_id(self):
         restaurants_dto = [
             CreateRestaurantDTO(
+                id="restaurant-1",
                 name="Spice Hub",
                 owner_id="00000000-0000-0000-0000-000000000001",
                 description="Popular spot",

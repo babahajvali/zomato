@@ -3,6 +3,7 @@ from typing import List, Optional
 from accounts.interactors.storage_interface.address_storage_interface import (
     AddressStorageInterface,
 )
+from accounts.exception.custom_exceptions import EmailNotFound
 from accounts.interactors.dtos import CreateAddressDTO, AddressDTO
 from accounts.models import User, Address
 
@@ -29,6 +30,8 @@ class AddressStorage(AddressStorageInterface):
         user_map = {user.email: user for user in users}
 
         for dto in address_dtos:
+            if dto.email not in user_map:
+                raise EmailNotFound(email=dto.email)
             address = Address(
                 user=user_map[dto.email],
                 label=dto.label,

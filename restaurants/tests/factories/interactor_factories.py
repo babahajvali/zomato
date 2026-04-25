@@ -24,6 +24,7 @@ class CreateRestaurantDTOFactory(factory.Factory):
     class Meta:
         model = CreateRestaurantDTO
 
+    id = factory.Sequence(lambda n: f"restaurant-{n}")
     name = factory.Sequence(lambda n: f"Restaurant {n}")
     owner_id = factory.Sequence(lambda n: f"00000000-0000-0000-0000-{n:012d}")
     description = factory.Faker("sentence")
@@ -38,6 +39,8 @@ class CreateMenuItemDTOFactory(factory.Factory):
     class Meta:
         model = CreateMenuItemDTO
 
+    id = factory.Sequence(lambda n: f"item-{n}")
+    restaurant_id = factory.Sequence(lambda n: f"restaurant-{n}")
     name = factory.Sequence(lambda n: f"Item {n}")
     description = factory.Faker("sentence")
     category = Category.STARTER

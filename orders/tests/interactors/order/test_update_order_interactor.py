@@ -30,10 +30,10 @@ class TestUpdateOrderStatusInteractor:
         self.interactor.restaurant_adapter = MagicMock()
 
     @patch(
-        "orders.interactors.orders.update_order_interactor.transaction.atomic",
+        "orders.interactors.order.update_order_interactor.transaction.atomic",
         no_op_lock,
     )
-    @patch("orders.interactors.orders.update_order_interactor.redis_lock", no_op_lock)
+    @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
     def test_update_order_status_successfully(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
@@ -125,10 +125,10 @@ class TestUpdateOrderStatusInteractor:
         self.order_storage.update_order_status.assert_not_called()
 
     @patch(
-        "orders.interactors.orders.update_order_interactor.transaction.atomic",
+        "orders.interactors.order.update_order_interactor.transaction.atomic",
         no_op_lock,
     )
-    @patch("orders.interactors.orders.update_order_interactor.redis_lock", no_op_lock)
+    @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
     def test_update_order_status_revalidates_transition_inside_lock(self):
         first_order_dto = OrderDTOFactory(
             order_id="orders-1",

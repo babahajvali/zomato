@@ -12,7 +12,6 @@ from accounts.interactors.storage_interface.user_storage_interface import (
     UserStorageInterface,
 )
 from accounts.tests.factories.interactor_factories import AddressDTOFactory
-from accounts.tests.factories.storage_factories import UserFactory
 
 
 class TestGetUserAddressesInteractor:
@@ -27,13 +26,12 @@ class TestGetUserAddressesInteractor:
     def test_get_user_addresses_success(self):
         # Arrange
         user_id = "test-user-id"
-        user = UserFactory(id=user_id)
         expected_addresses = [
             AddressDTOFactory(user_id=user_id),
             AddressDTOFactory(user_id=user_id),
         ]
 
-        self.mock_user_storage.validate_user_exists.return_value = user
+        self.mock_user_storage.check_user_exists.return_value = True
         self.mock_address_storage.get_user_addresses.return_value = expected_addresses
 
         # Act
@@ -41,7 +39,7 @@ class TestGetUserAddressesInteractor:
 
         # Assert
         assert result == expected_addresses
-        self.mock_user_storage.validate_user_exists.assert_called_once_with(
+        self.mock_user_storage.check_user_exists.assert_called_once_with(
             user_id=user_id
         )
         self.mock_address_storage.get_user_addresses.assert_called_once_with(
@@ -52,16 +50,14 @@ class TestGetUserAddressesInteractor:
         # Arrange
         user_id = "non-existent-user"
 
-        self.mock_user_storage.validate_user_exists.side_effect = UserNotFound(
-            user_id=user_id
-        )
+        self.mock_user_storage.check_user_exists.return_value = False
 
         # Act & Assert
         with pytest.raises(UserNotFound) as exc_info:
             self.interactor.get_user_addresses(user_id=user_id)
 
         assert exc_info.value.user_id == user_id
-        self.mock_user_storage.validate_user_exists.assert_called_once_with(
+        self.mock_user_storage.check_user_exists.assert_called_once_with(
             user_id=user_id
         )
         self.mock_address_storage.get_user_addresses.assert_not_called()

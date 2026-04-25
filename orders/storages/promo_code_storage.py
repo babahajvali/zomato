@@ -21,7 +21,8 @@ class PromoCodeStorage(PromoCodeStorageInterface):
             valid_until=promo_code_obj.valid_until,
         )
 
-    def create_bulk_promo_codes(self, promo_code_dtos: List[CreatePromoCodeDTO]):
+    def create_bulk_promo_codes(self,
+                                promo_code_dtos: List[CreatePromoCodeDTO]):
         promo_codes = [
             PromoCode(
                 id=dto.id,
@@ -42,13 +43,11 @@ class PromoCodeStorage(PromoCodeStorageInterface):
 
     def get_existing_codes(self, codes: List[str]) -> List[str]:
         return list(
-            PromoCode.objects.filter(code__in=codes).values_list("code", flat=True)
+            PromoCode.objects.filter(code__in=codes).values_list("code",
+                                                                 flat=True)
         )
 
-    def get_promo_code_by_id(self, promo_code_id: int) -> PromoCodeDTO | None:
+    def get_promo_code_by_id(self, promo_code_id: int) -> PromoCodeDTO:
         promo_code_obj = PromoCode.objects.filter(id=promo_code_id).first()
-
-        if promo_code_obj is None:
-            return None
 
         return self._convert_to_promo_code_dto(promo_code_obj=promo_code_obj)

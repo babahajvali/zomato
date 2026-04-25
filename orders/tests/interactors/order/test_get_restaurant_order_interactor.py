@@ -33,11 +33,13 @@ class TestGetRestaurantOrderInteractor:
         result = self.interactor.get_restaurant_orders(
             restaurant_id="restaurants-1",
             user_id="owner-1",
+            limit=10,
+            offset=0,
         )
 
         assert result == order_dtos
         self.order_storage.get_restaurant_orders.assert_called_once_with(
-            restaurant_id="restaurants-1"
+            restaurant_id="restaurants-1", limit=10, offset=0
         )
 
     def test_get_restaurant_order_raises_user_is_not_restaurant_owner(self):
@@ -49,6 +51,8 @@ class TestGetRestaurantOrderInteractor:
             self.interactor.get_restaurant_orders(
                 restaurant_id="restaurants-1",
                 user_id="other-user",
+                limit=10,
+                offset=0,
             )
 
         assert exc.value.user_id == "other-user"

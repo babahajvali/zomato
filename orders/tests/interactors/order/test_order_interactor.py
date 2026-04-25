@@ -1,5 +1,6 @@
 from datetime import timedelta
-from unittest.mock import create_autospec
+from contextlib import contextmanager
+from unittest.mock import create_autospec, patch
 
 import pytest
 from django.utils import timezone
@@ -18,23 +19,31 @@ from orders.interactors.storage_interface.order_storage_interface import (
 from orders.tests.factories.dto_factories import OrderDTOFactory
 
 
+@contextmanager
+def no_op_lock(*args, **kwargs):
+    yield
+
+
 class TestOrderInteractor:
     def setup_method(self):
         self.order_storage = create_autospec(OrderStorageInterface)
         self.interactor = OrderInteractor(order_storage=self.order_storage)
 
+    @patch("orders.interactors.order.order_interactor.transaction.atomic", no_op_lock)
+    @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
     def test_cancel_order_successfully(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
             customer_id="customer-1",
             status=OrderStatus.PLACED,
+            placed_at=timezone.now(),
         )
         cancelled_order_dto = OrderDTOFactory(
             order_id="orders-1",
             customer_id="customer-1",
             status=OrderStatus.CANCELLED,
         )
-        self.order_storage.get_order.side_effect = [order_dto, order_dto]
+        self.order_storage.get_order.side_effect = [order_dto, order_dto, order_dto]
         self.order_storage.get_order_placed_at.return_value = timezone.now()
         self.order_storage.update_order_status.return_value = cancelled_order_dto
 
@@ -146,10 +155,18 @@ class TestOrderInteractor:
         ]
         self.order_storage.get_user_orders.return_value = order_dtos
 
-        result = self.interactor.get_user_orders(user_id="customer-1")
+        result = self.interactor.get_user_orders(
+            user_id="customer-1",
+            limit=10,
+            offset=0,
+        )
 
         assert result == order_dtos
-        self.order_storage.get_user_orders.assert_called_once_with(user_id="customer-1")
+        self.order_storage.get_user_orders.assert_called_once_with(
+            user_id="customer-1",
+            limit=10,
+            offset=0,
+        )
 
     def test_get_order_successfully(self):
         order_dto = OrderDTOFactory(order_id="orders-1")
