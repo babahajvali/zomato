@@ -1,0 +1,8 @@
+{
+  "data": {
+    "autoCancelOrder": {
+      "__typename": "OrderCannotBeCancelled",
+      "orderId": "orders-1"
+    }
+  }
+}

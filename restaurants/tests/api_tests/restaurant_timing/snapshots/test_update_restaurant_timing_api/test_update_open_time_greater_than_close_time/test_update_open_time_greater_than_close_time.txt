@@ -1,0 +1,32 @@
+{
+  "errors": [
+    {
+      "message": "Unknown type 'RestaurantTimingNoFoundTpe'. Did you mean 'RestaurantTimingNotFound', 'RestaurantTimingType', 'RestaurantTimingsListType', 'RestaurantNotFound', or 'RestaurantMenuType'?",
+      "locations": [
+        {
+          "line": 12,
+          "column": 16
+        }
+      ]
+    },
+    {
+      "message": "Unknown type 'UserIsNotRestaurantOwnerType'. Did you mean 'UserIsNotRestaurantOwner'?",
+      "locations": [
+        {
+          "line": 16,
+          "column": 16
+        }
+      ]
+    },
+    {
+      "message": "Unknown type 'OpenTimeGreaterThanCloseTimeType'. Did you mean 'OpenTimeGreaterThanCloseTime'?",
+      "locations": [
+        {
+          "line": 20,
+          "column": 16
+        }
+      ]
+    }
+  ],
+  "data": null
+}

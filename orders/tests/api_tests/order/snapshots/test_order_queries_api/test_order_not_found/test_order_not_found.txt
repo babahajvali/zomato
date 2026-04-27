@@ -1,0 +1,8 @@
+{
+  "data": {
+    "getOrder": {
+      "__typename": "OrderNotFound",
+      "orderId": "invalid-orders"
+    }
+  }
+}

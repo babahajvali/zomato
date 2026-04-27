@@ -1,0 +1,14 @@
+{
+  "errors": [
+    {
+      "message": "Unknown type 'RestaurantNotFoundType'. Did you mean 'RestaurantNotFound', 'RestaurantTimingType', 'RestaurantDashboardType', 'RestaurantMenuType', or 'RestaurantNotOpenNow'?",
+      "locations": [
+        {
+          "line": 14,
+          "column": 16
+        }
+      ]
+    }
+  ],
+  "data": null
+}

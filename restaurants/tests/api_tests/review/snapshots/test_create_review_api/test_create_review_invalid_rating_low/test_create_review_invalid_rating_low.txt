@@ -1,0 +1,8 @@
+{
+  "data": {
+    "createReview": {
+      "__typename": "InvalidRatingFound",
+      "userRating": 0
+    }
+  }
+}

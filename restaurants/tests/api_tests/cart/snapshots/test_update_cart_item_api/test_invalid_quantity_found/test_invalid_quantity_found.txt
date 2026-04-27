@@ -1,0 +1,8 @@
+{
+  "data": {
+    "updateCartItem": {
+      "__typename": "InvalidQuantity",
+      "quantity": 0
+    }
+  }
+}

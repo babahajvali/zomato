@@ -1,0 +1,26 @@
+{
+  "data": {
+    "getOrder": {
+      "__typename": "OrderSummaryType",
+      "orderId": "orders-1",
+      "customerId": "49bb508e-c6d1-4882-95fd-1991d103f7cd",
+      "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7df",
+      "promoCodeId": 1,
+      "status": "PLACED",
+      "itemsTotal": "400.00",
+      "deliveryFee": "30.00",
+      "taxFee": "20.00",
+      "finalAmount": "450.00",
+      "addressId": 1,
+      "placedAt": "2026-04-27 05:14:41.004573+00:00",
+      "items": [
+        {
+          "itemId": "item-1",
+          "quantity": 2,
+          "itemPrice": "200.00",
+          "subtotal": "400.00"
+        }
+      ]
+    }
+  }
+}

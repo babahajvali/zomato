@@ -1,0 +1,9 @@
+{
+  "data": {
+    "removeCartItem": {
+      "__typename": "RemoveCartItemSuccessType",
+      "cartItemId": 1,
+      "success": true
+    }
+  }
+}

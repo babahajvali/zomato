@@ -1,0 +1,12 @@
+{
+  "data": {
+    "updateOrderStatus": {
+      "__typename": "InvalidOrderStatusTransition",
+      "currentStatus": "PLACED",
+      "newStatus": "DELIVERED",
+      "allowed": [
+        "CONFIRMED"
+      ]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "errors": [
+    {
+      "message": "Field 'userOrders' argument 'params' of type 'GetUserOrdersInputParams!' is required, but it was not provided.",
+      "locations": [
+        {
+          "line": 3,
+          "column": 7
+        }
+      ]
+    }
+  ],
+  "data": null
+}

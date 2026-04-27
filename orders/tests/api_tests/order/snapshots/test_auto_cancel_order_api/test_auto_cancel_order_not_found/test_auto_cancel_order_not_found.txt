@@ -1,0 +1,8 @@
+{
+  "data": {
+    "autoCancelOrder": {
+      "__typename": "OrderNotFound",
+      "orderId": "invalid-orders"
+    }
+  }
+}
