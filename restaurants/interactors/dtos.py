@@ -1,6 +1,7 @@
-from datetime import time
+from datetime import time, date
 from dataclasses import dataclass
-from typing import Optional, List
+from decimal import Decimal
+from typing import Optional, List, Dict
 
 from restaurants.constants.enums import CuisineType, Category
 
@@ -195,3 +196,40 @@ class RestaurantReviewSummaryDTO:
     restaurant_id: str
     average_rating: float
     total_reviews: int
+
+
+@dataclass
+class DashboardFiltersDTO:
+    restaurant_id: str
+    owner_id: str
+    date_from: date
+    date_to: date
+
+
+@dataclass
+class RestaurantOrdersSummaryDTO:
+    total_orders: int
+    total_revenue: Decimal
+    avg_order_value: Decimal
+    total_cancelled: int
+    cancellation_rate: Decimal
+
+
+@dataclass
+class OrdersByStatusDTO:
+    status: str
+    count: int
+
+
+@dataclass
+class RatingSummaryDTO:
+    average_rating: Decimal
+    total_reviews: int
+    distribution: Dict[str, int]
+
+
+@dataclass
+class RestaurantDashboardDTO:
+    summary: RestaurantOrdersSummaryDTO
+    orders_by_status: List[OrdersByStatusDTO]
+    rating_summary: RatingSummaryDTO

@@ -6,6 +6,9 @@ from restaurants.graphql.resolvers.browse_restaurants_resolver import (
 from restaurants.graphql.resolvers.get_cart_items_resolver import (
     get_cart_items_resolver,
 )
+from restaurants.graphql.resolvers.get_restaurant_dashboard_resolver import (
+    get_restaurant_dashboard_resolver,
+)
 from restaurants.graphql.resolvers.get_restaurant_timings_resolver import (
     get_restaurant_timings_resolver,
 )
@@ -17,12 +20,14 @@ from restaurants.graphql.types.input_types import (
     ViewRestaurantMenuInputParams,
     GetRestaurantTimingsInputParams,
     GetCartItemsInputParams,
+    GetRestaurantDashboardInputParams,
 )
 from restaurants.graphql.types.response_types import (
     BrowseRestaurantsResponse,
     ViewRestaurantMenuResponse,
     GetRestaurantTimingsResponse,
     GetCartItemsResponse,
+    GetRestaurantDashboardResponse,
 )
 
 
@@ -46,4 +51,10 @@ class RestaurantQueries(graphene.ObjectType):
         GetCartItemsResponse,
         params=GetCartItemsInputParams(required=True),
         resolver=get_cart_items_resolver,
+    )
+
+    get_restaurant_dashboard = graphene.Field(
+        GetRestaurantDashboardResponse,
+        params=GetRestaurantDashboardInputParams(required=True),
+        resolver=get_restaurant_dashboard_resolver,
     )

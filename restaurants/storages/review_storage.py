@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import List
 
 from django.db.models import Avg, Count
@@ -6,6 +7,7 @@ from restaurants.interactors.dtos import (
     CreateReviewDTO,
     ReviewDTO,
     RestaurantReviewSummaryDTO,
+    RatingSummaryDTO,
 )
 from restaurants.interactors.storage_interface.review_storage_interface import (
     ReviewStorageInterface,
@@ -69,3 +71,25 @@ class ReviewStorage(ReviewStorageInterface):
         return RestaurantReview.objects.filter(
             customer_id=user_id, restaurant_id=restaurant_id
         ).exists()
+
+    def get_rating_summary(self, restaurant_id: str) -> RatingSummaryDTO:
+        reviews = RestaurantReview.objects.filter(restaurant_id=restaurant_id)
+
+        result = reviews.aggregate(
+            average_rating=Avg("rating"),
+            total_reviews=Count("id"),
+        )
+
+        distribution_qs = reviews.values("rating").annotate(count=Count("id"))
+        distribution = {str(row["rating"]): row["count"] for row in distribution_qs}
+
+        for star in range(1, 6):
+            distribution.setdefault(str(star), 0)
+
+        return RatingSummaryDTO(
+            average_rating=Decimal(str(result["average_rating"] or 0)).quantize(
+                Decimal("0.01")
+            ),
+            total_reviews=result["total_reviews"] or 0,
+            distribution=distribution,
+        )

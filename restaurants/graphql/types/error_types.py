@@ -48,3 +48,8 @@ class UserAlreadyReviewedRestaurant(graphene.ObjectType):
 
 class InvalidRatingFound(graphene.ObjectType):
     user_rating = graphene.Int(required=True)
+
+
+class InvalidDateRange(graphene.ObjectType):
+    date_from = graphene.Date(required=True)
+    date_to = graphene.Date(required=True)

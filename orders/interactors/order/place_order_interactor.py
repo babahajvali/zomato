@@ -144,12 +144,11 @@ class PlaceOrderInteractor(PromoCodeMixin):
 
         return self._build_order_summary_dto(order_dto=order_dto, cart_items=cart_items)
 
-
     def _validate_promo_code_existence_and_eligibility(
         self,
         promo_code_id: int,
         items_total: Decimal,
-    ) -> None:
+    ):
 
         self.validate_promo_code_exist(promo_code_id=promo_code_id)
 
@@ -166,7 +165,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
             )
 
     @staticmethod
-    def _validate_promo_code_expiry(promo_code_dto: PromoCodeDTO) -> None:
+    def _validate_promo_code_expiry(promo_code_dto: PromoCodeDTO):
         now = timezone.now()
 
         if promo_code_dto.valid_from and now < promo_code_dto.valid_from:
@@ -174,7 +173,6 @@ class PlaceOrderInteractor(PromoCodeMixin):
 
         if promo_code_dto.valid_until and now > promo_code_dto.valid_until:
             raise PromoCodeExpired(code=promo_code_dto.code)
-
 
     def _get_discount_price(
         self,
@@ -211,7 +209,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
         if usage_count >= max_usage_count:
             raise PromoCodeMaximumUsed(max_usage_count=max_usage_count)
 
-    def _validate_restaurant_timing(self, restaurant_id: str) -> None:
+    def _validate_restaurant_timing(self, restaurant_id: str):
         now = datetime.now()
         timing = self.restaurant_adapter.get_restaurant_timing(
             restaurant_id=restaurant_id,
@@ -260,11 +258,8 @@ class PlaceOrderInteractor(PromoCodeMixin):
             )
         return Decimal(str(zone_dto.delivery_fee))
 
-
     def _get_validated_cart_id(self, customer_id: str) -> str:
-        cart_id = self.restaurant_adapter.get_customer_cart_id(
-            customer_id=customer_id
-        )
+        cart_id = self.restaurant_adapter.get_customer_cart_id(customer_id=customer_id)
         if cart_id is None:
             raise CustomerCartNotFound(customer_id=customer_id)
         return cart_id
@@ -274,7 +269,6 @@ class PlaceOrderInteractor(PromoCodeMixin):
         if not cart_items:
             raise EmptyCartItemsFound(cart_id=cart_id)
         return cart_items
-
 
     def _save_order(
         self,
@@ -301,17 +295,17 @@ class PlaceOrderInteractor(PromoCodeMixin):
         self,
         cart_items: List[CartItemDTO],
         order_id: str,
-    ) -> None:
+    ):
         order_items = self._build_order_items(cart_items=cart_items, order_id=order_id)
         self.order_storage.create_order_items(order_item_dtos=order_items)
 
-
     @staticmethod
     def _calculate_items_total(cart_items: List[CartItemDTO]) -> Decimal:
-        return sum(
+        items_total = sum(
             Decimal(str(item.item_price)) * Decimal(str(item.quantity))
             for item in cart_items
         )
+        return Decimal(items_total)
 
     @staticmethod
     def _calculate_discount_price(

@@ -5,6 +5,7 @@ from restaurants.interactors.dtos import (
     CreateReviewDTO,
     ReviewDTO,
     RestaurantReviewSummaryDTO,
+    RatingSummaryDTO,
 )
 
 
@@ -25,4 +26,8 @@ class ReviewStorageInterface(ABC):
 
     @abstractmethod
     def check_user_review_exists(self, user_id: str, restaurant_id: str) -> bool:
+        pass
+
+    @abstractmethod
+    def get_rating_summary(self, restaurant_id: str) -> RatingSummaryDTO:
         pass

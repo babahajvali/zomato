@@ -1,9 +1,10 @@
-from datetime import timedelta
+from datetime import timedelta, date
 from typing import List, Optional
 from datetime import datetime
 from django.db import transaction
 from django.utils import timezone
 
+from orders.app_service.dtos import RestaurantOrdersSummaryDTO, OrdersByStatusDTO
 from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
     OrderCancellationTimeExceeded,
@@ -73,6 +74,20 @@ class OrderInteractor(OrderMixin):
         order_items = self.order_storage.get_order_items(order_id=order_id)
 
         return self._build_order_summary(order_dto=order_dto, order_items=order_items)
+
+    def get_restaurant_orders_summary(
+        self, restaurant_id: str, date_from: date, date_to: date
+    ) -> RestaurantOrdersSummaryDTO:
+        return self.order_storage.get_restaurant_orders_summary(
+            restaurant_id=restaurant_id, date_from=date_from, date_to=date_to
+        )
+
+    def get_orders_count_by_status(
+        self, restaurant_id: str, date_from: date, date_to: date
+    ) -> List[OrdersByStatusDTO]:
+        return self.order_storage.get_orders_count_by_status(
+            restaurant_id=restaurant_id, date_from=date_from, date_to=date_to
+        )
 
     def _validate_cancel_order_time(self, order_id: str, placed_at: Optional[datetime]):
         if not placed_at:

@@ -104,3 +104,28 @@ class ReviewType(graphene.ObjectType):
     customer_id = graphene.String(required=True)
     rating = graphene.Float(required=True)
     review = graphene.String()
+
+
+class RestaurantOrdersSummaryType(graphene.ObjectType):
+    total_orders = graphene.Int(required=True)
+    total_revenue = graphene.Decimal(required=True)
+    avg_order_value = graphene.Decimal(required=True)
+    total_cancelled = graphene.Int(required=True)
+    cancellation_rate = graphene.Decimal(required=True)
+
+
+class OrdersByStatusType(graphene.ObjectType):
+    status = graphene.String(required=True)
+    count = graphene.Int(required=True)
+
+
+class RatingSummaryType(graphene.ObjectType):
+    average_rating = graphene.Decimal(required=True)
+    total_reviews = graphene.Int(required=True)
+    distribution = graphene.Dict(required=True)
+
+
+class RestaurantDashboardType(graphene.ObjectType):
+    summary = graphene.Field(RestaurantOrdersSummaryType)
+    orders_by_status = graphene.List(OrdersByStatusType)
+    rating_summary = graphene.Field(RatingSummaryType)

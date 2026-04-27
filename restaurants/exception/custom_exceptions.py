@@ -159,3 +159,12 @@ class InvalidRatingFound(Exception):
 
     def __str__(self):
         return f" Invalid rating: {self.rating} found "
+
+
+class InvalidDateRange(Exception):
+    def __init__(self, date_from: datetime.date, date_to: datetime.date):
+        self.date_from = date_from
+        self.date_to = date_to
+
+    def __str__(self):
+        return f"{self.date_from} --> {self.date_to}"

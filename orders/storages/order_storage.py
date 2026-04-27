@@ -1,8 +1,10 @@
 from datetime import datetime, date
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from typing import List
 
+from django.db.models import Count, Q, Avg, Sum
 
+from orders.app_service.dtos import RestaurantOrdersSummaryDTO, OrdersByStatusDTO
 from orders.constants.enums import OrderStatus
 from orders.interactors.dtos import (
     CreateOrderDTO,
@@ -139,3 +141,69 @@ class OrderStorage(OrderStorageInterface):
         ).order_by("-created_at")[offset : offset + limit]
 
         return [self._convert_to_order_dto(order_obj=order) for order in orders]
+
+    def get_restaurant_orders_summary(
+        self, restaurant_id: str, date_from: date, date_to: date
+    ) -> RestaurantOrdersSummaryDTO:
+        orders = Order.objects.filter(
+            restaurant_id=restaurant_id,
+            created_at__date__gte=date_from,
+            created_at__date__lte=date_to,
+        )
+
+        result = orders.aggregate(
+            total_orders=Count("id"),
+            total_revenue=Sum(
+                "final_amount",
+                filter=~Q(status=OrderStatus.CANCELLED.value),
+            ),
+            avg_order_value=Avg(
+                "final_amount",
+                filter=~Q(status=OrderStatus.CANCELLED.value),
+            ),
+            total_cancelled=Count(
+                "id",
+                filter=Q(status=OrderStatus.CANCELLED.value),
+            ),
+        )
+
+        total_orders = result["total_orders"] or 0
+        total_cancelled = result["total_cancelled"] or 0
+        total_revenue = Decimal(str(result["total_revenue"] or 0))
+        avg_order_value = Decimal(str(result["avg_order_value"] or 0))
+
+        cancellation_rate = (
+            Decimal(str(total_cancelled)) / Decimal(str(total_orders)) * 100
+            if total_orders > 0
+            else Decimal("0.00")
+        ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+        return RestaurantOrdersSummaryDTO(
+            total_orders=total_orders,
+            total_revenue=total_revenue.quantize(Decimal("0.01")),
+            avg_order_value=avg_order_value.quantize(Decimal("0.01")),
+            total_cancelled=total_cancelled,
+            cancellation_rate=cancellation_rate,
+        )
+
+    def get_orders_count_by_status(
+        self, restaurant_id: str, date_from: date, date_to: date
+    ) -> List[OrdersByStatusDTO]:
+        results = (
+            Order.objects.filter(
+                restaurant_id=restaurant_id,
+                created_at__date__gte=date_from,
+                created_at__date__lte=date_to,
+            )
+            .values("status")
+            .annotate(count=Count("id"))
+            .order_by("-count")
+        )
+
+        return [
+            OrdersByStatusDTO(
+                status=row["status"],
+                count=row["count"],
+            )
+            for row in results
+        ]

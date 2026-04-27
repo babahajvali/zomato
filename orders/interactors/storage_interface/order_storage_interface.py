@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import List
 
+from orders.app_service.dtos import RestaurantOrdersSummaryDTO
 from orders.constants.enums import OrderStatus
 from orders.interactors.dtos import (
     CreateOrderDTO,
@@ -54,4 +55,16 @@ class OrderStorageInterface(ABC):
     def get_today_restaurant_orders(
         self, restaurant_id: str, limit: int, offset: int
     ) -> List[OrderDTO]:
+        pass
+
+    @abstractmethod
+    def get_restaurant_orders_summary(
+        self, restaurant_id: str, date_from: date, date_to: date
+    ) -> RestaurantOrdersSummaryDTO:
+        pass
+
+    @abstractmethod
+    def get_orders_count_by_status(
+        self, restaurant_id: str, date_from: date, date_to: date
+    ) -> List[OrdersByStatusDTO]:
         pass

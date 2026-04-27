@@ -67,3 +67,8 @@ class CreateReviewInputParams(graphene.InputObjectType):
     restaurant_id = graphene.String(required=True)
     rating = graphene.Int(required=True)
     review = graphene.String()
+
+class GetRestaurantDashboardInputParams(graphene.InputObjectType):
+    restaurant_id = graphene.String(required=True)
+    date_from = graphene.Date(required=True)
+    date_to = graphene.Date(required=True)
