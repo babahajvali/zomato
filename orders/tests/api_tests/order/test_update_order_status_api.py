@@ -17,7 +17,7 @@ def no_op_lock(*args, **kwargs):
 
 @pytest.mark.django_db
 class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
-    @patch("orders.interactors.orders.update_order_interactor.redis_lock", no_op_lock)
+    @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
     def test_update_order_status_successfully(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)

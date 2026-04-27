@@ -6,7 +6,7 @@ from restaurants.graphql.types.error_types import (
     RestaurantNotFound,
     InvalidCategoriesFound,
     InvalidCuisineTypeException,
-    InvalidMinRatingException,
+    InvalidMinRating,
     CartNotFound,
     MenuItemNotFound,
     InvalidQuantity,
@@ -72,7 +72,7 @@ class BrowseRestaurantsResponse(graphene.Union):
         types = (
             BrowseRestaurantsType,
             InvalidCuisineTypeException,
-            InvalidMinRatingException,
+            InvalidMinRating,
         )
 
 

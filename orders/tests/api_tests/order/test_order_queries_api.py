@@ -80,7 +80,7 @@ class TestUserOrdersApi(BaseUserOrdersTestCase):
 
         self.execute_schema(
             query=self.QUERY,
-            variables={},
+            variables={"params": {"limit": 5, "offset": 0}},
             snapshot=snapshot,
             user_id=user_id,
         )
@@ -91,7 +91,7 @@ class TestUserOrdersApi(BaseUserOrdersTestCase):
 
         self.execute_schema(
             query=self.QUERY,
-            variables={},
+            variables={"params": {"limit": 5, "offset": 0}},
             snapshot=snapshot,
             user_id=user_id,
         )
@@ -125,7 +125,7 @@ class TestRestaurantOrdersApi(BaseRestaurantOrdersTestCase):
             status=OrderStatus.PLACED.value,
         )
 
-        variables = {"params": {"restaurantId": restaurant_id}}
+        variables = {"params": {"restaurantId": restaurant_id, "limit": 3, "offset": 0}}
 
         self.execute_schema(
             query=self.QUERY,
@@ -142,7 +142,7 @@ class TestRestaurantOrdersApi(BaseRestaurantOrdersTestCase):
         UserFactory(id=user_id)
         RestaurantFactory(id=restaurant_id, owner_id=owner_id)
 
-        variables = {"params": {"restaurantId": restaurant_id}}
+        variables = {"params": {"restaurantId": restaurant_id, "limit": 5, "offset": 0}}
 
         self.execute_schema(
             query=self.QUERY,

@@ -2,7 +2,7 @@ from restaurants.exception import custom_exceptions
 
 from restaurants.graphql.types.error_types import (
     InvalidCuisineTypeException,
-    InvalidMinRatingException,
+    InvalidMinRating,
 )
 from restaurants.graphql.types.types import BrowseRestaurantType, BrowseRestaurantsType
 from restaurants.interactors.dtos import BrowseRestaurantFiltersDTO
@@ -55,4 +55,4 @@ def get_browse_restaurants_resolver(root, info, params=None):
     except custom_exceptions.InvalidCuisineTypeException as exc:
         return InvalidCuisineTypeException(cuisine_type=str(exc.cuisine_type))
     except custom_exceptions.InvalidMinRating as exc:
-        return InvalidMinRatingException(min_rating=exc.min_rating)
+        return InvalidMinRating(min_rating=exc.min_rating)

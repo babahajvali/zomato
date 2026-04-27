@@ -88,6 +88,7 @@ class TestCreateMenuItemInteractor:
         self.restaurant_storage.create_menu_items.assert_not_called()
 
     def test_create_menu_item_invalid_category(self):
+        restaurant_id = "restaurants-1"
         invalid_category = create_autospec(object)
         invalid_category.value = "INVALID_CATEGORY"
         create_items_dto = [

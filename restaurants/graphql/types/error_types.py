@@ -22,7 +22,7 @@ class InvalidCuisineTypeException(graphene.ObjectType):
     cuisine_type = graphene.String(required=True)
 
 
-class InvalidMinRatingException(graphene.ObjectType):
+class InvalidMinRating(graphene.ObjectType):
     min_rating = graphene.Float(required=True)
 
 
