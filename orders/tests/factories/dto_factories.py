@@ -7,6 +7,8 @@ from orders.interactors.dtos import (
     CreateOrderItemDTO,
     CreatePromoCodeDTO,
     OrderDTO,
+    OrderItemSummaryDTO,
+    OrderSummaryDTO,
     PlaceOrderDTO,
     PromoCodeDTO,
 )
@@ -90,3 +92,31 @@ class CreateOrderItemDTOFactory(factory.Factory):
     item_id = "00000000-0000-0000-0000-000000000004"
     quantity = 2
     item_price = 200.0
+
+
+class OrderItemSummaryDTOFactory(factory.Factory):
+    class Meta:
+        model = OrderItemSummaryDTO
+
+    item_id = "00000000-0000-0000-0000-000000000004"
+    quantity = 2
+    item_price = 200.0
+    subtotal = 400.0
+
+
+class OrderSummaryDTOFactory(factory.Factory):
+    class Meta:
+        model = OrderSummaryDTO
+
+    order_id = "00000000-0000-0000-0000-000000000003"
+    customer_id = "00000000-0000-0000-0000-000000000001"
+    restaurant_id = "00000000-0000-0000-0000-000000000002"
+    promo_code_id = None
+    status = OrderStatus.PLACED
+    items = factory.List([factory.SubFactory(OrderItemSummaryDTOFactory)])
+    items_total = 400.0
+    delivery_fee = 30.0
+    tax_fee = 20.0
+    final_amount = 450.0
+    placed_at = factory.LazyFunction(datetime.now)
+    address_id = 1

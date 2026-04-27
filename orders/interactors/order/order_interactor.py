@@ -9,8 +9,9 @@ from orders.exception.custom_exceptions import (
     OrderCancellationTimeExceeded,
     OrderCannotBeCancelled,
     OrderAlreadyCancelled,
+    OrderNotFound,
 )
-from orders.interactors.dtos import OrderDTO
+from orders.interactors.dtos import OrderDTO, OrderSummaryDTO
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
 )
@@ -63,10 +64,15 @@ class OrderInteractor(OrderMixin):
             user_id=user_id, limit=limit, offset=offset
         )
 
-    def get_order(self, order_id: str) -> OrderDTO:
-        self.validate_order_exists(order_id=order_id)
+    def get_order(self, order_id: str) -> OrderSummaryDTO:
+        order_dto = self.order_storage.get_order(order_id=order_id)
 
-        return self.order_storage.get_order(order_id=order_id)
+        if order_dto is None:
+            raise OrderNotFound(order_id=order_id)
+
+        order_items = self.order_storage.get_order_items(order_id=order_id)
+
+        return self._build_order_summary(order_dto=order_dto, order_items=order_items)
 
     def _validate_cancel_order_time(self, order_id: str, placed_at: Optional[datetime]):
         if not placed_at:
@@ -86,3 +92,23 @@ class OrderInteractor(OrderMixin):
     def _validate_order_is_not_already_cancelled(order_dto):
         if order_dto.status == OrderStatus.CANCELLED.value:
             raise OrderAlreadyCancelled(order_id=order_dto.order_id)
+
+    @staticmethod
+    def _build_order_summary(
+        order_dto: OrderDTO,
+        order_items,
+    ) -> OrderSummaryDTO:
+        return OrderSummaryDTO(
+            order_id=order_dto.order_id,
+            customer_id=order_dto.customer_id,
+            restaurant_id=order_dto.restaurant_id,
+            promo_code_id=order_dto.promo_code_id,
+            status=order_dto.status,
+            items=order_items,
+            items_total=order_dto.items_total,
+            delivery_fee=order_dto.delivery_fee,
+            tax_fee=order_dto.tax_fee,
+            final_amount=order_dto.final_amount,
+            placed_at=order_dto.placed_at,
+            address_id=order_dto.address_id,
+        )

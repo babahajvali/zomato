@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from restaurants.interactors.dtos import (
     BrowseRestaurantDTO,
+    RestaurantReviewSummaryDTO,
     RestaurantTimingDTO,
     RestaurantDTO,
 )
@@ -90,15 +91,20 @@ class TimingMixin:
     def compute_is_open_bulk(
         restaurants: List[RestaurantDTO],
         timings: List[RestaurantTimingDTO],
+        review_summaries: List[RestaurantReviewSummaryDTO],
     ) -> List[BrowseRestaurantDTO]:
 
         now = datetime.datetime.now()
         day_of_week = now.isoweekday()
         current_time = now.time()
+        review_summary_map = {
+            summary.restaurant_id: summary for summary in review_summaries
+        }
 
         browse_restaurants = []
 
         for each_restaurant in restaurants:
+            review_summary = review_summary_map.get(str(each_restaurant.id))
             restaurant = BrowseRestaurantDTO(
                 restaurant_id=each_restaurant.id,
                 name=each_restaurant.name,
@@ -107,8 +113,10 @@ class TimingMixin:
                 address=each_restaurant.address,
                 is_veg_only=each_restaurant.is_veg_only,
                 is_deleted=each_restaurant.is_deleted,
-                average_rating=0.0,
-                total_reviews=0,
+                average_rating=(
+                    review_summary.average_rating if review_summary else 0.0
+                ),
+                total_reviews=review_summary.total_reviews if review_summary else 0,
                 is_open=False,
                 cuisine_type=each_restaurant.cuisine_type,
             )

@@ -10,8 +10,8 @@ from restaurants.graphql.types.input_types import CreateReviewInputParams
 from restaurants.graphql.types.response_types import CreateReviewResponse
 from restaurants.graphql.types.types import ReviewType
 from restaurants.interactors.dtos import CreateReviewDTO
-from restaurants.interactors.review.create_review_interactor import (
-    CreateReviewInteractor,
+from restaurants.interactors.review.review_interactor import (
+    ReviewInteractor,
 )
 from restaurants.storages.restaurant_storage import RestaurantStorage
 from restaurants.storages.review_storage import ReviewStorage
@@ -29,7 +29,7 @@ class CreateReviewMutation(graphene.Mutation):
         restaurant_storage = RestaurantStorage()
         review_storage = ReviewStorage()
 
-        interactor = CreateReviewInteractor(
+        interactor = ReviewInteractor(
             restaurant_storage=restaurant_storage,
             review_storage=review_storage,
         )

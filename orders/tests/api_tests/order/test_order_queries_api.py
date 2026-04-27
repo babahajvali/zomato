@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 import pytest
 
 from accounts.tests.factories.storage_factories import UserFactory
@@ -7,7 +9,11 @@ from orders.tests.api_tests.order import (
     BaseRestaurantOrdersTestCase,
     BaseUserOrdersTestCase,
 )
-from orders.tests.factories.storage_factories import OrderFactory, PromoCodeFactory
+from orders.tests.factories.storage_factories import (
+    OrderFactory,
+    OrderItemFactory,
+    PromoCodeFactory,
+)
 from restaurants.tests.factories.storage_factories import RestaurantFactory
 
 
@@ -19,12 +25,20 @@ class TestGetOrderApi(BaseGetOrderTestCase):
         UserFactory(id=user_id)
         RestaurantFactory(id=restaurant_id)
         promo_code = PromoCodeFactory(id=1)
-        OrderFactory(
+        order = OrderFactory(
             id="orders-1",
             customer_id=user_id,
             restaurant_id=restaurant_id,
             promo_code=promo_code,
             status=OrderStatus.PLACED.value,
+        )
+        order.created_at = datetime(2026, 4, 27, 5, 14, 41, 4573, tzinfo=timezone.utc)
+        order.save(update_fields=["created_at"])
+        OrderItemFactory(
+            order_id="orders-1",
+            item_id="item-1",
+            quantity=2,
+            item_price=200.0,
         )
 
         variables = {"params": {"orderId": "orders-1"}}

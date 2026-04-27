@@ -6,8 +6,8 @@ from restaurants.exception.custom_exceptions import (
     InvalidRatingFound,
     RestaurantNotFound,
 )
-from restaurants.interactors.review.create_review_interactor import (
-    CreateReviewInteractor,
+from restaurants.interactors.review.review_interactor import (
+    ReviewInteractor,
 )
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
     RestaurantStorageInterface,
@@ -25,7 +25,7 @@ class TestCreateReviewInteractor:
     def setup_method(self):
         self.mock_review_storage = create_autospec(ReviewStorageInterface)
         self.mock_restaurant_storage = create_autospec(RestaurantStorageInterface)
-        self.interactor = CreateReviewInteractor(
+        self.interactor = ReviewInteractor(
             review_storage=self.mock_review_storage,
             restaurant_storage=self.mock_restaurant_storage,
         )

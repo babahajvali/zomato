@@ -49,7 +49,7 @@ class UpdateOrderStatusResponse(graphene.Union):
 class GetOrderResponse(graphene.Union):
     class Meta:
         types = (
-            OrderType,
+            OrderSummaryType,
             OrderNotFound,
         )
 

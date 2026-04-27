@@ -16,7 +16,7 @@ from orders.interactors.order.order_interactor import OrderInteractor
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
 )
-from orders.tests.factories.dto_factories import OrderDTOFactory
+from orders.tests.factories.dto_factories import OrderDTOFactory, OrderSummaryDTOFactory
 
 
 @contextmanager
@@ -169,13 +169,25 @@ class TestOrderInteractor:
         )
 
     def test_get_order_successfully(self):
-        order_dto = OrderDTOFactory(order_id="orders-1")
+        placed_at = timezone.now()
+        order_dto = OrderDTOFactory(
+            order_id="orders-1",
+            status=OrderStatus.PLACED,
+            placed_at=placed_at,
+        )
+        order_summary_dto = OrderSummaryDTOFactory(
+            order_id="orders-1",
+            status=OrderStatus.PLACED,
+            placed_at=placed_at,
+        )
         self.order_storage.get_order.return_value = order_dto
+        self.order_storage.get_order_items.return_value = order_summary_dto.items
 
         result = self.interactor.get_order(order_id="orders-1")
 
-        assert result == order_dto
-        assert self.order_storage.get_order.call_count == 2
+        assert result == order_summary_dto
+        assert self.order_storage.get_order.call_count == 1
+        self.order_storage.get_order_items.assert_called_once_with(order_id="orders-1")
 
     def test_get_order_raises_order_not_found(self):
         self.order_storage.get_order.return_value = None

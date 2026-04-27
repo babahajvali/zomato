@@ -1,4 +1,12 @@
-from restaurants.interactors.dtos import CreateReviewDTO, ReviewDTO
+from typing import List
+
+from django.db.models import Avg, Count
+
+from restaurants.interactors.dtos import (
+    CreateReviewDTO,
+    ReviewDTO,
+    RestaurantReviewSummaryDTO,
+)
 from restaurants.interactors.storage_interface.review_storage_interface import (
     ReviewStorageInterface,
 )
@@ -6,6 +14,28 @@ from restaurants.models import RestaurantReview
 
 
 class ReviewStorage(ReviewStorageInterface):
+    def get_restaurant_review_summaries(
+        self, restaurant_ids: List[str]
+    ) -> List[RestaurantReviewSummaryDTO]:
+        review_summaries = (
+            RestaurantReview.objects.filter(restaurant_id__in=restaurant_ids)
+            .values("restaurant_id")
+            .annotate(
+                average_rating=Avg("rating"),
+                total_reviews=Count("id"),
+            )
+            .order_by("restaurant_id")
+        )
+
+        return [
+            RestaurantReviewSummaryDTO(
+                restaurant_id=str(summary["restaurant_id"]),
+                average_rating=float(summary["average_rating"]),
+                total_reviews=summary["total_reviews"],
+            )
+            for summary in review_summaries
+        ]
+
     @staticmethod
     def _convert_to_review_dto(review_obj: RestaurantReview) -> ReviewDTO:
         return ReviewDTO(

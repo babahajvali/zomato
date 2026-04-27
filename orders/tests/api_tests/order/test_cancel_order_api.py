@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+from contextlib import contextmanager
+from unittest.mock import patch
 
 import pytest
 
@@ -9,8 +11,14 @@ from orders.tests.factories.storage_factories import OrderFactory
 from restaurants.models import Restaurant
 
 
+@contextmanager
+def no_op_lock(*args, **kwargs):
+    yield
+
+
 @pytest.mark.django_db
 class TestCancelOrderApi(BaseCancelOrderTestCase):
+    @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
     def test_cancel_order_successfully(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
@@ -46,6 +54,7 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
             user_id=user_id,
         )
 
+    @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
     def test_cancel_order_not_found(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
@@ -63,6 +72,7 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
             user_id=user_id,
         )
 
+    @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
     def test_cancel_order_not_belongs_to_user(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         other_user_id = "49bb508e-c6d1-4882-95fd-1991d103f7ce"
@@ -100,6 +110,7 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
             user_id=other_user_id,
         )
 
+    @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
     def test_cancel_order_time_exceeded(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
@@ -135,6 +146,7 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
             user_id=user_id,
         )
 
+    @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
     def test_cancel_order_already_cancelled(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)

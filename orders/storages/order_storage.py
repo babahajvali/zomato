@@ -8,6 +8,7 @@ from orders.interactors.dtos import (
     CreateOrderDTO,
     CreateOrderItemDTO,
     OrderDTO,
+    OrderItemSummaryDTO,
 )
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
@@ -39,6 +40,21 @@ class OrderStorage(OrderStorageInterface):
             return None
 
         return self._convert_to_order_dto(order_obj=order_obj)
+
+    def get_order_items(self, order_id: str) -> List[OrderItemSummaryDTO]:
+        order_items = OrderItem.objects.filter(order_id=order_id).order_by(
+            "created_at", "id"
+        )
+
+        return [
+            OrderItemSummaryDTO(
+                item_id=order_item.item_id,
+                quantity=order_item.quantity,
+                item_price=Decimal(order_item.item_price),
+                subtotal=Decimal(order_item.item_price) * order_item.quantity,
+            )
+            for order_item in order_items
+        ]
 
     def get_promo_code_usage(self, promo_code_id: int) -> int:
         return (

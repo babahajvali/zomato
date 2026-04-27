@@ -1,9 +1,20 @@
 from abc import ABC, abstractmethod
+from typing import List
 
-from restaurants.interactors.dtos import CreateReviewDTO, ReviewDTO
+from restaurants.interactors.dtos import (
+    CreateReviewDTO,
+    ReviewDTO,
+    RestaurantReviewSummaryDTO,
+)
 
 
 class ReviewStorageInterface(ABC):
+    @abstractmethod
+    def get_restaurant_review_summaries(
+        self, restaurant_ids: List[str]
+    ) -> List[RestaurantReviewSummaryDTO]:
+        pass
+
     @abstractmethod
     def get_restaurant_reviews(self, restaurant_id: str):
         pass

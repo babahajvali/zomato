@@ -17,6 +17,7 @@ from restaurants.interactors.dtos import (
     CartItemDTO,
     CreateReviewDTO,
     ReviewDTO,
+    RestaurantReviewSummaryDTO,
 )
 
 
@@ -172,3 +173,12 @@ class ReviewDTOFactory(factory.Factory):
     customer_id = factory.LazyFunction(uuid.uuid4)
     rating = factory.Faker("random_int", min=1, max=5)
     review = factory.Faker("text", max_nb_chars=200)
+
+
+class RestaurantReviewSummaryDTOFactory(factory.Factory):
+    class Meta:
+        model = RestaurantReviewSummaryDTO
+
+    restaurant_id = factory.Sequence(lambda n: f"restaurant-{n}")
+    average_rating = 4.5
+    total_reviews = 2

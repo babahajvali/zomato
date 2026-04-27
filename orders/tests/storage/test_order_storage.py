@@ -5,7 +5,11 @@ from orders.interactors.dtos import CreateOrderItemDTO
 from orders.models import OrderItem
 from orders.storages.order_storage import OrderStorage
 from orders.tests.factories.dto_factories import CreateOrderDTOFactory
-from orders.tests.factories.storage_factories import OrderFactory, PromoCodeFactory
+from orders.tests.factories.storage_factories import (
+    OrderFactory,
+    OrderItemFactory,
+    PromoCodeFactory,
+)
 
 
 @pytest.mark.django_db
@@ -42,6 +46,37 @@ class TestOrderStorage:
         result = self.storage.get_order(order_id="invalid-orders")
 
         assert result is None
+
+    def test_get_order_items_successfully(self):
+        order = OrderFactory(
+            id="orders-1",
+            customer_id="customer-1",
+            restaurant_id="restaurants-1",
+            items_total=400.0,
+            delivery_fee=30.0,
+            tax_fee=20.0,
+            final_amount=450.0,
+            address_id="1",
+        )
+        OrderItemFactory(order=order, item_id="item-1", quantity=2, item_price=100.0)
+        OrderItemFactory(order=order, item_id="item-2", quantity=1, item_price=200.0)
+
+        result = self.storage.get_order_items(order_id="orders-1")
+
+        assert len(result) == 2
+        assert result[0].item_id == "item-1"
+        assert result[0].quantity == 2
+        assert result[0].item_price == 100.0
+        assert result[0].subtotal == 200.0
+        assert result[1].item_id == "item-2"
+        assert result[1].quantity == 1
+        assert result[1].item_price == 200.0
+        assert result[1].subtotal == 200.0
+
+    def test_get_order_items_returns_empty_when_not_found(self):
+        result = self.storage.get_order_items(order_id="invalid-orders")
+
+        assert result == []
 
     def test_create_order_successfully_with_promo_code(self):
         promo_code = PromoCodeFactory()

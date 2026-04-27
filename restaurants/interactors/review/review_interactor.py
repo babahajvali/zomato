@@ -1,8 +1,14 @@
+from typing import List
+
 from restaurants.exception.custom_exceptions import (
     UserAlreadyReviewedRestaurant,
     InvalidRatingFound,
 )
-from restaurants.interactors.dtos import CreateReviewDTO, ReviewDTO
+from restaurants.interactors.dtos import (
+    CreateReviewDTO,
+    ReviewDTO,
+    RestaurantReviewSummaryDTO,
+)
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
     RestaurantStorageInterface,
 )
@@ -12,7 +18,7 @@ from restaurants.interactors.storage_interface.review_storage_interface import (
 from restaurants.mixins.restaurant_mixin import RestaurantMixin
 
 
-class CreateReviewInteractor(RestaurantMixin):
+class ReviewInteractor(RestaurantMixin):
     def __init__(
         self,
         review_storage: ReviewStorageInterface,
@@ -34,6 +40,13 @@ class CreateReviewInteractor(RestaurantMixin):
         )
 
         return self.review_storage.create_review(create_review_dto=create_review_dto)
+
+    def get_restaurant_review_summaries(
+        self, restaurant_ids: List[str]
+    ) -> List[RestaurantReviewSummaryDTO]:
+        return self.review_storage.get_restaurant_review_summaries(
+            restaurant_ids=restaurant_ids
+        )
 
     def _validate_user_has_not_reviewed(self, user_id: str, restaurant_id: str):
         is_review_exists = self.review_storage.check_user_review_exists(

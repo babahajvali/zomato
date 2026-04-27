@@ -3,12 +3,21 @@ from datetime import datetime
 from typing import List
 
 from orders.constants.enums import OrderStatus
-from orders.interactors.dtos import CreateOrderDTO, OrderDTO, CreateOrderItemDTO
+from orders.interactors.dtos import (
+    CreateOrderDTO,
+    OrderDTO,
+    CreateOrderItemDTO,
+    OrderItemSummaryDTO,
+)
 
 
 class OrderStorageInterface(ABC):
     @abstractmethod
     def get_order(self, order_id: str) -> OrderDTO:
+        pass
+
+    @abstractmethod
+    def get_order_items(self, order_id: str) -> List[OrderItemSummaryDTO]:
         pass
 
     @abstractmethod

@@ -51,6 +51,26 @@ class TestReviewStorage(TestCase):
         for review in result:
             assert review.restaurant_id == restaurant.id
 
+    def test_get_restaurant_review_summaries_success(self):
+        restaurant_1 = RestaurantFactory(id="restaurant-1")
+        restaurant_2 = RestaurantFactory(id="restaurant-2")
+
+        RestaurantReviewFactory(restaurant=restaurant_1, rating=4, customer_id="user-1")
+        RestaurantReviewFactory(restaurant=restaurant_1, rating=5, customer_id="user-2")
+        RestaurantReviewFactory(restaurant=restaurant_2, rating=3, customer_id="user-3")
+
+        result = self.storage.get_restaurant_review_summaries(
+            restaurant_ids=["restaurant-1", "restaurant-2"]
+        )
+
+        assert len(result) == 2
+        assert result[0].restaurant_id == "restaurant-1"
+        assert result[0].average_rating == 4.5
+        assert result[0].total_reviews == 2
+        assert result[1].restaurant_id == "restaurant-2"
+        assert result[1].average_rating == 3.0
+        assert result[1].total_reviews == 1
+
     def test_get_restaurant_reviews_empty(self):
         # Arrange
         restaurant = RestaurantFactory()

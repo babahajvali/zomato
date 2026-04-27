@@ -188,3 +188,10 @@ class ReviewDTO:
     customer_id: str
     rating: int
     review: str
+
+
+@dataclass
+class RestaurantReviewSummaryDTO:
+    restaurant_id: str
+    average_rating: float
+    total_reviews: int

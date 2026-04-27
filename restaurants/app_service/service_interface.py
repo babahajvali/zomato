@@ -19,6 +19,7 @@ from restaurants.storages.cart_storage import CartStorage
 from restaurants.storages.delivery_zone_storage import DeliveryZoneStorage
 from restaurants.storages.restaurant_storage import RestaurantStorage
 from restaurants.storages.restaurant_timing_storage import RestaurantTimingStorage
+from restaurants.storages.review_storage import ReviewStorage
 
 
 class ServiceInterface:
@@ -27,6 +28,7 @@ class ServiceInterface:
         self.delivery_zone_storage = DeliveryZoneStorage()
         self.restaurant_timing_storage = RestaurantTimingStorage()
         self.restaurant_storage = RestaurantStorage()
+        self.review_storage = ReviewStorage()
 
     def get_delivery_zone_by_restaurant_id(
         self, restaurant_id: str, pin_code: str

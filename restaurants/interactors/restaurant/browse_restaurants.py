@@ -11,6 +11,9 @@ from restaurants.interactors.storage_interface.restaurant_storage_interface impo
 from restaurants.interactors.storage_interface.restaurant_timing_storage_interface import (
     RestaurantTimingStorageInterface,
 )
+from restaurants.interactors.storage_interface.review_storage_interface import (
+    ReviewStorageInterface,
+)
 from restaurants.mixins.restaurant_mixin import RestaurantMixin
 from restaurants.mixins.restaurant_timing_mixin import TimingMixin
 
@@ -20,6 +23,7 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
         self,
         restaurant_storage: RestaurantStorageInterface,
         restaurant_timing_storage: RestaurantTimingStorageInterface,
+        review_storage: ReviewStorageInterface,
     ):
         super().__init__(
             restaurant_storage=restaurant_storage,
@@ -27,6 +31,7 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
         )
         self.restaurant_storage = restaurant_storage
         self.restaurant_timing_storage = restaurant_timing_storage
+        self.review_storage = review_storage
 
     def browse_restaurants(
         self,
@@ -59,10 +64,14 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
         timings = self.restaurant_timing_storage.get_operating_hours_for_restaurants(
             restaurant_ids=restaurant_ids
         )
+        review_summaries = self.review_storage.get_restaurant_review_summaries(
+            restaurant_ids=restaurant_ids
+        )
 
         restaurant_dtos = self.compute_is_open_bulk(
             restaurants=restaurants,
             timings=timings,
+            review_summaries=review_summaries,
         )
 
         return restaurant_dtos

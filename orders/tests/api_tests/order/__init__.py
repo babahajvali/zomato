@@ -105,7 +105,7 @@ class BaseGetOrderTestCase(GraphQLBaseTestCase):
     QUERY = """
     query GetOrder($params: GetOrderInputParams!) {
       getOrder(params: $params) {
-        ... on OrderType {
+        ... on OrderSummaryType {
           __typename
           orderId
           customerId
@@ -117,6 +117,13 @@ class BaseGetOrderTestCase(GraphQLBaseTestCase):
           taxFee
           finalAmount
           addressId
+          placedAt
+          items {
+            itemId
+            quantity
+            itemPrice
+            subtotal
+          }
         }
         ... on OrderNotFound {
           __typename
@@ -196,19 +203,19 @@ class BaseCancelOrderTestCase(GraphQLBaseTestCase):
           finalAmount
           addressId
         }
-        ... on OrderNotFoundType {
+        ... on OrderNotFound {
           __typename
           orderId
         }
-        ... on OrderNotBelongsToUserType {
+        ... on OrderNotBelongsToUser {
           __typename
           orderId
         }
-        ... on OrderCancellationTimeExceededType {
+        ... on OrderCancellationTimeExceeded {
           __typename
           orderId
         }
-        ... on OrderCannotBeCancelledType {
+        ... on OrderCannotBeCancelled {
           __typename
           orderId
         }
@@ -234,11 +241,11 @@ class BaseAutoCancelOrderTestCase(GraphQLBaseTestCase):
           finalAmount
           addressId
         }
-        ... on OrderNotFoundType {
+        ... on OrderNotFound {
           __typename
           orderId
         }
-        ... on OrderCannotBeCancelledType {
+        ... on OrderCannotBeCancelled {
           __typename
           orderId
         }
