@@ -131,5 +131,5 @@ class GetRestaurantDashboardResponse(graphene.Union):
             RestaurantDashboardType,
             RestaurantNotFound,
             InvalidDateRange,
-            UserAlreadyReviewedRestaurant,
+            UserIsNotRestaurantOwner,
         )

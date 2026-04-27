@@ -131,7 +131,7 @@ class BaseGetRestaurantDashboardTestCase(GraphQLBaseTestCase):
           dateFrom
           dateTo
         }
-        ... on UserAlreadyReviewedRestaurant {
+        ... on UserIsNotRestaurantOwner {
           __typename
           userId
         }
