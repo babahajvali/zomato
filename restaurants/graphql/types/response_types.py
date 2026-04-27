@@ -27,6 +27,7 @@ from restaurants.graphql.types.types import (
     RemoveCartItemSuccessType,
     ClearCartItemsSuccessType,
     ReviewType,
+    RestaurantDashboardType,
 )
 from utils.graphql_types import UserIsNotRestaurantOwner
 
@@ -123,10 +124,11 @@ class CreateReviewResponse(graphene.Union):
             InvalidRatingFound,
         )
 
+
 class GetRestaurantDashboardResponse(graphene.Union):
     class Meta:
         types = (
-
+            RestaurantDashboardType,
             RestaurantNotFound,
             InvalidDateRange,
             UserAlreadyReviewedRestaurant,

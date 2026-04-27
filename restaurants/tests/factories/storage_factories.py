@@ -92,5 +92,5 @@ class RestaurantReviewFactory(DjangoModelFactory):
 
     restaurant = factory.SubFactory(RestaurantFactory)
     review_text = factory.Faker("sentence")
-    rating = factory.Sequence(lambda n: n)
+    rating = 4
     customer_id = factory.Sequence(lambda n: "00000000-0000-0000-0000-000000000000")

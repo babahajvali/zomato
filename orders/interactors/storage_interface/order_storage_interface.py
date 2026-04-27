@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime, date
 from typing import List
-
-from orders.app_service.dtos import RestaurantOrdersSummaryDTO
+from orders.app_service.dtos import RestaurantOrdersSummaryDTO, OrdersByStatusDTO
 from orders.constants.enums import OrderStatus
 from orders.interactors.dtos import (
     CreateOrderDTO,

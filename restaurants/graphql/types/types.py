@@ -1,4 +1,5 @@
 import graphene
+from graphene.types.generic import GenericScalar
 
 
 class RestaurantTimingType(graphene.ObjectType):
@@ -122,7 +123,7 @@ class OrdersByStatusType(graphene.ObjectType):
 class RatingSummaryType(graphene.ObjectType):
     average_rating = graphene.Decimal(required=True)
     total_reviews = graphene.Int(required=True)
-    distribution = graphene.Dict(required=True)
+    distribution = GenericScalar(required=True)
 
 
 class RestaurantDashboardType(graphene.ObjectType):

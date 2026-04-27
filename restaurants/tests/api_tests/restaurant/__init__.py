@@ -62,6 +62,7 @@ class BaseRestaurantMenuTestCase(GraphQLBaseTestCase):
     }
     }"""
 
+
 class BaseCreateMenuItemsTestCase(GraphQLBaseTestCase):
     QUERY = """
     mutation CreateMenuItems($params: CreateMenuItemsInputParams!) {
@@ -90,6 +91,47 @@ class BaseCreateMenuItemsTestCase(GraphQLBaseTestCase):
           categories
         }
         ... on UserIsNotRestaurantOwnerType {
+          __typename
+          userId
+        }
+      }
+    }
+    """
+
+
+class BaseGetRestaurantDashboardTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    query GetRestaurantDashboard($params: GetRestaurantDashboardInputParams!) {
+      getRestaurantDashboard(params: $params) {
+        ... on RestaurantDashboardType {
+          __typename
+          ordersByStatus {
+            count
+            status
+          }
+          ratingSummary {
+            averageRating
+            totalReviews
+            distribution
+          }
+          summary {
+            avgOrderValue
+            cancellationRate
+            totalCancelled
+            totalOrders
+            totalRevenue
+          }
+        }
+        ... on RestaurantNotFound {
+          __typename
+          restaurantId
+        }
+        ... on InvalidDateRange {
+          __typename
+          dateFrom
+          dateTo
+        }
+        ... on UserAlreadyReviewedRestaurant {
           __typename
           userId
         }
