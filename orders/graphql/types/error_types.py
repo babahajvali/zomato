@@ -59,4 +59,4 @@ class OrderNotBelongsToUser(graphene.ObjectType):
 
 
 class CustomerCartNotFound(graphene.ObjectType):
-    customer_id = graphene.Int(required=True)
+    customer_id = graphene.String(required=True)

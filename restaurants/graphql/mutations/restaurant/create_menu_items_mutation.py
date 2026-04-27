@@ -16,6 +16,7 @@ from restaurants.interactors.restaurant.create_menu_item_interactor import (
 )
 from restaurants.storages.restaurant_storage import RestaurantStorage
 from utils.graphql_types import UserIsNotRestaurantOwner
+from utils.uuid_util import generate_uuid
 
 
 class CreateMenuItemsMutation(graphene.Mutation):
@@ -33,6 +34,8 @@ class CreateMenuItemsMutation(graphene.Mutation):
 
         create_items_dto = [
             CreateMenuItemDTO(
+                id=generate_uuid(),
+                restaurant_id=params.restaurant_id,
                 name=item.name,
                 description=item.description,
                 price=item.price,

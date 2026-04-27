@@ -86,7 +86,7 @@ class RestaurantStorage(RestaurantStorageInterface):
                 name=item.name,
                 description=item.description,
                 price=item.price,
-                category=item.category,
+                category=item.category.value if hasattr(item.category, "value") else item.category,
                 is_veg=item.is_veg,
                 is_available=item.is_available,
                 tags=item.tags,
