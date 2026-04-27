@@ -15,7 +15,6 @@ from restaurants.interactors.dtos import (
     RestaurantDTO,
 )
 from restaurants.models.restaurant import Restaurant, MenuItem
-from utils.uuid_util import generate_uuid
 
 
 class RestaurantStorage(RestaurantStorageInterface):

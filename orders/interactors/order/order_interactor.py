@@ -10,7 +10,6 @@ from orders.exception.custom_exceptions import (
     OrderCancellationTimeExceeded,
     OrderCannotBeCancelled,
     OrderAlreadyCancelled,
-    OrderNotFound,
 )
 from orders.interactors.dtos import OrderDTO, OrderSummaryDTO
 from orders.interactors.storage_interface.order_storage_interface import (
@@ -66,10 +65,8 @@ class OrderInteractor(OrderMixin):
         )
 
     def get_order(self, order_id: str) -> OrderSummaryDTO:
+        self.validate_order_exists(order_id=order_id)
         order_dto = self.order_storage.get_order(order_id=order_id)
-
-        if order_dto is None:
-            raise OrderNotFound(order_id=order_id)
 
         order_items = self.order_storage.get_order_items(order_id=order_id)
 

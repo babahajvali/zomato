@@ -59,7 +59,7 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
         self,
         restaurants: List[RestaurantDTO],
     ) -> List[BrowseRestaurantDTO]:
-        restaurant_ids = [str(restaurant.id) for restaurant in restaurants]
+        restaurant_ids = [each.id for each in restaurants]
 
         timings = self.restaurant_timing_storage.get_operating_hours_for_restaurants(
             restaurant_ids=restaurant_ids

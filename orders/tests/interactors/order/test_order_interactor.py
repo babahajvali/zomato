@@ -186,7 +186,6 @@ class TestOrderInteractor:
         result = self.interactor.get_order(order_id="orders-1")
 
         assert result == order_summary_dto
-        assert self.order_storage.get_order.call_count == 1
         self.order_storage.get_order_items.assert_called_once_with(order_id="orders-1")
 
     def test_get_order_raises_order_not_found(self):

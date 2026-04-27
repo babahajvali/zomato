@@ -11,6 +11,7 @@ from restaurants.interactors.restaurant.browse_restaurants import (
 )
 from restaurants.storages.restaurant_storage import RestaurantStorage
 from restaurants.storages.restaurant_timing_storage import RestaurantTimingStorage
+from restaurants.storages.review_storage import ReviewStorage
 
 
 def _map_browse_restaurants_response(restaurants):
@@ -47,6 +48,7 @@ def get_browse_restaurants_resolver(root, info, params=None):
     interactor = BrowseRestaurantsInteractor(
         restaurant_storage=RestaurantStorage(),
         restaurant_timing_storage=RestaurantTimingStorage(),
+        review_storage=ReviewStorage(),
     )
 
     try:

@@ -82,5 +82,6 @@ class ServiceInterface:
         interactor = BrowseRestaurantsInteractor(
             restaurant_storage=self.restaurant_storage,
             restaurant_timing_storage=self.restaurant_timing_storage,
+            review_storage=self.review_storage,
         )
         return interactor.get_restaurant_owner_id(restaurant_id=restaurant_id)
