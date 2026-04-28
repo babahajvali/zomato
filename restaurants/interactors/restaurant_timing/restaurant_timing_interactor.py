@@ -1,6 +1,6 @@
 from typing import List
 
-from restaurants.interactors.dtos import RestaurantTimingDTO
+from restaurants.interactors.dtos import RestaurantTimingDTO, CreateRestaurantTimingDTO
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
     RestaurantStorageInterface,
 )
@@ -23,6 +23,26 @@ class RestaurantTimingInteractor(RestaurantMixin, TimingMixin):
         )
         self.restaurant_timing_storage = restaurant_timing_storage
         self.restaurant_storage = restaurant_storage
+
+    def create_restaurant_timing(
+        self, create_restaurant_timing_dto: CreateRestaurantTimingDTO, user_id: str
+    ) -> RestaurantTimingDTO:
+        self.validate_restaurant_is_exists(
+            restaurant_id=create_restaurant_timing_dto.restaurant_id
+        )
+        self.validate_user_is_restaurant_owner(
+            restaurant_id=create_restaurant_timing_dto.restaurant_id, user_id=user_id
+        )
+
+        self.validate_restaurant_timings(
+            open_time=create_restaurant_timing_dto.open_time,
+            close_time=create_restaurant_timing_dto.close_time,
+            timing_id=None,
+        )
+
+        return self.restaurant_timing_storage.create_bulk_restaurant_timing(
+            create_restaurant_timing_dto=[create_restaurant_timing_dto]
+        )
 
     def get_restaurant_timings(self, restaurant_id: str) -> List[RestaurantTimingDTO]:
         self.validate_restaurant_is_exists(restaurant_id=restaurant_id)

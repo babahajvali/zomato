@@ -60,5 +60,5 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
 
     @staticmethod
     def _validate_quantity(quantity: int):
-        if quantity <= 0 or quantity > 9:
+        if quantity <= 0 or quantity > 10:
             raise InvalidQuantityFound(quantity=quantity)

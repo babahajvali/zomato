@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import graphene
 
 from restaurants.constants.enums import Category
@@ -11,8 +13,8 @@ from restaurants.graphql.types.error_types import (
 )
 from restaurants.graphql.types.types import MenuItemsType, MenuItemType
 from restaurants.interactors.dtos import CreateMenuItemDTO
-from restaurants.interactors.restaurant.create_menu_item_interactor import (
-    CreateMenuItemInteractor,
+from restaurants.interactors.restaurant.menu_item_interactor import (
+    MenuItemInteractor,
 )
 from restaurants.storages.restaurant_storage import RestaurantStorage
 from utils.graphql_types import UserIsNotRestaurantOwner
@@ -28,7 +30,7 @@ class CreateMenuItemsMutation(graphene.Mutation):
     @staticmethod
     def mutate(root, info, params):
         restaurant_storage = RestaurantStorage()
-        interactor = CreateMenuItemInteractor(
+        interactor = MenuItemInteractor(
             restaurant_storage=restaurant_storage,
         )
 
@@ -61,7 +63,7 @@ class CreateMenuItemsMutation(graphene.Mutation):
                     restaurant_id=item.restaurant_id,
                     name=item.name,
                     description=item.description,
-                    price=float(item.price),
+                    price=Decimal(item.price),
                     category=item.category,
                     is_veg=item.is_veg,
                     is_available=item.is_available,

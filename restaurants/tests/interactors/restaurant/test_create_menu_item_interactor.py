@@ -7,8 +7,8 @@ from restaurants.exception.custom_exceptions import (
     RestaurantNotFound,
     UserIsNotRestaurantOwner,
 )
-from restaurants.interactors.restaurant.create_menu_item_interactor import (
-    CreateMenuItemInteractor,
+from restaurants.interactors.restaurant.menu_item_interactor import (
+    MenuItemInteractor,
 )
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
     RestaurantStorageInterface,
@@ -22,7 +22,7 @@ from restaurants.tests.factories.interactor_factories import (
 class TestCreateMenuItemInteractor:
     def setup_method(self):
         self.restaurant_storage = create_autospec(RestaurantStorageInterface)
-        self.interactor = CreateMenuItemInteractor(
+        self.interactor = MenuItemInteractor(
             restaurant_storage=self.restaurant_storage,
         )
 

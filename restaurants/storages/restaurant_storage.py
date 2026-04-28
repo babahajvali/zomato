@@ -13,6 +13,7 @@ from restaurants.interactors.dtos import (
     BrowseRestaurantFiltersDTO,
     MenuItemWithTagsDTO,
     RestaurantDTO,
+    UpdateMenuItemDTO,
 )
 from restaurants.models.restaurant import Restaurant, MenuItem
 
@@ -86,7 +87,9 @@ class RestaurantStorage(RestaurantStorageInterface):
                 name=item.name,
                 description=item.description,
                 price=item.price,
-                category=item.category.value if hasattr(item.category, "value") else item.category,
+                category=item.category.value
+                if hasattr(item.category, "value")
+                else item.category,
                 is_veg=item.is_veg,
                 is_available=item.is_available,
                 tags=item.tags,
@@ -181,3 +184,32 @@ class RestaurantStorage(RestaurantStorageInterface):
             return None
 
         return self._convert_to_menu_item_dto(item_obj=menu_item_obj)
+
+    def update_menu_item(self, update_menu_item_dto: UpdateMenuItemDTO) -> MenuItemDTO:
+
+        update_properties = {}
+        if update_menu_item_dto.name is not None:
+            update_properties["name"] = update_menu_item_dto.name
+
+        if update_menu_item_dto.price is not None:
+            update_properties["price"] = update_menu_item_dto.price
+
+        if update_menu_item_dto.is_available is not None:
+            update_properties["is_available"] = update_menu_item_dto.is_available
+
+        if update_menu_item_dto.preparation_time_in_minutes is not None:
+            update_properties["preparation_time_in_minutes"] = (
+                update_menu_item_dto.preparation_time_in_minutes
+            )
+
+        if update_menu_item_dto.tags is not None:
+            update_properties["tags"] = update_menu_item_dto.tags
+
+        MenuItem.objects.filter(id=update_menu_item_dto.menu_item_id).update(
+            **update_properties
+        )
+
+        return self.get_menu_item(menu_item_id=update_menu_item_dto.menu_item_id)
+
+    def delete_menu_item(self, menu_item_id: str):
+        return MenuItem.objects.filter(id=menu_item_id).delete()

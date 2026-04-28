@@ -44,6 +44,9 @@ class OrderInteractor(OrderMixin):
                 self._validate_cancel_order_time(
                     placed_at=order_dto.placed_at, order_id=order_dto.order_id
                 )
+                self._validate_order_is_cancellable(
+                    order_id=order_dto.order_id, order_status=order_dto.status.value
+                )
 
                 return self.order_storage.update_order_status(
                     order_id=order_id,
@@ -94,10 +97,10 @@ class OrderInteractor(OrderMixin):
         if now - placed_at > timedelta(minutes=5):
             raise OrderCancellationTimeExceeded(order_id=order_id)
 
-    def _validate_order_is_cancellable(self, order_id: str):
-        order_dto = self.order_storage.get_order(order_id=order_id)
+    @staticmethod
+    def _validate_order_is_cancellable(order_status: str, order_id: str):
 
-        if order_dto.status != OrderStatus.PLACED:
+        if order_status != OrderStatus.PLACED.value:
             raise OrderCannotBeCancelled(order_id=order_id)
 
     @staticmethod

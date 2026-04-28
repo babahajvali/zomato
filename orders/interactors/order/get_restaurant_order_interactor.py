@@ -47,6 +47,6 @@ class GetRestaurantOrderInteractor(OrderMixin):
     ) -> List[OrderDTO]:
 
         now = timezone.now()
-        five_minutes_ago = now - timedelta(minutes=5)
+        five_minutes_ago = now - timedelta(minutes=0)
 
         return [order for order in orders if order.placed_at <= five_minutes_ago]

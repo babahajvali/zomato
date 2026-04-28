@@ -57,30 +57,30 @@ class PlaceOrderInteractor(PromoCodeMixin):
 
     def place_order(self, order_data: PlaceOrderDTO) -> OrderSummaryDTO:
 
-        cart_id = self._get_validated_cart_id(customer_id=order_data.customer_id)
-        cart_items = self._get_validated_cart_items(cart_id=cart_id)
-        items_total = self._calculate_items_total(cart_items=cart_items)
-
         delivery_fee = self._validate_address_and_get_delivery_fee(
             address_id=order_data.address_id,
             restaurant_id=order_data.restaurant_id,
         )
 
         self._validate_restaurant_timing(restaurant_id=order_data.restaurant_id)
+        with redis_lock(f"order:{order_data.customer_id}", timeout=REDIS_LOCK_TIMEOUT):
+            cart_id = self._get_validated_cart_id(customer_id=order_data.customer_id)
+            cart_items = self._get_validated_cart_items(cart_id=cart_id)
+            items_total = self._calculate_items_total(cart_items=cart_items)
 
-        if order_data.promo_code_id:
-            self._validate_promo_code_existence_and_eligibility(
-                promo_code_id=order_data.promo_code_id,
+            if order_data.promo_code_id:
+                self._validate_promo_code_existence_and_eligibility(
+                    promo_code_id=order_data.promo_code_id,
+                    items_total=items_total,
+                )
+
+            return self._place_order_with_locks(
+                order_data=order_data,
+                cart_items=cart_items,
+                cart_id=cart_id,
                 items_total=items_total,
+                delivery_fee=delivery_fee,
             )
-
-        return self._place_order_with_locks(
-            order_data=order_data,
-            cart_items=cart_items,
-            cart_id=cart_id,
-            items_total=items_total,
-            delivery_fee=delivery_fee,
-        )
 
     def _place_order_with_locks(
         self,
@@ -91,28 +91,27 @@ class PlaceOrderInteractor(PromoCodeMixin):
         delivery_fee: Decimal,
     ) -> OrderSummaryDTO:
 
-        with redis_lock(f"order:{order_data.customer_id}", timeout=REDIS_LOCK_TIMEOUT):
-            if order_data.promo_code_id:
-                with redis_lock(
-                    f"promo:{order_data.promo_code_id}", timeout=REDIS_LOCK_TIMEOUT
-                ):
-                    with transaction.atomic():
-                        return self._execute_order(
-                            order_data=order_data,
-                            cart_items=cart_items,
-                            cart_id=cart_id,
-                            items_total=items_total,
-                            delivery_fee=delivery_fee,
-                        )
+        if order_data.promo_code_id:
+            with redis_lock(
+                f"promo:{order_data.promo_code_id}", timeout=REDIS_LOCK_TIMEOUT
+            ):
+                with transaction.atomic():
+                    return self._execute_order(
+                        order_data=order_data,
+                        cart_items=cart_items,
+                        cart_id=cart_id,
+                        items_total=items_total,
+                        delivery_fee=delivery_fee,
+                    )
 
-            with transaction.atomic():
-                return self._execute_order(
-                    order_data=order_data,
-                    cart_items=cart_items,
-                    cart_id=cart_id,
-                    items_total=items_total,
-                    delivery_fee=delivery_fee,
-                )
+        with transaction.atomic():
+            return self._execute_order(
+                order_data=order_data,
+                cart_items=cart_items,
+                cart_id=cart_id,
+                items_total=items_total,
+                delivery_fee=delivery_fee,
+            )
 
     def _execute_order(
         self,

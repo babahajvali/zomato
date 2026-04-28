@@ -233,3 +233,13 @@ class RestaurantDashboardDTO:
     summary: RestaurantOrdersSummaryDTO
     orders_by_status: List[OrdersByStatusDTO]
     rating_summary: RatingSummaryDTO
+
+
+@dataclass
+class UpdateMenuItemDTO:
+    menu_item_id: str
+    name: Optional[str]
+    is_available: Optional[bool]
+    preparation_time_in_minutes: Optional[int]
+    price: Optional[Decimal]
+    tags: Optional[List[str]]
