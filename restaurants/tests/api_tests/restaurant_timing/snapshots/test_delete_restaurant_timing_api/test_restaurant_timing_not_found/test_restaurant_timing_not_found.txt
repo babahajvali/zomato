@@ -1,23 +1,8 @@
 {
-  "errors": [
-    {
-      "message": "Unknown type 'RestaurantTimingNotFoundType'. Did you mean 'RestaurantTimingNotFound', 'RestaurantTimingType', 'RestaurantTimingsListType', 'RestaurantNotFound', or 'RestaurantMenuType'?",
-      "locations": [
-        {
-          "line": 9,
-          "column": 16
-        }
-      ]
-    },
-    {
-      "message": "Unknown type 'UserIsNotRestaurantOwnerType'. Did you mean 'UserIsNotRestaurantOwner'?",
-      "locations": [
-        {
-          "line": 13,
-          "column": 16
-        }
-      ]
+  "data": {
+    "deleteRestaurantTiming": {
+      "__typename": "RestaurantTimingNotFound",
+      "id": 2
     }
-  ],
-  "data": null
+  }
 }

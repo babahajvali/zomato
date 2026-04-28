@@ -109,10 +109,10 @@ class TestCartItemInteractor:
             self.interactor.update_cart_item(
                 cart_id="cart-123",
                 menu_item_id="item-123",
-                quantity=10,
+                quantity=11,
             )
 
-        assert exc.value.quantity == 10
+        assert exc.value.quantity == 11
         self.cart_storage.create_or_update_cart_item.assert_not_called()
 
     def test_update_cart_item_with_max_valid_quantity(self):

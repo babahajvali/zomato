@@ -1,14 +1,30 @@
 {
-  "errors": [
-    {
-      "message": "Unknown type 'RestaurantNotFoundType'. Did you mean 'RestaurantNotFound', 'RestaurantTimingType', 'RestaurantDashboardType', 'RestaurantMenuType', or 'RestaurantNotOpenNow'?",
-      "locations": [
+  "data": {
+    "getRestaurantTimings": {
+      "__typename": "RestaurantTimingsListType",
+      "timings": [
         {
-          "line": 14,
-          "column": 16
+          "id": 7,
+          "restaurantId": "test-restaurants-id",
+          "dayOfWeek": 1,
+          "openTime": "09:00:00",
+          "closeTime": "21:00:00"
+        },
+        {
+          "id": 8,
+          "restaurantId": "test-restaurants-id",
+          "dayOfWeek": 2,
+          "openTime": "09:00:00",
+          "closeTime": "21:00:00"
+        },
+        {
+          "id": 9,
+          "restaurantId": "test-restaurants-id",
+          "dayOfWeek": 3,
+          "openTime": "09:00:00",
+          "closeTime": "21:00:00"
         }
       ]
     }
-  ],
-  "data": null
+  }
 }

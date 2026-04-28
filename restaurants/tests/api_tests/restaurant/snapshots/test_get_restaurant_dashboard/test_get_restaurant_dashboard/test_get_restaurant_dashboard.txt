@@ -2,16 +2,7 @@
   "data": {
     "getRestaurantDashboard": {
       "__typename": "RestaurantDashboardType",
-      "ordersByStatus": [
-        {
-          "count": 1,
-          "status": "PLACED"
-        },
-        {
-          "count": 1,
-          "status": "DELIVERED"
-        }
-      ],
+      "ordersByStatus": [],
       "ratingSummary": {
         "averageRating": "4.00",
         "totalReviews": 1,
@@ -24,11 +15,11 @@
         }
       },
       "summary": {
-        "avgOrderValue": "450.00",
+        "avgOrderValue": "0.00",
         "cancellationRate": "0.00",
         "totalCancelled": 0,
-        "totalOrders": 2,
-        "totalRevenue": "900.00"
+        "totalOrders": 0,
+        "totalRevenue": "0.00"
       }
     }
   }

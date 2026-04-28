@@ -1,29 +1,20 @@
 {
   "errors": [
     {
-      "message": "Unknown type 'RestaurantTimingNoFoundTpe'. Did you mean 'RestaurantTimingNotFound', 'RestaurantTimingType', 'RestaurantTimingsListType', 'RestaurantNotFound', or 'RestaurantMenuType'?",
+      "message": "Variable '$params' got invalid value {'id': 1, 'closeTime': '23:00:00'}; Field 'timingId' of required type 'Int!' was not provided.",
       "locations": [
         {
-          "line": 12,
-          "column": 16
+          "line": 2,
+          "column": 37
         }
       ]
     },
     {
-      "message": "Unknown type 'UserIsNotRestaurantOwnerType'. Did you mean 'UserIsNotRestaurantOwner'?",
+      "message": "Variable '$params' got invalid value {'id': 1, 'closeTime': '23:00:00'}; Field 'id' is not defined by type 'UpdateRestaurantTimingInputParams'.",
       "locations": [
         {
-          "line": 16,
-          "column": 16
-        }
-      ]
-    },
-    {
-      "message": "Unknown type 'OpenTimeGreaterThanCloseTimeType'. Did you mean 'OpenTimeGreaterThanCloseTime'?",
-      "locations": [
-        {
-          "line": 20,
-          "column": 16
+          "line": 2,
+          "column": 37
         }
       ]
     }

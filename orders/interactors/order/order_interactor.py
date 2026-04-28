@@ -56,7 +56,9 @@ class OrderInteractor(OrderMixin):
 
     def auto_cancel_order(self, order_id: str) -> OrderDTO:
         self.validate_order_exists(order_id=order_id)
-        self._validate_order_is_cancellable(order_id=order_id)
+        self._validate_order_is_cancellable(
+            order_id=order_id, order_status=OrderStatus.PLACED.value
+        )
 
         return self.order_storage.update_order_status(
             order_id=order_id, status=OrderStatus.CANCELLED

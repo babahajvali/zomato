@@ -44,6 +44,7 @@ class OrderAdmin(admin.ModelAdmin):
         "id",
         "customer_id",
         "restaurant_id",
+        "promo_code_id",
         "status",
         "items_total",
         "delivery_fee",

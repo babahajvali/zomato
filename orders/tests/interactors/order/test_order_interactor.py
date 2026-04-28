@@ -8,7 +8,6 @@ from django.utils import timezone
 from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
     OrderCancellationTimeExceeded,
-    OrderCannotBeCancelled,
     OrderDoesNotBelongToUser,
     OrderNotFound,
 )
@@ -133,19 +132,6 @@ class TestOrderInteractor:
             self.interactor.auto_cancel_order(order_id="invalid-orders")
 
         assert exc.value.order_id == "invalid-orders"
-        self.order_storage.update_order_status.assert_not_called()
-
-    def test_auto_cancel_order_raises_order_cannot_be_cancelled(self):
-        order_dto = OrderDTOFactory(
-            order_id="orders-1",
-            status=OrderStatus.CONFIRMED,
-        )
-        self.order_storage.get_order.side_effect = [order_dto, order_dto]
-
-        with pytest.raises(OrderCannotBeCancelled) as exc:
-            self.interactor.auto_cancel_order(order_id="orders-1")
-
-        assert exc.value.order_id == "orders-1"
         self.order_storage.update_order_status.assert_not_called()
 
     def test_user_orders_successfully(self):

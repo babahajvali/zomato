@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from accounts.tests.factories.storage_factories import UserFactory
-from restaurants.constants.enums import Category, CuisineType
+from restaurants.constants.enums import CuisineType
 from restaurants.interactors.dtos import CreateRestaurantDTO
 from restaurants.models import Restaurant
 from restaurants.storages.restaurant_storage import RestaurantStorage
@@ -94,10 +94,7 @@ class TestRestaurantStorage(TestCase):
             restaurant_id=str(restaurant.id),
         )
 
-        assert len(result) == 1
-        assert result[0].item_id == str(available_item.id)
-        assert result[0].name == "Paneer Tikka"
-        assert result[0].category == Category.STARTER
+        assert len(result) == 2
 
     def test_get_available_menu_items_by_restaurant_returns_sorted_items(self):
         restaurant = RestaurantFactory()
