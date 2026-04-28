@@ -28,7 +28,7 @@ class DeleteMenuItemMutation(graphene.Mutation):
             )
 
             return DeleteMenuItemSuccessType(
-                success=True, menu_cart_id=params.menu_item_id
+                success=True, menu_item_id=params.menu_item_id
             )
         except custom_exceptions.MenuItemNotFound as e:
             return MenuItemNotFound(menu_item_id=e.menu_item_id)

@@ -5,6 +5,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from orders.app_service.dtos import RestaurantOrdersSummaryDTO, OrdersByStatusDTO
+from orders.constants.constants import CANCEL_TIME
 from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
     OrderCancellationTimeExceeded,
@@ -94,7 +95,7 @@ class OrderInteractor(OrderMixin):
             placed_at = self.order_storage.get_order_placed_at(order_id=order_id)
         now = timezone.now()
 
-        if now - placed_at > timedelta(minutes=5):
+        if now - placed_at > timedelta(minutes=CANCEL_TIME):
             raise OrderCancellationTimeExceeded(order_id=order_id)
 
     @staticmethod

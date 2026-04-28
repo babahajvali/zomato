@@ -98,6 +98,56 @@ class BaseCreateMenuItemsTestCase(GraphQLBaseTestCase):
     }
     """
 
+class BaseUpdateMenuItemTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    mutation UpdateMenuItem($params: UpdateMenuItemInputParams!) {
+      updateMenuItem(params: $params) {
+        ... on MenuItemType {
+          __typename
+          category
+          description
+          isAvailable
+          isVeg
+          name
+          itemId
+          preparationTimeInMinutes
+          price
+          restaurantId
+          tags
+        }
+        ... on MenuItemNotFound {
+          __typename
+          menuItemId
+        }
+        ... on UserIsNotRestaurantOwner {
+          __typename
+          userId
+        }
+      }
+    }
+    """
+
+class BaseDeleteMenuItemTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    mutation DeleteMenuItem($params: DeleteMenuItemInputParams!) {
+      deleteMenuItem(params: $params) {
+        ... on DeleteMenuItemSuccessType {
+          __typename
+          menuItemId
+          success
+        }
+        ... on MenuItemNotFound {
+          __typename
+          menuItemId
+        }
+        ... on UserIsNotRestaurantOwner {
+          __typename
+          userId
+        }
+      }
+    }
+    """
+
 
 class BaseGetRestaurantDashboardTestCase(GraphQLBaseTestCase):
     QUERY = """
