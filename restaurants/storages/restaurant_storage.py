@@ -165,7 +165,6 @@ class RestaurantStorage(RestaurantStorageInterface):
 
         items = MenuItem.objects.filter(
             restaurant_id=restaurant_id,
-            is_available=True,
         ).order_by("category", "name")
 
         return [self._convert_to_menu_item_with_tags_dto(item=item) for item in items]

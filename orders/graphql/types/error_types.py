@@ -48,6 +48,7 @@ class InvalidOrderStatusTransition(graphene.ObjectType):
 
 class OrderCancellationTimeExceeded(graphene.ObjectType):
     order_id = graphene.String(required=True)
+    minutes = graphene.Int(required=True)
 
 
 class OrderCannotBeCancelled(graphene.ObjectType):

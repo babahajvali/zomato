@@ -96,7 +96,7 @@ class OrderInteractor(OrderMixin):
         now = timezone.now()
 
         if now - placed_at > timedelta(minutes=CANCEL_TIME):
-            raise OrderCancellationTimeExceeded(order_id=order_id)
+            raise OrderCancellationTimeExceeded(order_id=order_id, minutes=CANCEL_TIME)
 
     @staticmethod
     def _validate_order_is_cancellable(order_status: str, order_id: str):

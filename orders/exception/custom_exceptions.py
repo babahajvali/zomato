@@ -147,11 +147,12 @@ class OrderDoesNotBelongToUser(Exception):
 
 
 class OrderCancellationTimeExceeded(Exception):
-    def __init__(self, order_id: str):
+    def __init__(self, order_id: str, minutes: int):
         self.order_id = order_id
+        self.minutes = minutes
 
     def __str__(self):
-        return f"Order {self.order_id} cancellation time exceeded"
+        return f"Order {self.order_id} cancellation time {self.minutes} exceeded"
 
 
 class OrderCannotBeCancelled(Exception):

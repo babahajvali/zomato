@@ -41,7 +41,9 @@ class CancelOrderMutation(graphene.Mutation):
             return OrderNotBelongsToUser(order_id=exc.order_id)
 
         except custom_exceptions.OrderCancellationTimeExceeded as exc:
-            return OrderCancellationTimeExceeded(order_id=exc.order_id)
+            return OrderCancellationTimeExceeded(
+                order_id=exc.order_id, minutes=exc.minutes
+            )
 
         except custom_exceptions.OrderCannotBeCancelled as exc:
             return OrderCannotBeCancelled(order_id=exc.order_id)
