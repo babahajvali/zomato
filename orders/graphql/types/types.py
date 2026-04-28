@@ -39,3 +39,18 @@ class OrderSummaryType(graphene.ObjectType):
 
 class OrdersType(graphene.ObjectType):
     orders = graphene.List(OrderType)
+
+
+class PromoCodeType(graphene.ObjectType):
+    promo_code_id = graphene.Int(required=True)
+    code = graphene.String(required=True)
+    discount_type = graphene.String(required=True)
+    discount_value = graphene.Decimal(required=True)
+    min_order_value = graphene.Decimal(required=True)
+    max_usage = graphene.Int(required=True)
+    valid_from = graphene.DateTime(required=True)
+    valid_until = graphene.DateTime(required=True)
+
+
+class PromoCodesType(graphene.ObjectType):
+    promo_codes = graphene.List(PromoCodeType)

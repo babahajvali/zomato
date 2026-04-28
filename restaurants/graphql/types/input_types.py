@@ -68,7 +68,28 @@ class CreateReviewInputParams(graphene.InputObjectType):
     rating = graphene.Int(required=True)
     review = graphene.String()
 
+
 class GetRestaurantDashboardInputParams(graphene.InputObjectType):
     restaurant_id = graphene.String(required=True)
     date_from = graphene.Date(required=True)
     date_to = graphene.Date(required=True)
+
+
+class CreateRestaurantTimingInputParams(graphene.InputObjectType):
+    restaurant_id = graphene.String(required=True)
+    day_of_week = graphene.Int(required=True)
+    open_time = graphene.Time()
+    close_time = graphene.Time()
+
+
+class UpdateMenuItemInputParams(graphene.InputObjectType):
+    menu_item_id = graphene.String(required=True)
+    name = graphene.String()
+    price = graphene.Decimal()
+    is_available = graphene.Boolean()
+    preparation_time_in_minutes = graphene.Int()
+    tags = graphene.List(graphene.String)
+
+
+class DeleteMenuItemInputParams(graphene.InputObjectType):
+    menu_item_id = graphene.String(required=True)

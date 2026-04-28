@@ -16,7 +16,12 @@ from orders.graphql.types.error_types import (
     OrderCancellationTimeExceeded,
     CustomerCartNotFound,
 )
-from orders.graphql.types.types import OrderType, OrdersType, OrderSummaryType
+from orders.graphql.types.types import (
+    OrderType,
+    OrdersType,
+    OrderSummaryType,
+    PromoCodesType,
+)
 from utils.graphql_types import UserIsNotRestaurantOwner
 
 
@@ -93,3 +98,8 @@ class AutoCancelOrderResponse(graphene.Union):
             OrderNotFound,
             OrderCannotBeCancelled,
         )
+
+
+class GetAvailablePromoCodesResponse(graphene.Union):
+    class Meta:
+        types = (PromoCodesType,)

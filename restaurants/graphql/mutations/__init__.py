@@ -12,6 +12,15 @@ from restaurants.graphql.mutations.cart.update_cart_item_mutation import (
 from restaurants.graphql.mutations.restaurant.create_menu_items_mutation import (
     CreateMenuItemsMutation,
 )
+from restaurants.graphql.mutations.restaurant.delete_mnu_item_mutation import (
+    DeleteMenuItemMutation,
+)
+from restaurants.graphql.mutations.restaurant.update_menu_item_mutation import (
+    UpdateMenuItemMutation,
+)
+from restaurants.graphql.mutations.restaurant_timing.create_restaurant_timing_mutation import (
+    CreateRestaurantTimingMutation,
+)
 from restaurants.graphql.mutations.restaurant_timing.update_restaurant_timing_mutation import (
     UpdateRestaurantTimingMutation,
 )
@@ -31,3 +40,6 @@ class RestaurantMutations(graphene.ObjectType):
     remove_cart_item = RemoveCartItemMutation.Field(required=True)
     update_cart_item = UpdateCartItemMutation.Field(required=True)
     create_review = CreateReviewMutation.Field(required=True)
+    create_restaurant_timing = CreateRestaurantTimingMutation.Field(required=True)
+    update_menu_item = UpdateMenuItemMutation.Field(required=True)
+    delete_menu_item = DeleteMenuItemMutation.Field(required=True)

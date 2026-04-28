@@ -1,5 +1,8 @@
 import graphene
 
+from orders.graphql.resolvers.get_available_promo_code_resolver import (
+    get_available_promo_code_resolver,
+)
 from orders.graphql.resolvers.order_resolvers import (
     get_order_resolver,
     get_restaurant_order_resolver,
@@ -19,6 +22,7 @@ from orders.graphql.types.response_types import (
     RestaurantOrdersResponse,
     TodayRestaurantOrdersResponse,
     UserOrdersResponse,
+    GetAvailablePromoCodesResponse,
 )
 
 
@@ -42,4 +46,7 @@ class OrderQueries(graphene.ObjectType):
         TodayRestaurantOrdersResponse,
         params=GetTodayRestaurantOrdersInputParams(required=True),
         resolver=get_today_restaurant_orders_resolver,
+    )
+    get_available_promo_codes = graphene.Field(
+        GetAvailablePromoCodesResponse, resolver=get_available_promo_code_resolver
     )

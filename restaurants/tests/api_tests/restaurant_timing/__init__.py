@@ -1,6 +1,36 @@
 from utils.test_utils import GraphQLBaseTestCase
 
 
+class BaseCreateRestaurantTimingTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    mutation CreateRestaurantTiming($params: CreateRestaurantTimingInputParams!) {
+      createRestaurantTiming(params: $params) {
+        ... on RestaurantTimingType {
+          __typename
+          id
+          restaurantId
+          dayOfWeek
+          openTime
+          closeTime
+        }
+        ... on RestaurantNotFound {
+          __typename
+          restaurantId
+        }
+        ... on UserIsNotRestaurantOwner {
+          __typename
+          userId
+        }
+        ... on OpenTimeGreaterThanCloseTime {
+          __typename
+          openTime
+          closeTime
+        }
+      }
+    }
+    """
+
+
 class BaseUpdateRestaurantTiming(GraphQLBaseTestCase):
     QUERY = """
     mutation UpdateRestaurantTiming($params: UpdateRestaurantTimingInputParams!) {
@@ -13,15 +43,15 @@ class BaseUpdateRestaurantTiming(GraphQLBaseTestCase):
           openTime
           closeTime
         }
-        ... on RestaurantTimingNoFoundTpe {
+        ... on RestaurantTimingNotFound {
           __typename
           id
         }
-        ... on UserIsNotRestaurantOwnerType {
+        ... on UserIsNotRestaurantOwner {
           __typename
           userId
         }
-        ... on OpenTimeGreaterThanCloseTimeType {
+        ... on OpenTimeGreaterThanCloseTime {
           __typename
           openTime
           closeTime
@@ -45,7 +75,7 @@ class BaseGetRestaurantTimingsTestCase(GraphQLBaseTestCase):
             closeTime
           }
         }
-        ... on RestaurantNotFoundType {
+        ... on RestaurantNotFound {
           __typename
           restaurantId
         }
@@ -63,11 +93,11 @@ class BaseDeleteRestaurantTimingTestCase(GraphQLBaseTestCase):
           success
           timingId
         }
-        ... on RestaurantTimingNotFoundType {
+        ... on RestaurantTimingNotFound {
           __typename
           id
         }
-        ... on UserIsNotRestaurantOwnerType {
+        ... on UserIsNotRestaurantOwner {
           __typename
           userId
         }

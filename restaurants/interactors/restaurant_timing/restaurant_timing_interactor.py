@@ -42,7 +42,7 @@ class RestaurantTimingInteractor(RestaurantMixin, TimingMixin):
 
         return self.restaurant_timing_storage.create_bulk_restaurant_timing(
             create_restaurant_timing_dto=[create_restaurant_timing_dto]
-        )
+        )[0]
 
     def get_restaurant_timings(self, restaurant_id: str) -> List[RestaurantTimingDTO]:
         self.validate_restaurant_is_exists(restaurant_id=restaurant_id)

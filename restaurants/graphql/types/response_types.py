@@ -28,6 +28,8 @@ from restaurants.graphql.types.types import (
     ClearCartItemsSuccessType,
     ReviewType,
     RestaurantDashboardType,
+    MenuItemType,
+    DeleteMenuItemSuccessType,
 )
 from utils.graphql_types import UserIsNotRestaurantOwner
 
@@ -131,5 +133,33 @@ class GetRestaurantDashboardResponse(graphene.Union):
             RestaurantDashboardType,
             RestaurantNotFound,
             InvalidDateRange,
+            UserIsNotRestaurantOwner,
+        )
+
+
+class CreateRestaurantTimingResponse(graphene.Union):
+    class Meta:
+        types = (
+            RestaurantTimingType,
+            RestaurantNotFound,
+            UserIsNotRestaurantOwner,
+            OpenTimeGreaterThanCloseTime,
+        )
+
+
+class UpdateMenuItemResponse(graphene.Union):
+    class Meta:
+        types = (
+            MenuItemType,
+            MenuItemNotFound,
+            UserIsNotRestaurantOwner,
+        )
+
+
+class DeleteMenuItemResponse(graphene.Union):
+    class Meta:
+        types = (
+            DeleteMenuItemSuccessType,
+            MenuItemNotFound,
             UserIsNotRestaurantOwner,
         )
