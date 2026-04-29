@@ -39,6 +39,12 @@ class ReviewInteractor(RestaurantMixin):
 
         return self.review_storage.create_review(create_review_dto=create_review_dto)
 
+    def get_user_restaurant_review(self, user_id: str, restaurant_id: str) -> ReviewDTO:
+
+        return self.review_storage.get_user_restaurant_review(
+            user_id=user_id, restaurant_id=restaurant_id
+        )
+
     def get_restaurant_review_summaries(
         self, restaurant_ids: List[str]
     ) -> List[RestaurantReviewSummaryDTO]:

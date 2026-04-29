@@ -1,4 +1,4 @@
-from datetime import time, date
+from datetime import time, date, datetime
 from dataclasses import dataclass
 from decimal import Decimal
 from typing import Optional, List, Dict
@@ -189,6 +189,7 @@ class ReviewDTO:
     customer_id: str
     rating: int
     review: str
+    created_at: Optional[datetime] = None
 
 
 @dataclass
@@ -229,9 +230,24 @@ class RatingSummaryDTO:
 
 
 @dataclass
+class TopSellingItemDTO:
+    menu_item_id: str
+    quantity_sold: int
+    revenue: Decimal
+
+
+@dataclass
+class PeakHourDTO:
+    hour: int
+    order_count: int
+
+
+@dataclass
 class RestaurantDashboardDTO:
     summary: RestaurantOrdersSummaryDTO
     orders_by_status: List[OrdersByStatusDTO]
+    peak_hours: List[PeakHourDTO]
+    top_selling_items: List[TopSellingItemDTO]
     rating_summary: RatingSummaryDTO
 
 

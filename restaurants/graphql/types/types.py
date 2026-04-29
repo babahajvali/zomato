@@ -110,6 +110,7 @@ class ReviewType(graphene.ObjectType):
     customer_id = graphene.String(required=True)
     rating = graphene.Float(required=True)
     review = graphene.String()
+    created_at = graphene.DateTime()
 
 
 class RestaurantOrdersSummaryType(graphene.ObjectType):
@@ -131,7 +132,20 @@ class RatingSummaryType(graphene.ObjectType):
     distribution = GenericScalar(required=True)
 
 
+class TopSellingItemType(graphene.ObjectType):
+    menu_item_id = graphene.String(required=True)
+    quantity = graphene.Int(required=True)
+    revenue = graphene.Float(required=True)
+
+
+class PeakHourType(graphene.ObjectType):
+    hour = graphene.Int(required=True)
+    order_count = graphene.Int(required=True)
+
+
 class RestaurantDashboardType(graphene.ObjectType):
     summary = graphene.Field(RestaurantOrdersSummaryType)
+    peak_hours = graphene.List(PeakHourType)
+    top_selling = graphene.List(TopSellingItemType)
     orders_by_status = graphene.List(OrdersByStatusType)
     rating_summary = graphene.Field(RatingSummaryType)

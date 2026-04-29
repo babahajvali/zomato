@@ -93,3 +93,8 @@ class UpdateMenuItemInputParams(graphene.InputObjectType):
 
 class DeleteMenuItemInputParams(graphene.InputObjectType):
     menu_item_id = graphene.String(required=True)
+
+
+class GetUserRestaurantReviewInputParams(graphene.InputObjectType):
+    restaurant_id = graphene.String(required=True)
+    user_id = graphene.String(required=True)

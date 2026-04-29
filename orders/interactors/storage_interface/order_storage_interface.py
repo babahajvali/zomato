@@ -8,6 +8,8 @@ from orders.interactors.dtos import (
     OrderDTO,
     CreateOrderItemDTO,
     OrderItemSummaryDTO,
+    PeakHourDTO,
+    TopSellingItemDTO,
 )
 
 
@@ -66,4 +68,19 @@ class OrderStorageInterface(ABC):
     def get_orders_count_by_status(
         self, restaurant_id: str, date_from: date, date_to: date
     ) -> List[OrdersByStatusDTO]:
+        pass
+
+    @abstractmethod
+    def get_peak_hours(
+        self, restaurant_id: str, date_from: date, date_to: date
+    ) -> List[PeakHourDTO]:
+        pass
+
+    @abstractmethod
+    def get_top_selling_items(
+        self,
+        restaurant_id: str,
+        date_from: date,
+        date_to: date,
+    ) -> List[TopSellingItemDTO]:
         pass

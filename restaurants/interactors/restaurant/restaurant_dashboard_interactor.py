@@ -54,10 +54,23 @@ class RestaurantDashboardInteractor(RestaurantMixin):
             restaurant_id=dashboard_filter_dto.restaurant_id
         )
 
+        peak_hours = self.order_adapter.get_peak_hours(
+            restaurant_id=dashboard_filter_dto.restaurant_id,
+            date_from=dashboard_filter_dto.date_from,
+            date_to=dashboard_filter_dto.date_to,
+        )
+        top_selling_items = self.order_adapter.get_top_selling_items(
+            restaurant_id=dashboard_filter_dto.restaurant_id,
+            date_from=dashboard_filter_dto.date_from,
+            date_to=dashboard_filter_dto.date_to,
+        )
+
         return RestaurantDashboardDTO(
             summary=restaurant_orders_summary,
             orders_by_status=orders_status,
             rating_summary=rating_summary,
+            peak_hours=peak_hours,
+            top_selling_items=top_selling_items,
         )
 
     @staticmethod

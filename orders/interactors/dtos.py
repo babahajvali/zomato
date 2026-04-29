@@ -96,3 +96,16 @@ class OrderSummaryDTO:
     final_amount: Decimal
     placed_at: datetime
     address_id: int
+
+
+@dataclass
+class TopSellingItemDTO:
+    menu_item_id: str
+    quantity_sold: int
+    revenue: Decimal
+
+
+@dataclass
+class PeakHourDTO:
+    hour: int
+    order_count: int

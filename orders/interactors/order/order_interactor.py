@@ -12,7 +12,12 @@ from orders.exception.custom_exceptions import (
     OrderCancellationNotAllowed,
     OrderAlreadyCancelled,
 )
-from orders.interactors.dtos import OrderDTO, OrderSummaryDTO
+from orders.interactors.dtos import (
+    OrderDTO,
+    OrderSummaryDTO,
+    PeakHourDTO,
+    TopSellingItemDTO,
+)
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
 )
@@ -91,6 +96,22 @@ class OrderInteractor(OrderMixin):
     ) -> List[OrdersByStatusDTO]:
 
         return self.order_storage.get_orders_count_by_status(
+            restaurant_id=restaurant_id, date_from=date_from, date_to=date_to
+        )
+
+    def get_peak_hours(
+        self, restaurant_id: str, date_from: date, date_to: date
+    ) -> List[PeakHourDTO]:
+
+        return self.order_storage.get_peak_hours(
+            restaurant_id=restaurant_id, date_from=date_from, date_to=date_to
+        )
+
+    def get_top_selling_items(
+        self, restaurant_id: str, date_from: date, date_to: date
+    ) -> List[TopSellingItemDTO]:
+
+        return self.order_storage.get_top_selling_items(
             restaurant_id=restaurant_id, date_from=date_from, date_to=date_to
         )
 

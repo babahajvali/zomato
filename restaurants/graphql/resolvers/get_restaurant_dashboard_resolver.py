@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from restaurants.exception import custom_exceptions
 from restaurants.graphql.types.error_types import InvalidDateRange, RestaurantNotFound
 from restaurants.graphql.types.types import (
@@ -5,6 +7,8 @@ from restaurants.graphql.types.types import (
     RestaurantOrdersSummaryType,
     OrdersByStatusType,
     RatingSummaryType,
+    TopSellingItemType,
+    PeakHourType,
 )
 from restaurants.interactors.dtos import DashboardFiltersDTO, RestaurantDashboardDTO
 from restaurants.interactors.restaurant.restaurant_dashboard_interactor import (
@@ -55,6 +59,18 @@ def _map_dashboard_dto_to_type(result: RestaurantDashboardDTO):
             total_cancelled=result.summary.total_cancelled,
             cancellation_rate=result.summary.cancellation_rate,
         ),
+        peak_hours=[
+            PeakHourType(hour=i.hour, order_count=i.order_count)
+            for i in result.peak_hours
+        ],
+        top_selling=[
+            TopSellingItemType(
+                menu_item_id=i.menu_item_id,
+                quantity=i.quantity_sold,
+                revenue=Decimal(i.revenue),
+            )
+            for i in result.top_selling_items
+        ],
         orders_by_status=[
             OrdersByStatusType(status=i.status, count=i.count)
             for i in result.orders_by_status

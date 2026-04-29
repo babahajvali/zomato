@@ -31,3 +31,7 @@ class ReviewStorageInterface(ABC):
     @abstractmethod
     def get_rating_summary(self, restaurant_id: str) -> RatingSummaryDTO:
         pass
+
+    @abstractmethod
+    def get_user_restaurant_review(self, restaurant_id: str, user_id: str) -> ReviewDTO:
+        pass

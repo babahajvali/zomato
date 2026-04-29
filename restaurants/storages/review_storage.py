@@ -46,6 +46,7 @@ class ReviewStorage(ReviewStorageInterface):
             customer_id=review_obj.customer_id,
             rating=review_obj.rating,
             review=review_obj.review_text,
+            created_at=review_obj.created_at,
         )
 
     def get_restaurant_reviews(self, restaurant_id: str):
@@ -93,3 +94,15 @@ class ReviewStorage(ReviewStorageInterface):
             total_reviews=result["total_reviews"] or 0,
             distribution=distribution,
         )
+
+    def get_user_restaurant_review(
+        self, restaurant_id: str, user_id: str
+    ) -> ReviewDTO | None:
+        review_obj = RestaurantReview.objects.filter(
+            restaurant_id=restaurant_id, customer_id=user_id
+        ).first()
+
+        if review_obj is None:
+            return None
+
+        return self._convert_to_review_dto(review_obj=review_obj)

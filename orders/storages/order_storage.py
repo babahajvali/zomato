@@ -2,7 +2,8 @@ from datetime import datetime, date
 from decimal import Decimal, ROUND_HALF_UP
 from typing import List
 
-from django.db.models import Count, Q, Avg, Sum
+from django.db.models import Count, Q, Avg, Sum, ExpressionWrapper, F, DecimalField
+from django.db.models.functions import ExtractHour
 
 from orders.app_service.dtos import RestaurantOrdersSummaryDTO, OrdersByStatusDTO
 from orders.constants.enums import OrderStatus
@@ -11,6 +12,8 @@ from orders.interactors.dtos import (
     CreateOrderItemDTO,
     OrderDTO,
     OrderItemSummaryDTO,
+    TopSellingItemDTO,
+    PeakHourDTO,
 )
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
@@ -204,6 +207,69 @@ class OrderStorage(OrderStorageInterface):
             OrdersByStatusDTO(
                 status=row["status"],
                 count=row["count"],
+            )
+            for row in results
+        ]
+
+    def get_top_selling_items(
+        self,
+        restaurant_id: str,
+        date_from: date,
+        date_to: date,
+    ) -> List[TopSellingItemDTO]:
+
+        results = (
+            OrderItem.objects.filter(
+                order__restaurant_id=restaurant_id,
+                order__created_at__date__gte=date_from,
+                order__created_at__date__lte=date_to,
+                order__status=OrderStatus.DELIVERED.value,
+            )
+            .values("item_id")
+            .annotate(
+                quantity_sold=Sum("quantity"),
+                revenue=Sum(
+                    ExpressionWrapper(
+                        F("item_price") * F("quantity"),
+                        output_field=DecimalField(),
+                    )
+                ),
+            )
+            .order_by("-quantity_sold")[:5]
+        )
+
+        return [
+            TopSellingItemDTO(
+                menu_item_id=str(row["item_id"]),
+                quantity_sold=row["quantity_sold"],
+                revenue=Decimal(str(row["revenue"] or 0)).quantize(Decimal("0.01")),
+            )
+            for row in results
+        ]
+
+    def get_peak_hours(
+        self,
+        restaurant_id: str,
+        date_from: date,
+        date_to: date,
+    ) -> List[PeakHourDTO]:
+
+        results = (
+            Order.objects.filter(
+                restaurant_id=restaurant_id,
+                created_at__date__gte=date_from,
+                created_at__date__lte=date_to,
+            )
+            .annotate(hour=ExtractHour("created_at"))
+            .values("hour")
+            .annotate(order_count=Count("id"))
+            .order_by("hour")
+        )
+
+        return [
+            PeakHourDTO(
+                hour=row["hour"],
+                order_count=row["order_count"],
             )
             for row in results
         ]

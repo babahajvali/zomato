@@ -163,3 +163,8 @@ class DeleteMenuItemResponse(graphene.Union):
             MenuItemNotFound,
             UserNotRestaurantOwner,
         )
+
+
+class GetUserRestaurantReviewResponse(graphene.Union):
+    class Meta:
+        types = (ReviewType,)
