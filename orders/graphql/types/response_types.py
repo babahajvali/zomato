@@ -15,6 +15,7 @@ from orders.graphql.types.error_types import (
     OrderNotOwnedByUser,
     OrderCancellationWindowExpired,
     CustomerCartNotFound,
+    MenuItemsUnavailable,
 )
 from orders.graphql.types.types import (
     OrderType,
@@ -39,6 +40,7 @@ class PlaceOrderResponse(graphene.Union):
             PromoCodeNotFound,
             CartIsEmpty,
             CustomerCartNotFound,
+            MenuItemsUnavailable,
         )
 
 

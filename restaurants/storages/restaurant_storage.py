@@ -212,3 +212,12 @@ class RestaurantStorage(RestaurantStorageInterface):
 
     def delete_menu_item(self, menu_item_id: str):
         return MenuItem.objects.filter(id=menu_item_id).delete()
+
+    def get_unavailable_menu_items(self, menu_item_ids: List[str]) -> List[str]:
+
+        return list(
+            MenuItem.objects.filter(
+                id__in=menu_item_ids,
+                is_available=False,
+            ).values_list("id", flat=True)
+        )

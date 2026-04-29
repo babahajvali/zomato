@@ -12,6 +12,7 @@ from restaurants.interactors.dtos import (
 from restaurants.interactors.restaurant.browse_restaurants import (
     BrowseRestaurantsInteractor,
 )
+from restaurants.interactors.restaurant.menu_item_interactor import MenuItemInteractor
 from restaurants.interactors.restaurant_timing.restaurant_timing_interactor import (
     RestaurantTimingInteractor,
 )
@@ -89,3 +90,8 @@ class ServiceInterface:
         )
 
         return interactor.get_restaurant_owner_id(restaurant_id=restaurant_id)
+
+    def get_unavailable_menu_items(self, menu_item_ids: List[str]) -> List[str]:
+        interactor = MenuItemInteractor(restaurant_storage=self.restaurant_storage)
+
+        return interactor.get_unavailable_items(menu_item_ids=menu_item_ids)

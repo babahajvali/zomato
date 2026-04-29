@@ -193,3 +193,11 @@ class CustomerCartNotFound(Exception):
 
     def __str__(self):
         return f"Customer {self.customer_id} not found"
+
+
+class MenuItemsUnavailable(Exception):
+    def __init__(self, unavailable_item_ids: List[str]):
+        self.unavailable_item_ids = unavailable_item_ids
+
+    def __str__(self):
+        return f"Unavailable menu items {self.unavailable_item_ids}"

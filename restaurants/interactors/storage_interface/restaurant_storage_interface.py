@@ -63,3 +63,7 @@ class RestaurantStorageInterface(ABC):
     @abstractmethod
     def delete_menu_item(self, menu_item_id: str) :
         pass
+
+    @abstractmethod
+    def get_unavailable_menu_items(self, menu_item_ids: List[str]) -> List[str]:
+        pass

@@ -1,6 +1,7 @@
 from typing import List
 
 from orders.adapter.dtos import DeliveryZoneDTO, RestaurantTimingDTO, CartItemDTO
+from restaurants.interactors.dtos import MenuItemDTO
 
 
 class RestaurantAdapter:
@@ -39,3 +40,6 @@ class RestaurantAdapter:
 
     def get_restaurant_owner_id(self, restaurant_id: str):
         return self.interface.get_restaurant_owner_id(restaurant_id=restaurant_id)
+
+    def get_unavailable_menu_items(self, menu_item_ids: List[str]) -> List[str]:
+        return self.interface.get_unavailable_menu_items(menu_item_ids=menu_item_ids)

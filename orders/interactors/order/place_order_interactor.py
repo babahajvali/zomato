@@ -21,6 +21,7 @@ from orders.exception.custom_exceptions import (
     PromoCodeNotYetValid,
     PromoCodeExpired,
     CustomerCartNotFound,
+    MenuItemsUnavailable,
 )
 from orders.interactors.dtos import (
     PlaceOrderDTO,
@@ -122,6 +123,9 @@ class PlaceOrderInteractor(PromoCodeMixin):
         items_total: Decimal,
         delivery_fee: Decimal,
     ) -> OrderSummaryDTO:
+        item_ids = [item.menu_item_id for item in cart_items]
+        self._validate_items(item_ids=item_ids)
+
         discount_price = self._get_discount_price(
             promo_code_id=order_data.promo_code_id,
             items_total=items_total,
@@ -385,3 +389,12 @@ class PlaceOrderInteractor(PromoCodeMixin):
             promo_code_id=order_dto.promo_code_id,
             placed_at=order_dto.placed_at,
         )
+
+    def _validate_items(self, item_ids: List[str]):
+
+        unavailable_item_ids = self.restaurant_adapter.get_unavailable_menu_items(
+            menu_item_ids=item_ids
+        )
+
+        if unavailable_item_ids:
+            raise MenuItemsUnavailable(unavailable_item_ids=unavailable_item_ids)

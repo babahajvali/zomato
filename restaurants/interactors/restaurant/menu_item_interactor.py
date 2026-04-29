@@ -63,3 +63,9 @@ class MenuItemInteractor(RestaurantMixin):
         )
 
         return self.restaurant_storage.delete_menu_item(menu_item_id=menu_item_id)
+
+    def get_unavailable_items(self, menu_item_ids: List[str]) -> List[str]:
+
+        return self.restaurant_storage.get_unavailable_menu_items(
+            menu_item_ids=menu_item_ids
+        )

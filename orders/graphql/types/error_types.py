@@ -61,3 +61,7 @@ class OrderNotOwnedByUser(graphene.ObjectType):
 
 class CustomerCartNotFound(graphene.ObjectType):
     customer_id = graphene.String(required=True)
+
+
+class MenuItemsUnavailable(graphene.ObjectType):
+    unavailable_item_ids = graphene.List(graphene.String)

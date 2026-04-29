@@ -87,6 +87,7 @@ class TestPlaceOrderInteractor:
             delivery_fee=30.0,
             estimated_delivery_mins=30,
         )
+        self.interactor.restaurant_adapter.get_unavailable_menu_items.return_value = []
 
     @patch(
         "orders.interactors.order.place_order_interactor.transaction.atomic",

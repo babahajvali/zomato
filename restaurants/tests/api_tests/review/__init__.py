@@ -51,3 +51,20 @@ class BaseGetRestaurantReviewsTestCase(GraphQLBaseTestCase):
       }
     }
     """
+
+
+class BaseGetUserRestaurantReviewTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    query GetUserRestaurantReview($params: GetUserRestaurantReviewInputParams!) {
+      getUserRestaurantReview(params: $params) {
+        ... on ReviewType {
+          __typename
+          reviewId
+          restaurantId
+          customerId
+          rating
+          review
+        }
+      }
+    }
+    """

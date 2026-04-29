@@ -3,6 +3,7 @@ from typing import List
 
 from django.utils import timezone
 
+from orders.constants.constants import CANCEL_TIME
 from orders.interactors.dtos import (
     OrderDTO,
     OrderSummaryDTO,
@@ -105,6 +106,6 @@ class GetRestaurantOrderInteractor(OrderMixin):
     ) -> List[OrderDTO]:
 
         now = timezone.now()
-        five_minutes_ago = now - timedelta(minutes=1)
+        five_minutes_ago = now - timedelta(minutes=CANCEL_TIME)
 
         return [order for order in orders if order.placed_at <= five_minutes_ago]
