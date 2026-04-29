@@ -14,7 +14,7 @@ class CreateUserDTO:
 
 @dataclass
 class CreateAddressDTO:
-    email: str
+    user_id: str
     label: str
     full_address: str
     city: str

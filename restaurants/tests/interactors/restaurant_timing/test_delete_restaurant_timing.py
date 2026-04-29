@@ -5,7 +5,7 @@ import pytest
 from accounts.tests.factories.interactor_factories import UserDTOFactory
 from restaurants.exception.custom_exceptions import (
     RestaurantTimingNotFound,
-    UserIsNotRestaurantOwner,
+    UserNotRestaurantOwner,
     RestaurantNotFound,
 )
 from restaurants.interactors.restaurant_timing.restaurant_timing_interactor import (
@@ -64,7 +64,7 @@ class TestDeleteRestaurantTiming:
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7de"
         UserDTOFactory.create(id=user_id)
 
-        with pytest.raises(UserIsNotRestaurantOwner) as e:
+        with pytest.raises(UserNotRestaurantOwner) as e:
             self.interactor.delete_restaurant_timing(timing_id=id, user_id=user_id)
 
         assert e.value.user_id == user_id

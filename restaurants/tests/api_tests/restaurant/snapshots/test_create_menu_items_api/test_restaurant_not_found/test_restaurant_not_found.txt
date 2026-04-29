@@ -1,32 +1,8 @@
 {
-  "errors": [
-    {
-      "message": "Unknown type 'RestaurantNotFoundType'. Did you mean 'RestaurantNotFound', 'RestaurantTimingType', 'RestaurantDashboardType', 'RestaurantMenuType', or 'RestaurantNotOpenNow'?",
-      "locations": [
-        {
-          "line": 19,
-          "column": 16
-        }
-      ]
-    },
-    {
-      "message": "Unknown type 'InvalidCategoriesFoundType'. Did you mean 'InvalidCategoriesFound' or 'InvalidRatingFound'?",
-      "locations": [
-        {
-          "line": 23,
-          "column": 16
-        }
-      ]
-    },
-    {
-      "message": "Unknown type 'UserIsNotRestaurantOwnerType'. Did you mean 'UserIsNotRestaurantOwner'?",
-      "locations": [
-        {
-          "line": 27,
-          "column": 16
-        }
-      ]
+  "data": {
+    "createMenuItems": {
+      "__typename": "RestaurantNotFound",
+      "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7de"
     }
-  ],
-  "data": null
+  }
 }

@@ -3,9 +3,9 @@ from typing import List, Any, Dict
 from django.utils.dateparse import parse_datetime
 
 from orders.exception.custom_exceptions import (
-    AlreadyExistsPromoCode,
+    PromoCodeAlreadyExists,
     DuplicatePromoCodes,
-    EmptyPromoCodeFound,
+    EmptyPromoCode,
     InvalidPromoCodeDateRange,
 )
 from orders.interactors.dtos import CreatePromoCodeDTO
@@ -51,7 +51,7 @@ class ImportPromoCodes:
         existing_codes = self.promo_code_storage.get_existing_codes(codes)
 
         if existing_codes:
-            raise AlreadyExistsPromoCode(codes=existing_codes)
+            raise PromoCodeAlreadyExists(codes=existing_codes)
 
     @staticmethod
     def _validate_duplicate_codes(codes: List[str]):
@@ -71,7 +71,7 @@ class ImportPromoCodes:
         empty_promo_codes = [1 for each_promo in promo_codes if not each_promo]
 
         if empty_promo_codes:
-            raise EmptyPromoCodeFound(
+            raise EmptyPromoCode(
                 message=f"{len(empty_promo_codes)} Empty promo codes found"
             )
 

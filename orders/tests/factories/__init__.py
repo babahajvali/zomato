@@ -1,4 +1,4 @@
-from orders.tests.factories.dto_factories import (
+from orders.tests.factories.interactor_factories import (
     CreateOrderDTOFactory,
     CreateOrderItemDTOFactory,
     CreatePromoCodeDTOFactory,

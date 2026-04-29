@@ -2,8 +2,8 @@ import pytest
 from unittest.mock import create_autospec
 
 from restaurants.exception.custom_exceptions import (
-    UserAlreadyReviewedRestaurant,
-    InvalidRatingFound,
+    RestaurantAlreadyReviewedByUser,
+    InvalidRating,
     RestaurantNotFound,
 )
 from restaurants.interactors.review.review_interactor import (
@@ -86,7 +86,7 @@ class TestCreateReviewInteractor:
         self.mock_restaurant_storage.check_restaurant_is_exist.return_value = True
 
         # Act & Assert
-        with pytest.raises(InvalidRatingFound) as exc_info:
+        with pytest.raises(InvalidRating) as exc_info:
             self.interactor.create_review(create_review_dto=create_review_dto)
 
         assert exc_info.value.rating == 0
@@ -103,7 +103,7 @@ class TestCreateReviewInteractor:
         self.mock_restaurant_storage.check_restaurant_is_exist.return_value = True
 
         # Act & Assert
-        with pytest.raises(InvalidRatingFound) as exc_info:
+        with pytest.raises(InvalidRating) as exc_info:
             self.interactor.create_review(create_review_dto=create_review_dto)
 
         assert exc_info.value.rating == 6
@@ -121,7 +121,7 @@ class TestCreateReviewInteractor:
         self.mock_review_storage.check_user_review_exists.return_value = True
 
         # Act & Assert
-        with pytest.raises(UserAlreadyReviewedRestaurant) as exc_info:
+        with pytest.raises(RestaurantAlreadyReviewedByUser) as exc_info:
             self.interactor.create_review(create_review_dto=create_review_dto)
 
         assert exc_info.value.user_id == create_review_dto.customer_id

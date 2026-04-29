@@ -44,7 +44,7 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
         return self._get_browse_restaurants(restaurants=restaurants)
 
     def get_restaurant_owner_id(self, restaurant_id: str) -> str:
-        self.validate_restaurant_is_exists(restaurant_id=restaurant_id)
+        self.validate_restaurant_exists(restaurant_id=restaurant_id)
 
         return self.restaurant_storage.get_restaurant_owner_id(
             restaurant_id=restaurant_id

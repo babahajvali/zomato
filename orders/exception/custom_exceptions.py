@@ -2,7 +2,7 @@ from decimal import Decimal
 from typing import List
 
 
-class AlreadyExistsPromoCode(Exception):
+class PromoCodeAlreadyExists(Exception):
     def __init__(self, codes: List[str]):
         self.codes = codes
 
@@ -12,7 +12,7 @@ class DuplicatePromoCodes(Exception):
         self.codes = codes
 
 
-class EmptyPromoCodeFound(Exception):
+class EmptyPromoCode(Exception):
     def __init__(self, message: str):
         self.message = message
 
@@ -36,7 +36,7 @@ class PromoCodeNotFound(Exception):
         return f"PromoCode {self.promo_code_id} not found"
 
 
-class PromoCodeMaximumUsed(Exception):
+class PromoCodeUsageLimitReached(Exception):
     def __init__(self, max_usage_count: int):
         self.max_usage_count = max_usage_count
 
@@ -45,7 +45,7 @@ class PromoCodeMaximumUsed(Exception):
 
 
 class PromoCodeNotEligible(Exception):
-    def __init__(self, min_order_value: float, items_total: Decimal):
+    def __init__(self, min_order_value: Decimal, items_total: Decimal):
         self.min_order_value = min_order_value
         self.items_total = items_total
 
@@ -53,7 +53,7 @@ class PromoCodeNotEligible(Exception):
         return f"Minimum order value {self.min_order_value} is greater than total items {self.items_total}"
 
 
-class DeliveryNotAvailableForAddress(Exception):
+class DeliveryUnavailableForAddress(Exception):
     def __init__(self, restaurant_id: str, pin_code: str):
         self.restaurant_id = restaurant_id
         self.pin_code = pin_code
@@ -70,7 +70,7 @@ class AddressNotFound(Exception):
         return f"Invalid address {self.address_id}"
 
 
-class RestaurantNotOpenNow(Exception):
+class RestaurantNotOpen(Exception):
     def __init__(self, restaurant_id: str, day_of_week: int):
         self.restaurant_id = restaurant_id
         self.day_of_week = day_of_week
@@ -98,7 +98,7 @@ class ResourceLocked(Exception):
         return self.message
 
 
-class EmptyCartItemsFound(Exception):
+class CartIsEmpty(Exception):
     def __init__(self, cart_id: str):
         self.cart_id = cart_id
 
@@ -114,7 +114,7 @@ class OrderNotFound(Exception):
         return f"Order {self.order_id} not found"
 
 
-class UserIsNotRestaurantOwner(Exception):
+class UserNotRestaurantOwner(Exception):
     def __init__(self, user_id: str):
         self.user_id = user_id
 
@@ -137,7 +137,7 @@ class InvalidOrderStatusTransition(Exception):
         return str(self.new_status)
 
 
-class OrderDoesNotBelongToUser(Exception):
+class OrderNotOwnedByUser(Exception):
     def __init__(self, user_id: str, order_id: str):
         self.user_id = user_id
         self.order_id = order_id
@@ -146,7 +146,7 @@ class OrderDoesNotBelongToUser(Exception):
         return f"Order {self.order_id} does not belong to user {self.user_id}"
 
 
-class OrderCancellationTimeExceeded(Exception):
+class OrderCancellationWindowExpired(Exception):
     def __init__(self, order_id: str, minutes: int):
         self.order_id = order_id
         self.minutes = minutes
@@ -155,7 +155,7 @@ class OrderCancellationTimeExceeded(Exception):
         return f"Order {self.order_id} cancellation time {self.minutes} exceeded"
 
 
-class OrderCannotBeCancelled(Exception):
+class OrderCancellationNotAllowed(Exception):
     def __init__(self, order_id: str):
         self.order_id = order_id
 

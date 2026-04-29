@@ -1,12 +1,12 @@
 from typing import List
 
 
-class DuplicateUserEmails(Exception):
+class DuplicateEmails(Exception):
     def __init__(self, emails: List[str]):
         self.emails = emails
 
 
-class AlreadyExistsEmail(Exception):
+class EmailAlreadyExists(Exception):
     def __init__(self, emails: List[str]):
         self.emails = emails
 
@@ -24,7 +24,7 @@ class UserNotFound(Exception):
         self.user_id = user_id
 
 
-class AlreadyExistsAddress(Exception):
+class AddressAlreadyExists(Exception):
     def __init__(self, addresses: List[tuple]):
         self.addresses = addresses
 

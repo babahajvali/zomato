@@ -28,16 +28,10 @@ def no_op_lock(*args, **kwargs):
     yield
 
 
-@contextmanager
-def fixed_created_order(order_id: str, placed_at):
+def patch_created_order(order_id: str, placed_at, monkeypatch):
     order_id_field = Order._meta.get_field("id")
-    original_default = order_id_field.default
-    order_id_field.default = lambda order_id=order_id: order_id
-    try:
-        with patch.object(timezone, "now", return_value=placed_at):
-            yield
-    finally:
-        order_id_field.default = original_default
+    monkeypatch.setattr(order_id_field, "default", lambda order_id=order_id: order_id)
+    monkeypatch.setattr(timezone, "now", lambda: placed_at)
 
 
 @pytest.mark.django_db
@@ -71,8 +65,13 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         )
 
     @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
-    def test_place_order_with_flat_promo_code_successfully(self, snapshot):
+    def test_place_order_with_flat_promo_code_successfully(self, snapshot, monkeypatch):
         placed_at = datetime.fromisoformat("2026-04-27T04:00:07.483027+00:00")
+        patch_created_order(
+            order_id="2a174989-0c91-4ccd-ad46-cacebe226e1d",
+            placed_at=placed_at,
+            monkeypatch=monkeypatch,
+        )
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -105,20 +104,23 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
             }
         }
 
-        with fixed_created_order(
-            order_id="2a174989-0c91-4ccd-ad46-cacebe226e1d",
-            placed_at=placed_at,
-        ):
-            self.execute_schema(
-                query=self.QUERY,
-                variables=variables,
-                snapshot=snapshot,
-                user_id=user_id,
-            )
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )
 
     @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
-    def test_place_order_with_percentage_promo_code_successfully(self, snapshot):
+    def test_place_order_with_percentage_promo_code_successfully(
+        self, snapshot, monkeypatch
+    ):
         placed_at = datetime.fromisoformat("2026-04-27T04:00:07.508492+00:00")
+        patch_created_order(
+            order_id="780a5a46-0bad-4459-b166-d1da57c2a5c6",
+            placed_at=placed_at,
+            monkeypatch=monkeypatch,
+        )
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -151,17 +153,14 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
             }
         }
 
-        with fixed_created_order(
-            order_id="780a5a46-0bad-4459-b166-d1da57c2a5c6",
-            placed_at=placed_at,
-        ):
-            self.execute_schema(
-                query=self.QUERY,
-                variables=variables,
-                snapshot=snapshot,
-                user_id=user_id,
-            )
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )
 
+    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
     def test_promo_code_not_eligible_min_order_value(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
@@ -243,7 +242,12 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         )
 
     @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
-    def test_place_order_with_multiple_items_successfully(self, snapshot):
+    def test_place_order_with_multiple_items_successfully(self, snapshot, monkeypatch):
+        patch_created_order(
+            order_id="454a5524-cf0a-4a67-be1a-16b4dea2ae91",
+            placed_at=datetime.fromisoformat("2026-04-27T04:00:07.562308+00:00"),
+            monkeypatch=monkeypatch,
+        )
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -293,13 +297,9 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
             }
         }
 
-        with fixed_created_order(
-            order_id="454a5524-cf0a-4a67-be1a-16b4dea2ae91",
-            placed_at=datetime.fromisoformat("2026-04-27T04:00:07.562308+00:00"),
-        ):
-            self.execute_schema(
-                query=self.QUERY,
-                variables=variables,
-                snapshot=snapshot,
-                user_id=user_id,
-            )
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )

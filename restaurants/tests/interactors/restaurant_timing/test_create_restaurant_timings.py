@@ -19,8 +19,8 @@ from restaurants.interactors.storage_interface.restaurant_timing_storage_interfa
 )
 from restaurants.exception.custom_exceptions import (
     RestaurantNotFound,
-    UserIsNotRestaurantOwner,
-    OpenTimeGreaterThanCloseTime,
+    UserNotRestaurantOwner,
+    InvalidTimingRange,
 )
 
 
@@ -108,7 +108,7 @@ class TestCreateRestaurantTimingInteractor:
         dto = self._get_create_dto()
         self._setup_dependencies(owner_id="owner-456")
 
-        with pytest.raises(UserIsNotRestaurantOwner) as exc:
+        with pytest.raises(UserNotRestaurantOwner) as exc:
             self.interactor.create_restaurant_timing(
                 create_restaurant_timing_dto=dto,
                 user_id="user-123",
@@ -130,7 +130,7 @@ class TestCreateRestaurantTimingInteractor:
         )
         self._setup_dependencies()
 
-        with pytest.raises(OpenTimeGreaterThanCloseTime) as exc:
+        with pytest.raises(InvalidTimingRange) as exc:
             self.interactor.create_restaurant_timing(
                 create_restaurant_timing_dto=dto,
                 user_id="user-123",

@@ -3,14 +3,14 @@ from decimal import Decimal
 
 from orders.exception import custom_exceptions
 from orders.graphql.types.error_types import (
-    PromoCodeMaximumUsed,
+    PromoCodeUsageLimitReached,
     PromoCodeNotEligible,
-    DeliveryNotAvailableForAddress,
+    DeliveryUnavailableForAddress,
     AddressIdNotFound,
-    RestaurantNotOpenNow,
+    RestaurantNotOpen,
     RestaurantClosed,
     PromoCodeNotFound,
-    EmptyCartItemsFound,
+    CartIsEmpty,
     CustomerCartNotFound,
 )
 from orders.graphql.types.input_types import PlaceOrderInputParams
@@ -50,8 +50,8 @@ class PlaceOrderMutation(graphene.Mutation):
         except custom_exceptions.PromoCodeNotFound as exc:
             return PromoCodeNotFound(promo_code_id=exc.promo_code_id)
 
-        except custom_exceptions.PromoCodeMaximumUsed as exc:
-            return PromoCodeMaximumUsed(max_usage_count=exc.max_usage_count)
+        except custom_exceptions.PromoCodeUsageLimitReached as exc:
+            return PromoCodeUsageLimitReached(max_usage_count=exc.max_usage_count)
 
         except custom_exceptions.PromoCodeNotEligible as exc:
             return PromoCodeNotEligible(
@@ -62,22 +62,22 @@ class PlaceOrderMutation(graphene.Mutation):
         except custom_exceptions.AddressNotFound as exc:
             return AddressIdNotFound(address_id=exc.address_id)
 
-        except custom_exceptions.DeliveryNotAvailableForAddress as exc:
-            return DeliveryNotAvailableForAddress(
+        except custom_exceptions.DeliveryUnavailableForAddress as exc:
+            return DeliveryUnavailableForAddress(
                 restaurant_id=exc.restaurant_id,
                 pin_code=exc.pin_code,
             )
 
-        except custom_exceptions.RestaurantNotOpenNow as exc:
-            return RestaurantNotOpenNow(
+        except custom_exceptions.RestaurantNotOpen as exc:
+            return RestaurantNotOpen(
                 restaurant_id=exc.restaurant_id,
                 day_of_week=exc.day_of_week,
             )
 
         except custom_exceptions.RestaurantClosed as exc:
             return RestaurantClosed(restaurant_id=exc.restaurant_id)
-        except custom_exceptions.EmptyCartItemsFound as exc:
-            return EmptyCartItemsFound(cart_id=exc.cart_id)
+        except custom_exceptions.CartIsEmpty as exc:
+            return CartIsEmpty(cart_id=exc.cart_id)
         except custom_exceptions.CustomerCartNotFound as exc:
             return CustomerCartNotFound(customer_id=exc.customer_id)
 

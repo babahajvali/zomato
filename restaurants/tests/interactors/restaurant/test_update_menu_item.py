@@ -4,7 +4,7 @@ import pytest
 
 from restaurants.exception.custom_exceptions import (
     RestaurantNotFound,
-    UserIsNotRestaurantOwner,
+    UserNotRestaurantOwner,
 )
 from restaurants.interactors.restaurant.menu_item_interactor import MenuItemInteractor
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
@@ -68,7 +68,7 @@ class TestUpdateMenuItemInteractor:
 
         self.restaurant_storage.get_restaurant_owner_id.return_value = "owner-456"
 
-        with pytest.raises(UserIsNotRestaurantOwner):
+        with pytest.raises(UserNotRestaurantOwner):
             self.interactor.update_menu_item(
                 update_menu_item_dto=update_dto, user_id="user-123"
             )

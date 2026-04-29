@@ -13,13 +13,13 @@ from orders.adapter.dtos import (
 from orders.exception.custom_exceptions import (
     AddressNotFound,
     CustomerCartNotFound,
-    DeliveryNotAvailableForAddress,
-    EmptyCartItemsFound,
-    PromoCodeMaximumUsed,
+    DeliveryUnavailableForAddress,
+    CartIsEmpty,
+    PromoCodeUsageLimitReached,
     PromoCodeNotEligible,
     PromoCodeNotFound,
     RestaurantClosed,
-    RestaurantNotOpenNow,
+    RestaurantNotOpen,
 )
 from orders.interactors.order.place_order_interactor import PlaceOrderInteractor
 from orders.interactors.storage_interface.order_storage_interface import (
@@ -28,7 +28,7 @@ from orders.interactors.storage_interface.order_storage_interface import (
 from orders.interactors.storage_interface.promo_code_storage_interface import (
     PromoCodeStorageInterface,
 )
-from orders.tests.factories.dto_factories import (
+from orders.tests.factories.interactor_factories import (
     OrderDTOFactory,
     PlaceOrderDTOFactory,
     PromoCodeDTOFactory,
@@ -169,6 +169,7 @@ class TestPlaceOrderInteractor:
         assert create_order_dto.tax_fee == 20.0
         assert create_order_dto.final_amount == 450.0
 
+    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
     def test_place_order_raises_promo_code_not_found(self):
         self._setup_valid_adapters()
         self.promo_code_storage.get_promo_code_by_id.return_value = None
@@ -181,6 +182,7 @@ class TestPlaceOrderInteractor:
         assert exc.value.promo_code_id == 99
         self.order_storage.create_order.assert_not_called()
 
+    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
     def test_place_order_raises_promo_code_not_eligible(self):
         self._setup_valid_adapters()
         self.promo_code_storage.get_promo_code_by_id.return_value = PromoCodeDTOFactory(
@@ -210,7 +212,7 @@ class TestPlaceOrderInteractor:
         )
         self.order_storage.get_promo_code_usage.return_value = 2
 
-        with pytest.raises(PromoCodeMaximumUsed) as exc:
+        with pytest.raises(PromoCodeUsageLimitReached) as exc:
             self.interactor.place_order(
                 order_data=PlaceOrderDTOFactory(promo_code_id=1)
             )
@@ -218,6 +220,7 @@ class TestPlaceOrderInteractor:
         assert exc.value.max_usage_count == 2
         self.order_storage.create_order.assert_not_called()
 
+    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
     def test_place_order_raises_customer_cart_not_found(self):
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_customer_cart_id.return_value = None
@@ -230,11 +233,12 @@ class TestPlaceOrderInteractor:
         assert exc.value.customer_id == "customer-404"
         self.order_storage.create_order.assert_not_called()
 
+    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
     def test_place_order_raises_empty_cart_items_found(self):
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_customer_cart_items.return_value = []
 
-        with pytest.raises(EmptyCartItemsFound) as exc:
+        with pytest.raises(CartIsEmpty) as exc:
             self.interactor.place_order(
                 order_data=PlaceOrderDTOFactory(customer_id="customer-1")
             )
@@ -246,7 +250,7 @@ class TestPlaceOrderInteractor:
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_restaurant_timing.return_value = None
 
-        with pytest.raises(RestaurantNotOpenNow):
+        with pytest.raises(RestaurantNotOpen):
             self.interactor.place_order(order_data=PlaceOrderDTOFactory())
 
         self.order_storage.create_order.assert_not_called()
@@ -282,7 +286,7 @@ class TestPlaceOrderInteractor:
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_delivery_zone_by_restaurant_id.return_value = None
 
-        with pytest.raises(DeliveryNotAvailableForAddress) as exc:
+        with pytest.raises(DeliveryUnavailableForAddress) as exc:
             self.interactor.place_order(
                 order_data=PlaceOrderDTOFactory(restaurant_id="restaurants-1")
             )

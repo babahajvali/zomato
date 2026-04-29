@@ -3,8 +3,8 @@ from unittest.mock import create_autospec, patch
 import pytest
 
 from accounts.exception.custom_exceptions import (
-    AlreadyExistsEmail,
-    DuplicateUserEmails,
+    EmailAlreadyExists,
+    DuplicateEmails,
 )
 from accounts.interactors.populate_data.import_users import ImportUsers
 from accounts.interactors.storage_interface.user_storage_interface import (
@@ -77,7 +77,7 @@ class TestImportUsers:
         mock_read_csv.return_value = [ALICE_ROW, BOB_ROW_DUPLICATE]
 
         # Act & Assert
-        with pytest.raises(DuplicateUserEmails) as exc:
+        with pytest.raises(DuplicateEmails) as exc:
             self.interactor.import_users(file_path="users.csv")
 
         assert exc.value.emails == ["alice@example.com"]
@@ -92,7 +92,7 @@ class TestImportUsers:
         self.user_storage.get_existing_emails.return_value = ["alice@example.com"]
 
         # Act & Assert
-        with pytest.raises(AlreadyExistsEmail) as exc:
+        with pytest.raises(EmailAlreadyExists) as exc:
             self.interactor.import_users(file_path="users.csv")
 
         assert exc.value.emails == ["alice@example.com"]

@@ -1,7 +1,7 @@
 {
   "data": {
     "cancelOrder": {
-      "__typename": "OrderNotBelongsToUser",
+      "__typename": "OrderNotOwnedByUser",
       "orderId": "orders-1"
     }
   }

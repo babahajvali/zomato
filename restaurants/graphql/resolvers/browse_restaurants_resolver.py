@@ -54,7 +54,7 @@ def get_browse_restaurants_resolver(root, info, params=None):
     try:
         restaurants = interactor.browse_restaurants(filters_dto=filters_dto)
         return _map_browse_restaurants_response(restaurants=restaurants)
-    except custom_exceptions.InvalidCuisineTypeException as exc:
+    except custom_exceptions.InvalidCuisineType as exc:
         return InvalidCuisineTypeException(cuisine_type=str(exc.cuisine_type))
     except custom_exceptions.InvalidMinRating as exc:
         return InvalidMinRating(min_rating=exc.min_rating)

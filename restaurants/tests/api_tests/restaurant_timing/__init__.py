@@ -17,11 +17,11 @@ class BaseCreateRestaurantTimingTestCase(GraphQLBaseTestCase):
           __typename
           restaurantId
         }
-        ... on UserIsNotRestaurantOwner {
+        ... on UserNotRestaurantOwner {
           __typename
           userId
         }
-        ... on OpenTimeGreaterThanCloseTime {
+        ... on InvalidTimingRange {
           __typename
           openTime
           closeTime
@@ -47,11 +47,11 @@ class BaseUpdateRestaurantTiming(GraphQLBaseTestCase):
           __typename
           id
         }
-        ... on UserIsNotRestaurantOwner {
+        ... on UserNotRestaurantOwner {
           __typename
           userId
         }
-        ... on OpenTimeGreaterThanCloseTime {
+        ... on InvalidTimingRange {
           __typename
           openTime
           closeTime
@@ -97,7 +97,7 @@ class BaseDeleteRestaurantTimingTestCase(GraphQLBaseTestCase):
           __typename
           id
         }
-        ... on UserIsNotRestaurantOwner {
+        ... on UserNotRestaurantOwner {
           __typename
           userId
         }

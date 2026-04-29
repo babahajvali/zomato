@@ -1,36 +1,30 @@
 from typing import List
 
 from orders.adapter.dtos import DeliveryZoneDTO, RestaurantTimingDTO, CartItemDTO
-from restaurants.app_service.service_interface import ServiceInterface
 
 
 class RestaurantAdapter:
     @property
     def interface(self):
 
+        from restaurants.app_service.service_interface import ServiceInterface
+
         return ServiceInterface()
 
     def get_delivery_zone_by_restaurant_id(
         self, restaurant_id: str, pin_code: str
-    ) -> DeliveryZoneDTO | None:
+    ) -> DeliveryZoneDTO:
 
-        zones = self.interface.get_delivery_zone_by_restaurant_id(
+        return self.interface.get_delivery_zone_by_restaurant_id(
             restaurant_id=restaurant_id, pin_code=pin_code
         )
 
-        if zones is None:
-            return None
-
-        return zones
-
     def get_restaurant_timing(
         self, restaurant_id: str, day_of_week: int
-    ) -> RestaurantTimingDTO | None:
+    ) -> RestaurantTimingDTO:
         restaurant_day_timing = self.interface.get_restaurant_timing(
             restaurant_id=restaurant_id, day_of_week=day_of_week
         )
-        if restaurant_day_timing is None:
-            return None
 
         return restaurant_day_timing
 

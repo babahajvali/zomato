@@ -10,7 +10,7 @@ from restaurants.graphql.types.types import MenuItemType
 from restaurants.interactors.dtos import UpdateMenuItemDTO
 from restaurants.interactors.restaurant.menu_item_interactor import MenuItemInteractor
 from restaurants.storages.restaurant_storage import RestaurantStorage
-from utils.graphql_types import UserIsNotRestaurantOwner
+from utils.graphql_types import UserNotRestaurantOwner
 
 
 class UpdateMenuItemMutation(graphene.Mutation):
@@ -51,7 +51,7 @@ class UpdateMenuItemMutation(graphene.Mutation):
                 preparation_time_in_minutes=result.preparation_time_in_minutes,
                 tags=result.tags,
             )
-        except custom_exceptions.UserIsNotRestaurantOwner as e:
-            return UserIsNotRestaurantOwner(user_id=e.user_id)
+        except custom_exceptions.UserNotRestaurantOwner as e:
+            return UserNotRestaurantOwner(user_id=e.user_id)
         except custom_exceptions.MenuItemNotFound as e:
             return MenuItemNotFound(menu_item_id=e.menu_item_id)

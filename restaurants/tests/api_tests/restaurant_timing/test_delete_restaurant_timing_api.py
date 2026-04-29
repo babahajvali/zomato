@@ -19,7 +19,7 @@ class TestDeleteRestaurantTiming(BaseDeleteRestaurantTimingTestCase):
         UserFactory(id=user_id)
         RestaurantFactory(id=restaurant_id, owner_id=user_id)
 
-        timing = RestaurantTimingFactory(restaurant_id=restaurant_id)
+        timing = RestaurantTimingFactory(id=0, restaurant_id=restaurant_id)
 
         variables = {"params": {"timingId": timing.id}}
 

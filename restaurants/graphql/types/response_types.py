@@ -2,16 +2,16 @@ import graphene
 
 from restaurants.graphql.types.error_types import (
     RestaurantTimingNotFound,
-    OpenTimeGreaterThanCloseTime,
+    InvalidTimingRange,
     RestaurantNotFound,
-    InvalidCategoriesFound,
+    InvalidCategories,
     InvalidCuisineTypeException,
     InvalidMinRating,
     CartNotFound,
     MenuItemNotFound,
     InvalidQuantity,
     CartItemNotFound,
-    UserAlreadyReviewedRestaurant,
+    RestaurantAlreadyReviewedByUser,
     InvalidRatingFound,
     InvalidDateRange,
 )
@@ -31,7 +31,7 @@ from restaurants.graphql.types.types import (
     MenuItemType,
     DeleteMenuItemSuccessType,
 )
-from utils.graphql_types import UserIsNotRestaurantOwner
+from utils.graphql_types import UserNotRestaurantOwner
 
 
 class UpdateRestaurantTimingResponse(graphene.Union):
@@ -39,8 +39,8 @@ class UpdateRestaurantTimingResponse(graphene.Union):
         types = (
             RestaurantTimingType,
             RestaurantTimingNotFound,
-            OpenTimeGreaterThanCloseTime,
-            UserIsNotRestaurantOwner,
+            InvalidTimingRange,
+            UserNotRestaurantOwner,
         )
 
 
@@ -49,7 +49,7 @@ class DeleteRestaurantTimingResponse(graphene.Union):
         types = (
             DeleteRestaurantTimingSuccessType,
             RestaurantTimingNotFound,
-            UserIsNotRestaurantOwner,
+            UserNotRestaurantOwner,
         )
 
 
@@ -66,8 +66,8 @@ class CreateMenuItemsResponse(graphene.Union):
         types = (
             MenuItemsType,
             RestaurantNotFound,
-            InvalidCategoriesFound,
-            UserIsNotRestaurantOwner,
+            InvalidCategories,
+            UserNotRestaurantOwner,
         )
 
 
@@ -122,7 +122,7 @@ class CreateReviewResponse(graphene.Union):
         types = (
             ReviewType,
             RestaurantNotFound,
-            UserAlreadyReviewedRestaurant,
+            RestaurantAlreadyReviewedByUser,
             InvalidRatingFound,
         )
 
@@ -133,7 +133,7 @@ class GetRestaurantDashboardResponse(graphene.Union):
             RestaurantDashboardType,
             RestaurantNotFound,
             InvalidDateRange,
-            UserIsNotRestaurantOwner,
+            UserNotRestaurantOwner,
         )
 
 
@@ -142,8 +142,8 @@ class CreateRestaurantTimingResponse(graphene.Union):
         types = (
             RestaurantTimingType,
             RestaurantNotFound,
-            UserIsNotRestaurantOwner,
-            OpenTimeGreaterThanCloseTime,
+            UserNotRestaurantOwner,
+            InvalidTimingRange,
         )
 
 
@@ -152,7 +152,7 @@ class UpdateMenuItemResponse(graphene.Union):
         types = (
             MenuItemType,
             MenuItemNotFound,
-            UserIsNotRestaurantOwner,
+            UserNotRestaurantOwner,
         )
 
 
@@ -161,5 +161,5 @@ class DeleteMenuItemResponse(graphene.Union):
         types = (
             DeleteMenuItemSuccessType,
             MenuItemNotFound,
-            UserIsNotRestaurantOwner,
+            UserNotRestaurantOwner,
         )

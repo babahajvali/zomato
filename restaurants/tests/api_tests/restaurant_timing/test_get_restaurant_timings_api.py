@@ -16,7 +16,9 @@ class TestGetRestaurantTimings(BaseGetRestaurantTimingsTestCase):
         restaurant_id = "test-restaurants-id"
 
         RestaurantFactory(id=restaurant_id)
-        RestaurantTimingFactory.create_batch(3, restaurant_id=restaurant_id)
+        RestaurantTimingFactory(id=2, restaurant_id=restaurant_id, day_of_week=3)
+        RestaurantTimingFactory(id=3, restaurant_id=restaurant_id, day_of_week=4)
+        RestaurantTimingFactory(id=4, restaurant_id=restaurant_id, day_of_week=5)
 
         variables = {"params": {"restaurantId": restaurant_id}}
 

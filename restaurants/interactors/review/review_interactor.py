@@ -1,8 +1,8 @@
 from typing import List
 
 from restaurants.exception.custom_exceptions import (
-    UserAlreadyReviewedRestaurant,
-    InvalidRatingFound,
+    RestaurantAlreadyReviewedByUser,
+    InvalidRating,
 )
 from restaurants.interactors.dtos import (
     CreateReviewDTO,
@@ -30,9 +30,7 @@ class ReviewInteractor(RestaurantMixin):
 
     def create_review(self, create_review_dto: CreateReviewDTO) -> ReviewDTO:
 
-        self.validate_restaurant_is_exists(
-            restaurant_id=create_review_dto.restaurant_id
-        )
+        self.validate_restaurant_exists(restaurant_id=create_review_dto.restaurant_id)
         self._validate_rating(rating=create_review_dto.rating)
         self._validate_user_has_not_reviewed(
             user_id=create_review_dto.customer_id,
@@ -54,9 +52,9 @@ class ReviewInteractor(RestaurantMixin):
         )
 
         if is_review_exists:
-            raise UserAlreadyReviewedRestaurant(user_id=user_id)
+            raise RestaurantAlreadyReviewedByUser(user_id=user_id)
 
     @staticmethod
     def _validate_rating(rating: int):
         if rating < 1 or rating > 5:
-            raise InvalidRatingFound(rating=rating)
+            raise InvalidRating(rating=rating)

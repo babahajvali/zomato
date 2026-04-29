@@ -1,0 +1,9 @@
+{
+  "data": {
+    "createRestaurantTiming": {
+      "__typename": "InvalidTimingRange",
+      "openTime": "23:00:00",
+      "closeTime": "10:00:00"
+    }
+  }
+}

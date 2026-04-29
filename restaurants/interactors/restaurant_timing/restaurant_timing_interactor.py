@@ -27,17 +27,16 @@ class RestaurantTimingInteractor(RestaurantMixin, TimingMixin):
     def create_restaurant_timing(
         self, create_restaurant_timing_dto: CreateRestaurantTimingDTO, user_id: str
     ) -> RestaurantTimingDTO:
-        self.validate_restaurant_is_exists(
+        self.validate_restaurant_exists(
             restaurant_id=create_restaurant_timing_dto.restaurant_id
         )
         self.validate_user_is_restaurant_owner(
             restaurant_id=create_restaurant_timing_dto.restaurant_id, user_id=user_id
         )
 
-        self.validate_restaurant_timings(
+        self.validate_restaurant_timing_within_range(
             open_time=create_restaurant_timing_dto.open_time,
             close_time=create_restaurant_timing_dto.close_time,
-            timing_id=None,
         )
 
         return self.restaurant_timing_storage.create_bulk_restaurant_timing(
@@ -45,7 +44,7 @@ class RestaurantTimingInteractor(RestaurantMixin, TimingMixin):
         )[0]
 
     def get_restaurant_timings(self, restaurant_id: str) -> List[RestaurantTimingDTO]:
-        self.validate_restaurant_is_exists(restaurant_id=restaurant_id)
+        self.validate_restaurant_exists(restaurant_id=restaurant_id)
 
         return self.restaurant_timing_storage.get_restaurant_timings(
             restaurant_id=restaurant_id
@@ -64,7 +63,7 @@ class RestaurantTimingInteractor(RestaurantMixin, TimingMixin):
     def get_day_restaurant_timing(
         self, restaurant_id: str, day_of_week: int
     ) -> RestaurantTimingDTO:
-        self.validate_restaurant_is_exists(restaurant_id=restaurant_id)
+        self.validate_restaurant_exists(restaurant_id=restaurant_id)
 
         return self.restaurant_timing_storage.get_day_restaurant_timing(
             restaurant_id=restaurant_id, day_of_week=day_of_week

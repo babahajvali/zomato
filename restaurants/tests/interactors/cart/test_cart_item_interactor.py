@@ -5,7 +5,7 @@ import pytest
 from restaurants.exception.custom_exceptions import (
     CartNotFound,
     CartItemNotFound,
-    InvalidQuantityFound,
+    InvalidQuantity,
     MenuItemNotFound,
 )
 from restaurants.interactors.cart.cart_item_interactor import CartItemInteractor
@@ -91,7 +91,7 @@ class TestCartItemInteractor:
         self.cart_storage.get_cart.return_value = CartDTOFactory(cart_id="cart-123")
         self.restaurant_storage.get_menu_item.return_value = MenuItemDTOFactory()
 
-        with pytest.raises(InvalidQuantityFound) as exc:
+        with pytest.raises(InvalidQuantity) as exc:
             self.interactor.update_cart_item(
                 cart_id="cart-123",
                 menu_item_id="item-123",
@@ -105,7 +105,7 @@ class TestCartItemInteractor:
         self.cart_storage.get_cart.return_value = CartDTOFactory(cart_id="cart-123")
         self.restaurant_storage.get_menu_item.return_value = MenuItemDTOFactory()
 
-        with pytest.raises(InvalidQuantityFound) as exc:
+        with pytest.raises(InvalidQuantity) as exc:
             self.interactor.update_cart_item(
                 cart_id="cart-123",
                 menu_item_id="item-123",

@@ -25,6 +25,7 @@ class TestUpdateMenuItemApi(BaseUpdateMenuItemTestCase):
             id=menu_item_id,
             restaurant_id=restaurant_id,
             name="Old Name",
+            description="Test item",
             is_available=True,
             price=100,
         )

@@ -11,9 +11,9 @@ from restaurants.interactors.storage_interface.restaurant_timing_storage_interfa
     RestaurantTimingStorageInterface,
 )
 from restaurants.exception.custom_exceptions import (
-    OpenTimeGreaterThanCloseTime,
+    InvalidTimingRange,
     RestaurantTimingNotFound,
-    UserIsNotRestaurantOwner,
+    UserNotRestaurantOwner,
 )
 
 
@@ -40,16 +40,14 @@ class TimingMixin:
             timing_id=timing_id
         )
         if owner_id != user_id:
-            raise UserIsNotRestaurantOwner(user_id=user_id)
+            raise UserNotRestaurantOwner(user_id=user_id)
 
     @staticmethod
     def validate_restaurant_timing_within_range(
         open_time: datetime.time, close_time: datetime.time
     ):
         if open_time > close_time:
-            raise OpenTimeGreaterThanCloseTime(
-                open_time=open_time, close_time=close_time
-            )
+            raise InvalidTimingRange(open_time=open_time, close_time=close_time)
 
     def validate_restaurant_timings(
         self,
@@ -62,33 +60,33 @@ class TimingMixin:
                 open_time=open_time, close_time=close_time
             )
         elif open_time is not None:
-            self.validate_open_time_valid(timing_id=timing_id, open_time=open_time)
+            self.validate_open_time(timing_id=timing_id, open_time=open_time)
         elif close_time is not None:
-            self.validate_close_time_valid(timing_id=timing_id, close_time=close_time)
+            self.validate_close_time(timing_id=timing_id, close_time=close_time)
 
-    def validate_open_time_valid(self, timing_id: int, open_time: datetime.time):
+    def validate_open_time(self, timing_id: int, open_time: datetime.time):
         timing_data = self.restaurant_timing_storage.get_restaurant_timing(
             timing_id=timing_id
         )
 
         if open_time >= timing_data.close_time:
-            raise OpenTimeGreaterThanCloseTime(
+            raise InvalidTimingRange(
                 open_time=open_time, close_time=timing_data.close_time
             )
 
-    def validate_close_time_valid(self, timing_id: int, close_time: datetime.time):
+    def validate_close_time(self, timing_id: int, close_time: datetime.time):
 
         timing_data = self.restaurant_timing_storage.get_restaurant_timing(
             timing_id=timing_id
         )
 
         if close_time <= timing_data.open_time:
-            raise OpenTimeGreaterThanCloseTime(
+            raise InvalidTimingRange(
                 open_time=timing_data.open_time, close_time=close_time
             )
 
-    @staticmethod
     def compute_is_open_bulk(
+        self,
         restaurants: List[RestaurantDTO],
         timings: List[RestaurantTimingDTO],
         review_summaries: List[RestaurantReviewSummaryDTO],
@@ -102,46 +100,57 @@ class TimingMixin:
         }
 
         browse_restaurants = []
+        for restaurant in restaurants:
+            todays_timing = self._get_todays_timing(timings, restaurant.id, day_of_week)
+            is_open = self._check_is_open(todays_timing, current_time)
+            review_summary = review_summary_map.get(str(restaurant.id))
 
-        for each_restaurant in restaurants:
-            review_summary = review_summary_map.get(str(each_restaurant.id))
-            restaurant = BrowseRestaurantDTO(
-                restaurant_id=each_restaurant.id,
-                name=each_restaurant.name,
-                description=each_restaurant.description,
-                pin_code=each_restaurant.pin_code,
-                address=each_restaurant.address,
-                is_veg_only=each_restaurant.is_veg_only,
-                is_deleted=each_restaurant.is_deleted,
-                average_rating=(
-                    review_summary.average_rating if review_summary else 0.0
-                ),
-                total_reviews=review_summary.total_reviews if review_summary else 0,
-                is_open=False,
-                cuisine_type=each_restaurant.cuisine_type,
+            browse_restaurants.append(
+                self._build_browse_restaurant_dto(restaurant, review_summary, is_open)
             )
 
-            todays_timing = next(
-                (
-                    t
-                    for t in timings
-                    if t.restaurant_id == restaurant.restaurant_id
-                    and t.day_of_week == day_of_week
-                ),
-                None,
-            )
-
-            if not todays_timing:
-                restaurant.is_open = False
-                continue
-
-            if not todays_timing.open_time or not todays_timing.close_time:
-                restaurant.is_open = False
-                continue
-
-            restaurant.is_open = (
-                todays_timing.open_time <= current_time <= todays_timing.close_time
-            )
-
-            browse_restaurants.append(restaurant)
         return browse_restaurants
+
+    @staticmethod
+    def _get_todays_timing(
+        timings: List[RestaurantTimingDTO],
+        restaurant_id: str,
+        day_of_week: int,
+    ) -> Optional[RestaurantTimingDTO]:
+        return next(
+            (
+                t
+                for t in timings
+                if t.restaurant_id == restaurant_id and t.day_of_week == day_of_week
+            ),
+            None,
+        )
+
+    @staticmethod
+    def _check_is_open(
+        timing: Optional[RestaurantTimingDTO],
+        current_time: datetime.time,
+    ) -> bool:
+        if not timing or not timing.open_time or not timing.close_time:
+            return False
+        return timing.open_time <= current_time <= timing.close_time
+
+    @staticmethod
+    def _build_browse_restaurant_dto(
+        restaurant: RestaurantDTO,
+        review_summary: Optional[RestaurantReviewSummaryDTO],
+        is_open: bool,
+    ) -> BrowseRestaurantDTO:
+        return BrowseRestaurantDTO(
+            restaurant_id=restaurant.id,
+            name=restaurant.name,
+            description=restaurant.description,
+            pin_code=restaurant.pin_code,
+            address=restaurant.address,
+            is_veg_only=restaurant.is_veg_only,
+            is_deleted=restaurant.is_deleted,
+            average_rating=review_summary.average_rating if review_summary else 0.0,
+            total_reviews=review_summary.total_reviews if review_summary else 0,
+            is_open=is_open,
+            cuisine_type=restaurant.cuisine_type,
+        )

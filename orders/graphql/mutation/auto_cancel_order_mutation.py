@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from orders.exception import custom_exceptions
 from orders.graphql.types.error_types import (
-    OrderCannotBeCancelled,
+    OrderCancellationNotAllowed,
     OrderNotFound,
 )
 from orders.graphql.types.input_types import AutoCancelOrderInputParams
@@ -32,8 +32,8 @@ class AutoCancelOrderMutation(graphene.Mutation):
         except custom_exceptions.OrderNotFound as exc:
             return OrderNotFound(order_id=exc.order_id)
 
-        except custom_exceptions.OrderCannotBeCancelled as exc:
-            return OrderCannotBeCancelled(order_id=exc.order_id)
+        except custom_exceptions.OrderCancellationNotAllowed as exc:
+            return OrderCancellationNotAllowed(order_id=exc.order_id)
 
 
 def _map_order_response(order_dto: OrderDTO) -> OrderType:

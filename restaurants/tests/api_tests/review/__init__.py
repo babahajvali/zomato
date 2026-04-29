@@ -21,7 +21,7 @@ class BaseCreateReviewTestCase(GraphQLBaseTestCase):
           __typename
           userRating
         }
-        ... on UserAlreadyReviewedRestaurant {
+        ... on RestaurantAlreadyReviewedByUser {
           __typename
           userId
         }
@@ -44,7 +44,7 @@ class BaseGetRestaurantReviewsTestCase(GraphQLBaseTestCase):
             review
           }
         }
-        ... on RestaurantNotFoundType {
+        ... on RestaurantNotFound {
           __typename
           restaurantId
         }

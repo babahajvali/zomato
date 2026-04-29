@@ -1,7 +1,7 @@
 {
   "data": {
     "deleteRestaurantTiming": {
-      "__typename": "UserIsNotRestaurantOwner",
+      "__typename": "UserNotRestaurantOwner",
       "userId": "user-id-123"
     }
   }

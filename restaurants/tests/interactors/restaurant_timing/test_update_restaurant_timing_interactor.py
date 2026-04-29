@@ -11,9 +11,9 @@ from restaurants.interactors.storage_interface.restaurant_timing_storage_interfa
     RestaurantTimingStorageInterface,
 )
 from restaurants.exception.custom_exceptions import (
-    OpenTimeGreaterThanCloseTime,
+    InvalidTimingRange,
     RestaurantTimingNotFound,
-    UserIsNotRestaurantOwner,
+    UserNotRestaurantOwner,
 )
 
 
@@ -113,7 +113,7 @@ class TestUpdateRestaurantTimingInteractor:
         )
         self._setup_dependencies(owner_id="owner-456")
 
-        with pytest.raises(UserIsNotRestaurantOwner) as exc:
+        with pytest.raises(UserNotRestaurantOwner) as exc:
             self.interactor.update_restaurant_timing(
                 update_restaurant_timing_dto=update_dto
             )
@@ -133,7 +133,7 @@ class TestUpdateRestaurantTimingInteractor:
         )
         self._setup_dependencies()
 
-        with pytest.raises(OpenTimeGreaterThanCloseTime) as exc:
+        with pytest.raises(InvalidTimingRange) as exc:
             self.interactor.update_restaurant_timing(
                 update_restaurant_timing_dto=update_dto
             )
@@ -150,7 +150,7 @@ class TestUpdateRestaurantTimingInteractor:
         )
         self._setup_dependencies(existing_close_time=time(21, 0))
 
-        with pytest.raises(OpenTimeGreaterThanCloseTime) as exc:
+        with pytest.raises(InvalidTimingRange) as exc:
             self.interactor.update_restaurant_timing(
                 update_restaurant_timing_dto=update_dto
             )
@@ -167,7 +167,7 @@ class TestUpdateRestaurantTimingInteractor:
         )
         self._setup_dependencies(existing_open_time=time(9, 0))
 
-        with pytest.raises(OpenTimeGreaterThanCloseTime) as exc:
+        with pytest.raises(InvalidTimingRange) as exc:
             self.interactor.update_restaurant_timing(
                 update_restaurant_timing_dto=update_dto
             )

@@ -1,23 +1,9 @@
 {
-  "errors": [
-    {
-      "message": "Variable '$params' got invalid value {'id': 1, 'closeTime': '10:00:00'}; Field 'timingId' of required type 'Int!' was not provided.",
-      "locations": [
-        {
-          "line": 2,
-          "column": 37
-        }
-      ]
-    },
-    {
-      "message": "Variable '$params' got invalid value {'id': 1, 'closeTime': '10:00:00'}; Field 'id' is not defined by type 'UpdateRestaurantTimingInputParams'.",
-      "locations": [
-        {
-          "line": 2,
-          "column": 37
-        }
-      ]
+  "data": {
+    "updateRestaurantTiming": {
+      "__typename": "InvalidTimingRange",
+      "openTime": "10:00:00",
+      "closeTime": "10:00:00"
     }
-  ],
-  "data": null
+  }
 }

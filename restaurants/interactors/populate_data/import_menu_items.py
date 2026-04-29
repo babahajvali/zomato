@@ -5,7 +5,7 @@ from restaurants.interactors.dtos import CreateMenuItemDTO
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
     RestaurantStorageInterface,
 )
-from restaurants.exception.custom_exceptions import InvalidRestaurantIdsFound
+from restaurants.exception.custom_exceptions import InvalidRestaurantIds
 from utils.read_csv_util import read_csv, validate_row
 
 
@@ -16,49 +16,11 @@ class ImportMenuItems:
     def import_menu_items(self, file_path="./sample_data/menu_items.csv"):
         rows = read_csv(file_path=file_path)
 
-        restaurant_ids = []
-
-        for index, row in enumerate(rows, start=1):
-            validate_row(
-                row,
-                [
-                    "id",
-                    "restaurant",
-                    "name",
-                    "price",
-                    "category",
-                    "preparation_time_in_minutes",
-                ],
-                f"menu item row {index}",
-            )
-
-            id = row["id"].strip()
-            restaurant_id = row["restaurant"].strip()
-            name = row["name"].strip()
-
-            row["id"] = id
-            row["restaurant"] = restaurant_id
-            row["name"] = name
-
-            restaurant_ids.append(restaurant_id)
+        restaurant_ids = self._parse_and_normalize_rows(rows=rows)
 
         self._validate_restaurants_exist(list(set(restaurant_ids)))
 
-        menu_items_dto = [
-            CreateMenuItemDTO(
-                id=row["id"],
-                restaurant_id=row["restaurant"],
-                name=row["name"],
-                description=row.get("description"),
-                price=row["price"],
-                category=row["category"],
-                is_veg=row.get("is_veg") == "True",
-                is_available=row.get("is_available", "True") == "True",
-                preparation_time_in_minutes=int(row["preparation_time_in_minutes"]),
-                tags=json.loads(row["tags"]) if row.get("tags") else [],
-            )
-            for row in rows
-        ]
+        menu_items_dto = self._build_menu_item_dtos(rows=rows)
 
         created_items = self.restaurant_storage.create_menu_items(
             menu_items_dto, restaurant_id=restaurant_ids[0]
@@ -73,4 +35,45 @@ class ImportMenuItems:
         missing_ids = [rid for rid in restaurant_ids if rid not in existing_ids_set]
 
         if missing_ids:
-            raise InvalidRestaurantIdsFound(restaurant_ids=missing_ids)
+            raise InvalidRestaurantIds(restaurant_ids=missing_ids)
+
+    @staticmethod
+    def _parse_and_normalize_rows(rows) -> List[str]:
+        restaurant_ids = []
+        for index, row in enumerate(rows, start=1):
+            validate_row(
+                row,
+                [
+                    "id",
+                    "restaurant",
+                    "name",
+                    "price",
+                    "category",
+                    "preparation_time_in_minutes",
+                ],
+                f"menu item row {index}",
+            )
+            row["id"] = row["id"].strip()
+            row["restaurant"] = row["restaurant"].strip()
+            row["name"] = row["name"].strip()
+            restaurant_ids.append(row["restaurant"])
+
+        return restaurant_ids
+
+    @staticmethod
+    def _build_menu_item_dtos(rows) -> List[CreateMenuItemDTO]:
+        return [
+            CreateMenuItemDTO(
+                id=row["id"],
+                restaurant_id=row["restaurant"],
+                name=row["name"],
+                description=row.get("description"),
+                price=row["price"],
+                category=row["category"],
+                is_veg=row.get("is_veg") == "True",
+                is_available=row.get("is_available", "True") == "True",
+                preparation_time_in_minutes=int(row["preparation_time_in_minutes"]),
+                tags=json.loads(row["tags"]) if row.get("tags") else [],
+            )
+            for row in rows
+        ]

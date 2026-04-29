@@ -7,7 +7,7 @@ from restaurants.graphql.types.response_types import DeleteMenuItemResponse
 from restaurants.graphql.types.types import DeleteMenuItemSuccessType
 from restaurants.interactors.restaurant.menu_item_interactor import MenuItemInteractor
 from restaurants.storages.restaurant_storage import RestaurantStorage
-from utils.graphql_types import UserIsNotRestaurantOwner
+from utils.graphql_types import UserNotRestaurantOwner
 
 
 class DeleteMenuItemMutation(graphene.Mutation):
@@ -32,5 +32,5 @@ class DeleteMenuItemMutation(graphene.Mutation):
             )
         except custom_exceptions.MenuItemNotFound as e:
             return MenuItemNotFound(menu_item_id=e.menu_item_id)
-        except custom_exceptions.UserIsNotRestaurantOwner as e:
-            return UserIsNotRestaurantOwner(user_id=e.user_id)
+        except custom_exceptions.UserNotRestaurantOwner as e:
+            return UserNotRestaurantOwner(user_id=e.user_id)

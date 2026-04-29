@@ -15,7 +15,14 @@ class TestBrowseRestaurantsAPI(BaseBrowseRestaurantsTestCase):
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7d5"
 
-        RestaurantFactory(id=restaurant_id)
+        RestaurantFactory(
+            id=restaurant_id,
+            name="Restaurant 1",
+            description="Test restaurant",
+            address="Test Address",
+            pin_code="500001",
+            is_deleted=False,
+        )
 
         variables = {
             "params": {

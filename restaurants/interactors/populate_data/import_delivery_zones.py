@@ -15,38 +15,12 @@ class ImportDeliveryZones:
     def import_delivery_zones(self, file_path="./sample_data/delivery_zones.csv"):
         rows = read_csv(file_path=file_path)
 
-        combinations = []
-
-        for index, row in enumerate(rows, start=1):
-            validate_row(
-                row,
-                ["restaurant", "pin_code", "delivery_fee", "estimated_delivery_mins"],
-                f"delivery zone row {index}",
-            )
-
-            restaurant_id = row["restaurant"].strip()
-            pin_code = row["pin_code"].strip()
-
-            row["restaurant"] = restaurant_id
-            row["pin_code"] = pin_code
-            row["delivery_fee"] = float(row["delivery_fee"])
-            row["estimated_delivery_mins"] = int(row["estimated_delivery_mins"])
-
-            combinations.append((restaurant_id, pin_code))
+        combinations = self._parse_and_normalize_rows(rows)
 
         self._validate_duplicate_combinations(combinations)
         self._validate_existing_delivery_zones(combinations)
 
-        delivery_zones_dto = [
-            CreateDeliveryZoneDTO(
-                restaurant_id=row["restaurant"],
-                pin_code=row["pin_code"],
-                delivery_fee=row["delivery_fee"],
-                estimated_delivery_mins=row["estimated_delivery_mins"],
-            )
-            for row in rows
-        ]
-
+        delivery_zones_dto = self._build_delivery_zone_dtos(rows)
         created_delivery_zones = (
             self.delivery_zone_storage_interface.create_bulk_delivery_zones(
                 delivery_zones_dto
@@ -75,3 +49,31 @@ class ImportDeliveryZones:
 
         if duplicates:
             raise DuplicateDeliveryZones(combinations=duplicates)
+
+    @staticmethod
+    def _parse_and_normalize_rows(rows) -> List[Tuple[str, str]]:
+        combinations = []
+        for index, row in enumerate(rows, start=1):
+            validate_row(
+                row,
+                ["restaurant", "pin_code", "delivery_fee", "estimated_delivery_mins"],
+                f"delivery zone row {index}",
+            )
+            row["restaurant"] = row["restaurant"].strip()
+            row["pin_code"] = row["pin_code"].strip()
+            row["delivery_fee"] = float(row["delivery_fee"])
+            row["estimated_delivery_mins"] = int(row["estimated_delivery_mins"])
+            combinations.append((row["restaurant"], row["pin_code"]))
+        return combinations
+
+    @staticmethod
+    def _build_delivery_zone_dtos(rows) -> List[CreateDeliveryZoneDTO]:
+        return [
+            CreateDeliveryZoneDTO(
+                restaurant_id=row["restaurant"],
+                pin_code=row["pin_code"],
+                delivery_fee=row["delivery_fee"],
+                estimated_delivery_mins=row["estimated_delivery_mins"],
+            )
+            for row in rows
+        ]

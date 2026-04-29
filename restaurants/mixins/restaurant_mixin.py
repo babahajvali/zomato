@@ -2,8 +2,8 @@ from typing import List
 
 from restaurants.constants.enums import Category
 from restaurants.exception.custom_exceptions import (
-    UserIsNotRestaurantOwner,
-    InvalidCategoriesFound,
+    UserNotRestaurantOwner,
+    InvalidCategories,
     RestaurantNotFound,
     InvalidMinRating,
     MenuItemNotFound,
@@ -25,7 +25,7 @@ class RestaurantMixin:
         )
 
         if str(owner_id) != user_id:
-            raise UserIsNotRestaurantOwner(user_id=user_id)
+            raise UserNotRestaurantOwner(user_id=user_id)
 
     @staticmethod
     def validate_categories(categories: List[str]):
@@ -37,9 +37,9 @@ class RestaurantMixin:
                 invalid_categories.append(category)
 
         if invalid_categories:
-            raise InvalidCategoriesFound(categories=invalid_categories)
+            raise InvalidCategories(categories=invalid_categories)
 
-    def validate_restaurant_is_exists(self, restaurant_id: str):
+    def validate_restaurant_exists(self, restaurant_id: str):
 
         is_restaurant_exists = self.restaurant_storage.check_restaurant_is_exist(
             restaurant_id=restaurant_id

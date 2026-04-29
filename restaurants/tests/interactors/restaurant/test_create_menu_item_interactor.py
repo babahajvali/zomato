@@ -3,9 +3,9 @@ from unittest.mock import create_autospec
 import pytest
 
 from restaurants.exception.custom_exceptions import (
-    InvalidCategoriesFound,
+    InvalidCategories,
     RestaurantNotFound,
-    UserIsNotRestaurantOwner,
+    UserNotRestaurantOwner,
 )
 from restaurants.interactors.restaurant.menu_item_interactor import (
     MenuItemInteractor,
@@ -77,7 +77,7 @@ class TestCreateMenuItemInteractor:
         self.restaurant_storage.check_restaurant_is_exist.return_value = True
         self.restaurant_storage.get_restaurant_owner_id.return_value = "owner-456"
 
-        with pytest.raises(UserIsNotRestaurantOwner) as exc:
+        with pytest.raises(UserNotRestaurantOwner) as exc:
             self.interactor.create_menu_item(
                 create_items_dto=create_items_dto,
                 user_id="user-123",
@@ -102,7 +102,7 @@ class TestCreateMenuItemInteractor:
         self.restaurant_storage.check_restaurant_is_exist.return_value = True
         self.restaurant_storage.get_restaurant_owner_id.return_value = "user-123"
 
-        with pytest.raises(InvalidCategoriesFound) as exc:
+        with pytest.raises(InvalidCategories) as exc:
             self.interactor.create_menu_item(
                 create_items_dto=create_items_dto,
                 user_id="user-123",

@@ -27,7 +27,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
 
         variables = {
             "params": {
-                "id": timing_id,
+                "timingId": timing_id,
                 "openTime": "11:00:00",
                 "closeTime": "23:00:00",
             }
@@ -48,7 +48,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
 
         variables = {
             "params": {
-                "id": timing_id,
+                "timingId": timing_id,
                 "openTime": "11:00:00",
                 "closeTime": "23:00:00",
             }
@@ -83,7 +83,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
 
         variables = {
             "params": {
-                "id": timing_id,
+                "timingId": timing_id,
                 "openTime": "11:00:00",
                 "closeTime": "23:00:00",
             }
@@ -113,7 +113,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
 
         variables = {
             "params": {
-                "id": timing_id,
+                "timingId": timing_id,
                 "openTime": "23:00:00",
                 "closeTime": "10:00:00",
             }
@@ -143,7 +143,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
 
         variables = {
             "params": {
-                "id": timing_id,
+                "timingId": timing_id,
                 "openTime": "11:00:00",
             }
         }
@@ -172,7 +172,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
 
         variables = {
             "params": {
-                "id": timing_id,
+                "timingId": timing_id,
                 "closeTime": "23:00:00",
             }
         }
@@ -201,7 +201,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
 
         variables = {
             "params": {
-                "id": timing_id,
+                "timingId": timing_id,
                 "openTime": "22:00:00",
             }
         }
@@ -230,7 +230,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
 
         variables = {
             "params": {
-                "id": timing_id,
+                "timingId": timing_id,
                 "closeTime": "10:00:00",
             }
         }

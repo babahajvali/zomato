@@ -7,7 +7,7 @@ import pytest
 from restaurants.exception.custom_exceptions import (
     InvalidDateRange,
     RestaurantNotFound,
-    UserIsNotRestaurantOwner,
+    UserNotRestaurantOwner,
 )
 from restaurants.interactors.dtos import (
     DashboardFiltersDTO,
@@ -116,7 +116,7 @@ class TestRestaurantDashboardInteractor:
         self.restaurant_storage.check_restaurant_is_exist.return_value = True
         self.restaurant_storage.get_restaurant_owner_id.return_value = "owner-456"
 
-        with pytest.raises(UserIsNotRestaurantOwner) as exc:
+        with pytest.raises(UserNotRestaurantOwner) as exc:
             self.interactor.get_restaurant_dashboard(
                 dashboard_filter_dto=dashboard_input
             )

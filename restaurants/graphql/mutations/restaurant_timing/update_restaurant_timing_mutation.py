@@ -7,14 +7,14 @@ from restaurants.interactors.restaurant_timing.update_restaurant_timing_interact
 )
 
 from restaurants.graphql.types.error_types import (
-    OpenTimeGreaterThanCloseTime,
+    InvalidTimingRange,
     RestaurantTimingNotFound,
 )
 from restaurants.graphql.types.input_types import UpdateRestaurantTimingInputParams
 from restaurants.graphql.types.response_types import UpdateRestaurantTimingResponse
 from restaurants.graphql.types.types import RestaurantTimingType
 from restaurants.storages.restaurant_timing_storage import RestaurantTimingStorage
-from utils.graphql_types import UserIsNotRestaurantOwner
+from utils.graphql_types import UserNotRestaurantOwner
 
 
 class UpdateRestaurantTimingMutation(graphene.Mutation):
@@ -51,11 +51,11 @@ class UpdateRestaurantTimingMutation(graphene.Mutation):
         except custom_exceptions.RestaurantTimingNotFound as exc:
             return RestaurantTimingNotFound(id=exc.id)
 
-        except custom_exceptions.OpenTimeGreaterThanCloseTime as exc:
-            return OpenTimeGreaterThanCloseTime(
+        except custom_exceptions.InvalidTimingRange as exc:
+            return InvalidTimingRange(
                 open_time=exc.open_time,
                 close_time=exc.close_time,
             )
 
-        except custom_exceptions.UserIsNotRestaurantOwner as exc:
-            return UserIsNotRestaurantOwner(user_id=exc.user_id)
+        except custom_exceptions.UserNotRestaurantOwner as exc:
+            return UserNotRestaurantOwner(user_id=exc.user_id)

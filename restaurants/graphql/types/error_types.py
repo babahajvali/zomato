@@ -5,7 +5,7 @@ class RestaurantTimingNotFound(graphene.ObjectType):
     id = graphene.Int(required=True)
 
 
-class OpenTimeGreaterThanCloseTime(graphene.ObjectType):
+class InvalidTimingRange(graphene.ObjectType):
     open_time = graphene.Time(required=True)
     close_time = graphene.Time(required=True)
 
@@ -14,7 +14,7 @@ class RestaurantNotFound(graphene.ObjectType):
     restaurant_id = graphene.String(required=True)
 
 
-class InvalidCategoriesFound(graphene.ObjectType):
+class InvalidCategories(graphene.ObjectType):
     categories = graphene.List(graphene.String, required=True)
 
 
@@ -42,7 +42,7 @@ class CartItemNotFound(graphene.ObjectType):
     cart_item_id = graphene.Int(required=True)
 
 
-class UserAlreadyReviewedRestaurant(graphene.ObjectType):
+class RestaurantAlreadyReviewedByUser(graphene.ObjectType):
     user_id = graphene.String(required=True)
 
 

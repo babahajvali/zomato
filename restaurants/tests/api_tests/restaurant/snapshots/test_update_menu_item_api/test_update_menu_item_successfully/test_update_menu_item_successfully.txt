@@ -1,0 +1,20 @@
+{
+  "data": {
+    "updateMenuItem": {
+      "__typename": "MenuItemType",
+      "category": "STARTER",
+      "description": "Test item",
+      "isAvailable": false,
+      "isVeg": true,
+      "name": "Updated Name",
+      "itemId": "49bb508e-c6d1-4882-95fd-1991d103f7df",
+      "preparationTimeInMinutes": 15,
+      "price": 200.0,
+      "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7de",
+      "tags": [
+        "updated",
+        "spicy"
+      ]
+    }
+  }
+}

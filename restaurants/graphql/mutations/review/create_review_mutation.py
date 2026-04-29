@@ -3,7 +3,7 @@ import graphene
 from restaurants.exception import custom_exceptions
 from restaurants.graphql.types.error_types import (
     RestaurantNotFound,
-    UserAlreadyReviewedRestaurant,
+    RestaurantAlreadyReviewedByUser,
     InvalidRatingFound,
 )
 from restaurants.graphql.types.input_types import CreateReviewInputParams
@@ -54,7 +54,7 @@ class CreateReviewMutation(graphene.Mutation):
 
         except custom_exceptions.RestaurantNotFound as e:
             return RestaurantNotFound(restaurant_id=e.restaurant_id)
-        except custom_exceptions.UserAlreadyReviewedRestaurant as e:
-            return UserAlreadyReviewedRestaurant(user_id=e.user_id)
-        except custom_exceptions.InvalidRatingFound as e:
+        except custom_exceptions.RestaurantAlreadyReviewedByUser as e:
+            return RestaurantAlreadyReviewedByUser(user_id=e.user_id)
+        except custom_exceptions.InvalidRating as e:
             return InvalidRatingFound(user_rating=e.rating)

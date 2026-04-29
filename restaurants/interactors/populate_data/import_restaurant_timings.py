@@ -19,34 +19,9 @@ class ImportRestaurantTimings:
     ):
         rows = read_csv(file_path=file_path)
 
-        combinations = []
-
-        for index, row in enumerate(rows, start=1):
-            validate_row(
-                row,
-                ["restaurant", "day_of_week", "open_time", "close_time"],
-                f"restaurants timing row {index}",
-            )
-
-            restaurant_id = row["restaurant"].strip()
-            day_of_week = int(row["day_of_week"])
-
-            row["restaurant"] = restaurant_id
-            row["day_of_week"] = day_of_week
-
-            combinations.append((restaurant_id, day_of_week))
-
+        combinations = self._parse_and_normalize_rows(rows=rows)
         self._validate_duplicate_combinations(combinations)
-
-        timings_dto = [
-            CreateRestaurantTimingDTO(
-                restaurant_id=row["restaurant"],
-                day_of_week=row["day_of_week"],
-                open_time=row["open_time"],
-                close_time=row["close_time"],
-            )
-            for row in rows
-        ]
+        timings_dto = self._build_restaurant_timing_dtos(rows=rows)
 
         created_timings = (
             self.restaurant_timing_storage_interface.create_bulk_restaurant_timing(
@@ -54,7 +29,7 @@ class ImportRestaurantTimings:
             )
         )
 
-        return created_timings
+        return f" {len(created_timings)} restaurants were created"
 
     @staticmethod
     def _validate_duplicate_combinations(combinations: List[tuple]):
@@ -68,3 +43,29 @@ class ImportRestaurantTimings:
 
         if duplicates:
             raise DuplicateRestaurantTimings(restaurant_ids=duplicates)
+
+    @staticmethod
+    def _parse_and_normalize_rows(rows) -> List[tuple]:
+        combinations = []
+        for index, row in enumerate(rows, start=1):
+            validate_row(
+                row,
+                ["restaurant", "day_of_week", "open_time", "close_time"],
+                f"restaurants timing row {index}",
+            )
+            row["restaurant"] = row["restaurant"].strip()
+            row["day_of_week"] = int(row["day_of_week"])
+            combinations.append((row["restaurant"], row["day_of_week"]))
+        return combinations
+
+    @staticmethod
+    def _build_restaurant_timing_dtos(rows) -> List[CreateRestaurantTimingDTO]:
+        return [
+            CreateRestaurantTimingDTO(
+                restaurant_id=row["restaurant"],
+                day_of_week=row["day_of_week"],
+                open_time=row["open_time"],
+                close_time=row["close_time"],
+            )
+            for row in rows
+        ]

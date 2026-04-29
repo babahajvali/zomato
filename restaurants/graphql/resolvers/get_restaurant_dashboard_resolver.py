@@ -12,7 +12,7 @@ from restaurants.interactors.restaurant.restaurant_dashboard_interactor import (
 )
 from restaurants.storages.restaurant_storage import RestaurantStorage
 from restaurants.storages.review_storage import ReviewStorage
-from utils.graphql_types import UserIsNotRestaurantOwner
+from utils.graphql_types import UserNotRestaurantOwner
 
 
 def get_restaurant_dashboard_resolver(root, info, params):
@@ -42,8 +42,8 @@ def get_restaurant_dashboard_resolver(root, info, params):
         return InvalidDateRange(date_from=e.date_from, date_to=e.date_to)
     except custom_exceptions.RestaurantNotFound as e:
         return RestaurantNotFound(restaurant_id=e.restaurant_id)
-    except custom_exceptions.UserIsNotRestaurantOwner as e:
-        return UserIsNotRestaurantOwner(user_id=e.user_id)
+    except custom_exceptions.UserNotRestaurantOwner as e:
+        return UserNotRestaurantOwner(user_id=e.user_id)
 
 
 def _map_dashboard_dto_to_type(result: RestaurantDashboardDTO):

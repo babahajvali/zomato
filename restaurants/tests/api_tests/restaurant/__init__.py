@@ -21,11 +21,11 @@ class BaseBrowseRestaurantsTestCase(GraphQLBaseTestCase):
             totalReviews
           }
         }
-        ... on InvalidCuisineTypeExceptionType {
+        ... on InvalidCuisineTypeException {
           __typename
           cuisineType
         }
-        ... on InvalidMinRatingExceptionType {
+        ... on InvalidMinRating {
           __typename
           minRating
         }
@@ -55,7 +55,7 @@ class BaseRestaurantMenuTestCase(GraphQLBaseTestCase):
     }
     restaurantId
     }
-    ... on RestaurantNotFoundType {
+    ... on RestaurantNotFound {
     __typename
     restaurantId
     }
@@ -82,15 +82,15 @@ class BaseCreateMenuItemsTestCase(GraphQLBaseTestCase):
             tags
           }
         }
-        ... on RestaurantNotFoundType {
+        ... on RestaurantNotFound {
           __typename
           restaurantId
         }
-        ... on InvalidCategoriesFoundType {
+        ... on InvalidCategories {
           __typename
           categories
         }
-        ... on UserIsNotRestaurantOwnerType {
+        ... on UserNotRestaurantOwner {
           __typename
           userId
         }
@@ -119,7 +119,7 @@ class BaseUpdateMenuItemTestCase(GraphQLBaseTestCase):
           __typename
           menuItemId
         }
-        ... on UserIsNotRestaurantOwner {
+        ... on UserNotRestaurantOwner {
           __typename
           userId
         }
@@ -140,7 +140,7 @@ class BaseDeleteMenuItemTestCase(GraphQLBaseTestCase):
           __typename
           menuItemId
         }
-        ... on UserIsNotRestaurantOwner {
+        ... on UserNotRestaurantOwner {
           __typename
           userId
         }
@@ -181,7 +181,7 @@ class BaseGetRestaurantDashboardTestCase(GraphQLBaseTestCase):
           dateFrom
           dateTo
         }
-        ... on UserIsNotRestaurantOwner {
+        ... on UserNotRestaurantOwner {
           __typename
           userId
         }

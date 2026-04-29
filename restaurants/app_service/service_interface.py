@@ -61,6 +61,7 @@ class ServiceInterface:
             cart_storage=self.cart_storage,
             restaurant_storage=self.restaurant_storage,
         )
+
         return interactor.get_cart_items(cart_id=cart_id)
 
     def clear_cart_items(self, cart_id: str):
@@ -68,6 +69,7 @@ class ServiceInterface:
             cart_storage=self.cart_storage,
             restaurant_storage=self.restaurant_storage,
         )
+
         return interactor.clear_cart_items(cart_id=cart_id)
 
     def get_customer_cart_id(self, customer_id: str) -> str:
@@ -75,6 +77,7 @@ class ServiceInterface:
             cart_storage=self.cart_storage,
             restaurant_storage=self.restaurant_storage,
         )
+
         return interactor.get_customer_cart_id(customer_id=customer_id)
 
     def get_restaurant_owner_id(self, restaurant_id: str) -> str:
@@ -84,4 +87,5 @@ class ServiceInterface:
             restaurant_timing_storage=self.restaurant_timing_storage,
             review_storage=self.review_storage,
         )
+
         return interactor.get_restaurant_owner_id(restaurant_id=restaurant_id)

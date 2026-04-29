@@ -49,5 +49,5 @@ class UpdateCartItemMutation(graphene.Mutation):
             return CartNotFound(cart_id=e.cart_id)
         except custom_exceptions.MenuItemNotFound as e:
             return MenuItemNotFound(menu_item_id=e.menu_item_id)
-        except custom_exceptions.InvalidQuantityFound as e:
+        except custom_exceptions.InvalidQuantity as e:
             return InvalidQuantity(quantity=e.quantity)

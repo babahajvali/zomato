@@ -19,7 +19,7 @@ class ViewRestaurantMenuInteractor(RestaurantMixin):
 
     def view_restaurant_menu(self, restaurant_id: str) -> RestaurantMenuDTO:
 
-        self.validate_restaurant_is_exists(restaurant_id=restaurant_id)
+        self.validate_restaurant_exists(restaurant_id=restaurant_id)
 
         items = self.restaurant_storage.get_available_menu_items_by_restaurant(
             restaurant_id=restaurant_id

@@ -1,5 +1,5 @@
 import graphene
 
 
-class UserIsNotRestaurantOwner(graphene.ObjectType):
+class UserNotRestaurantOwner(graphene.ObjectType):
     user_id = graphene.String(required=True)

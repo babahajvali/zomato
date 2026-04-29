@@ -29,7 +29,7 @@ class BasePlaceOrderTestCase(GraphQLBaseTestCase):
           __typename
           promoCodeId
         }
-        ... on PromoCodeMaximumUsed {
+        ... on PromoCodeUsageLimitReached {
           __typename
           maxUsageCount
         }
@@ -42,12 +42,12 @@ class BasePlaceOrderTestCase(GraphQLBaseTestCase):
           __typename
           addressId
         }
-        ... on DeliveryNotAvailableForAddress {
+        ... on DeliveryUnavailableForAddress {
           __typename
           restaurantId
           pinCode
         }
-        ... on RestaurantNotOpenNow {
+        ... on RestaurantNotOpen {
           __typename
           restaurantId
           dayOfWeek
@@ -56,7 +56,7 @@ class BasePlaceOrderTestCase(GraphQLBaseTestCase):
           __typename
           restaurantId
         }
-        ... on EmptyCartItemsFound {
+        ... on CartIsEmpty {
           __typename
           cartId
         }
@@ -86,7 +86,7 @@ class BaseUpdateOrderStatusTestCase(GraphQLBaseTestCase):
           __typename
           orderId
         }
-        ... on UserIsNotRestaurantOwner {
+        ... on UserNotRestaurantOwner {
           __typename
           userId
         }
@@ -177,7 +177,7 @@ class BaseRestaurantOrdersTestCase(GraphQLBaseTestCase):
             addressId
           }
         }
-        ... on UserIsNotRestaurantOwner {
+        ... on UserNotRestaurantOwner {
           __typename
           userId
         }
@@ -207,15 +207,16 @@ class BaseCancelOrderTestCase(GraphQLBaseTestCase):
           __typename
           orderId
         }
-        ... on OrderNotBelongsToUser {
+        ... on OrderNotOwnedByUser {
           __typename
           orderId
         }
-        ... on OrderCancellationTimeExceeded {
+        ... on OrderCancellationWindowExpired {
           __typename
           orderId
+          minutes
         }
-        ... on OrderCannotBeCancelled {
+        ... on OrderCancellationNotAllowed {
           __typename
           orderId
         }
@@ -245,7 +246,7 @@ class BaseAutoCancelOrderTestCase(GraphQLBaseTestCase):
           __typename
           orderId
         }
-        ... on OrderCannotBeCancelled {
+        ... on OrderCancellationNotAllowed {
           __typename
           orderId
         }

@@ -6,9 +6,7 @@ from accounts.interactors.dtos import CreateAddressDTO, AddressDTO
 
 class AddressStorageInterface(ABC):
     @abstractmethod
-    def get_existing_addresses(
-        self, emails: List[str], labels: List[str]
-    ) -> List[tuple]:
+    def get_existing_addresses(self, user_label_pairs: List[tuple]) -> List[tuple]:
         pass
 
     @abstractmethod

@@ -1,4 +1,4 @@
-from restaurants.exception.custom_exceptions import InvalidQuantityFound
+from restaurants.exception.custom_exceptions import InvalidQuantity
 from restaurants.interactors.dtos import CartItemDTO
 from restaurants.interactors.storage_interface.cart_storage_interface import (
     CartStorageInterface,
@@ -61,4 +61,4 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
     @staticmethod
     def _validate_quantity(quantity: int):
         if quantity <= 0 or quantity > 10:
-            raise InvalidQuantityFound(quantity=quantity)
+            raise InvalidQuantity(quantity=quantity)

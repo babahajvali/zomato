@@ -1,23 +1,8 @@
 {
-  "errors": [
-    {
-      "message": "Unknown type 'InvalidCuisineTypeExceptionType'. Did you mean 'InvalidCuisineTypeException'?",
-      "locations": [
-        {
-          "line": 20,
-          "column": 16
-        }
-      ]
-    },
-    {
-      "message": "Unknown type 'InvalidMinRatingExceptionType'.",
-      "locations": [
-        {
-          "line": 24,
-          "column": 16
-        }
-      ]
+  "data": {
+    "browseRestaurants": {
+      "__typename": "BrowseRestaurantsType",
+      "restaurants": []
     }
-  ],
-  "data": null
+  }
 }

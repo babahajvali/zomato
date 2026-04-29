@@ -3,7 +3,7 @@ from unittest.mock import create_autospec
 import pytest
 
 from restaurants.exception.custom_exceptions import (
-    UserIsNotRestaurantOwner,
+    UserNotRestaurantOwner,
     RestaurantNotFound,
 )
 from restaurants.interactors.restaurant.menu_item_interactor import MenuItemInteractor
@@ -58,7 +58,7 @@ class TestDeleteMenuItemInteractor:
 
         self.restaurant_storage.get_restaurant_owner_id.return_value = "owner-456"
 
-        with pytest.raises(UserIsNotRestaurantOwner):
+        with pytest.raises(UserNotRestaurantOwner):
             self.interactor.delete_menu_item(
                 menu_item_id=menu_item_id, user_id="user-123"
             )

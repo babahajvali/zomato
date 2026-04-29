@@ -1,0 +1,12 @@
+{
+  "data": {
+    "createRestaurantTiming": {
+      "__typename": "RestaurantTimingType",
+      "id": 1,
+      "restaurantId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "dayOfWeek": 4,
+      "openTime": "10:00:00",
+      "closeTime": "10:00:00"
+    }
+  }
+}

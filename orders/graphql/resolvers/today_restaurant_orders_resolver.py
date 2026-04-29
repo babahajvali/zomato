@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from orders.exception import custom_exceptions
-from utils.graphql_types import UserIsNotRestaurantOwner
+from utils.graphql_types import UserNotRestaurantOwner
 from orders.graphql.types.types import OrderType, OrdersType
 from orders.interactors.order.get_restaurant_order_interactor import (
     GetRestaurantOrderInteractor,
@@ -42,5 +42,5 @@ def get_today_restaurant_orders_resolver(root, info, params):
             offset=params.offset,
         )
         return map_orders_response(order_dtos=order_dtos)
-    except custom_exceptions.UserIsNotRestaurantOwner as exc:
-        return UserIsNotRestaurantOwner(user_id=exc.user_id)
+    except custom_exceptions.UserNotRestaurantOwner as exc:
+        return UserNotRestaurantOwner(user_id=exc.user_id)

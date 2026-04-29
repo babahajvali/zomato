@@ -22,6 +22,8 @@ class TestRestaurantMenuAPI(BaseRestaurantMenuTestCase):
         MenuItemFactory(
             restaurant_id=restaurant_id,
             id="49bb508e-c6d1-4882-95fd-1991d103f7d5",
+            name="Item 1",
+            description="Test item",
             tags=["New_Item", "Best_Seller"],
         )
 

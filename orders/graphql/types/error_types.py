@@ -1,7 +1,7 @@
 import graphene
 
 
-class PromoCodeMaximumUsed(graphene.ObjectType):
+class PromoCodeUsageLimitReached(graphene.ObjectType):
     max_usage_count = graphene.Int(required=True)
 
 
@@ -10,7 +10,7 @@ class PromoCodeNotEligible(graphene.ObjectType):
     items_total = graphene.Decimal(required=True)
 
 
-class DeliveryNotAvailableForAddress(graphene.ObjectType):
+class DeliveryUnavailableForAddress(graphene.ObjectType):
     restaurant_id = graphene.String(required=True)
     pin_code = graphene.String(required=True)
 
@@ -19,7 +19,7 @@ class AddressIdNotFound(graphene.ObjectType):
     address_id = graphene.Int(required=True)
 
 
-class RestaurantNotOpenNow(graphene.ObjectType):
+class RestaurantNotOpen(graphene.ObjectType):
     restaurant_id = graphene.String(required=True)
     day_of_week = graphene.Int(required=True)
 
@@ -32,7 +32,7 @@ class PromoCodeNotFound(graphene.ObjectType):
     promo_code_id = graphene.Int()
 
 
-class EmptyCartItemsFound(graphene.ObjectType):
+class CartIsEmpty(graphene.ObjectType):
     cart_id = graphene.String(required=True)
 
 
@@ -46,16 +46,16 @@ class InvalidOrderStatusTransition(graphene.ObjectType):
     allowed = graphene.List(graphene.String)
 
 
-class OrderCancellationTimeExceeded(graphene.ObjectType):
+class OrderCancellationWindowExpired(graphene.ObjectType):
     order_id = graphene.String(required=True)
     minutes = graphene.Int(required=True)
 
 
-class OrderCannotBeCancelled(graphene.ObjectType):
+class OrderCancellationNotAllowed(graphene.ObjectType):
     order_id = graphene.String(required=True)
 
 
-class OrderNotBelongsToUser(graphene.ObjectType):
+class OrderNotOwnedByUser(graphene.ObjectType):
     order_id = graphene.String(required=True)
 
 

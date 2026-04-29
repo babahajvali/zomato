@@ -3,7 +3,6 @@ from decimal import Decimal
 
 from orders.constants.enums import OrderStatus
 from orders.exception import custom_exceptions
-from orders.exception.custom_exceptions import UserIsNotRestaurantOwner
 from orders.graphql.types.error_types import (
     InvalidOrderStatusTransition,
     OrderNotFound,
@@ -12,8 +11,9 @@ from orders.graphql.types.input_types import UpdateOrderStatusInputParams
 from orders.graphql.types.response_types import UpdateOrderStatusResponse
 from orders.graphql.types.types import OrderType
 from orders.interactors.dtos import OrderDTO
-from orders.interactors.order.update_order_interactor import UpdateOrderStatusInteractor
+from orders.interactors.order.update_order_interactor import UpdateOrderInteractor
 from orders.storages.order_storage import OrderStorage
+from utils.graphql_types import UserNotRestaurantOwner
 
 
 class UpdateOrderStatusMutation(graphene.Mutation):
@@ -24,7 +24,7 @@ class UpdateOrderStatusMutation(graphene.Mutation):
 
     @staticmethod
     def mutate(root, info, params):
-        interactor = UpdateOrderStatusInteractor(order_storage=OrderStorage())
+        interactor = UpdateOrderInteractor(order_storage=OrderStorage())
 
         try:
             order_dto = interactor.update_order_status(
@@ -37,8 +37,8 @@ class UpdateOrderStatusMutation(graphene.Mutation):
         except custom_exceptions.OrderNotFound as exc:
             return OrderNotFound(order_id=exc.order_id)
 
-        except custom_exceptions.UserIsNotRestaurantOwner as exc:
-            return UserIsNotRestaurantOwner(user_id=exc.user_id)
+        except custom_exceptions.UserNotRestaurantOwner as exc:
+            return UserNotRestaurantOwner(user_id=exc.user_id)
 
         except custom_exceptions.InvalidOrderStatusTransition as exc:
             return InvalidOrderStatusTransition(

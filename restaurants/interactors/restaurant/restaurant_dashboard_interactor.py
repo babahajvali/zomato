@@ -27,7 +27,7 @@ class RestaurantDashboardInteractor(RestaurantMixin):
         self, dashboard_filter_dto: DashboardFiltersDTO
     ) -> RestaurantDashboardDTO:
 
-        self.validate_restaurant_is_exists(
+        self.validate_restaurant_exists(
             restaurant_id=dashboard_filter_dto.restaurant_id
         )
         self.validate_user_is_restaurant_owner(

@@ -22,7 +22,8 @@ class MenuItemInteractor(RestaurantMixin):
         user_id: str,
         restaurant_id: str,
     ) -> List[MenuItemDTO]:
-        self.validate_restaurant_is_exists(restaurant_id=restaurant_id)
+
+        self.validate_restaurant_exists(restaurant_id=restaurant_id)
         self.validate_user_is_restaurant_owner(
             user_id=user_id, restaurant_id=restaurant_id
         )
@@ -53,6 +54,7 @@ class MenuItemInteractor(RestaurantMixin):
         )
 
     def delete_menu_item(self, menu_item_id: str, user_id: str):
+
         self.validate_menu_item_exists(menu_item_id=menu_item_id)
         menu_item_dto = self.restaurant_storage.get_menu_item(menu_item_id=menu_item_id)
 

@@ -4,10 +4,10 @@ from decimal import Decimal
 from orders.exception import custom_exceptions
 
 from orders.graphql.types.error_types import (
-    OrderCannotBeCancelled,
+    OrderCancellationNotAllowed,
     OrderNotFound,
-    OrderNotBelongsToUser,
-    OrderCancellationTimeExceeded,
+    OrderNotOwnedByUser,
+    OrderCancellationWindowExpired,
 )
 from orders.graphql.types.input_types import CancelOrderInputParams
 from orders.graphql.types.response_types import CancelOrderResponse
@@ -37,16 +37,16 @@ class CancelOrderMutation(graphene.Mutation):
         except custom_exceptions.OrderNotFound as exc:
             return OrderNotFound(order_id=exc.order_id)
 
-        except custom_exceptions.OrderDoesNotBelongToUser as exc:
-            return OrderNotBelongsToUser(order_id=exc.order_id)
+        except custom_exceptions.OrderNotOwnedByUser as exc:
+            return OrderNotOwnedByUser(order_id=exc.order_id)
 
-        except custom_exceptions.OrderCancellationTimeExceeded as exc:
-            return OrderCancellationTimeExceeded(
+        except custom_exceptions.OrderCancellationWindowExpired as exc:
+            return OrderCancellationWindowExpired(
                 order_id=exc.order_id, minutes=exc.minutes
             )
 
-        except custom_exceptions.OrderCannotBeCancelled as exc:
-            return OrderCannotBeCancelled(order_id=exc.order_id)
+        except custom_exceptions.OrderCancellationNotAllowed as exc:
+            return OrderCancellationNotAllowed(order_id=exc.order_id)
 
 
 def _map_order_response(order_dto: OrderDTO) -> OrderType:

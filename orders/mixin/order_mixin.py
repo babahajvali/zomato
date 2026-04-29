@@ -3,8 +3,8 @@ from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
     InvalidOrderStatusTransition,
     OrderNotFound,
-    OrderDoesNotBelongToUser,
-    UserIsNotRestaurantOwner,
+    OrderNotOwnedByUser,
+    UserNotRestaurantOwner,
 )
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
@@ -55,11 +55,11 @@ class OrderMixin:
         order_dto = self.order_storage.get_order(order_id=order_id)
 
         if order_dto.customer_id != user_id:
-            raise OrderDoesNotBelongToUser(order_id=order_id, user_id=user_id)
+            raise OrderNotOwnedByUser(order_id=order_id, user_id=user_id)
 
     def validate_user_is_restaurant_owner(self, user_id: str, restaurant_id: str):
         owner_id = self.restaurant_adapter.get_restaurant_owner_id(
             restaurant_id=restaurant_id
         )
         if owner_id != user_id:
-            raise UserIsNotRestaurantOwner(user_id=user_id)
+            raise UserNotRestaurantOwner(user_id=user_id)

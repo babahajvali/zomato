@@ -3,7 +3,7 @@
     "deleteRestaurantTiming": {
       "__typename": "DeleteRestaurantTimingSuccessType",
       "success": true,
-      "timingId": 5
+      "timingId": 0
     }
   }
 }

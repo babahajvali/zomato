@@ -1,32 +1,24 @@
 {
-  "errors": [
-    {
-      "message": "Unknown type 'RestaurantNotFoundType'. Did you mean 'RestaurantNotFound', 'RestaurantTimingType', 'RestaurantDashboardType', 'RestaurantMenuType', or 'RestaurantNotOpenNow'?",
-      "locations": [
+  "data": {
+    "createMenuItems": {
+      "__typename": "MenuItemsType",
+      "menuItems": [
         {
-          "line": 19,
-          "column": 16
-        }
-      ]
-    },
-    {
-      "message": "Unknown type 'InvalidCategoriesFoundType'. Did you mean 'InvalidCategoriesFound' or 'InvalidRatingFound'?",
-      "locations": [
-        {
-          "line": 23,
-          "column": 16
-        }
-      ]
-    },
-    {
-      "message": "Unknown type 'UserIsNotRestaurantOwnerType'. Did you mean 'UserIsNotRestaurantOwner'?",
-      "locations": [
-        {
-          "line": 27,
-          "column": 16
+          "itemId": "49bb508e-c6d1-4882-95fd-1991d103f7fe",
+          "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7de",
+          "name": "Chicken Biryani",
+          "description": "Test",
+          "price": 250.0,
+          "category": "MAIN_COURSE",
+          "isVeg": false,
+          "isAvailable": true,
+          "preparationTimeInMinutes": 30,
+          "tags": [
+            "biryani",
+            "spicy"
+          ]
         }
       ]
     }
-  ],
-  "data": null
+  }
 }

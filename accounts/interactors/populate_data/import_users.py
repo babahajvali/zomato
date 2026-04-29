@@ -1,6 +1,6 @@
 from typing import List, Any
 
-from accounts.exception.custom_exceptions import AlreadyExistsEmail, DuplicateUserEmails
+from accounts.exception.custom_exceptions import EmailAlreadyExists, DuplicateEmails
 from accounts.interactors.dtos import CreateUserDTO
 from accounts.interactors.storage_interface.user_storage_interface import (
     UserStorageInterface,
@@ -38,7 +38,7 @@ class ImportUsers:
         existing_emails = self.user_storage.get_existing_emails(emails)
 
         if existing_emails:
-            raise AlreadyExistsEmail(emails=existing_emails)
+            raise EmailAlreadyExists(emails=existing_emails)
 
     @staticmethod
     def _validate_duplicate_emails(emails: List[str]):
@@ -50,7 +50,7 @@ class ImportUsers:
             seen.add(email)
 
         if duplicates:
-            raise DuplicateUserEmails(emails=duplicates)
+            raise DuplicateEmails(emails=duplicates)
 
     @staticmethod
     def _validate_rows(rows: list[dict[Any, str | Any]]) -> List[str]:

@@ -2,7 +2,7 @@ import datetime
 from typing import List
 
 
-class AlreadyExistsRestaurant(Exception):
+class RestaurantAlreadyExists(Exception):
     def __init__(self, names: List[str]):
         self.names = names
 
@@ -18,15 +18,7 @@ class DuplicateRestaurants(Exception):
         return str(self.names)
 
 
-class OwnerNotFound(Exception):
-    def __init__(self, email: List[str]):
-        self.email = email
-
-    def __str__(self):
-        return str(self.email)
-
-
-class OpenTimeGreaterThanCloseTime(Exception):
+class InvalidTimingRange(Exception):
     def __init__(self, open_time: datetime.time, close_time: datetime.time):
         self.open_time = open_time
         self.close_time = close_time
@@ -40,7 +32,7 @@ class RestaurantTimingNotFound(Exception):
         self.id = id
 
 
-class UserIsNotRestaurantOwner(Exception):
+class UserNotRestaurantOwner(Exception):
     def __init__(self, user_id: str):
         self.user_id = user_id
 
@@ -48,7 +40,7 @@ class UserIsNotRestaurantOwner(Exception):
         return str(self.user_id)
 
 
-class InvalidCategoriesFound(Exception):
+class InvalidCategories(Exception):
     def __init__(self, categories: List[str]):
         self.categories = categories
 
@@ -64,7 +56,7 @@ class RestaurantNotFound(Exception):
         return str(self.restaurant_id)
 
 
-class InvalidRestaurantIdsFound(Exception):
+class InvalidRestaurantIds(Exception):
     def __init__(self, restaurant_ids: List[str]):
         self.restaurant_ids = restaurant_ids
 
@@ -80,7 +72,7 @@ class DuplicateRestaurantTimings(Exception):
         return str(self.restaurant_ids)
 
 
-class InvalidCuisineTypeException(Exception):
+class InvalidCuisineType(Exception):
     def __init__(self, cuisine_type: str):
         self.cuisine_type = cuisine_type
 
@@ -112,7 +104,7 @@ class MenuItemNotFound(Exception):
         return f"{self.menu_item_id} menu item not found"
 
 
-class InvalidQuantityFound(Exception):
+class InvalidQuantity(Exception):
     def __init__(self, quantity: int):
         self.quantity = quantity
 
@@ -145,7 +137,7 @@ class DuplicateDeliveryZones(Exception):
         return self.message
 
 
-class UserAlreadyReviewedRestaurant(Exception):
+class RestaurantAlreadyReviewedByUser(Exception):
     def __init__(self, user_id: str):
         self.user_id = user_id
 
@@ -153,7 +145,7 @@ class UserAlreadyReviewedRestaurant(Exception):
         return f"{self.user_id} user already reviewed"
 
 
-class InvalidRatingFound(Exception):
+class InvalidRating(Exception):
     def __init__(self, rating: int):
         self.rating = rating
 

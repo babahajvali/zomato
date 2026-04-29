@@ -1,9 +1,9 @@
-from unittest.mock import MagicMock, create_autospec, patch
+from unittest.mock import create_autospec, patch
 
 import pytest
 
 from restaurants.exception.custom_exceptions import (
-    AlreadyExistsRestaurant,
+    RestaurantAlreadyExists,
     DuplicateRestaurants,
 )
 from restaurants.interactors.populate_data.import_restaurants import (
@@ -15,6 +15,10 @@ from restaurants.interactors.storage_interface.restaurant_storage_interface impo
 from restaurants.tests.factories.interactor_factories import CreateRestaurantDTOFactory
 
 
+READ_CSV = "restaurants.interactors.populate_data.import_restaurants.read_csv"
+VALIDATE_ROW = "restaurants.interactors.populate_data.import_restaurants.validate_row"
+
+
 class TestImportRestaurants:
     def setup_method(self):
         self.restaurant_storage = create_autospec(RestaurantStorageInterface)
@@ -22,7 +26,9 @@ class TestImportRestaurants:
             restaurant_storage_interface=self.restaurant_storage,
         )
 
-    def test_import_restaurants_success(self):
+    @patch(VALIDATE_ROW)
+    @patch(READ_CSV)
+    def test_import_restaurants_success(self, mock_read_csv, mock_validate_row):
         rows = [
             {
                 "id": "restaurant-1",
@@ -48,26 +54,18 @@ class TestImportRestaurants:
             is_deleted=False,
         )
         expected_result = ["created-restaurants"]
-        validate_row = MagicMock()
+        mock_read_csv.return_value = rows
 
         self.restaurant_storage.get_existing_restaurants.return_value = []
         self.restaurant_storage.create_bulk_restaurants.return_value = expected_result
 
-        with (
-            patch(
-                "restaurants.interactors.populate_data.import_restaurants.read_csv",
-                return_value=rows,
-            ),
-            patch(
-                "restaurants.interactors.populate_data.import_restaurants.validate_row",
-                validate_row,
-            ),
-        ):
-            result = self.interactor.import_restaurants(file_path="restaurants.csv")
+        result = self.interactor.import_restaurants(file_path="restaurants.csv")
 
         assert result == expected_result
 
-    def test_import_restaurants_duplicate_names(self):
+    @patch(VALIDATE_ROW)
+    @patch(READ_CSV)
+    def test_import_restaurants_duplicate_names(self, mock_read_csv, mock_validate_row):
         rows = [
             {
                 "id": "restaurant-1",
@@ -92,25 +90,18 @@ class TestImportRestaurants:
                 "is_deleted": "false",
             },
         ]
+        mock_read_csv.return_value = rows
 
-        with (
-            patch(
-                "restaurants.interactors.populate_data.import_restaurants.read_csv",
-                return_value=rows,
-            ),
-            patch(
-                "restaurants.interactors.populate_data.import_restaurants.validate_row",
-                MagicMock(),
-            ),
-        ):
-            with pytest.raises(DuplicateRestaurants) as exc:
-                self.interactor.import_restaurants(file_path="restaurants.csv")
+        with pytest.raises(DuplicateRestaurants) as exc:
+            self.interactor.import_restaurants(file_path="restaurants.csv")
 
         assert exc.value.names == ["Spice Hub"]
         self.restaurant_storage.get_existing_restaurants.assert_not_called()
         self.restaurant_storage.create_bulk_restaurants.assert_not_called()
 
-    def test_import_restaurants_already_exists(self):
+    @patch(VALIDATE_ROW)
+    @patch(READ_CSV)
+    def test_import_restaurants_already_exists(self, mock_read_csv, mock_validate_row):
         rows = [
             {
                 "id": "restaurant-1",
@@ -124,21 +115,12 @@ class TestImportRestaurants:
                 "is_deleted": "false",
             }
         ]
+        mock_read_csv.return_value = rows
 
         self.restaurant_storage.get_existing_restaurants.return_value = ["Spice Hub"]
 
-        with (
-            patch(
-                "restaurants.interactors.populate_data.import_restaurants.read_csv",
-                return_value=rows,
-            ),
-            patch(
-                "restaurants.interactors.populate_data.import_restaurants.validate_row",
-                MagicMock(),
-            ),
-        ):
-            with pytest.raises(AlreadyExistsRestaurant) as exc:
-                self.interactor.import_restaurants(file_path="restaurants.csv")
+        with pytest.raises(RestaurantAlreadyExists) as exc:
+            self.interactor.import_restaurants(file_path="restaurants.csv")
 
         assert exc.value.names == ["Spice Hub"]
         self.restaurant_storage.create_bulk_restaurants.assert_not_called()

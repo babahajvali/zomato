@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, create_autospec, patch
+from unittest.mock import create_autospec, patch
 
 import pytest
 
@@ -14,6 +14,12 @@ from restaurants.tests.factories.interactor_factories import (
 )
 
 
+READ_CSV = "restaurants.interactors.populate_data.import_restaurant_timings.read_csv"
+VALIDATE_ROW = (
+    "restaurants.interactors.populate_data.import_restaurant_timings.validate_row"
+)
+
+
 class TestImportRestaurantTimings:
     def setup_method(self):
         self.restaurant_timing_storage = create_autospec(
@@ -23,7 +29,11 @@ class TestImportRestaurantTimings:
             restaurant_timing_storage_interface=self.restaurant_timing_storage
         )
 
-    def test_import_restaurant_timings_success(self):
+    @patch(VALIDATE_ROW)
+    @patch(READ_CSV)
+    def test_import_restaurant_timings_success(
+        self, mock_read_csv, mock_validate_row
+    ):
         rows = [
             {
                 "restaurant": " restaurants-1 ",
@@ -39,27 +49,17 @@ class TestImportRestaurantTimings:
             close_time="21:00:00",
         )
         expected_result = ["created-timing"]
-        validate_row = MagicMock()
+        mock_read_csv.return_value = rows
         self.restaurant_timing_storage.create_bulk_restaurant_timing.return_value = (
             expected_result
         )
 
-        with (
-            patch(
-                "restaurants.interactors.populate_data.import_restaurant_timings.read_csv",
-                return_value=rows,
-            ),
-            patch(
-                "restaurants.interactors.populate_data.import_restaurant_timings.validate_row",
-                validate_row,
-            ),
-        ):
-            result = self.interactor.import_restaurant_timings(
-                file_path="restaurant_timings.csv"
-            )
+        result = self.interactor.import_restaurant_timings(
+            file_path="restaurant_timings.csv"
+        )
 
-        assert result == expected_result
-        validate_row.assert_called_once_with(
+        assert result == " 1 restaurants were created"
+        mock_validate_row.assert_called_once_with(
             rows[0],
             ["restaurant", "day_of_week", "open_time", "close_time"],
             "restaurants timing row 1",
@@ -68,7 +68,11 @@ class TestImportRestaurantTimings:
             [expected_dto]
         )
 
-    def test_import_restaurant_timings_duplicate_combination(self):
+    @patch(VALIDATE_ROW)
+    @patch(READ_CSV)
+    def test_import_restaurant_timings_duplicate_combination(
+        self, mock_read_csv, mock_validate_row
+    ):
         rows = [
             {
                 "restaurant": " restaurants-1 ",
@@ -83,21 +87,12 @@ class TestImportRestaurantTimings:
                 "close_time": "22:00:00",
             },
         ]
+        mock_read_csv.return_value = rows
 
-        with (
-            patch(
-                "restaurants.interactors.populate_data.import_restaurant_timings.read_csv",
-                return_value=rows,
-            ),
-            patch(
-                "restaurants.interactors.populate_data.import_restaurant_timings.validate_row",
-                MagicMock(),
-            ),
-        ):
-            with pytest.raises(DuplicateRestaurantTimings) as exc:
-                self.interactor.import_restaurant_timings(
-                    file_path="restaurant_timings.csv"
-                )
+        with pytest.raises(DuplicateRestaurantTimings) as exc:
+            self.interactor.import_restaurant_timings(
+                file_path="restaurant_timings.csv"
+            )
 
         assert exc.value.restaurant_ids == ["restaurants-1"]
         self.restaurant_timing_storage.create_bulk_restaurant_timing.assert_not_called()

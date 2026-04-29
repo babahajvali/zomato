@@ -8,8 +8,8 @@ from orders.app_service.dtos import RestaurantOrdersSummaryDTO, OrdersByStatusDT
 from orders.constants.constants import CANCEL_TIME
 from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
-    OrderCancellationTimeExceeded,
-    OrderCannotBeCancelled,
+    OrderCancellationWindowExpired,
+    OrderCancellationNotAllowed,
     OrderAlreadyCancelled,
 )
 from orders.interactors.dtos import OrderDTO, OrderSummaryDTO
@@ -81,6 +81,7 @@ class OrderInteractor(OrderMixin):
     def get_restaurant_orders_summary(
         self, restaurant_id: str, date_from: date, date_to: date
     ) -> RestaurantOrdersSummaryDTO:
+
         return self.order_storage.get_restaurant_orders_summary(
             restaurant_id=restaurant_id, date_from=date_from, date_to=date_to
         )
@@ -88,23 +89,24 @@ class OrderInteractor(OrderMixin):
     def get_orders_count_by_status(
         self, restaurant_id: str, date_from: date, date_to: date
     ) -> List[OrdersByStatusDTO]:
+
         return self.order_storage.get_orders_count_by_status(
             restaurant_id=restaurant_id, date_from=date_from, date_to=date_to
         )
 
     def _validate_cancel_order_time(self, order_id: str, placed_at: Optional[datetime]):
-        if not placed_at:
+        if placed_at is None:
             placed_at = self.order_storage.get_order_placed_at(order_id=order_id)
         now = timezone.now()
 
         if now - placed_at > timedelta(minutes=CANCEL_TIME):
-            raise OrderCancellationTimeExceeded(order_id=order_id, minutes=CANCEL_TIME)
+            raise OrderCancellationWindowExpired(order_id=order_id, minutes=CANCEL_TIME)
 
     @staticmethod
     def _validate_order_is_cancellable(order_status: str, order_id: str):
 
         if order_status != OrderStatus.PLACED.value:
-            raise OrderCannotBeCancelled(order_id=order_id)
+            raise OrderCancellationNotAllowed(order_id=order_id)
 
     @staticmethod
     def _validate_order_is_not_already_cancelled(order_dto):

@@ -4,23 +4,23 @@
       "__typename": "RestaurantTimingsListType",
       "timings": [
         {
-          "id": 7,
-          "restaurantId": "test-restaurants-id",
-          "dayOfWeek": 1,
-          "openTime": "09:00:00",
-          "closeTime": "21:00:00"
-        },
-        {
-          "id": 8,
-          "restaurantId": "test-restaurants-id",
-          "dayOfWeek": 2,
-          "openTime": "09:00:00",
-          "closeTime": "21:00:00"
-        },
-        {
-          "id": 9,
+          "id": 2,
           "restaurantId": "test-restaurants-id",
           "dayOfWeek": 3,
+          "openTime": "09:00:00",
+          "closeTime": "21:00:00"
+        },
+        {
+          "id": 3,
+          "restaurantId": "test-restaurants-id",
+          "dayOfWeek": 4,
+          "openTime": "09:00:00",
+          "closeTime": "21:00:00"
+        },
+        {
+          "id": 4,
+          "restaurantId": "test-restaurants-id",
+          "dayOfWeek": 5,
           "openTime": "09:00:00",
           "closeTime": "21:00:00"
         }

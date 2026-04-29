@@ -1,11 +1,13 @@
 from typing import List, Optional
 
+from django.db.models import Q
+
 from accounts.interactors.storage_interface.address_storage_interface import (
     AddressStorageInterface,
 )
-from accounts.exception.custom_exceptions import EmailNotFound
+from accounts.exception.custom_exceptions import UserNotFound
 from accounts.interactors.dtos import CreateAddressDTO, AddressDTO
-from accounts.models import User, Address
+from accounts.models import Address, User
 
 
 class AddressStorage(AddressStorageInterface):
@@ -23,17 +25,15 @@ class AddressStorage(AddressStorageInterface):
 
     def create_bulk_addresses(self, address_dtos: List[CreateAddressDTO]):
         addresses = []
-
-        emails = [dto.email for dto in address_dtos]
-        users = User.objects.filter(email__in=emails)
-
-        user_map = {user.email: user for user in users}
+        user_ids = [dto.user_id for dto in address_dtos]
+        users = User.objects.filter(id__in=user_ids)
+        user_map = {str(user.id): user for user in users}
 
         for dto in address_dtos:
-            if dto.email not in user_map:
-                raise EmailNotFound(email=dto.email)
+            if dto.user_id not in user_map:
+                raise UserNotFound(user_id=dto.user_id)
             address = Address(
-                user=user_map[dto.email],
+                user=user_map[dto.user_id],
                 label=dto.label,
                 full_address=dto.full_address,
                 city=dto.city,
@@ -46,14 +46,13 @@ class AddressStorage(AddressStorageInterface):
 
         return created_addresses
 
-    def get_existing_addresses(
-        self, emails: List[str], labels: List[str]
-    ) -> List[tuple]:
-        return list(
-            Address.objects.filter(
-                user__email__in=emails, label__in=labels
-            ).values_list("user__email", "label")
-        )
+    def get_existing_addresses(self, user_label_pairs: List[tuple]) -> List[tuple]:
+        query = Q()
+
+        for user_id, label in user_label_pairs:
+            query |= Q(user_id=user_id, label=label)
+
+        return list(Address.objects.filter(query).values_list("user_id", "label"))
 
     def get_address_by_id(self, address_id: int) -> Optional[AddressDTO]:
         address_obj = Address.objects.filter(id=address_id).first()

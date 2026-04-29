@@ -14,6 +14,7 @@ class OrderAdapter:
     def get_restaurant_orders_summary(
         self, restaurant_id: str, date_from: date, date_to: date
     ) -> RestaurantOrdersSummaryDTO:
+
         return self.interface.get_restaurant_orders_summary(
             restaurant_id=restaurant_id, date_from=date_from, date_to=date_to
         )

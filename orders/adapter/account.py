@@ -1,4 +1,3 @@
-from accounts.app_interface.service_interface import ServiceInterface
 from orders.adapter.dtos import AddressDTO
 
 
@@ -6,11 +5,10 @@ class AccountAdapter:
     @property
     def interface(self):
 
+        from accounts.app_interface.service_interface import ServiceInterface
+
         return ServiceInterface()
 
-    def get_address_by_id(self, address_id: int) -> AddressDTO | None:
-        address_dto = self.interface.get_address_by_id(address_id)
+    def get_address_by_id(self, address_id: int) -> AddressDTO:
 
-        if address_dto is None:
-            return None
-        return address_dto
+        return self.interface.get_address_by_id(address_id)

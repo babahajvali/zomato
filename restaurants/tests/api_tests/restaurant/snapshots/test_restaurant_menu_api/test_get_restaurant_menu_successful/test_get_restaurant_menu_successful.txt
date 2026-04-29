@@ -1,14 +1,28 @@
 {
-  "errors": [
-    {
-      "message": "Unknown type 'RestaurantNotFoundType'. Did you mean 'RestaurantNotFound', 'RestaurantTimingType', 'RestaurantDashboardType', 'RestaurantMenuType', or 'RestaurantNotOpenNow'?",
-      "locations": [
+  "data": {
+    "viewRestaurantManu": {
+      "__typename": "RestaurantMenuType",
+      "categories": [
         {
-          "line": 21,
-          "column": 12
+          "category": "STARTER",
+          "items": [
+            {
+              "description": "Test item",
+              "isAvailable": true,
+              "isVeg": true,
+              "itemId": "49bb508e-c6d1-4882-95fd-1991d103f7d5",
+              "name": "Item 1",
+              "preparationTimeInMinutes": 15,
+              "price": 199.0,
+              "tags": [
+                "New_Item",
+                "Best_Seller"
+              ]
+            }
+          ]
         }
-      ]
+      ],
+      "restaurantId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
     }
-  ],
-  "data": null
+  }
 }

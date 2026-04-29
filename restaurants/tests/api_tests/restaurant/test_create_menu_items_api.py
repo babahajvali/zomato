@@ -22,9 +22,9 @@ class TestCreateMenuItemsApi(BaseCreateMenuItemsTestCase):
 
         variables = {
             "params": {
+                "restaurantId": restaurant_id,
                 "menuItems": [
                     {
-                        "restaurantId": restaurant_id,
                         "name": "Chicken Biryani",
                         "description": "Test",
                         "price": 250.0,
@@ -52,9 +52,9 @@ class TestCreateMenuItemsApi(BaseCreateMenuItemsTestCase):
 
         variables = {
             "params": {
+                "restaurantId": restaurant_id,
                 "menuItems": [
                     {
-                        "restaurantId": restaurant_id,
                         "name": "Chicken Biryani",
                         "description": "Test",
                         "price": 250.0,
@@ -85,9 +85,9 @@ class TestCreateMenuItemsApi(BaseCreateMenuItemsTestCase):
 
         variables = {
             "params": {
+                "restaurantId": restaurant_id,
                 "menuItems": [
                     {
-                        "restaurantId": restaurant_id,
                         "name": "Chicken Biryani",
                         "description": "Test",
                         "price": 250.0,
@@ -116,9 +116,9 @@ class TestCreateMenuItemsApi(BaseCreateMenuItemsTestCase):
 
         variables = {
             "params": {
+                "restaurantId": restaurant_id,
                 "menuItems": [
                     {
-                        "restaurantId": restaurant_id,
                         "name": "Chicken Biryani",
                         "description": "Test",
                         "price": 250.0,

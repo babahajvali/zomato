@@ -7,13 +7,13 @@ from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
     InvalidOrderStatusTransition,
     OrderNotFound,
-    UserIsNotRestaurantOwner,
+    UserNotRestaurantOwner,
 )
-from orders.interactors.order.update_order_interactor import UpdateOrderStatusInteractor
+from orders.interactors.order.update_order_interactor import UpdateOrderInteractor
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
 )
-from orders.tests.factories.dto_factories import OrderDTOFactory
+from orders.tests.factories.interactor_factories import OrderDTOFactory
 
 
 @contextmanager
@@ -24,7 +24,7 @@ def no_op_lock(*args, **kwargs):
 class TestUpdateOrderStatusInteractor:
     def setup_method(self):
         self.order_storage = create_autospec(OrderStorageInterface)
-        self.interactor = UpdateOrderStatusInteractor(
+        self.interactor = UpdateOrderInteractor(
             order_storage=self.order_storage,
         )
         self.interactor.restaurant_adapter = MagicMock()
@@ -92,7 +92,7 @@ class TestUpdateOrderStatusInteractor:
             "owner-1"
         )
 
-        with pytest.raises(UserIsNotRestaurantOwner) as exc:
+        with pytest.raises(UserNotRestaurantOwner) as exc:
             self.interactor.update_order_status(
                 order_id="orders-1",
                 status=OrderStatus.CONFIRMED,

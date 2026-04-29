@@ -7,15 +7,18 @@ from django.utils import timezone
 
 from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
-    OrderCancellationTimeExceeded,
-    OrderDoesNotBelongToUser,
+    OrderCancellationWindowExpired,
+    OrderNotOwnedByUser,
     OrderNotFound,
 )
 from orders.interactors.order.order_interactor import OrderInteractor
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
 )
-from orders.tests.factories.dto_factories import OrderDTOFactory, OrderSummaryDTOFactory
+from orders.tests.factories.interactor_factories import (
+    OrderDTOFactory,
+    OrderSummaryDTOFactory,
+)
 
 
 @contextmanager
@@ -76,7 +79,7 @@ class TestOrderInteractor:
         )
         self.order_storage.get_order.side_effect = [order_dto, order_dto]
 
-        with pytest.raises(OrderDoesNotBelongToUser) as exc:
+        with pytest.raises(OrderNotOwnedByUser) as exc:
             self.interactor.cancel_order(
                 order_id="orders-1",
                 user_id="other-user",
@@ -96,7 +99,7 @@ class TestOrderInteractor:
             timezone.now() - timedelta(minutes=6)
         )
 
-        with pytest.raises(OrderCancellationTimeExceeded) as exc:
+        with pytest.raises(OrderCancellationWindowExpired) as exc:
             self.interactor.cancel_order(
                 order_id="orders-1",
                 user_id="customer-1",

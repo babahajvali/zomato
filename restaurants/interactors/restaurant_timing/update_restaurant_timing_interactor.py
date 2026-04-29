@@ -13,6 +13,7 @@ class UpdateRestaurantTimingInteractor(TimingMixin):
     def update_restaurant_timing(
         self, update_restaurant_timing_dto: UpdateRestaurantTimingDTO
     ) -> RestaurantTimingDTO:
+
         self.validate_restaurant_timing_exists(
             timing_id=update_restaurant_timing_dto.timing_id
         )
@@ -21,12 +22,9 @@ class UpdateRestaurantTimingInteractor(TimingMixin):
             user_id=update_restaurant_timing_dto.user_id,
         )
 
-        open_time = update_restaurant_timing_dto.open_time
-        close_time = update_restaurant_timing_dto.close_time
-
         self.validate_restaurant_timings(
-            open_time=open_time,
-            close_time=close_time,
+            open_time=update_restaurant_timing_dto.open_time,
+            close_time=update_restaurant_timing_dto.close_time,
             timing_id=update_restaurant_timing_dto.timing_id,
         )
 

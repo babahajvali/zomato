@@ -9,7 +9,7 @@ from orders.mixin.order_mixin import OrderMixin
 from utils.redis_util import redis_lock
 
 
-class UpdateOrderStatusInteractor(OrderMixin):
+class UpdateOrderInteractor(OrderMixin):
     def __init__(self, order_storage: OrderStorageInterface):
         super().__init__(order_storage=order_storage)
         self.order_storage = order_storage

@@ -1,14 +1,8 @@
 {
-  "errors": [
-    {
-      "message": "Unknown type 'RestaurantNotFoundType'. Did you mean 'RestaurantNotFound', 'RestaurantTimingType', 'RestaurantDashboardType', 'RestaurantMenuType', or 'RestaurantNotOpenNow'?",
-      "locations": [
-        {
-          "line": 21,
-          "column": 12
-        }
-      ]
+  "data": {
+    "viewRestaurantManu": {
+      "__typename": "RestaurantNotFound",
+      "restaurantId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
     }
-  ],
-  "data": null
+  }
 }
