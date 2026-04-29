@@ -7,6 +7,7 @@ from orders.interactors.dtos import (
     CreateOrderItemDTO,
     CreatePromoCodeDTO,
     OrderDTO,
+    OrderItemDTO,
     OrderItemSummaryDTO,
     OrderSummaryDTO,
     PlaceOrderDTO,
@@ -98,6 +99,17 @@ class OrderItemSummaryDTOFactory(factory.Factory):
     class Meta:
         model = OrderItemSummaryDTO
 
+    item_id = "00000000-0000-0000-0000-000000000004"
+    quantity = 2
+    item_price = 200.0
+    subtotal = 400.0
+
+
+class OrderItemDTOFactory(factory.Factory):
+    class Meta:
+        model = OrderItemDTO
+
+    order_id = "00000000-0000-0000-0000-000000000003"
     item_id = "00000000-0000-0000-0000-000000000004"
     quantity = 2
     item_price = 200.0

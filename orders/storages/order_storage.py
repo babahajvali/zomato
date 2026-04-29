@@ -14,6 +14,7 @@ from orders.interactors.dtos import (
     OrderItemSummaryDTO,
     TopSellingItemDTO,
     PeakHourDTO,
+    OrderItemDTO,
 )
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
@@ -272,4 +273,18 @@ class OrderStorage(OrderStorageInterface):
                 order_count=row["order_count"],
             )
             for row in results
+        ]
+
+    def get_orders_items(self, order_ids: List[str]) -> List[OrderItemDTO]:
+        order_item_objs = OrderItem.objects.filter(order_id__in=order_ids)
+
+        return [
+            OrderItemDTO(
+                order_id=obj.order.id,
+                item_id=obj.item_id,
+                quantity=obj.quantity,
+                item_price=obj.item_price,
+                subtotal=Decimal(str(obj.item_price * obj.quantity)),
+            )
+            for obj in order_item_objs
         ]

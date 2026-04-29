@@ -109,3 +109,12 @@ class TopSellingItemDTO:
 class PeakHourDTO:
     hour: int
     order_count: int
+
+
+@dataclass
+class OrderItemDTO:
+    order_id: str
+    item_id: str
+    quantity: int
+    item_price: Decimal
+    subtotal: Decimal

@@ -37,6 +37,10 @@ class OrderSummaryType(graphene.ObjectType):
     items = graphene.List(OrderItemType)
 
 
+class OrderSummariesType(graphene.ObjectType):
+    order_summaries = graphene.List(OrderSummaryType)
+
+
 class OrdersType(graphene.ObjectType):
     orders = graphene.List(OrderType)
 

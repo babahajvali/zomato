@@ -21,6 +21,7 @@ from orders.graphql.types.types import (
     OrdersType,
     OrderSummaryType,
     PromoCodesType,
+    OrderSummariesType,
 )
 from utils.graphql_types import UserNotRestaurantOwner
 
@@ -75,7 +76,7 @@ class RestaurantOrdersResponse(graphene.Union):
 class TodayRestaurantOrdersResponse(graphene.Union):
     class Meta:
         types = (
-            OrdersType,
+            OrderSummariesType,
             UserNotRestaurantOwner,
         )
 

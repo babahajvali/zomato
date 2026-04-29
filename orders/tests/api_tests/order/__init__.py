@@ -186,6 +186,40 @@ class BaseRestaurantOrdersTestCase(GraphQLBaseTestCase):
     """
 
 
+class BaseTodayRestaurantOrdersTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    query TodayRestaurantOrders($params: GetTodayRestaurantOrdersInputParams!) {
+      todayRestaurantOrders(params: $params) {
+        ... on OrderSummariesType {
+          __typename
+          orderSummaries {
+            orderId
+            customerId
+            restaurantId
+            promoCodeId
+            status
+            itemsTotal
+            deliveryFee
+            taxFee
+            finalAmount
+            addressId
+            items {
+              itemId
+              quantity
+              itemPrice
+              subtotal
+            }
+          }
+        }
+        ... on UserNotRestaurantOwner {
+          __typename
+          userId
+        }
+      }
+    }
+    """
+
+
 class BaseCancelOrderTestCase(GraphQLBaseTestCase):
     QUERY = """
     mutation CancelOrder($params: CancelOrderInputParams!) {

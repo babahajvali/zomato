@@ -10,6 +10,7 @@ from orders.interactors.dtos import (
     OrderItemSummaryDTO,
     PeakHourDTO,
     TopSellingItemDTO,
+    OrderItemDTO,
 )
 
 
@@ -83,4 +84,8 @@ class OrderStorageInterface(ABC):
         date_from: date,
         date_to: date,
     ) -> List[TopSellingItemDTO]:
+        pass
+
+    @abstractmethod
+    def get_orders_items(self, order_ids: List[str]) -> List[OrderItemDTO]:
         pass
