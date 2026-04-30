@@ -149,3 +149,20 @@ class RestaurantDashboardType(graphene.ObjectType):
     top_selling = graphene.List(TopSellingItemType)
     orders_by_status = graphene.List(OrdersByStatusType)
     rating_summary = graphene.Field(RatingSummaryType)
+
+
+class OwnerRestaurantType(graphene.ObjectType):
+    restaurant_id = graphene.String(required=True)
+    name = graphene.String(required=True)
+    description = graphene.String(required=True)
+    cuisine_type = graphene.String(required=True)
+    address = graphene.String(required=True)
+    pin_code = graphene.String(required=True)
+    is_veg_only = graphene.Boolean(required=True)
+    is_deleted = graphene.Boolean(required=True)
+    created_at = graphene.DateTime(required=True)
+    updated_at = graphene.DateTime(required=True)
+
+
+class OwnerRestaurantsType(graphene.ObjectType):
+    restaurants = graphene.List(OwnerRestaurantType, required=True)

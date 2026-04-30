@@ -1,4 +1,5 @@
 import datetime
+from time import timezone
 from typing import List, Optional
 
 from restaurants.interactors.dtos import (
@@ -92,7 +93,7 @@ class TimingMixin:
         review_summaries: List[RestaurantReviewSummaryDTO],
     ) -> List[BrowseRestaurantDTO]:
 
-        now = datetime.datetime.now()
+        now = timezone.now()
         day_of_week = now.isoweekday()
         current_time = now.time()
         review_summary_map = {

@@ -1,6 +1,7 @@
-from datetime import datetime
 from decimal import Decimal
 from typing import List
+
+from django.utils import timezone
 
 from orders.interactors.storage_interface.promo_code_storage_interface import (
     PromoCodeStorageInterface,
@@ -53,7 +54,7 @@ class PromoCodeStorage(PromoCodeStorageInterface):
         return self._convert_to_promo_code_dto(promo_code_obj=promo_code_obj)
 
     def get_available_promo_codes(self) -> List[PromoCodeDTO]:
-        now = datetime.now()
+        now = timezone.now()
 
         promo_code_objs = PromoCode.objects.filter(
             valid_from__lte=now, valid_until__gte=now

@@ -153,7 +153,7 @@ class RestaurantStorage(RestaurantStorageInterface):
                 address=restaurant.address,
                 pin_code=restaurant.pin_code,
                 is_veg_only=restaurant.is_veg_only,
-                is_deleted=not restaurant.is_deleted,
+                is_deleted=restaurant.is_deleted,
                 owner_id=restaurant.owner_id,
             )
             for restaurant in queryset
