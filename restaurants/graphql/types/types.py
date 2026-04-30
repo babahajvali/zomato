@@ -160,8 +160,7 @@ class OwnerRestaurantType(graphene.ObjectType):
     pin_code = graphene.String(required=True)
     is_veg_only = graphene.Boolean(required=True)
     is_deleted = graphene.Boolean(required=True)
-    created_at = graphene.DateTime(required=True)
-    updated_at = graphene.DateTime(required=True)
+    owner_id = graphene.String(required=True)
 
 
 class OwnerRestaurantsType(graphene.ObjectType):

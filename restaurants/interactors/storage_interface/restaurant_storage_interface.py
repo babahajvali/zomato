@@ -7,7 +7,8 @@ from restaurants.interactors.dtos import (
     MenuItemDTO,
     BrowseRestaurantFiltersDTO,
     MenuItemWithTagsDTO,
-    RestaurantDTO, UpdateMenuItemDTO,
+    RestaurantDTO,
+    UpdateMenuItemDTO,
 )
 
 
@@ -61,9 +62,13 @@ class RestaurantStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def delete_menu_item(self, menu_item_id: str) :
+    def delete_menu_item(self, menu_item_id: str):
         pass
 
     @abstractmethod
     def get_unavailable_menu_items(self, menu_item_ids: List[str]) -> List[str]:
+        pass
+
+    @abstractmethod
+    def get_owner_restaurants(self, owner_id: str) -> List[RestaurantDTO]:
         pass

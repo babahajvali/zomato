@@ -188,3 +188,27 @@ class BaseGetRestaurantDashboardTestCase(GraphQLBaseTestCase):
       }
     }
     """
+
+
+class BaseGetOwnerRestaurantsTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    query GetOwnerRestaurants {
+      getOwnerRestaurants {
+        ... on OwnerRestaurantsType {
+          __typename
+          restaurants {
+            restaurantId
+            name
+            description
+            cuisineType
+            address
+            pinCode
+            isVegOnly
+            isDeleted
+            createdAt
+            updatedAt
+          }
+        }
+      }
+    }
+    """
