@@ -1,5 +1,6 @@
 from django.db import transaction
 
+from orders.adapter.restaurant import RestaurantAdapter
 from orders.constants.enums import OrderStatus
 from orders.interactors.dtos import OrderDTO
 from orders.interactors.storage_interface.order_storage_interface import (
@@ -13,6 +14,7 @@ class UpdateOrderInteractor(OrderMixin):
     def __init__(self, order_storage: OrderStorageInterface):
         super().__init__(order_storage=order_storage)
         self.order_storage = order_storage
+        self.restaurant_adapter = RestaurantAdapter()
 
     def update_order_status(
         self, order_id: str, status: OrderStatus, user_id: str
@@ -34,10 +36,10 @@ class UpdateOrderInteractor(OrderMixin):
     def _validate_ownership_and_transition(
         self, order_dto: OrderDTO, user_id: str, status: OrderStatus
     ):
-        self.validate_user_is_restaurant_owner(
-            user_id=user_id,
-            restaurant_id=order_dto.restaurant_id,
+        owner_id = self.restaurant_adapter.get_restaurant_owner_id(
+            restaurant_id=order_dto.restaurant_id
         )
+        self.validate_user_is_restaurant_owner(user_id=user_id, owner_id=owner_id)
         self.validate_order_status_transition(
             current_status=order_dto.status,
             new_status=status,

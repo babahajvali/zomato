@@ -11,7 +11,7 @@
           "address": "Test Address",
           "pinCode": "500001",
           "isVegOnly": false,
-          "isDeleted": true,
+          "isDeleted": false,
           "isOpen": false,
           "averageRating": 0.0,
           "totalReviews": 0

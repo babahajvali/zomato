@@ -29,7 +29,7 @@ class OrderStorage(OrderStorageInterface):
             order_id=str(order_obj.id),
             customer_id=str(order_obj.customer_id),
             restaurant_id=str(order_obj.restaurant_id),
-            promo_code_id=order_obj.promo_code.id if order_obj.promo_code else None,
+            promo_code_id=order_obj.promo_code_id if order_obj.promo_code else None,
             status=OrderStatus(order_obj.status),
             items_total=Decimal(order_obj.items_total),
             delivery_fee=Decimal(order_obj.delivery_fee),

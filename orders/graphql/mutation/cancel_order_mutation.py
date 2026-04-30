@@ -8,6 +8,7 @@ from orders.graphql.types.error_types import (
     OrderNotFound,
     OrderNotOwnedByUser,
     OrderCancellationWindowExpired,
+    OrderAlreadyCancelled,
 )
 from orders.graphql.types.input_types import CancelOrderInputParams
 from orders.graphql.types.response_types import CancelOrderResponse
@@ -47,6 +48,8 @@ class CancelOrderMutation(graphene.Mutation):
 
         except custom_exceptions.OrderCancellationNotAllowed as exc:
             return OrderCancellationNotAllowed(order_id=exc.order_id)
+        except custom_exceptions.OrderAlreadyCancelled as exc:
+            return OrderAlreadyCancelled(order_id=exc.order_id)
 
 
 def _map_order_response(order_dto: OrderDTO) -> OrderType:

@@ -4,6 +4,7 @@ import factory
 
 from restaurants.constants.enums import Category, CuisineType
 from restaurants.interactors.dtos import (
+    BrowseRestaurantFiltersDTO,
     CategoryMenuDTO,
     CreateMenuItemDTO,
     CreateRestaurantTimingDTO,
@@ -13,6 +14,7 @@ from restaurants.interactors.dtos import (
     RestaurantMenuDTO,
     RestaurantTimingDTO,
     RestaurantDTO,
+    UpdateMenuItemDTO,
     CartDTO,
     CartItemDTO,
     CreateReviewDTO,
@@ -66,6 +68,18 @@ class MenuItemDTOFactory(factory.Factory):
     preparation_time_in_minutes = 15
     tags = factory.LazyFunction(list)
     category = Category.STARTER
+
+
+class UpdateMenuItemDTOFactory(factory.Factory):
+    class Meta:
+        model = UpdateMenuItemDTO
+
+    menu_item_id = factory.Sequence(lambda n: f"item-{n}")
+    name = factory.Sequence(lambda n: f"Updated Item {n}")
+    is_available = True
+    preparation_time_in_minutes = 20
+    price = 299.0
+    tags = factory.LazyFunction(list)
 
 
 class CreateRestaurantTimingDTOFactory(factory.Factory):
@@ -173,6 +187,16 @@ class ReviewDTOFactory(factory.Factory):
     customer_id = factory.LazyFunction(uuid.uuid4)
     rating = factory.Faker("random_int", min=1, max=5)
     review = factory.Faker("text", max_nb_chars=200)
+
+
+class BrowseRestaurantFiltersDTOFactory(factory.Factory):
+    class Meta:
+        model = BrowseRestaurantFiltersDTO
+
+    cuisine_type = None
+    is_veg_only = None
+    pincode = None
+    min_rating = None
 
 
 class RestaurantReviewSummaryDTOFactory(factory.Factory):

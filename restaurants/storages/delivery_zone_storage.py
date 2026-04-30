@@ -1,5 +1,7 @@
 from typing import List, Tuple
 
+from django.db.models import Q
+
 from restaurants.interactors.dtos import CreateDeliveryZoneDTO, DeliveryZoneDTO
 from restaurants.interactors.storage_interface.delivery_zone_storage_interface import (
     DeliveryZoneStorageInterface,
@@ -12,7 +14,7 @@ class DeliveryZoneStorage(DeliveryZoneStorageInterface):
     def _convert_to_delivery_zone_dto(zone_obj: DeliveryZone) -> DeliveryZoneDTO:
         return DeliveryZoneDTO(
             delivery_zone_id=zone_obj.pk,
-            restaurant_id=zone_obj.restaurant.id,
+            restaurant_id=zone_obj.restaurant_id,
             pin_code=zone_obj.pin_code,
             delivery_fee=float(zone_obj.delivery_fee),
             estimated_delivery_mins=zone_obj.estimated_delivery_mins,
@@ -61,12 +63,13 @@ class DeliveryZoneStorage(DeliveryZoneStorageInterface):
         if not combinations:
             return []
 
-        restaurant_ids = [restaurant_id for restaurant_id, _ in combinations]
-        pin_codes = [pin_code for _, pin_code in combinations]
+        query_filter = Q()
+        for r, p in combinations:
+            query_filter |= Q(restaurant_id=r, pin_code=p)
 
-        existing_zones = DeliveryZone.objects.filter(
-            restaurant_id__in=restaurant_ids, pin_code__in=pin_codes
-        ).values_list("restaurant_id", "pin_code")
+        existing_zones = DeliveryZone.objects.filter(query_filter).values_list(
+            "restaurant_id", "pin_code"
+        )
 
         existing_set = set(existing_zones)
 

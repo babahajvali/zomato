@@ -92,27 +92,23 @@ class PlaceOrderInteractor(PromoCodeMixin):
         delivery_fee: Decimal,
     ) -> OrderSummaryDTO:
 
+        def run():
+            with transaction.atomic():
+                return self._execute_order(
+                    order_data=order_data,
+                    cart_items=cart_items,
+                    cart_id=cart_id,
+                    items_total=items_total,
+                    delivery_fee=delivery_fee,
+                )
+
         if order_data.promo_code_id:
             with redis_lock(
                 f"promo:{order_data.promo_code_id}", timeout=REDIS_LOCK_TIMEOUT
             ):
-                with transaction.atomic():
-                    return self._execute_order(
-                        order_data=order_data,
-                        cart_items=cart_items,
-                        cart_id=cart_id,
-                        items_total=items_total,
-                        delivery_fee=delivery_fee,
-                    )
+                return run()
 
-        with transaction.atomic():
-            return self._execute_order(
-                order_data=order_data,
-                cart_items=cart_items,
-                cart_id=cart_id,
-                items_total=items_total,
-                delivery_fee=delivery_fee,
-            )
+        return run()
 
     def _execute_order(
         self,

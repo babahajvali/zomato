@@ -13,6 +13,8 @@ from orders.graphql.types.error_types import (
     CartIsEmpty,
     CustomerCartNotFound,
     MenuItemsUnavailable,
+    PromoCodeExpired,
+    PromoCodeNotYetValid,
 )
 from orders.graphql.types.input_types import PlaceOrderInputParams
 from orders.graphql.types.response_types import PlaceOrderResponse
@@ -83,6 +85,10 @@ class PlaceOrderMutation(graphene.Mutation):
             return CustomerCartNotFound(customer_id=exc.customer_id)
         except custom_exceptions.MenuItemsUnavailable as exc:
             return MenuItemsUnavailable(unavailable_item_ids=exc.unavailable_item_ids)
+        except custom_exceptions.PromoCodeExpired as exc:
+            return PromoCodeExpired(code=exc.code)
+        except custom_exceptions.PromoCodeNotYetValid as exc:
+            return PromoCodeNotYetValid(code=exc.code)
 
 
 def _map_order_response(order_summary_dto: OrderSummaryDTO) -> OrderSummaryType:

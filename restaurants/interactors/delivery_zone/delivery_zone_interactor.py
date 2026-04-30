@@ -8,7 +8,7 @@ class DeliveryZoneInteractor:
     def __init__(self, delivery_zone_storage: DeliveryZoneStorageInterface):
         self.delivery_zone_storage = delivery_zone_storage
 
-    def get_delivery_zone_by_restaurant_id(
+    def get_delivery_zone_by_restaurant_and_pin_code(
         self, restaurant_id: str, pin_code: str
     ) -> DeliveryZoneDTO:
 

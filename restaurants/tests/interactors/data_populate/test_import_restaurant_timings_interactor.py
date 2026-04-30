@@ -31,9 +31,7 @@ class TestImportRestaurantTimings:
 
     @patch(VALIDATE_ROW)
     @patch(READ_CSV)
-    def test_import_restaurant_timings_success(
-        self, mock_read_csv, mock_validate_row
-    ):
+    def test_import_restaurant_timings_success(self, mock_read_csv, mock_validate_row):
         rows = [
             {
                 "restaurant": " restaurants-1 ",
@@ -58,7 +56,7 @@ class TestImportRestaurantTimings:
             file_path="restaurant_timings.csv"
         )
 
-        assert result == " 1 restaurants were created"
+        assert result == " 1 restaurant timings were created"
         mock_validate_row.assert_called_once_with(
             rows[0],
             ["restaurant", "day_of_week", "open_time", "close_time"],

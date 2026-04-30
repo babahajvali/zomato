@@ -5,8 +5,9 @@ from accounts.interactors.storage_interface.user_storage_interface import (
 
 
 class UserMixin:
-    def __init__(self, user_storage: UserStorageInterface):
+    def __init__(self, user_storage: UserStorageInterface, **kwargs):
         self.user_storage = user_storage
+        super().__init__(**kwargs)
 
     def validate_user_exists(self, user_id: str):
         is_user_exists = self.user_storage.check_user_exists(user_id=user_id)

@@ -19,8 +19,8 @@ class CartStorage(CartStorageInterface):
     def _convert_to_cart_item_dto(cart_item_obj: CartItem) -> CartItemDTO:
         return CartItemDTO(
             cart_item_id=cart_item_obj.pk,
-            cart_id=str(cart_item_obj.cart.id),
-            menu_item_id=str(cart_item_obj.menu_item.id),
+            cart_id=str(cart_item_obj.cart_id),
+            menu_item_id=str(cart_item_obj.menu_item_id),
             quantity=cart_item_obj.quantity,
             item_price=float(cart_item_obj.item_price),
         )

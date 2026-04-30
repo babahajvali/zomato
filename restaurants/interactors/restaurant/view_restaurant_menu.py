@@ -37,17 +37,14 @@ class ViewRestaurantMenuInteractor(RestaurantMixin):
         items: List[MenuItemWithTagsDTO],
     ) -> List[CategoryMenuDTO]:
 
-        category_map = defaultdict()
+        category_map = defaultdict(list)
 
         for item in items:
             category = item.category
 
-            if category not in category_map:
-                category_map[category] = []
-
             category_map[category].append(item)
 
         return [
-            CategoryMenuDTO(category=category, items=items)
-            for category, items in category_map.items()
+            CategoryMenuDTO(category=category, items=menu_items)
+            for category, menu_items in category_map.items()
         ]

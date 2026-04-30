@@ -37,7 +37,6 @@ class OrderInteractor(OrderMixin):
             order_id=order_id,
             user_id=user_id,
         )
-        self._validate_cancel_order_time(order_id=order_id, placed_at=None)
 
         with redis_lock(
             lock_key=f"order_status_{order_id}",
@@ -47,28 +46,17 @@ class OrderInteractor(OrderMixin):
                 order_dto = self.order_storage.get_order(order_id=order_id)
 
                 self._validate_order_is_not_already_cancelled(order_dto=order_dto)
-                self._validate_cancel_order_time(
-                    placed_at=order_dto.placed_at, order_id=order_dto.order_id
-                )
                 self._validate_order_is_cancellable(
                     order_id=order_dto.order_id, order_status=order_dto.status.value
+                )
+                self._validate_cancel_order_time(
+                    placed_at=order_dto.placed_at, order_id=order_dto.order_id
                 )
 
                 return self.order_storage.update_order_status(
                     order_id=order_id,
                     status=OrderStatus.CANCELLED,
                 )
-
-    def auto_cancel_order(self, order_id: str) -> OrderDTO:
-        self.validate_order_exists(order_id=order_id)
-        order_dto = self.order_storage.get_order(order_id=order_id)
-        self._validate_order_is_cancellable(
-            order_id=order_id, order_status=order_dto.status.value
-        )
-
-        return self.order_storage.update_order_status(
-            order_id=order_id, status=OrderStatus.CANCELLED
-        )
 
     def get_user_orders(self, user_id: str, limit: int, offset: int) -> List[OrderDTO]:
 

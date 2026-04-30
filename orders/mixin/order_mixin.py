@@ -1,4 +1,3 @@
-from orders.adapter.restaurant import RestaurantAdapter
 from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
     InvalidOrderStatusTransition,
@@ -23,7 +22,6 @@ VALID_TRANSITIONS = {
 class OrderMixin:
     def __init__(self, order_storage: OrderStorageInterface, **kwargs):
         self.order_storage = order_storage
-        self.restaurant_adapter = RestaurantAdapter()
         super().__init__(**kwargs)
 
     def validate_order_exists(self, order_id: str):
@@ -57,9 +55,8 @@ class OrderMixin:
         if order_dto.customer_id != user_id:
             raise OrderNotOwnedByUser(order_id=order_id, user_id=user_id)
 
-    def validate_user_is_restaurant_owner(self, user_id: str, restaurant_id: str):
-        owner_id = self.restaurant_adapter.get_restaurant_owner_id(
-            restaurant_id=restaurant_id
-        )
+    @staticmethod
+    def validate_user_is_restaurant_owner(user_id: str, owner_id: str):
+
         if owner_id != user_id:
             raise UserNotRestaurantOwner(user_id=user_id)

@@ -1,7 +1,7 @@
 {
   "data": {
     "cancelOrder": {
-      "__typename": "OrderCancellationNotAllowed",
+      "__typename": "OrderAlreadyCancelled",
       "orderId": "orders-1"
     }
   }

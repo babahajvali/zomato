@@ -60,3 +60,42 @@ class TestRestaurantOrdersApi(BaseRestaurantOrdersTestCase):
             snapshot=snapshot,
             user_id=user_id,
         )
+
+    def test_restaurant_orders_empty(self, snapshot):
+        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
+        restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
+        UserFactory(id=user_id)
+        RestaurantFactory(id=restaurant_id, owner_id=user_id)
+
+        variables = {"params": {"restaurantId": restaurant_id, "limit": 5, "offset": 0}}
+
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )
+
+    def test_get_order_pagination(self, snapshot):
+        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
+        restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
+        UserFactory(id=user_id)
+        RestaurantFactory(id=restaurant_id, owner_id=user_id)
+
+        # Create 5 orders for pagination testing
+        for i in range(1, 6):
+            OrderFactory(
+                id=f"orders-{i}",
+                customer_id=f"customer-{i}",
+                restaurant_id=restaurant_id,
+                status=OrderStatus.PLACED.value,
+            )
+
+        variables = {"params": {"restaurantId": restaurant_id, "limit": 2, "offset": 1}}
+
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )

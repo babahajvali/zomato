@@ -17,7 +17,7 @@ class RestaurantTimingStorage(RestaurantTimingStorageInterface):
         return RestaurantTimingDTO(
             timing_id=timing_obj.pk,
             day_of_week=timing_obj.day_of_week,
-            restaurant_id=timing_obj.restaurant.id,
+            restaurant_id=timing_obj.restaurant_id,
             open_time=timing_obj.open_time,
             close_time=timing_obj.close_time,
         )

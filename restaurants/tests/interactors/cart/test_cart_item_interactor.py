@@ -171,3 +171,107 @@ class TestCartItemInteractor:
 
         assert exc.value.cart_id == "invalid-cart"
         self.cart_storage.clear_cart_items.assert_not_called()
+
+    def test_update_cart_item_with_min_valid_quantity(self):
+        # Test boundary: quantity=1 (minimum valid quantity)
+        menu_item = MenuItemDTOFactory(id="item-123", price=350.0)
+        cart_item = CartItemDTOFactory(
+            cart_id="cart-123",
+            menu_item_id="item-123",
+            quantity=1,
+            item_price=350.0,
+        )
+
+        self.cart_storage.get_cart.return_value = CartDTOFactory(cart_id="cart-123")
+        self.restaurant_storage.get_menu_item.return_value = menu_item
+        self.cart_storage.create_or_update_cart_item.return_value = cart_item
+
+        result = self.interactor.update_cart_item(
+            cart_id="cart-123",
+            menu_item_id="item-123",
+            quantity=1,
+        )
+
+        assert result.quantity == 1
+        self.cart_storage.create_or_update_cart_item.assert_called_once_with(
+            cart_id="cart-123",
+            menu_item_id="item-123",
+            quantity=1,
+            item_price=menu_item.price,
+        )
+
+    def test_update_cart_item_with_max_valid_quantity_10(self):
+        # Test boundary: quantity=10 (maximum valid quantity)
+        menu_item = MenuItemDTOFactory(id="item-123", price=350.0)
+        cart_item = CartItemDTOFactory(
+            cart_id="cart-123",
+            menu_item_id="item-123",
+            quantity=10,
+            item_price=350.0,
+        )
+
+        self.cart_storage.get_cart.return_value = CartDTOFactory(cart_id="cart-123")
+        self.restaurant_storage.get_menu_item.return_value = menu_item
+        self.cart_storage.create_or_update_cart_item.return_value = cart_item
+
+        result = self.interactor.update_cart_item(
+            cart_id="cart-123",
+            menu_item_id="item-123",
+            quantity=10,
+        )
+
+        assert result.quantity == 10
+        self.cart_storage.create_or_update_cart_item.assert_called_once_with(
+            cart_id="cart-123",
+            menu_item_id="item-123",
+            quantity=10,
+            item_price=menu_item.price,
+        )
+
+    def test_get_cart_items_successfully(self):
+        # Test get_cart_items() method
+        cart_items = [
+            CartItemDTOFactory(
+                cart_id="cart-123",
+                menu_item_id="item-1",
+                quantity=2,
+                item_price=350.0,
+            ),
+            CartItemDTOFactory(
+                cart_id="cart-123",
+                menu_item_id="item-2",
+                quantity=1,
+                item_price=200.0,
+            ),
+        ]
+
+        self.cart_storage.get_cart.return_value = CartDTOFactory(cart_id="cart-123")
+        self.cart_storage.get_cart_items.return_value = cart_items
+
+        result = self.interactor.get_cart_items(cart_id="cart-123")
+
+        assert len(result) == 2
+        assert result[0].menu_item_id == "item-1"
+        assert result[0].quantity == 2
+        assert result[1].menu_item_id == "item-2"
+        assert result[1].quantity == 1
+        self.cart_storage.get_cart_items.assert_called_once_with(cart_id="cart-123")
+
+    def test_get_cart_items_raises_cart_not_found(self):
+        # Test error path for get_cart_items
+        self.cart_storage.get_cart.return_value = None
+
+        with pytest.raises(CartNotFound) as exc:
+            self.interactor.get_cart_items(cart_id="invalid-cart")
+
+        assert exc.value.cart_id == "invalid-cart"
+        self.cart_storage.get_cart_items.assert_not_called()
+
+    def test_get_customer_cart_id(self):
+        # Test get_customer_cart_id() method
+        self.cart_storage.get_customer_cart_id.return_value = "cart-123"
+
+        result = self.interactor.get_customer_cart_id(customer_id="customer-1")
+
+        assert result == "cart-123"
+        self.cart_storage.get_customer_cart_id.assert_called_once_with(customer_id="customer-1")

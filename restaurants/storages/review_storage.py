@@ -42,7 +42,7 @@ class ReviewStorage(ReviewStorageInterface):
     def _convert_to_review_dto(review_obj: RestaurantReview) -> ReviewDTO:
         return ReviewDTO(
             review_id=review_obj.pk,
-            restaurant_id=review_obj.restaurant.id,
+            restaurant_id=review_obj.restaurant_id,
             customer_id=review_obj.customer_id,
             rating=review_obj.rating,
             review=review_obj.review_text,

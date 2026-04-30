@@ -133,3 +133,47 @@ class TestCreateReviewInteractor:
             restaurant_id=create_review_dto.restaurant_id,
         )
         self.mock_review_storage.create_review.assert_not_called()
+
+    def test_create_review_boundary_rating_1(self):
+        # Test valid lower boundary (rating=1)
+        create_review_dto = CreateReviewDTOFactory(rating=1)
+        expected_review = ReviewDTOFactory(
+            restaurant_id=create_review_dto.restaurant_id,
+            customer_id=create_review_dto.customer_id,
+            rating=1,
+            review=create_review_dto.review,
+        )
+
+        self.mock_restaurant_storage.check_restaurant_is_exist.return_value = True
+        self.mock_review_storage.check_user_review_exists.return_value = False
+        self.mock_review_storage.create_review.return_value = expected_review
+
+        result = self.interactor.create_review(create_review_dto=create_review_dto)
+
+        assert result == expected_review
+        assert result.rating == 1
+        self.mock_review_storage.create_review.assert_called_once_with(
+            create_review_dto=create_review_dto
+        )
+
+    def test_create_review_boundary_rating_5(self):
+        # Test valid upper boundary (rating=5)
+        create_review_dto = CreateReviewDTOFactory(rating=5)
+        expected_review = ReviewDTOFactory(
+            restaurant_id=create_review_dto.restaurant_id,
+            customer_id=create_review_dto.customer_id,
+            rating=5,
+            review=create_review_dto.review,
+        )
+
+        self.mock_restaurant_storage.check_restaurant_is_exist.return_value = True
+        self.mock_review_storage.check_user_review_exists.return_value = False
+        self.mock_review_storage.create_review.return_value = expected_review
+
+        result = self.interactor.create_review(create_review_dto=create_review_dto)
+
+        assert result == expected_review
+        assert result.rating == 5
+        self.mock_review_storage.create_review.assert_called_once_with(
+            create_review_dto=create_review_dto
+        )

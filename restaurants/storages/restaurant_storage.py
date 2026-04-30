@@ -23,7 +23,7 @@ class RestaurantStorage(RestaurantStorageInterface):
     def _convert_to_menu_item_dto(item_obj: MenuItem) -> MenuItemDTO:
         return MenuItemDTO(
             id=item_obj.id,
-            restaurant_id=item_obj.restaurant.id,
+            restaurant_id=item_obj.restaurant_id,
             name=item_obj.name,
             description=item_obj.description,
             price=item_obj.price,

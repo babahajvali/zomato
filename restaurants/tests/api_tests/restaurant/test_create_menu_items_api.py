@@ -34,7 +34,7 @@ class TestCreateMenuItemsApi(BaseCreateMenuItemsTestCase):
                         "preparationTimeInMinutes": 30,
                         "tags": ["biryani", "spicy"],
                     }
-                ]
+                ],
             }
         }
 
@@ -64,7 +64,7 @@ class TestCreateMenuItemsApi(BaseCreateMenuItemsTestCase):
                         "preparationTimeInMinutes": 30,
                         "tags": ["biryani", "spicy"],
                     }
-                ]
+                ],
             }
         }
 
@@ -97,7 +97,7 @@ class TestCreateMenuItemsApi(BaseCreateMenuItemsTestCase):
                         "preparationTimeInMinutes": 30,
                         "tags": ["biryani", "spicy"],
                     }
-                ]
+                ],
             }
         }
 
@@ -128,7 +128,7 @@ class TestCreateMenuItemsApi(BaseCreateMenuItemsTestCase):
                         "preparationTimeInMinutes": 30,
                         "tags": ["biryani", "spicy"],
                     }
-                ]
+                ],
             }
         }
 

@@ -33,7 +33,7 @@ class TestRestaurantTimingStorage(TestCase):
         )
 
         assert len(result) == 1
-        assert result[0].restaurant_id == str(restaurant.id)
+        assert result[0].restaurant_id == restaurant.id
         assert result[0].day_of_week == 1
         assert result[0].open_time == time(9, 0)
         assert result[0].close_time == time(21, 0)

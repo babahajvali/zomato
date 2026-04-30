@@ -18,6 +18,8 @@ from orders.exception.custom_exceptions import (
     PromoCodeUsageLimitReached,
     PromoCodeNotEligible,
     PromoCodeNotFound,
+    PromoCodeExpired,
+    PromoCodeNotYetValid,
     RestaurantClosed,
     RestaurantNotOpen,
 )
@@ -283,6 +285,7 @@ class TestPlaceOrderInteractor:
         assert exc.value.address_id == 999
         self.order_storage.create_order.assert_not_called()
 
+    @pytest.mark.django_db
     def test_place_order_raises_invalid_delivery_zone_found(self):
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_delivery_zone_by_restaurant_id.return_value = None
@@ -315,3 +318,120 @@ class TestPlaceOrderInteractor:
         assert result[0].item_id == "item-1"
         assert result[0].quantity == 2
         assert result[0].item_price == 200.0
+
+    @patch(
+        "orders.interactors.order.place_order_interactor.transaction.atomic",
+        no_op_lock,
+    )
+    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    def test_place_order_raises_promo_code_expired(self):
+        self._setup_valid_adapters()
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        expired_promo = PromoCodeDTOFactory(
+            promo_code_id=1,
+            valid_until=timezone.now() - timedelta(days=1),  # Expired yesterday
+        )
+        self.promo_code_storage.get_promo_code_by_id.return_value = expired_promo
+
+        with pytest.raises(PromoCodeExpired) as exc:
+            self.interactor.place_order(
+                order_data=PlaceOrderDTOFactory(promo_code_id=1)
+            )
+
+        assert exc.value.code == expired_promo.code
+        self.order_storage.create_order.assert_not_called()
+
+    @patch(
+        "orders.interactors.order.place_order_interactor.transaction.atomic",
+        no_op_lock,
+    )
+    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    def test_place_order_raises_promo_code_not_yet_valid(self):
+        self._setup_valid_adapters()
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        future_promo = PromoCodeDTOFactory(
+            promo_code_id=1,
+            valid_from=timezone.now() + timedelta(days=1),  # Valid tomorrow
+        )
+        self.promo_code_storage.get_promo_code_by_id.return_value = future_promo
+
+        with pytest.raises(PromoCodeNotYetValid) as exc:
+            self.interactor.place_order(
+                order_data=PlaceOrderDTOFactory(promo_code_id=1)
+            )
+
+        assert exc.value.code == future_promo.code
+        self.order_storage.create_order.assert_not_called()
+
+    def test_place_order_percentage_discount_calculation(self):
+        # Test the percentage discount calculation directly
+        from decimal import Decimal
+        from orders.constants.enums import PromoCodeType
+        
+        items_total = Decimal("400.00")
+        discount_type = PromoCodeType.PERCENTAGE.value
+        discount_value = Decimal("10.00")  # 10%
+        
+        result = self.interactor._calculate_discount_price(
+            items_total=items_total,
+            discount_type=discount_type,
+            discount_value=discount_value,
+        )
+        
+        # 10% of 400 = 40.00
+        assert result == Decimal("40.00")
+
+    @patch(
+        "orders.interactors.order.place_order_interactor.transaction.atomic",
+        no_op_lock,
+    )
+    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    def test_place_order_usage_at_limit_minus_one_should_succeed(self):
+        self._setup_valid_adapters()
+        promo_code = PromoCodeDTOFactory(
+            promo_code_id=1,
+            max_usage=5,
+        )
+        order_dto = OrderDTOFactory(order_id="orders-1")
+        
+        self.promo_code_storage.get_promo_code_by_id.return_value = promo_code
+        self.order_storage.get_promo_code_usage.return_value = 4  # usage_count == max_usage - 1
+        self.order_storage.create_order.return_value = order_dto
+
+        result = self.interactor.place_order(
+            order_data=PlaceOrderDTOFactory(promo_code_id=1)
+        )
+
+        assert result.order_id == "orders-1"
+
+    def test_place_order_menu_items_unavailable(self):
+        self._setup_valid_adapters()
+        
+        # Setup cart with unavailable items
+        cart_items = [
+            CartItemDTOFactory(
+                item_id="item-1",
+                quantity=2,
+                item_price=200.0,
+            ),
+            CartItemDTOFactory(
+                item_id="item-2", 
+                quantity=1,
+                item_price=150.0,
+                is_available=False,  # This item is unavailable
+            ),
+        ]
+        
+        self.restaurant_adapter.get_customer_cart_items.return_value = cart_items
+
+        with pytest.raises(MenuItemsUnavailable) as exc:
+            self.interactor.place_order(
+                order_data=PlaceOrderDTOFactory()
+            )
+        
+        assert exc.value.unavailable_item_ids == ["item-2"]
+        self.order_storage.create_order.assert_called_once()

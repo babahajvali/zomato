@@ -1,6 +1,7 @@
 import datetime
-from time import timezone
 from typing import List, Optional
+
+# from django.utils import timezone
 
 from restaurants.interactors.dtos import (
     BrowseRestaurantDTO,
@@ -93,7 +94,7 @@ class TimingMixin:
         review_summaries: List[RestaurantReviewSummaryDTO],
     ) -> List[BrowseRestaurantDTO]:
 
-        now = timezone.now()
+        now = datetime.datetime.now()
         day_of_week = now.isoweekday()
         current_time = now.time()
         review_summary_map = {
@@ -134,7 +135,11 @@ class TimingMixin:
     ) -> bool:
         if not timing or not timing.open_time or not timing.close_time:
             return False
-        return timing.open_time <= current_time <= timing.close_time
+
+        if timing.open_time < timing.close_time:
+            return timing.open_time <= current_time <= timing.close_time
+        else:
+            return current_time >= timing.open_time or current_time <= timing.close_time
 
     @staticmethod
     def _build_browse_restaurant_dto(

@@ -181,3 +181,39 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
             snapshot=snapshot,
             user_id=user_id,
         )
+
+    @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
+    def test_cancel_order_raises_not_cancellable_delivered_status(self, snapshot):
+        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
+        UserFactory(id=user_id)
+        restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
+        Restaurant.objects.create(
+            id=restaurant_id,
+            owner_id=user_id,
+            name="Test Restaurant",
+            cuisine_type="INDIAN",
+            address="Test Address",
+            pin_code="500001",
+        )
+
+        created_at = datetime.now() - timedelta(minutes=2)
+        OrderFactory(
+            id="orders-1",
+            customer_id=user_id,
+            restaurant_id=restaurant_id,
+            status=OrderStatus.DELIVERED.value,
+            created_at=created_at,
+        )
+
+        variables = {
+            "params": {
+                "orderId": "orders-1",
+            }
+        }
+
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )

@@ -65,3 +65,15 @@ class CustomerCartNotFound(graphene.ObjectType):
 
 class MenuItemsUnavailable(graphene.ObjectType):
     unavailable_item_ids = graphene.List(graphene.String)
+
+
+class PromoCodeExpired(graphene.ObjectType):
+    code = graphene.String(required=True)
+
+
+class PromoCodeNotYetValid(graphene.ObjectType):
+    code = graphene.String(required=True)
+
+
+class OrderAlreadyCancelled(graphene.ObjectType):
+    order_id = graphene.String(required=True)

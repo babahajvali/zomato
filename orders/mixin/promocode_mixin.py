@@ -5,8 +5,9 @@ from orders.interactors.storage_interface.promo_code_storage_interface import (
 
 
 class PromoCodeMixin:
-    def __init__(self, promo_code_storage: PromoCodeStorageInterface):
+    def __init__(self, promo_code_storage: PromoCodeStorageInterface, **kwargs):
         self.promo_code_storage = promo_code_storage
+        super().__init__(**kwargs)
 
     def validate_promo_code_exist(self, promo_code_id: int):
 

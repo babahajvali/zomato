@@ -25,40 +25,68 @@ class BasePlaceOrderTestCase(GraphQLBaseTestCase):
             subtotal
           }
         }
+
         ... on PromoCodeNotFound {
           __typename
           promoCodeId
         }
+
         ... on PromoCodeUsageLimitReached {
           __typename
           maxUsageCount
         }
+
         ... on PromoCodeNotEligible {
           __typename
           minOrderValue
           itemsTotal
         }
+
+        ... on PromoCodeExpired {
+          __typename
+          code
+        }
+
+        ... on PromoCodeNotYetValid {
+          __typename
+          code
+        }
+
         ... on AddressIdNotFound {
           __typename
           addressId
         }
+
         ... on DeliveryUnavailableForAddress {
           __typename
           restaurantId
           pinCode
         }
+
         ... on RestaurantNotOpen {
           __typename
           restaurantId
           dayOfWeek
         }
+
         ... on RestaurantClosed {
           __typename
           restaurantId
         }
+
         ... on CartIsEmpty {
           __typename
           cartId
+        }
+
+        ... on CustomerCartNotFound {
+          __typename
+          customerId
+        }
+
+        ... on MenuItemsUnavailable {
+          __typename
+          unavailableItemIds
         }
       }
     }
@@ -254,35 +282,9 @@ class BaseCancelOrderTestCase(GraphQLBaseTestCase):
           __typename
           orderId
         }
-      }
-    }
-    """
-
-
-class BaseAutoCancelOrderTestCase(GraphQLBaseTestCase):
-    QUERY = """
-    mutation AutoCancelOrder($params: AutoCancelOrderInputParams!) {
-      autoCancelOrder(params: $params) {
-        ... on OrderType {
-          __typename
-          orderId
-          customerId
-          restaurantId
-          promoCodeId
-          status
-          itemsTotal
-          deliveryFee
-          taxFee
-          finalAmount
-          addressId
-        }
-        ... on OrderNotFound {
-          __typename
-          orderId
-        }
-        ... on OrderCancellationNotAllowed {
-          __typename
-          orderId
+        ... on OrderAlreadyCancelled {
+        __typename
+        orderId
         }
       }
     }

@@ -113,3 +113,110 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
             snapshot=snapshot,
             user_id=user_id,
         )
+
+    @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
+    def test_update_status_confirmed_to_preparing(self, snapshot):
+        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
+        UserFactory(id=user_id)
+        restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
+        RestaurantFactory(id=restaurant_id, owner_id=user_id)
+        OrderFactory(
+            id="orders-1",
+            customer_id="customer-1",
+            restaurant_id=restaurant_id,
+            status=OrderStatus.CONFIRMED.value,  # Start from CONFIRMED
+        )
+
+        variables = {
+            "params": {
+                "orderId": "orders-1",
+                "status": OrderStatus.PREPARING.value,  # Transition to PREPARING
+            }
+        }
+
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )
+
+    @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
+    def test_update_status_preparing_to_out_of_delivery(self, snapshot):
+        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
+        UserFactory(id=user_id)
+        restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
+        RestaurantFactory(id=restaurant_id, owner_id=user_id)
+        OrderFactory(
+            id="orders-1",
+            customer_id="customer-1",
+            restaurant_id=restaurant_id,
+            status=OrderStatus.PREPARING.value,  # Start from PREPARING
+        )
+
+        variables = {
+            "params": {
+                "orderId": "orders-1",
+                "status": OrderStatus.OUT_OF_DELIVERY.value,  # Transition to OUT_OF_DELIVERY
+            }
+        }
+
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )
+
+    @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
+    def test_update_status_out_of_delivery_to_delivered(self, snapshot):
+        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
+        UserFactory(id=user_id)
+        restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
+        RestaurantFactory(id=restaurant_id, owner_id=user_id)
+        OrderFactory(
+            id="orders-1",
+            customer_id="customer-1",
+            restaurant_id=restaurant_id,
+            status=OrderStatus.OUT_OF_DELIVERY.value,  # Start from OUT_OF_DELIVERY
+        )
+
+        variables = {
+            "params": {
+                "orderId": "orders-1",
+                "status": OrderStatus.DELIVERED.value,  # Transition to DELIVERED
+            }
+        }
+
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )
+
+    def test_update_status_on_cancelled_order(self, snapshot):
+        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
+        UserFactory(id=user_id)
+        restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
+        RestaurantFactory(id=restaurant_id, owner_id=user_id)
+        OrderFactory(
+            id="orders-1",
+            customer_id="customer-1",
+            restaurant_id=restaurant_id,
+            status=OrderStatus.CANCELLED.value,  # Start from CANCELLED
+        )
+
+        variables = {
+            "params": {
+                "orderId": "orders-1",
+                "status": OrderStatus.PREPARING.value,  # Try to transition from CANCELLED
+            }
+        }
+
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )

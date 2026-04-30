@@ -52,3 +52,27 @@ class TestUserOrdersApi(BaseUserOrdersTestCase):
             snapshot=snapshot,
             user_id=user_id,
         )
+
+    def test_user_orders_pagination(self, snapshot):
+        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
+        restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
+        UserFactory(id=user_id)
+        RestaurantFactory(id=restaurant_id)
+        
+        # Create 5 orders for pagination testing
+        for i in range(1, 6):
+            OrderFactory(
+                id=f"orders-{i}",
+                customer_id=user_id,
+                restaurant_id=restaurant_id,
+                status=OrderStatus.PLACED.value,
+            )
+
+        # Test first page with limit=2, offset=0
+        variables = {"params": {"limit": 2, "offset": 0}}
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )

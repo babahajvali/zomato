@@ -4,7 +4,7 @@ import pytest
 
 from restaurants.exception.custom_exceptions import (
     UserNotRestaurantOwner,
-    RestaurantNotFound,
+    MenuItemNotFound,
 )
 from restaurants.interactors.restaurant.menu_item_interactor import MenuItemInteractor
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
@@ -38,11 +38,11 @@ class TestDeleteMenuItemInteractor:
     def test_delete_menu_item_not_found(self):
         menu_item_id = "menu-1"
 
-        self.restaurant_storage.get_menu_item.side_effect = RestaurantNotFound(
-            restaurant_id=menu_item_id
+        self.restaurant_storage.get_menu_item.side_effect = MenuItemNotFound(
+            menu_item_id=menu_item_id
         )
 
-        with pytest.raises(RestaurantNotFound):
+        with pytest.raises(MenuItemNotFound):
             self.interactor.delete_menu_item(
                 menu_item_id=menu_item_id, user_id="user-123"
             )

@@ -39,7 +39,7 @@ class ServiceInterface:
             delivery_zone_storage=self.delivery_zone_storage
         )
 
-        return interactor.get_delivery_zone_by_restaurant_id(
+        return interactor.get_delivery_zone_by_restaurant_and_pin_code(
             restaurant_id=restaurant_id, pin_code=pin_code
         )
 

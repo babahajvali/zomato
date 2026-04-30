@@ -3,6 +3,7 @@ from typing import List
 
 from django.utils import timezone
 
+from orders.adapter.restaurant import RestaurantAdapter
 from orders.constants.constants import CANCEL_TIME
 from orders.interactors.dtos import (
     OrderDTO,
@@ -20,13 +21,15 @@ class GetRestaurantOrderInteractor(OrderMixin):
     def __init__(self, order_storage: OrderStorageInterface):
         super().__init__(order_storage=order_storage)
         self.order_storage = order_storage
+        self.restaurant_adapter = RestaurantAdapter()
 
     def get_restaurant_orders(
         self, restaurant_id: str, user_id: str, limit: int, offset: int
     ) -> List[OrderDTO]:
-        self.validate_user_is_restaurant_owner(
-            restaurant_id=restaurant_id, user_id=user_id
+        owner_id = self.restaurant_adapter.get_restaurant_owner_id(
+            restaurant_id=restaurant_id
         )
+        self.validate_user_is_restaurant_owner(owner_id=owner_id, user_id=user_id)
 
         return self.order_storage.get_restaurant_orders(
             restaurant_id=restaurant_id, limit=limit, offset=offset
@@ -35,9 +38,12 @@ class GetRestaurantOrderInteractor(OrderMixin):
     def get_today_restaurant_orders(
         self, restaurant_id: str, user_id: str, limit: int, offset: int
     ) -> List[OrderSummaryDTO]:
+        owner_id = self.restaurant_adapter.get_restaurant_owner_id(
+            restaurant_id=restaurant_id
+        )
 
         self.validate_user_is_restaurant_owner(
-            restaurant_id=restaurant_id,
+            owner_id=owner_id,
             user_id=user_id,
         )
 
@@ -106,6 +112,6 @@ class GetRestaurantOrderInteractor(OrderMixin):
     ) -> List[OrderDTO]:
 
         now = timezone.now()
-        five_minutes_ago = now - timedelta(minutes=CANCEL_TIME)
+        cancellation_cutoff = now - timedelta(minutes=CANCEL_TIME)
 
-        return [order for order in orders if order.placed_at <= five_minutes_ago]
+        return [order for order in orders if order.placed_at <= cancellation_cutoff]

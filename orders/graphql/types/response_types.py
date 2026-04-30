@@ -16,6 +16,9 @@ from orders.graphql.types.error_types import (
     OrderCancellationWindowExpired,
     CustomerCartNotFound,
     MenuItemsUnavailable,
+    PromoCodeExpired,
+    PromoCodeNotYetValid,
+    OrderAlreadyCancelled,
 )
 from orders.graphql.types.types import (
     OrderType,
@@ -41,6 +44,8 @@ class PlaceOrderResponse(graphene.Union):
             CartIsEmpty,
             CustomerCartNotFound,
             MenuItemsUnavailable,
+            PromoCodeExpired,
+            PromoCodeNotYetValid,
         )
 
 
@@ -91,6 +96,7 @@ class CancelOrderResponse(graphene.Union):
             OrderNotOwnedByUser,
             OrderCancellationWindowExpired,
             OrderCancellationNotAllowed,
+            OrderAlreadyCancelled,
         )
 
 

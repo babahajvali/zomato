@@ -1,0 +1,10 @@
+{
+  "data": {
+    "updateOrderStatus": {
+      "__typename": "InvalidOrderStatusTransition",
+      "currentStatus": "CANCELLED",
+      "newStatus": "PREPARING",
+      "allowed": []
+    }
+  }
+}
