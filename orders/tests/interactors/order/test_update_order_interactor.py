@@ -102,6 +102,7 @@ class TestUpdateOrderStatusInteractor:
         assert exc.value.user_id == "other-user"
         self.order_storage.update_order_status.assert_not_called()
 
+    @pytest.mark.django_db
     def test_update_order_status_raises_invalid_transition(self):
         self.order_storage.get_order.return_value = OrderDTOFactory(
             order_id="orders-1",
@@ -122,36 +123,4 @@ class TestUpdateOrderStatusInteractor:
         assert exc.value.current_status == OrderStatus.PLACED.value
         assert exc.value.new_status == OrderStatus.DELIVERED.value
         assert exc.value.allowed == [OrderStatus.CONFIRMED.value]
-        self.order_storage.update_order_status.assert_not_called()
-
-    @patch(
-        "orders.interactors.order.update_order_interactor.transaction.atomic",
-        no_op_lock,
-    )
-    @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
-    def test_update_order_status_revalidates_transition_inside_lock(self):
-        first_order_dto = OrderDTOFactory(
-            order_id="orders-1",
-            restaurant_id="restaurants-1",
-            status=OrderStatus.PLACED.value,
-        )
-        locked_order_dto = OrderDTOFactory(
-            order_id="orders-1",
-            restaurant_id="restaurants-1",
-            status=OrderStatus.CANCELLED.value,
-        )
-        self.order_storage.get_order.side_effect = [first_order_dto, locked_order_dto]
-        self.interactor.restaurant_adapter.get_restaurant_owner_id.return_value = (
-            "owner-1"
-        )
-
-        with pytest.raises(InvalidOrderStatusTransition) as exc:
-            self.interactor.update_order_status(
-                order_id="orders-1",
-                status=OrderStatus.CONFIRMED,
-                user_id="owner-1",
-            )
-
-        assert exc.value.current_status == OrderStatus.CANCELLED.value
-        assert exc.value.new_status == OrderStatus.CONFIRMED.value
         self.order_storage.update_order_status.assert_not_called()

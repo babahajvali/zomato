@@ -20,8 +20,9 @@ class UpdateOrderInteractor(OrderMixin):
         self, order_id: str, status: OrderStatus, user_id: str
     ) -> OrderDTO:
         order_dto = self._get_validated_order(order_id=order_id)
-        self._validate_ownership_and_transition(
-            order_dto=order_dto, user_id=user_id, status=status
+        self._validate_ownership(
+            restaurant_id=order_dto.restaurant_id,
+            user_id=user_id,
         )
 
         with redis_lock(lock_key=f"order_status_{order_id}", timeout=10):
@@ -33,17 +34,11 @@ class UpdateOrderInteractor(OrderMixin):
 
         return self.order_storage.get_order(order_id=order_id)
 
-    def _validate_ownership_and_transition(
-        self, order_dto: OrderDTO, user_id: str, status: OrderStatus
-    ):
+    def _validate_ownership(self, restaurant_id: str, user_id: str):
         owner_id = self.restaurant_adapter.get_restaurant_owner_id(
-            restaurant_id=order_dto.restaurant_id
+            restaurant_id=restaurant_id
         )
         self.validate_user_is_restaurant_owner(user_id=user_id, owner_id=owner_id)
-        self.validate_order_status_transition(
-            current_status=order_dto.status,
-            new_status=status,
-        )
 
     def _revalidate_and_update(self, order_id: str, status: OrderStatus) -> OrderDTO:
         order_dto = self.order_storage.get_order(order_id=order_id)
