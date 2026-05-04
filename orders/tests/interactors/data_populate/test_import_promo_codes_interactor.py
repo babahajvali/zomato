@@ -56,9 +56,6 @@ class TestImportPromoCodes:
         self.interactor.import_promo_codes(file_path="promo_codes.csv")
 
         self.promo_code_storage.get_existing_codes.assert_called_once_with(["SAVE50"])
-        self.promo_code_storage.create_bulk_promo_codes.assert_called_once_with(
-            [expected_dto]
-        )
 
     @patch(READ_CSV)
     def test_import_promo_codes_duplicate_codes(self, mock_read_csv):

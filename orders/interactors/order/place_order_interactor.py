@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal, ROUND_HALF_UP
 from typing import List, Optional
 
@@ -210,7 +211,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
 
     def _validate_restaurant_timing(self, restaurant_id: str):
 
-        now = timezone.now()
+        now = datetime.now()
         timing = self.restaurant_adapter.get_restaurant_timing(
             restaurant_id=restaurant_id,
             day_of_week=now.isoweekday(),

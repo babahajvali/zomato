@@ -27,10 +27,8 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
     ) -> CartItemDTO:
 
         self.validate_cart_exists(cart_id=cart_id)
-        self.validate_menu_item_exists(menu_item_id=menu_item_id)
+        menu_item_dto = self.validate_menu_item_exists(menu_item_id=menu_item_id)
         self._validate_quantity(quantity=quantity)
-
-        menu_item_dto = self.restaurant_storage.get_menu_item(menu_item_id=menu_item_id)
 
         return self.cart_storage.create_or_update_cart_item(
             cart_id=cart_id,

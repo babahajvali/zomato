@@ -29,7 +29,7 @@ class ImportRestaurantTimings:
             )
         )
 
-        return f" {len(created_timings)} restaurant timings were created"
+        return f"{len(created_timings)} restaurant timings were created"
 
     @staticmethod
     def _validate_duplicate_combinations(combinations: List[tuple]):

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
     InvalidOrderStatusTransition,
@@ -5,6 +7,7 @@ from orders.exception.custom_exceptions import (
     OrderNotOwnedByUser,
     UserNotRestaurantOwner,
 )
+from orders.interactors.dtos import OrderDTO
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
 )
@@ -24,12 +27,17 @@ class OrderMixin:
         self.order_storage = order_storage
         super().__init__(**kwargs)
 
-    def validate_order_exists(self, order_id: str):
+    def validate_order_exists(self, order_id: str, user_id: Optional[str]) -> OrderDTO:
 
         order_dto = self.order_storage.get_order(order_id=order_id)
 
         if order_dto is None:
             raise OrderNotFound(order_id=order_id)
+
+        if order_dto.customer_id != user_id and user_id is not None:
+            raise OrderNotOwnedByUser(order_id=order_id, user_id=user_id)
+
+        return order_dto
 
     @staticmethod
     def validate_order_status_transition(
@@ -48,12 +56,6 @@ class OrderMixin:
                 new_status=new_status.value,
                 allowed=[status.value for status in allowed],
             )
-
-    def validate_order_belongs_to_user(self, order_id: str, user_id: str):
-        order_dto = self.order_storage.get_order(order_id=order_id)
-
-        if order_dto.customer_id != user_id:
-            raise OrderNotOwnedByUser(order_id=order_id, user_id=user_id)
 
     @staticmethod
     def validate_user_is_restaurant_owner(user_id: str, owner_id: str):

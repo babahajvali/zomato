@@ -47,7 +47,7 @@ class TestOrderInteractor:
             customer_id="customer-1",
             status=OrderStatus.CANCELLED,
         )
-        self.order_storage.get_order.side_effect = [order_dto, order_dto, order_dto]
+        self.order_storage.get_order.side_effect = [order_dto, order_dto]
         self.order_storage.get_order_placed_at.return_value = timezone.now()
         self.order_storage.update_order_status.return_value = cancelled_order_dto
 
@@ -99,7 +99,7 @@ class TestOrderInteractor:
             status=OrderStatus.PLACED,
             placed_at=timezone.now() - timedelta(minutes=6),
         )
-        self.order_storage.get_order.side_effect = [order_dto, order_dto, order_dto]
+        self.order_storage.get_order.side_effect = [order_dto, order_dto]
         self.order_storage.get_order_placed_at.return_value = (
             timezone.now() - timedelta(minutes=6)
         )
@@ -123,7 +123,7 @@ class TestOrderInteractor:
         )
 
         self.order_storage.get_order_placed_at.return_value = timezone.now()
-        self.order_storage.get_order.side_effect = [order_dto, order_dto, order_dto]
+        self.order_storage.get_order.side_effect = [order_dto, order_dto]
 
         with pytest.raises(OrderAlreadyCancelled):
             self.interactor.cancel_order(
@@ -143,7 +143,7 @@ class TestOrderInteractor:
         )
 
         self.order_storage.get_order_placed_at.return_value = timezone.now()
-        self.order_storage.get_order.side_effect = [order_dto, order_dto, order_dto]
+        self.order_storage.get_order.side_effect = [order_dto, order_dto]
 
         with pytest.raises(OrderCancellationNotAllowed):
             self.interactor.cancel_order(
@@ -171,7 +171,7 @@ class TestOrderInteractor:
             status=OrderStatus.CANCELLED,
         )
 
-        self.order_storage.get_order.side_effect = [order_dto, order_dto, order_dto]
+        self.order_storage.get_order.side_effect = [order_dto, order_dto]
         self.order_storage.get_order_placed_at.return_value = placed_at
         self.order_storage.update_order_status.return_value = cancelled_order_dto
 
@@ -198,7 +198,7 @@ class TestOrderInteractor:
             placed_at=placed_at,
         )
 
-        self.order_storage.get_order.side_effect = [order_dto, order_dto, order_dto]
+        self.order_storage.get_order.side_effect = [order_dto, order_dto]
         self.order_storage.get_order_placed_at.return_value = placed_at
 
         with pytest.raises(OrderCancellationWindowExpired):

@@ -30,7 +30,7 @@ class ImportAddresses:
                 full_address=row["full_address"],
                 city=row["city"],
                 pincode=row["pin_code"],
-                is_default=False,
+                is_default=row.get("is_default", "").strip().lower() == "true",
             )
             for row in rows
         ]

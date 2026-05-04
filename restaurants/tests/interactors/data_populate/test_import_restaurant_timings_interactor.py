@@ -56,7 +56,7 @@ class TestImportRestaurantTimings:
             file_path="restaurant_timings.csv"
         )
 
-        assert result == " 1 restaurant timings were created"
+        assert result == "1 restaurant timings were created"
         mock_validate_row.assert_called_once_with(
             rows[0],
             ["restaurant", "day_of_week", "open_time", "close_time"],

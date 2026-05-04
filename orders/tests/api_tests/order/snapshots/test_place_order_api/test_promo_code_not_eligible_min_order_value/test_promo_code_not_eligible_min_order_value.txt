@@ -3,7 +3,7 @@
     "placeOrder": {
       "__typename": "PromoCodeNotEligible",
       "minOrderValue": 200.0,
-      "itemsTotal": "50.0"
+      "itemsTotal": "50.00"
     }
   }
 }

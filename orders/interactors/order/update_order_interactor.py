@@ -30,9 +30,9 @@ class UpdateOrderInteractor(OrderMixin):
                 return self._revalidate_and_update(order_id=order_id, status=status)
 
     def _get_validated_order(self, order_id: str) -> OrderDTO:
-        self.validate_order_exists(order_id=order_id)
+        order_dto = self.validate_order_exists(order_id=order_id, user_id=None)
 
-        return self.order_storage.get_order(order_id=order_id)
+        return order_dto
 
     def _validate_ownership(self, restaurant_id: str, user_id: str):
         owner_id = self.restaurant_adapter.get_restaurant_owner_id(

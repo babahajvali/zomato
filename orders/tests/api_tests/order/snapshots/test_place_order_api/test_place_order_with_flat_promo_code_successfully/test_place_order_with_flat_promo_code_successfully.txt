@@ -7,8 +7,8 @@
       "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7df",
       "promoCodeId": 1,
       "status": "PLACED",
-      "itemsTotal": "400.0",
-      "deliveryFee": "30.0",
+      "itemsTotal": "400.00",
+      "deliveryFee": "30.00",
       "taxFee": "17.50",
       "finalAmount": "397.50",
       "addressId": 1,
@@ -17,8 +17,8 @@
         {
           "itemId": "49bb508e-c6d1-4882-95fd-1991d103f7de",
           "quantity": 2,
-          "itemPrice": "200.0",
-          "subtotal": "400.0"
+          "itemPrice": "200.00",
+          "subtotal": "400.00"
         }
       ]
     }

@@ -17,6 +17,7 @@ from restaurants.interactors.dtos import (
     UpdateMenuItemDTO,
     CartDTO,
     CartItemDTO,
+    DeliveryZoneDTO,
     CreateReviewDTO,
     ReviewDTO,
     RestaurantReviewSummaryDTO,
@@ -166,6 +167,17 @@ class CartItemDTOFactory(factory.Factory):
     menu_item_id = factory.Sequence(lambda n: f"item-{n}")
     quantity = 2
     item_price = 350.0
+
+
+class DeliveryZoneDTOFactory(factory.Factory):
+    class Meta:
+        model = DeliveryZoneDTO
+
+    delivery_zone_id = factory.Sequence(lambda n: n + 1)
+    restaurant_id = factory.Sequence(lambda n: f"restaurant-{n}")
+    pin_code = factory.Sequence(lambda n: f"500{n:03d}")
+    delivery_fee = 30.0
+    estimated_delivery_mins = 30
 
 
 class CreateReviewDTOFactory(factory.Factory):

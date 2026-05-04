@@ -26,13 +26,15 @@ class TimingMixin:
         self.restaurant_timing_storage = restaurant_timing_storage
         super().__init__(**kwargs)
 
-    def validate_restaurant_timing_exists(self, timing_id: int):
+    def validate_restaurant_timing_exists(self, timing_id: int) -> RestaurantTimingDTO:
         timing_data = self.restaurant_timing_storage.get_restaurant_timing(
             timing_id=timing_id
         )
 
         if timing_data is None:
             raise RestaurantTimingNotFound(id=timing_id)
+
+        return timing_data
 
     def validate_user_is_restaurant_owner_through_timing_id(
         self, timing_id: int, user_id: str
@@ -53,39 +55,37 @@ class TimingMixin:
 
     def validate_restaurant_timings(
         self,
-        timing_id: Optional[int],
         open_time: Optional[datetime.time],
         close_time: Optional[datetime.time],
+        actual_open_time: datetime.time,
+        actual_close_time: datetime.time,
     ):
         if open_time is not None and close_time is not None:
             self.validate_restaurant_timing_within_range(
                 open_time=open_time, close_time=close_time
             )
         elif open_time is not None:
-            self.validate_open_time(timing_id=timing_id, open_time=open_time)
+            self.validate_open_time(
+                actual_close_time=actual_close_time, open_time=open_time
+            )
         elif close_time is not None:
-            self.validate_close_time(timing_id=timing_id, close_time=close_time)
-
-    def validate_open_time(self, timing_id: int, open_time: datetime.time):
-        timing_data = self.restaurant_timing_storage.get_restaurant_timing(
-            timing_id=timing_id
-        )
-
-        if open_time >= timing_data.close_time:
-            raise InvalidTimingRange(
-                open_time=open_time, close_time=timing_data.close_time
+            self.validate_close_time(
+                actual_open_time=actual_open_time, close_time=close_time
             )
 
-    def validate_close_time(self, timing_id: int, close_time: datetime.time):
+    def validate_open_time(
+        self, actual_close_time: datetime.time, open_time: datetime.time
+    ):
 
-        timing_data = self.restaurant_timing_storage.get_restaurant_timing(
-            timing_id=timing_id
-        )
+        if open_time >= actual_close_time:
+            raise InvalidTimingRange(open_time=open_time, close_time=actual_close_time)
 
-        if close_time <= timing_data.open_time:
-            raise InvalidTimingRange(
-                open_time=timing_data.open_time, close_time=close_time
-            )
+    def validate_close_time(
+        self, actual_open_time: datetime.time, close_time: datetime.time
+    ):
+
+        if close_time <= actual_open_time:
+            raise InvalidTimingRange(open_time=actual_open_time, close_time=close_time)
 
     def compute_is_open_bulk(
         self,

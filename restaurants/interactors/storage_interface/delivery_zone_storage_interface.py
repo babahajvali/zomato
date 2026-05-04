@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from restaurants.interactors.dtos import CreateDeliveryZoneDTO, DeliveryZoneDTO
 
@@ -12,13 +12,15 @@ class DeliveryZoneStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def get_delivery_zone_by_id(self, delivery_zone_id: int) -> DeliveryZoneDTO:
+    def get_delivery_zone_by_id(
+        self, delivery_zone_id: int
+    ) -> Optional[DeliveryZoneDTO]:
         pass
 
     @abstractmethod
     def get_restaurant_delivery_zones(
         self, restaurant_id: str, pin_code: str
-    ) -> DeliveryZoneDTO:
+    ) -> Optional[DeliveryZoneDTO]:
         pass
 
     @abstractmethod

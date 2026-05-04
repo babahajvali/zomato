@@ -4,7 +4,6 @@ from accounts.interactors.storage_interface.user_storage_interface import (
 )
 from accounts.interactors.dtos import CreateUserDTO
 from accounts.models.user import User
-from utils.uuid_util import generate_uuid
 
 
 class UserStorage(UserStorageInterface):

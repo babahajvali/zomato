@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import List
 
 from restaurants.interactors.dtos import CartDTO, CartItemDTO
@@ -22,7 +23,7 @@ class CartStorage(CartStorageInterface):
             cart_id=str(cart_item_obj.cart_id),
             menu_item_id=str(cart_item_obj.menu_item_id),
             quantity=cart_item_obj.quantity,
-            item_price=float(cart_item_obj.item_price),
+            item_price=Decimal(cart_item_obj.item_price),
         )
 
     def create_carts(self, customer_ids: list[str]) -> List[CartDTO]:

@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import List
 
 from django.db.models import Avg, Count, Q
@@ -42,7 +43,7 @@ class RestaurantStorage(RestaurantStorageInterface):
             item_id=str(item.id),
             name=item.name,
             description=item.description,
-            price=float(item.price),
+            price=Decimal(item.price),
             category=Category(item.category),
             is_veg=item.is_veg,
             is_available=item.is_available,

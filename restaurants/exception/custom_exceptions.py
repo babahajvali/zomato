@@ -160,3 +160,8 @@ class InvalidDateRange(Exception):
 
     def __str__(self):
         return f"{self.date_from} --> {self.date_to}"
+
+
+class NothingToUpdate(Exception):
+    def __str__(self):
+        return "Nothing to update"

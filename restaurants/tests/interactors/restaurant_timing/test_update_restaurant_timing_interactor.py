@@ -14,6 +14,7 @@ from restaurants.exception.custom_exceptions import (
     InvalidTimingRange,
     RestaurantTimingNotFound,
     UserNotRestaurantOwner,
+    NothingToUpdate,
 )
 
 
@@ -223,4 +224,27 @@ class TestUpdateRestaurantTimingInteractor:
         )
         self.restaurant_timing_storage.update_restaurant_timing.assert_called_once_with(
             update_restaurant_timing_dto=update_dto
+        )
+
+    def test_update_restaurant_nothing_update(self, snapshot):
+        update_dto = UpdateRestaurantTimingDTO(
+            timing_id=1,
+            user_id="user-123",
+            open_time=None,
+            close_time=None,
+        )
+        expected = self._get_timing_dto(
+            open_time_value=time(9, 0),
+            close_time_value=time(20, 0),
+        )
+        self._setup_dependencies(storage_result=expected)
+
+        with pytest.raises(NothingToUpdate) as exc:
+            self.interactor.update_restaurant_timing(
+                update_restaurant_timing_dto=update_dto
+            )
+
+        snapshot.assert_match(
+            repr(exc),
+            "update_restaurant_timing_nothing_to_update.txt",
         )

@@ -70,7 +70,7 @@ class CreateMenuItemDTO:
     name: str
     description: str
     category: Category
-    price: float
+    price: Decimal
     is_veg: bool
     is_available: bool
     preparation_time_in_minutes: int
@@ -83,7 +83,7 @@ class MenuItemDTO:
     restaurant_id: str
     name: str
     description: str
-    price: float
+    price: Decimal
     is_veg: bool
     is_available: bool
     preparation_time_in_minutes: int
@@ -122,7 +122,7 @@ class MenuItemWithTagsDTO:
     item_id: str
     name: str
     description: str
-    price: float
+    price: Decimal
     category: Category
     is_veg: bool
     is_available: bool
@@ -154,14 +154,14 @@ class CartItemDTO:
     cart_id: str
     menu_item_id: str
     quantity: int
-    item_price: float
+    item_price: Decimal
 
 
 @dataclass
 class CreateDeliveryZoneDTO:
     restaurant_id: str
     pin_code: str
-    delivery_fee: float
+    delivery_fee: Decimal
     estimated_delivery_mins: int
 
 
@@ -170,7 +170,7 @@ class DeliveryZoneDTO:
     delivery_zone_id: int
     restaurant_id: str
     pin_code: str
-    delivery_fee: float
+    delivery_fee: Decimal
     estimated_delivery_mins: int
 
 

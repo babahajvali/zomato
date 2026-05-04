@@ -59,3 +59,5 @@ class RestaurantMixin:
 
         if not menu_item_dto:
             raise MenuItemNotFound(menu_item_id=menu_item_id)
+
+        return menu_item_dto

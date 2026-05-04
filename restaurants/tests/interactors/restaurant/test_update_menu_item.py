@@ -5,6 +5,7 @@ import pytest
 from restaurants.exception.custom_exceptions import (
     UserNotRestaurantOwner,
     MenuItemNotFound,
+    NothingToUpdate,
 )
 from restaurants.interactors.restaurant.menu_item_interactor import MenuItemInteractor
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
@@ -13,7 +14,6 @@ from restaurants.interactors.storage_interface.restaurant_storage_interface impo
 from restaurants.tests.factories.interactor_factories import (
     CreateMenuItemDTOFactory,
     MenuItemDTOFactory,
-    UpdateMenuItemDTOFactory,
 )
 
 
@@ -77,16 +77,15 @@ class TestUpdateMenuItemInteractor:
         self.restaurant_storage.update_menu_item.assert_not_called()
 
     def test_update_menu_item_with_partial_fields(self):
-        # Test partial update (some fields None)
         from restaurants.interactors.dtos import UpdateMenuItemDTO
-        
+
         update_dto = UpdateMenuItemDTO(
             menu_item_id="menu-1",
-            name="Updated Item Name",  # Only update name
-            is_available=None,  # Don't update availability
-            preparation_time_in_minutes=None,  # Don't update time
-            price=None,  # Don't update price
-            tags=None,  # Don't update tags
+            name="Updated Item Name",
+            is_available=None,
+            preparation_time_in_minutes=None,
+            price=None,
+            tags=None,
         )
 
         existing_item = MenuItemDTOFactory(restaurant_id="restaurant-1")
@@ -110,9 +109,8 @@ class TestUpdateMenuItemInteractor:
         )
 
     def test_update_menu_item_with_all_none_fields(self):
-        # Test silent no-op case when all fields are None
         from restaurants.interactors.dtos import UpdateMenuItemDTO
-        
+
         update_dto = UpdateMenuItemDTO(
             menu_item_id="menu-1",
             name=None,
@@ -126,22 +124,17 @@ class TestUpdateMenuItemInteractor:
             restaurant_id="restaurant-1",
             name="Original Name",
         )
-        # Item should remain unchanged
         unchanged_item = MenuItemDTOFactory(
             restaurant_id="restaurant-1",
             name="Original Name",
         )
 
         self.restaurant_storage.get_menu_item.return_value = existing_item
-        self.restaurant_storage.update_menu_item.return_value = unchanged_item
         self.restaurant_storage.get_restaurant_owner_id.return_value = "user-123"
 
-        result = self.interactor.update_menu_item(
-            update_menu_item_dto=update_dto, user_id="user-123"
-        )
+        with pytest.raises(NothingToUpdate):
+            self.interactor.update_menu_item(
+                update_menu_item_dto=update_dto, user_id="user-123"
+            )
 
-        assert result == unchanged_item
-        assert result.name == "Original Name"  # Should remain unchanged
-        self.restaurant_storage.update_menu_item.assert_called_once_with(
-            update_menu_item_dto=update_dto
-        )
+        self.restaurant_storage.update_menu_item.assert_not_called()

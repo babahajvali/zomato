@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import List, Tuple
 
 from django.db.models import Q
@@ -16,7 +17,7 @@ class DeliveryZoneStorage(DeliveryZoneStorageInterface):
             delivery_zone_id=zone_obj.pk,
             restaurant_id=zone_obj.restaurant_id,
             pin_code=zone_obj.pin_code,
-            delivery_fee=float(zone_obj.delivery_fee),
+            delivery_fee=Decimal(zone_obj.delivery_fee),
             estimated_delivery_mins=zone_obj.estimated_delivery_mins,
         )
 

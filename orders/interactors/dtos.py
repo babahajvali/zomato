@@ -11,8 +11,8 @@ class CreatePromoCodeDTO:
     id: int
     code: str
     discount_type: str
-    discount_value: float
-    min_order_value: float
+    discount_value: Decimal
+    min_order_value: Decimal
     max_usage: int
     valid_from: datetime
     valid_until: datetime
@@ -71,7 +71,7 @@ class CreateOrderItemDTO:
     order_id: str
     item_id: str
     quantity: int
-    item_price: float
+    item_price: Decimal
 
 
 @dataclass

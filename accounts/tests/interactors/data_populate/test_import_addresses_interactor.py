@@ -23,6 +23,7 @@ ALICE_ROW = {
     "full_address": "12 MG Road",
     "city": "Bangalore",
     "pin_code": "560001",
+    "is_default": "False",
 }
 
 ALICE_ROW_2 = {

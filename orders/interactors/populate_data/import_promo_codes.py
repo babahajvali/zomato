@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import List, Any, Dict
 
 from django.utils.dateparse import parse_datetime
@@ -32,11 +33,11 @@ class ImportPromoCodes:
                 id=int(row["id"]),
                 code=row["code"],
                 discount_type=row["discount_type"],
-                discount_value=float(row["discount_value"]),
-                min_order_value=float(row["min_order_value"]),
+                discount_value=Decimal(row["discount_value"]),
+                min_order_value=Decimal(row["min_order_value"]),
                 max_usage=int(row["max_usage"]),
-                valid_from=row.get("valid_from"),
-                valid_until=row.get("valid_until"),
+                valid_from=parse_datetime(row["valid_from"]),
+                valid_until=parse_datetime(row["valid_until"]),
             )
             for row in rows
         ]

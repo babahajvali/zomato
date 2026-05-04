@@ -5,9 +5,8 @@ from django.db.models import Q
 from accounts.interactors.storage_interface.address_storage_interface import (
     AddressStorageInterface,
 )
-from accounts.exception.custom_exceptions import UserNotFound
 from accounts.interactors.dtos import CreateAddressDTO, AddressDTO
-from accounts.models import Address, User
+from accounts.models import Address
 
 
 class AddressStorage(AddressStorageInterface):
@@ -16,7 +15,7 @@ class AddressStorage(AddressStorageInterface):
         return AddressDTO(
             address_id=address_obj.pk,
             label=address_obj.label,
-            user_id=address_obj.user.id,
+            user_id=address_obj.user_id,
             full_address=address_obj.full_address,
             city=address_obj.city,
             pincode=address_obj.pin_code,
@@ -25,15 +24,10 @@ class AddressStorage(AddressStorageInterface):
 
     def create_bulk_addresses(self, address_dtos: List[CreateAddressDTO]):
         addresses = []
-        user_ids = [dto.user_id for dto in address_dtos]
-        users = User.objects.filter(id__in=user_ids)
-        user_map = {str(user.id): user for user in users}
 
         for dto in address_dtos:
-            if dto.user_id not in user_map:
-                raise UserNotFound(user_id=dto.user_id)
             address = Address(
-                user=user_map[dto.user_id],
+                user_id=dto.user_id,
                 label=dto.label,
                 full_address=dto.full_address,
                 city=dto.city,

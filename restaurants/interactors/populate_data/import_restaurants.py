@@ -73,7 +73,7 @@ class ImportRestaurants:
                 address=row["address"],
                 pin_code=row["pin_code"],
                 is_veg_only=row["is_veg_only"].strip().lower() == "true",
-                is_deleted=row["is_deleted"],
+                is_deleted=row["is_deleted"].strip().lower() == "true",
             )
             for row in rows
         ]

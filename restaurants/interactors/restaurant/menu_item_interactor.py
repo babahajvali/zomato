@@ -1,5 +1,6 @@
 from typing import List
 
+from restaurants.exception.custom_exceptions import NothingToUpdate
 from restaurants.interactors.dtos import (
     CreateMenuItemDTO,
     MenuItemDTO,
@@ -40,13 +41,15 @@ class MenuItemInteractor(RestaurantMixin):
         self, update_menu_item_dto: UpdateMenuItemDTO, user_id: str
     ) -> MenuItemDTO:
 
-        self.validate_menu_item_exists(menu_item_id=update_menu_item_dto.menu_item_id)
-        menu_item_dto = self.restaurant_storage.get_menu_item(
+        menu_item_dto = self.validate_menu_item_exists(
             menu_item_id=update_menu_item_dto.menu_item_id
         )
 
         self.validate_user_is_restaurant_owner(
             user_id=user_id, restaurant_id=menu_item_dto.restaurant_id
+        )
+        self._validate_menu_item_update_properties(
+            update_menu_item_dto=update_menu_item_dto
         )
 
         return self.restaurant_storage.update_menu_item(
@@ -55,8 +58,7 @@ class MenuItemInteractor(RestaurantMixin):
 
     def delete_menu_item(self, menu_item_id: str, user_id: str):
 
-        self.validate_menu_item_exists(menu_item_id=menu_item_id)
-        menu_item_dto = self.restaurant_storage.get_menu_item(menu_item_id=menu_item_id)
+        menu_item_dto = self.validate_menu_item_exists(menu_item_id=menu_item_id)
 
         self.validate_user_is_restaurant_owner(
             user_id=user_id, restaurant_id=menu_item_dto.restaurant_id
@@ -69,3 +71,19 @@ class MenuItemInteractor(RestaurantMixin):
         return self.restaurant_storage.get_unavailable_menu_items(
             menu_item_ids=menu_item_ids
         )
+
+    @staticmethod
+    def _validate_menu_item_update_properties(update_menu_item_dto: UpdateMenuItemDTO):
+
+        is_empty_updates = all(
+            [
+                update_menu_item_dto.name is None,
+                update_menu_item_dto.price is None,
+                update_menu_item_dto.tags is None,
+                update_menu_item_dto.is_available is None,
+                update_menu_item_dto.preparation_time_in_minutes is None,
+            ]
+        )
+
+        if is_empty_updates:
+            raise NothingToUpdate()

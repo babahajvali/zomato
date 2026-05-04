@@ -1,6 +1,5 @@
-from datetime import timedelta, date
+from datetime import datetime, timedelta, date
 from typing import List, Optional
-from datetime import datetime
 from django.db import transaction
 from django.utils import timezone
 
@@ -32,11 +31,7 @@ class OrderInteractor(OrderMixin):
 
     def cancel_order(self, order_id: str, user_id: str) -> OrderDTO:
 
-        self.validate_order_exists(order_id=order_id)
-        self.validate_order_belongs_to_user(
-            order_id=order_id,
-            user_id=user_id,
-        )
+        self.validate_order_exists(order_id=order_id, user_id=user_id)
 
         with redis_lock(
             lock_key=f"order_status_{order_id}",
@@ -65,8 +60,7 @@ class OrderInteractor(OrderMixin):
         )
 
     def get_order(self, order_id: str) -> OrderSummaryDTO:
-        self.validate_order_exists(order_id=order_id)
-        order_dto = self.order_storage.get_order(order_id=order_id)
+        order_dto = self.validate_order_exists(order_id=order_id, user_id=None)
 
         order_items = self.order_storage.get_order_items(order_id=order_id)
 
