@@ -16,7 +16,7 @@ class Cart(models.Model):
         return self.customer_id
 
     class Meta:
-        unique_together = ("id", "customer_id")
+        indexes = [models.Index(fields=["customer_id"])]
 
 
 class CartItem(models.Model):

@@ -33,6 +33,7 @@ class Order(models.Model):
         indexes = [
             models.Index(fields=["restaurant_id"]),
             models.Index(fields=["status"]),
+            models.Index(fields=["customer_id"]),
         ]
 
 
@@ -40,7 +41,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     item_id = models.CharField(max_length=255)
     quantity = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(10)]
+        validators=[MinValueValidator(1), MaxValueValidator(10)]
     )
     item_price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
