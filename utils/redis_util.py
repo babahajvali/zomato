@@ -1,5 +1,3 @@
-# utils/redis_util.py
-
 import uuid
 from contextlib import contextmanager
 
