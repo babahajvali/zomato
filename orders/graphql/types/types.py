@@ -12,7 +12,7 @@ class OrderType(graphene.ObjectType):
     tax_fee = graphene.Decimal(required=True)
     final_amount = graphene.Decimal(required=True)
     address_id = graphene.Int(required=True)
-    placed_at = graphene.String(required=True)
+    placed_at = graphene.DateTime(required=True)
 
 
 class ScheduledOrderType(graphene.ObjectType):
@@ -26,8 +26,8 @@ class ScheduledOrderType(graphene.ObjectType):
     tax_fee = graphene.Decimal(required=True)
     final_amount = graphene.Decimal(required=True)
     address_id = graphene.Int(required=True)
-    placed_at = graphene.String(required=True)
-    scheduled_for = graphene.DateTime(required=True)
+    placed_at = graphene.DateTime(required=True)
+    scheduled_for = graphene.DateTime()
 
 
 class OrderItemType(graphene.ObjectType):
@@ -48,7 +48,7 @@ class OrderSummaryType(graphene.ObjectType):
     tax_fee = graphene.Decimal(required=True)
     final_amount = graphene.Decimal(required=True)
     address_id = graphene.Int(required=True)
-    placed_at = graphene.String(required=True)
+    placed_at = graphene.DateTime(required=True)
     items = graphene.List(OrderItemType)
 
 
@@ -63,7 +63,7 @@ class ScheduledOrderSummaryType(graphene.ObjectType):
     tax_fee = graphene.Decimal(required=True)
     final_amount = graphene.Decimal(required=True)
     address_id = graphene.Int(required=True)
-    placed_at = graphene.String(required=True)
+    placed_at = graphene.DateTime(required=True)
     scheduled_for = graphene.DateTime(required=True)
     items = graphene.List(OrderItemType)
 

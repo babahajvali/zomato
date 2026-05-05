@@ -12,7 +12,7 @@
       "taxFee": "20.00",
       "finalAmount": "450.00",
       "addressId": 1,
-      "placedAt": "2026-04-27 05:14:41.004573+00:00",
+      "placedAt": "2026-04-27T05:14:41.004573+00:00",
       "items": [
         {
           "itemId": "item-1",

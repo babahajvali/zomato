@@ -253,6 +253,7 @@ class TestPlaceOrderInteractor:
         self.order_storage.create_order.assert_not_called()
 
     @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    @pytest.mark.django_db
     def test_place_order_raises_menu_items_unavailable(self):
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_unavailable_menu_items.return_value = [

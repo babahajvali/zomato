@@ -125,7 +125,9 @@ class OrderStorage(OrderStorageInterface):
             ).order_by("-created_at")
         )[offset : offset + limit]
 
-        return [self._convert_to_order_dto(order_obj=order_obj) for order_obj in order_objs]
+        return [
+            self._convert_to_order_dto(order_obj=order_obj) for order_obj in order_objs
+        ]
 
     def get_order_placed_at(self, order_id: str) -> datetime:
         order_obj = Order.objects.get(id=order_id)
@@ -171,10 +173,14 @@ class OrderStorage(OrderStorageInterface):
 
         today = date.today()
 
-        orders = Order.objects.filter(
-            restaurant_id=restaurant_id,
-            created_at__date=today,
-        ).order_by("-created_at")[offset : offset + limit]
+        orders = (
+            Order.objects.filter(
+                restaurant_id=restaurant_id,
+                created_at__date=today,
+            )
+            .order_by("-created_at")
+            .exclude(status=OrderStatus.SCHEDULED.value)[offset : offset + limit]
+        )
 
         return [self._convert_to_order_dto(order_obj=order) for order in orders]
 
@@ -312,7 +318,7 @@ class OrderStorage(OrderStorageInterface):
 
         return [
             OrderItemDTO(
-                order_id=obj.order.id,
+                order_id=obj.order_id,
                 item_id=obj.item_id,
                 quantity=obj.quantity,
                 item_price=obj.item_price,

@@ -1,8 +1,7 @@
 {
   "data": {
     "placeScheduledOrder": {
-      "__typename": "RestaurantNotOpenAtScheduledTime",
-      "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7df",
+      "__typename": "ScheduledTimeTooSoon",
       "scheduledFor": "2026-05-05T12:00:00+00:00"
     }
   }
