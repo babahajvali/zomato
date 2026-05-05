@@ -93,6 +93,99 @@ class BasePlaceOrderTestCase(GraphQLBaseTestCase):
     """
 
 
+class BasePlaceScheduledOrderTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    mutation PlaceScheduledOrder($params: PlaceScheduledOrderInputParams!) {
+      placeScheduledOrder(params: $params) {
+        ... on ScheduledOrderSummaryType {
+          __typename
+          orderId
+          customerId
+          restaurantId
+          promoCodeId
+          status
+          itemsTotal
+          deliveryFee
+          taxFee
+          finalAmount
+          addressId
+          placedAt
+          scheduledFor
+          items {
+            itemId
+            quantity
+            itemPrice
+            subtotal
+          }
+        }
+
+        ... on PromoCodeNotFound {
+          __typename
+          promoCodeId
+        }
+
+        ... on PromoCodeUsageLimitReached {
+          __typename
+          maxUsageCount
+        }
+
+        ... on PromoCodeNotEligible {
+          __typename
+          minOrderValue
+          itemsTotal
+        }
+
+        ... on PromoCodeExpired {
+          __typename
+          code
+        }
+
+        ... on PromoCodeNotYetValid {
+          __typename
+          code
+        }
+
+        ... on AddressIdNotFound {
+          __typename
+          addressId
+        }
+
+        ... on DeliveryUnavailableForAddress {
+          __typename
+          restaurantId
+          pinCode
+        }
+
+        ... on ScheduledTimeTooSoon {
+          __typename
+          scheduledFor
+        }
+
+        ... on RestaurantNotOpenAtScheduledTime {
+          __typename
+          restaurantId
+          scheduledFor
+        }
+
+        ... on CartIsEmpty {
+          __typename
+          cartId
+        }
+
+        ... on CustomerCartNotFound {
+          __typename
+          customerId
+        }
+
+        ... on MenuItemsUnavailable {
+          __typename
+          unavailableItemIds
+        }
+      }
+    }
+    """
+
+
 class BaseUpdateOrderStatusTestCase(GraphQLBaseTestCase):
     QUERY = """
     mutation UpdateOrderStatus($params: UpdateOrderStatusInputParams!) {
@@ -164,8 +257,8 @@ class BaseGetOrderTestCase(GraphQLBaseTestCase):
 
 class BaseUserOrdersTestCase(GraphQLBaseTestCase):
     QUERY = """
-    query UserOrders {
-      userOrders {
+    query UserOrders($params: GetUserOrdersInputParams!) {
+      userOrders(params: $params) {
         ... on OrdersType {
           __typename
           orders {
@@ -179,6 +272,31 @@ class BaseUserOrdersTestCase(GraphQLBaseTestCase):
             taxFee
             finalAmount
             addressId
+          }
+        }
+      }
+    }
+    """
+
+
+class BaseUserScheduledOrdersTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    query UserScheduledOrders($params: GetUserScheduledOrdersInputParams!) {
+      userScheduledOrders(params: $params) {
+        ... on ScheduledOrdersType {
+          __typename
+          orders {
+            orderId
+            customerId
+            restaurantId
+            promoCodeId
+            status
+            itemsTotal
+            deliveryFee
+            taxFee
+            finalAmount
+            addressId
+            scheduledFor
           }
         }
       }
@@ -248,6 +366,41 @@ class BaseTodayRestaurantOrdersTestCase(GraphQLBaseTestCase):
     """
 
 
+class BaseTodayRestaurantScheduledOrdersTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    query TodayRestaurantScheduledOrders($params: GetTodayRestaurantScheduledOrdersInputParams!) {
+      todayRestaurantScheduledOrders(params: $params) {
+        ... on ScheduledOrderSummariesType {
+          __typename
+          orderSummaries {
+            orderId
+            customerId
+            restaurantId
+            promoCodeId
+            status
+            itemsTotal
+            deliveryFee
+            taxFee
+            finalAmount
+            addressId
+            scheduledFor
+            items {
+              itemId
+              quantity
+              itemPrice
+              subtotal
+            }
+          }
+        }
+        ... on UserNotRestaurantOwner {
+          __typename
+          userId
+        }
+      }
+    }
+    """
+
+
 class BaseCancelOrderTestCase(GraphQLBaseTestCase):
     QUERY = """
     mutation CancelOrder($params: CancelOrderInputParams!) {
@@ -285,6 +438,49 @@ class BaseCancelOrderTestCase(GraphQLBaseTestCase):
         ... on OrderAlreadyCancelled {
         __typename
         orderId
+        }
+      }
+    }
+    """
+
+
+class BaseCancelScheduledOrderTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    mutation CancelScheduledOrder($params: CancelOrderInputParams!) {
+      cancelScheduledOrder(params: $params) {
+        ... on OrderType {
+          __typename
+          orderId
+          customerId
+          restaurantId
+          promoCodeId
+          status
+          itemsTotal
+          deliveryFee
+          taxFee
+          finalAmount
+          addressId
+        }
+        ... on OrderNotFound {
+          __typename
+          orderId
+        }
+        ... on OrderNotOwnedByUser {
+          __typename
+          orderId
+        }
+        ... on OrderCancellationWindowExpired {
+          __typename
+          orderId
+          minutes
+        }
+        ... on OrderCancellationNotAllowed {
+          __typename
+          orderId
+        }
+        ... on OrderAlreadyCancelled {
+          __typename
+          orderId
         }
       }
     }

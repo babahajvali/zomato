@@ -84,4 +84,7 @@ class CartStorage(CartStorageInterface):
         ]
 
     def get_customer_cart_id(self, customer_id: str) -> str:
-        return Cart.objects.get(customer_id=customer_id).id
+        cart = Cart.objects.filter(customer_id=customer_id).first()
+        if cart is None:
+            return None
+        return cart.id

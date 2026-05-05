@@ -44,11 +44,27 @@ class OrderStorageInterface(ABC):
         pass
 
     @abstractmethod
+    def get_user_scheduled_orders(
+        self, user_id: str, limit: int, offset: int
+    ) -> List[OrderDTO]:
+        pass
+
+    @abstractmethod
     def get_order_placed_at(self, order_id: str) -> datetime:
         pass
 
     @abstractmethod
+    def get_order_updated_at(self, order_id: str) -> datetime:
+        pass
+
+    @abstractmethod
     def get_restaurant_orders(
+        self, restaurant_id: str, limit: int, offset: int
+    ) -> List[OrderDTO]:
+        pass
+
+    @abstractmethod
+    def get_today_restaurant_scheduled_orders(
         self, restaurant_id: str, limit: int, offset: int
     ) -> List[OrderDTO]:
         pass
@@ -88,4 +104,12 @@ class OrderStorageInterface(ABC):
 
     @abstractmethod
     def get_orders_items(self, order_ids: List[str]) -> List[OrderItemDTO]:
+        pass
+
+    @abstractmethod
+    def get_scheduled_orders_due_for_release(self) -> List[OrderDTO]:
+        pass
+
+    @abstractmethod
+    def get_order_item_ids(self, order_id: str) -> List[str]:
         pass

@@ -19,7 +19,7 @@ unlock_script = """
 @contextmanager
 def redis_lock(lock_key: str, timeout: int = 10):
     redis_client = get_redis_connection("default")
-    lock_value   = str(uuid.uuid4())
+    lock_value = str(uuid.uuid4())
 
     acquired = redis_client.set(
         lock_key,

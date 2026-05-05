@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from decimal import Decimal, ROUND_HALF_UP
 from typing import List
 
@@ -37,6 +37,7 @@ class OrderStorage(OrderStorageInterface):
             final_amount=Decimal(order_obj.final_amount),
             address_id=order_obj.address_id,
             placed_at=order_obj.created_at,
+            scheduled_for=order_obj.scheduled_for,
         )
 
     def get_order(self, order_id: str) -> OrderDTO | None:
@@ -82,6 +83,7 @@ class OrderStorage(OrderStorageInterface):
             tax_fee=create_order_dto.tax_fee,
             final_amount=create_order_dto.final_amount,
             address_id=create_order_dto.address_id,
+            scheduled_for=create_order_dto.scheduled_for,
         )
 
         return self._convert_to_order_dto(order_obj=order_obj)
@@ -113,10 +115,27 @@ class OrderStorage(OrderStorageInterface):
 
         return [self._convert_to_order_dto(order_obj=each) for each in user_order_objs]
 
+    def get_user_scheduled_orders(
+        self, user_id: str, limit: int, offset: int
+    ) -> List[OrderDTO]:
+        order_objs = (
+            Order.objects.filter(
+                customer_id=user_id,
+                status=OrderStatus.SCHEDULED.value,
+            ).order_by("-created_at")
+        )[offset : offset + limit]
+
+        return [self._convert_to_order_dto(order_obj=order_obj) for order_obj in order_objs]
+
     def get_order_placed_at(self, order_id: str) -> datetime:
         order_obj = Order.objects.get(id=order_id)
 
         return order_obj.created_at
+
+    def get_order_updated_at(self, order_id: str) -> datetime:
+        order_obj = Order.objects.get(id=order_id)
+
+        return order_obj.updated_at
 
     def get_restaurant_orders(
         self,
@@ -132,6 +151,19 @@ class OrderStorage(OrderStorageInterface):
         )[offset : offset + limit]
 
         return [self._convert_to_order_dto(order_obj=each) for each in order_objs]
+
+    def get_today_restaurant_scheduled_orders(
+        self, restaurant_id: str, limit: int, offset: int
+    ) -> List[OrderDTO]:
+        today = date.today()
+
+        orders = Order.objects.filter(
+            restaurant_id=restaurant_id,
+            created_at__date=today,
+            status=OrderStatus.SCHEDULED.value,
+        ).order_by("-created_at")[offset : offset + limit]
+
+        return [self._convert_to_order_dto(order_obj=order) for order in orders]
 
     def get_today_restaurant_orders(
         self, restaurant_id: str, limit: int, offset: int
@@ -288,3 +320,22 @@ class OrderStorage(OrderStorageInterface):
             )
             for obj in order_item_objs
         ]
+
+    def get_scheduled_orders_due_for_release(self) -> List[OrderDTO]:
+        now = datetime.now()
+        release_window = now + timedelta(minutes=30)
+
+        orders = Order.objects.filter(
+            status=OrderStatus.SCHEDULED.value,
+            scheduled_for__lte=release_window,
+            scheduled_for__gte=now,
+        ).select_for_update()
+
+        return [self._convert_to_order_dto(order_obj=order) for order in orders]
+
+    def get_order_item_ids(self, order_id: str) -> List[str]:
+        return list(
+            OrderItem.objects.filter(order_id=order_id).values_list(
+                "item_id", flat=True
+            )
+        )

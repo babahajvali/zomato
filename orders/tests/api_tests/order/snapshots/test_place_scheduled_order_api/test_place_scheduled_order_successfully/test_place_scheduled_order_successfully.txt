@@ -1,0 +1,27 @@
+{
+  "data": {
+    "placeScheduledOrder": {
+      "__typename": "ScheduledOrderSummaryType",
+      "orderId": "fa8b56e4-6af4-4c44-982f-6dad6b10f7ef",
+      "customerId": "49bb508e-c6d1-4882-95fd-1991d103f7cd",
+      "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7df",
+      "promoCodeId": 1,
+      "status": "SCHEDULED",
+      "itemsTotal": "400.00",
+      "deliveryFee": "30.00",
+      "taxFee": "17.50",
+      "finalAmount": "397.50",
+      "addressId": 1,
+      "placedAt": "2026-05-05 10:00:00+00:00",
+      "scheduledFor": "2026-05-05T12:00:00+00:00",
+      "items": [
+        {
+          "itemId": "49bb508e-c6d1-4882-95fd-1991d103f7de",
+          "quantity": 2,
+          "itemPrice": "200.00",
+          "subtotal": "400.00"
+        }
+      ]
+    }
+  }
+}

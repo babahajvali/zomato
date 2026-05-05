@@ -11,7 +11,9 @@ from orders.interactors.dtos import (
     OrderItemSummaryDTO,
     OrderSummaryDTO,
     PlaceOrderDTO,
+    PlaceScheduledOrderDTO,
     PromoCodeDTO,
+    ScheduledOrderDTO,
 )
 
 
@@ -66,6 +68,7 @@ class CreateOrderDTOFactory(factory.Factory):
     tax_fee = 20.0
     final_amount = 450.0
     address_id = 1
+    scheduled_for = None
 
 
 class OrderDTOFactory(factory.Factory):
@@ -83,6 +86,7 @@ class OrderDTOFactory(factory.Factory):
     final_amount = 450.0
     address_id = 1
     placed_at = factory.LazyFunction(datetime.now)
+    scheduled_for = factory.LazyFunction(datetime.now)
 
 
 class CreateOrderItemDTOFactory(factory.Factory):
@@ -125,6 +129,36 @@ class OrderSummaryDTOFactory(factory.Factory):
     restaurant_id = "00000000-0000-0000-0000-000000000002"
     promo_code_id = None
     status = OrderStatus.PLACED
+    items = factory.List([factory.SubFactory(OrderItemSummaryDTOFactory)])
+    items_total = 400.0
+    delivery_fee = 30.0
+    tax_fee = 20.0
+    final_amount = 450.0
+    placed_at = factory.LazyFunction(datetime.now)
+    address_id = 1
+
+
+class PlaceScheduledOrderDTOFactory(factory.Factory):
+    class Meta:
+        model = PlaceScheduledOrderDTO
+
+    customer_id = "00000000-0000-0000-0000-000000000001"
+    restaurant_id = "00000000-0000-0000-0000-000000000002"
+    address_id = 1
+    scheduled_for = factory.LazyFunction(datetime.now)
+    promo_code_id = None
+
+
+class ScheduledOrderDTOFactory(factory.Factory):
+    class Meta:
+        model = ScheduledOrderDTO
+
+    order_id = "00000000-0000-0000-0000-000000000003"
+    customer_id = "00000000-0000-0000-0000-000000000001"
+    restaurant_id = "00000000-0000-0000-0000-000000000002"
+    promo_code_id = None
+    scheduled_for = factory.LazyFunction(datetime.now)
+    status = OrderStatus.SCHEDULED
     items = factory.List([factory.SubFactory(OrderItemSummaryDTOFactory)])
     items_total = 400.0
     delivery_fee = 30.0

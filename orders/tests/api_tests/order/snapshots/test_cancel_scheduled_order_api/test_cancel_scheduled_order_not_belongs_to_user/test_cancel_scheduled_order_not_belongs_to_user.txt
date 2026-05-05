@@ -1,0 +1,8 @@
+{
+  "data": {
+    "cancelScheduledOrder": {
+      "__typename": "OrderNotOwnedByUser",
+      "orderId": "orders-1"
+    }
+  }
+}

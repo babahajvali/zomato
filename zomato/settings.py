@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "accounts",
     "restaurants",
     "orders",
+    "django_crontab",
 ]
 
 MIDDLEWARE = [
@@ -73,6 +74,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "zomato.wsgi.application"
+
+CRONJOBS = [
+    (
+        "*/1 * * * *",
+        "orders.corn.release_scheduled_orders",
+    )
+]
 
 
 # Database

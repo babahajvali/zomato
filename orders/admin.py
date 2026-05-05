@@ -51,6 +51,7 @@ class OrderAdmin(admin.ModelAdmin):
         "tax_fee",
         "final_amount",
         "created_at",
+        "scheduled_for",
     )
     list_filter = ("status", "created_at", "updated_at")
     search_fields = ("id", "customer_id", "restaurant_id", "address_id")

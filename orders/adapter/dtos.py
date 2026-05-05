@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import time
+from decimal import Decimal
 
 
 @dataclass
@@ -37,4 +38,4 @@ class CartItemDTO:
     cart_id: str
     menu_item_id: str
     quantity: int
-    item_price: float
+    item_price: Decimal

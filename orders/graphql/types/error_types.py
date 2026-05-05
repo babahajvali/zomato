@@ -28,6 +28,15 @@ class RestaurantClosed(graphene.ObjectType):
     restaurant_id = graphene.String(required=True)
 
 
+class ScheduledTimeTooSoon(graphene.ObjectType):
+    scheduled_for = graphene.DateTime(required=True)
+
+
+class RestaurantNotOpenAtScheduledTime(graphene.ObjectType):
+    restaurant_id = graphene.String(required=True)
+    scheduled_for = graphene.DateTime(required=True)
+
+
 class PromoCodeNotFound(graphene.ObjectType):
     promo_code_id = graphene.Int()
 

@@ -50,6 +50,8 @@ class PromoCodeStorage(PromoCodeStorageInterface):
 
     def get_promo_code_by_id(self, promo_code_id: int) -> PromoCodeDTO:
         promo_code_obj = PromoCode.objects.filter(id=promo_code_id).first()
+        if promo_code_obj is None:
+            return None
 
         return self._convert_to_promo_code_dto(promo_code_obj=promo_code_obj)
 

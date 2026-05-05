@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 from datetime import time
+from decimal import Decimal
 from unittest.mock import MagicMock, create_autospec, patch
 
 import pytest
@@ -15,6 +16,7 @@ from orders.exception.custom_exceptions import (
     CustomerCartNotFound,
     DeliveryUnavailableForAddress,
     CartIsEmpty,
+    MenuItemsUnavailable,
     PromoCodeUsageLimitReached,
     PromoCodeNotEligible,
     PromoCodeNotFound,
@@ -61,7 +63,7 @@ class TestPlaceOrderInteractor:
                 cart_id="cart-1",
                 menu_item_id="item-1",
                 quantity=2,
-                item_price=200.0,
+                item_price=Decimal(200.0),
             )
         ]
         self.interactor.restaurant_adapter.get_restaurant_timing.return_value = (
@@ -171,6 +173,7 @@ class TestPlaceOrderInteractor:
         ]
         assert create_order_dto.tax_fee == 20.0
         assert create_order_dto.final_amount == 450.0
+        assert create_order_dto.scheduled_for is None
 
     @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
     def test_place_order_raises_promo_code_not_found(self):
@@ -247,6 +250,19 @@ class TestPlaceOrderInteractor:
             )
 
         assert exc.value.cart_id == "cart-1"
+        self.order_storage.create_order.assert_not_called()
+
+    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    def test_place_order_raises_menu_items_unavailable(self):
+        self._setup_valid_adapters()
+        self.interactor.restaurant_adapter.get_unavailable_menu_items.return_value = [
+            "item-1"
+        ]
+
+        with pytest.raises(MenuItemsUnavailable) as exc:
+            self.interactor.place_order(order_data=PlaceOrderDTOFactory())
+
+        assert exc.value.unavailable_item_ids == ["item-1"]
         self.order_storage.create_order.assert_not_called()
 
     def test_place_order_raises_restaurant_day_timing_not_found(self):

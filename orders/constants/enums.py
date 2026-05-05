@@ -11,6 +11,7 @@ class PromoCodeType(Enum):
 
 
 class OrderStatus(Enum):
+    SCHEDULED = "SCHEDULED"
     PLACED = "PLACED"
     CONFIRMED = "CONFIRMED"
     PREPARING = "PREPARING"

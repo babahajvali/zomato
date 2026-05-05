@@ -56,7 +56,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         return cart
 
     def _create_open_restaurant_timing(self, restaurant):
-        now = timezone.now()
+        now = datetime.now()
 
         RestaurantTimingFactory(
             id=1,
@@ -219,10 +219,17 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
 
     def test_empty_cart_items_found(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
-        UserFactory(id=user_id)
+        user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
         self._create_open_restaurant_timing(restaurant=restaurant)
+        address = AddressFactory(id=1, user=user, pin_code="500001")
+        DeliveryZoneFactory(
+            id=1,
+            restaurant=restaurant,
+            pin_code="500001",
+            delivery_fee=30.0,
+        )
 
         CartFactory(
             id="49bb508e-c6d1-4882-95fd-1991d103f7dd",
@@ -232,7 +239,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         variables = {
             "params": {
                 "restaurantId": restaurant_id,
-                "addressId": 1,
+                "addressId": address.id,
             }
         }
 
@@ -306,7 +313,11 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
             user_id=user_id,
         )
 
-    def test_place_order_restaurant_not_open(self, snapshot):
+    @patch("orders.interactors.order.place_order_interactor.datetime")
+    def test_place_order_restaurant_not_open(self, mock_datetime, snapshot):
+        mock_datetime.now.return_value = datetime.fromisoformat(
+            "2026-05-05T12:00:00+00:00"
+        )
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -335,7 +346,11 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
             user_id=user_id,
         )
 
-    def test_place_order_restaurant_closed(self, snapshot):
+    @patch("orders.interactors.order.place_order_interactor.datetime")
+    def test_place_order_restaurant_closed(self, mock_datetime, snapshot):
+        mock_datetime.now.return_value = datetime.fromisoformat(
+            "2026-05-05T12:00:00+00:00"
+        )
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -350,7 +365,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         RestaurantTimingFactory(
             id=1,
             restaurant=restaurant,
-            day_of_week=datetime.now().isoweekday(),
+            day_of_week=2,
             open_time=time(23, 0),
             close_time=time(23, 30),
         )
@@ -465,6 +480,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
 
         promo_code = PromoCodeFactory(
             id=1,
+            code="EXPIRED_CODE",
             discount_type="FLAT",
             discount_value=50.0,
             min_order_value=100.0,
@@ -505,6 +521,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
 
         promo_code = PromoCodeFactory(
             id=1,
+            code="FUTURE_CODE",
             discount_type="FLAT",
             discount_value=50.0,
             min_order_value=100.0,

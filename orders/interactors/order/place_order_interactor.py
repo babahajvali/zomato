@@ -295,6 +295,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
             delivery_fee=delivery_fee,
             tax_fee=tax_fee,
             final_amount=total_amount,
+            scheduled_for=None,
         )
         return self.order_storage.create_order(create_order_dto=create_order_dto)
 

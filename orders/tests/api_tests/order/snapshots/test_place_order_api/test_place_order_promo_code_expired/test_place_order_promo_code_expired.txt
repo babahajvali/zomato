@@ -2,7 +2,7 @@
   "data": {
     "placeOrder": {
       "__typename": "PromoCodeExpired",
-      "code": "CODE10"
+      "code": "EXPIRED_CODE"
     }
   }
 }

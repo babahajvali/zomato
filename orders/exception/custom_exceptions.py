@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 from typing import List
 
@@ -201,3 +202,20 @@ class MenuItemsUnavailable(Exception):
 
     def __str__(self):
         return f"Unavailable menu items {self.unavailable_item_ids}"
+
+
+class ScheduledTimeTooSoon(Exception):
+    def __init__(self, scheduled_for: datetime):
+        self.scheduled_for = scheduled_for
+
+    def __str__(self):
+        return f"Schedule time {self.scheduled_for}"
+
+
+class RestaurantNotOpenAtScheduledTime(Exception):
+    def __init__(self, restaurant_id: str, scheduled_for: datetime):
+        self.restaurant_id = restaurant_id
+        self.scheduled_for = scheduled_for
+
+    def __str__(self):
+        return f"This restaurant {self.restaurant_id} timing not found at scheduled time {self.scheduled_for}"

@@ -7,21 +7,27 @@ from orders.graphql.resolvers.order_resolvers import (
     get_order_resolver,
     get_restaurant_order_resolver,
     get_user_order_resolver,
+    get_user_scheduled_order_resolver,
 )
 from orders.graphql.resolvers.today_restaurant_orders_resolver import (
     get_today_restaurant_orders_resolver,
+    get_today_restaurant_scheduled_orders_resolver,
 )
 from orders.graphql.types.input_types import (
     GetOrderInputParams,
     GetRestaurantOrdersInputParams,
     GetTodayRestaurantOrdersInputParams,
+    GetTodayRestaurantScheduledOrdersInputParams,
     GetUserOrdersInputParams,
+    GetUserScheduledOrdersInputParams,
 )
 from orders.graphql.types.response_types import (
     GetOrderResponse,
     RestaurantOrdersResponse,
     TodayRestaurantOrdersResponse,
+    TodayRestaurantScheduledOrdersResponse,
     UserOrdersResponse,
+    UserScheduledOrdersResponse,
     GetAvailablePromoCodesResponse,
 )
 
@@ -37,6 +43,11 @@ class OrderQueries(graphene.ObjectType):
         params=GetUserOrdersInputParams(required=True),
         resolver=get_user_order_resolver,
     )
+    user_scheduled_orders = graphene.Field(
+        UserScheduledOrdersResponse,
+        params=GetUserScheduledOrdersInputParams(required=True),
+        resolver=get_user_scheduled_order_resolver,
+    )
     restaurant_orders = graphene.Field(
         RestaurantOrdersResponse,
         params=GetRestaurantOrdersInputParams(required=True),
@@ -47,6 +58,12 @@ class OrderQueries(graphene.ObjectType):
         params=GetTodayRestaurantOrdersInputParams(required=True),
         resolver=get_today_restaurant_orders_resolver,
     )
+    today_restaurant_scheduled_orders = graphene.Field(
+        TodayRestaurantScheduledOrdersResponse,
+        params=GetTodayRestaurantScheduledOrdersInputParams(required=True),
+        resolver=get_today_restaurant_scheduled_orders_resolver,
+    )
     get_available_promo_codes = graphene.Field(
-        GetAvailablePromoCodesResponse, resolver=get_available_promo_code_resolver
+        GetAvailablePromoCodesResponse,
+        resolver=get_available_promo_code_resolver
     )

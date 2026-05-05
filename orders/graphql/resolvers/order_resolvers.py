@@ -4,10 +4,13 @@ from orders.exception import custom_exceptions
 from orders.graphql.types.error_types import OrderNotFound
 from orders.graphql.types.types import (
     OrderType,
+    ScheduledOrderType,
+    ScheduledOrdersType,
     OrdersType,
     OrderSummaryType,
     OrderItemType,
 )
+from orders.interactors.dtos import OrderDTO
 from orders.interactors.order.get_restaurant_order_interactor import (
     GetRestaurantOrderInteractor,
 )
@@ -35,6 +38,32 @@ def map_order_response(order_dto) -> OrderType:
 def map_orders_response(order_dtos) -> OrdersType:
     return OrdersType(
         orders=[map_order_response(order_dto=order_dto) for order_dto in order_dtos]
+    )
+
+
+def map_scheduled_order_response(order_dto: OrderDTO) -> ScheduledOrderType:
+    return ScheduledOrderType(
+        order_id=str(order_dto.order_id),
+        customer_id=str(order_dto.customer_id),
+        restaurant_id=str(order_dto.restaurant_id),
+        promo_code_id=order_dto.promo_code_id,
+        status=order_dto.status.value,
+        items_total=Decimal(order_dto.items_total),
+        delivery_fee=Decimal(order_dto.delivery_fee),
+        tax_fee=Decimal(order_dto.tax_fee),
+        final_amount=Decimal(order_dto.final_amount),
+        address_id=order_dto.address_id,
+        placed_at=order_dto.placed_at,
+        scheduled_for=order_dto.scheduled_for,
+    )
+
+
+def map_scheduled_orders_response(order_dtos) -> ScheduledOrdersType:
+    return ScheduledOrdersType(
+        orders=[
+            map_scheduled_order_response(order_dto=order_dto)
+            for order_dto in order_dtos
+        ]
     )
 
 
@@ -80,6 +109,17 @@ def get_user_order_resolver(root, info, params):
     )
 
     return map_orders_response(order_dtos=order_dtos)
+
+
+def get_user_scheduled_order_resolver(root, info, params):
+    interactor = OrderInteractor(order_storage=OrderStorage())
+    order_dtos = interactor.get_user_scheduled_orders(
+        user_id=info.context.user_id,
+        limit=params.limit,
+        offset=params.offset,
+    )
+
+    return map_scheduled_orders_response(order_dtos=order_dtos)
 
 
 def get_restaurant_order_resolver(root, info, params):

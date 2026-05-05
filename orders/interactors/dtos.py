@@ -49,6 +49,7 @@ class CreateOrderDTO:
     tax_fee: Decimal
     final_amount: Decimal
     address_id: int
+    scheduled_for: Optional[datetime]
 
 
 @dataclass
@@ -64,6 +65,7 @@ class OrderDTO:
     final_amount: Decimal
     address_id: int
     placed_at: datetime
+    scheduled_for: datetime
 
 
 @dataclass
@@ -118,3 +120,29 @@ class OrderItemDTO:
     quantity: int
     item_price: Decimal
     subtotal: Decimal
+
+
+@dataclass
+class PlaceScheduledOrderDTO:
+    customer_id: str
+    restaurant_id: str
+    address_id: int
+    scheduled_for: datetime
+    promo_code_id: Optional[int] = None
+
+
+@dataclass
+class ScheduledOrderDTO:
+    order_id: str
+    customer_id: str
+    restaurant_id: str
+    promo_code_id: Optional[int]
+    scheduled_for: datetime
+    status: OrderStatus
+    items: List[OrderItemSummaryDTO]
+    items_total: Decimal
+    delivery_fee: Decimal
+    tax_fee: Decimal
+    final_amount: Decimal
+    placed_at: datetime
+    address_id: int

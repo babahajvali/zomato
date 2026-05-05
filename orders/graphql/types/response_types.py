@@ -7,6 +7,8 @@ from orders.graphql.types.error_types import (
     AddressIdNotFound,
     RestaurantNotOpen,
     RestaurantClosed,
+    ScheduledTimeTooSoon,
+    RestaurantNotOpenAtScheduledTime,
     PromoCodeNotFound,
     CartIsEmpty,
     InvalidOrderStatusTransition,
@@ -22,10 +24,14 @@ from orders.graphql.types.error_types import (
 )
 from orders.graphql.types.types import (
     OrderType,
+    ScheduledOrderType,
     OrdersType,
+    ScheduledOrdersType,
     OrderSummaryType,
+    ScheduledOrderSummaryType,
     PromoCodesType,
     OrderSummariesType,
+    ScheduledOrderSummariesType,
 )
 from utils.graphql_types import UserNotRestaurantOwner
 
@@ -40,6 +46,25 @@ class PlaceOrderResponse(graphene.Union):
             AddressIdNotFound,
             RestaurantNotOpen,
             RestaurantClosed,
+            PromoCodeNotFound,
+            CartIsEmpty,
+            CustomerCartNotFound,
+            MenuItemsUnavailable,
+            PromoCodeExpired,
+            PromoCodeNotYetValid,
+        )
+
+
+class PlaceScheduledOrderResponse(graphene.Union):
+    class Meta:
+        types = (
+            ScheduledOrderSummaryType,
+            PromoCodeUsageLimitReached,
+            PromoCodeNotEligible,
+            DeliveryUnavailableForAddress,
+            AddressIdNotFound,
+            ScheduledTimeTooSoon,
+            RestaurantNotOpenAtScheduledTime,
             PromoCodeNotFound,
             CartIsEmpty,
             CustomerCartNotFound,
@@ -72,6 +97,11 @@ class UserOrdersResponse(graphene.Union):
         types = (OrdersType,)
 
 
+class UserScheduledOrdersResponse(graphene.Union):
+    class Meta:
+        types = (ScheduledOrdersType,)
+
+
 class RestaurantOrdersResponse(graphene.Union):
     class Meta:
         types = (
@@ -88,7 +118,27 @@ class TodayRestaurantOrdersResponse(graphene.Union):
         )
 
 
+class TodayRestaurantScheduledOrdersResponse(graphene.Union):
+    class Meta:
+        types = (
+            ScheduledOrderSummariesType,
+            UserNotRestaurantOwner,
+        )
+
+
 class CancelOrderResponse(graphene.Union):
+    class Meta:
+        types = (
+            OrderType,
+            OrderNotFound,
+            OrderNotOwnedByUser,
+            OrderCancellationWindowExpired,
+            OrderCancellationNotAllowed,
+            OrderAlreadyCancelled,
+        )
+
+
+class CancelScheduledOrderResponse(graphene.Union):
     class Meta:
         types = (
             OrderType,

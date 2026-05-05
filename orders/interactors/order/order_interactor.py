@@ -98,6 +98,16 @@ class OrderInteractor(OrderMixin):
             restaurant_id=restaurant_id, date_from=date_from, date_to=date_to
         )
 
+    def get_user_scheduled_orders(
+        self, user_id: str, limit: int, offset: int
+    ) -> List[OrderDTO]:
+
+        return self.order_storage.get_user_scheduled_orders(
+            user_id=user_id,
+            limit=limit,
+            offset=offset,
+        )
+
     def _validate_cancel_order_time(self, order_id: str, placed_at: Optional[datetime]):
         if placed_at is None:
             placed_at = self.order_storage.get_order_placed_at(order_id=order_id)

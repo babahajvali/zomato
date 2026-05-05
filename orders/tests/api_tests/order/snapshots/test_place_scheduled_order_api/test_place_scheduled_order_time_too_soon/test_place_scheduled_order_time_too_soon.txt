@@ -1,0 +1,8 @@
+{
+  "data": {
+    "placeScheduledOrder": {
+      "__typename": "ScheduledTimeTooSoon",
+      "scheduledFor": "2026-05-05T10:10:00+00:00"
+    }
+  }
+}

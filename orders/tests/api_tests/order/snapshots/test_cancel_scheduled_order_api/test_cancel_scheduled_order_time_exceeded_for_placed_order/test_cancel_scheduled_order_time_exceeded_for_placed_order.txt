@@ -1,0 +1,9 @@
+{
+  "data": {
+    "cancelScheduledOrder": {
+      "__typename": "OrderCancellationWindowExpired",
+      "orderId": "orders-1",
+      "minutes": 2
+    }
+  }
+}

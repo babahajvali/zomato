@@ -2,7 +2,7 @@
   "data": {
     "placeOrder": {
       "__typename": "PromoCodeNotYetValid",
-      "code": "CODE11"
+      "code": "FUTURE_CODE"
     }
   }
 }
