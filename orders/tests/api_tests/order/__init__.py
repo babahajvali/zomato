@@ -283,9 +283,9 @@ class BaseUserScheduledOrdersTestCase(GraphQLBaseTestCase):
     QUERY = """
     query UserScheduledOrders($params: GetUserScheduledOrdersInputParams!) {
       userScheduledOrders(params: $params) {
-        ... on ScheduledOrdersType {
+        ... on ScheduledOrderSummariesType {
           __typename
-          orders {
+          orderSummaries {
             orderId
             customerId
             restaurantId
@@ -297,6 +297,12 @@ class BaseUserScheduledOrdersTestCase(GraphQLBaseTestCase):
             finalAmount
             addressId
             scheduledFor
+            items {
+              itemId
+              quantity
+              itemPrice
+              subtotal
+            }
           }
         }
       }

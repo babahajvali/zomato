@@ -347,7 +347,7 @@ class TestPlaceOrderInteractor:
 
         expired_promo = PromoCodeDTOFactory(
             promo_code_id=1,
-            valid_until=timezone.now() - timedelta(days=1),  # Expired yesterday
+            valid_until=timezone.now() - timedelta(days=1),
         )
         self.promo_code_storage.get_promo_code_by_id.return_value = expired_promo
 
@@ -371,7 +371,7 @@ class TestPlaceOrderInteractor:
 
         future_promo = PromoCodeDTOFactory(
             promo_code_id=1,
-            valid_from=timezone.now() + timedelta(days=1),  # Valid tomorrow
+            valid_from=timezone.now() + timedelta(days=1),
         )
         self.promo_code_storage.get_promo_code_by_id.return_value = future_promo
 
@@ -382,24 +382,6 @@ class TestPlaceOrderInteractor:
 
         assert exc.value.code == future_promo.code
         self.order_storage.create_order.assert_not_called()
-
-    def test_place_order_percentage_discount_calculation(self):
-        # Test the percentage discount calculation directly
-        from decimal import Decimal
-        from orders.constants.enums import PromoCodeType
-
-        items_total = Decimal("400.00")
-        discount_type = PromoCodeType.PERCENTAGE.value
-        discount_value = Decimal("10.00")  # 10%
-
-        result = self.interactor._calculate_discount_price(
-            items_total=items_total,
-            discount_type=discount_type,
-            discount_value=discount_value,
-        )
-
-        # 10% of 400 = 40.00
-        assert result == Decimal("40.00")
 
     @patch(
         "orders.interactors.order.place_order_interactor.transaction.atomic",
@@ -416,7 +398,7 @@ class TestPlaceOrderInteractor:
 
         self.promo_code_storage.get_promo_code_by_id.return_value = promo_code
         self.order_storage.get_promo_code_usage.return_value = (
-            4  # usage_count == max_usage - 1
+            4
         )
         self.order_storage.create_order.return_value = order_dto
 

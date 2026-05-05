@@ -5,7 +5,7 @@ import pytest
 from accounts.tests.factories.storage_factories import UserFactory
 from orders.constants.enums import OrderStatus
 from orders.tests.api_tests.order import BaseUserScheduledOrdersTestCase
-from orders.tests.factories import OrderFactory
+from orders.tests.factories import OrderFactory, OrderItemFactory
 from restaurants.tests.factories.storage_factories import RestaurantFactory
 
 
@@ -38,6 +38,19 @@ class TestUserScheduledOrdersApi(BaseUserScheduledOrdersTestCase):
         )
         second_order.created_at = datetime(2026, 5, 5, 11, 0, tzinfo=timezone.utc)
         second_order.save(update_fields=["created_at"])
+
+        OrderItemFactory(
+            order_id="orders-1",
+            item_id="item-1",
+            quantity=2,
+            item_price=200.0,
+        )
+        OrderItemFactory(
+            order_id="orders-2",
+            item_id="item-2",
+            quantity=1,
+            item_price=150.0,
+        )
 
         OrderFactory(
             id="orders-3",
@@ -81,6 +94,12 @@ class TestUserScheduledOrdersApi(BaseUserScheduledOrdersTestCase):
             )
             order.created_at = datetime(2026, 5, 5, i, 0, tzinfo=timezone.utc)
             order.save(update_fields=["created_at"])
+            OrderItemFactory(
+                order_id=f"orders-{i}",
+                item_id=f"item-{i}",
+                quantity=1,
+                item_price=100.0 + i,
+            )
 
         self.execute_schema(
             query=self.QUERY,

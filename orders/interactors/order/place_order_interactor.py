@@ -1,5 +1,5 @@
 from datetime import datetime
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal
 from typing import List, Optional
 
 from django.db import transaction
@@ -8,8 +8,7 @@ from django.utils import timezone
 from orders.adapter.account import AccountAdapter
 from orders.adapter.dtos import CartItemDTO
 from orders.adapter.restaurant import RestaurantAdapter
-from orders.constants.constants import TAX_PERCENTAGE
-from orders.constants.enums import PromoCodeType, OrderStatus
+from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
     PromoCodeUsageLimitReached,
     PromoCodeNotEligible,
@@ -30,7 +29,6 @@ from orders.interactors.dtos import (
     CreateOrderItemDTO,
     PromoCodeDTO,
     OrderSummaryDTO,
-    OrderItemSummaryDTO,
 )
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
@@ -38,19 +36,22 @@ from orders.interactors.storage_interface.order_storage_interface import (
 from orders.interactors.storage_interface.promo_code_storage_interface import (
     PromoCodeStorageInterface,
 )
+from orders.mixin.order_mixin import OrderMixin
 from orders.mixin.promocode_mixin import PromoCodeMixin
 from utils.redis_util import redis_lock
 
 REDIS_LOCK_TIMEOUT = 30
 
 
-class PlaceOrderInteractor(PromoCodeMixin):
+class PlaceOrderInteractor(PromoCodeMixin, OrderMixin):
     def __init__(
         self,
         promo_code_storage: PromoCodeStorageInterface,
         order_storage: OrderStorageInterface,
     ):
-        super().__init__(promo_code_storage=promo_code_storage)
+        super().__init__(
+            promo_code_storage=promo_code_storage, order_storage=order_storage
+        )
         self.promo_code_storage = promo_code_storage
         self.order_storage = order_storage
         self.account_adapter = AccountAdapter()
@@ -68,7 +69,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
         with redis_lock(f"order:{order_data.customer_id}", timeout=REDIS_LOCK_TIMEOUT):
             cart_id = self._get_validated_cart_id(customer_id=order_data.customer_id)
             cart_items = self._get_validated_cart_items(cart_id=cart_id)
-            items_total = self._calculate_items_total(cart_items=cart_items)
+            items_total = self.calculate_items_total(cart_items=cart_items)
 
             if order_data.promo_code_id:
                 self._validate_promo_code_existence_and_eligibility(
@@ -126,7 +127,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
             promo_code_id=order_data.promo_code_id,
             items_total=items_total,
         )
-        tax_fee = self._calculate_tax_fee(
+        tax_fee = self.calculate_tax_fee(
             items_total=items_total,
             discount_price=discount_price,
         )
@@ -142,7 +143,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
         self._save_order_items(cart_items=cart_items, order_id=order_dto.order_id)
         self.restaurant_adapter.clear_customer_cart_items(cart_id=cart_id)
 
-        return self._build_order_summary_dto(order_dto=order_dto, cart_items=cart_items)
+        return self.build_order_summary_dto(order_dto=order_dto, cart_items=cart_items)
 
     def _validate_promo_code_existence_and_eligibility(
         self,
@@ -192,7 +193,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
             max_usage_count=promo_code_dto.max_usage,
         )
 
-        return self._calculate_discount_price(
+        return self.calculate_discount_price(
             items_total=items_total,
             discount_type=promo_code_dto.discount_type,
             discount_value=Decimal(str(promo_code_dto.discount_value)),
@@ -308,41 +309,6 @@ class PlaceOrderInteractor(PromoCodeMixin):
         self.order_storage.create_order_items(order_item_dtos=order_items)
 
     @staticmethod
-    def _calculate_items_total(cart_items: List[CartItemDTO]) -> Decimal:
-        items_total = sum(
-            Decimal(str(item.item_price)) * Decimal(str(item.quantity))
-            for item in cart_items
-        )
-
-        return Decimal(items_total)
-
-    @staticmethod
-    def _calculate_discount_price(
-        items_total: Decimal,
-        discount_type: str,
-        discount_value: Decimal,
-    ) -> Decimal:
-
-        if discount_type == PromoCodeType.PERCENTAGE.value:
-            return (items_total * discount_value / Decimal("100")).quantize(
-                Decimal("0.01"), rounding=ROUND_HALF_UP
-            )
-
-        return discount_value
-
-    @staticmethod
-    def _calculate_tax_fee(
-        items_total: Decimal,
-        discount_price: Decimal,
-    ) -> Decimal:
-
-        return (
-            (items_total - discount_price)
-            * Decimal(str(TAX_PERCENTAGE))
-            / Decimal("100")
-        ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-
-    @staticmethod
     def _build_order_items(
         cart_items: List[CartItemDTO],
         order_id: str,
@@ -357,35 +323,6 @@ class PlaceOrderInteractor(PromoCodeMixin):
             )
             for cart_item in cart_items
         ]
-
-    @staticmethod
-    def _build_order_summary_dto(
-        cart_items: List[CartItemDTO],
-        order_dto: OrderDTO,
-    ) -> OrderSummaryDTO:
-
-        return OrderSummaryDTO(
-            order_id=order_dto.order_id,
-            customer_id=order_dto.customer_id,
-            restaurant_id=order_dto.restaurant_id,
-            status=order_dto.status,
-            items=[
-                OrderItemSummaryDTO(
-                    item_id=item.menu_item_id,
-                    quantity=item.quantity,
-                    item_price=Decimal(str(item.item_price)),
-                    subtotal=Decimal(str(item.item_price)) * item.quantity,
-                )
-                for item in cart_items
-            ],
-            items_total=order_dto.items_total,
-            delivery_fee=order_dto.delivery_fee,
-            tax_fee=order_dto.tax_fee,
-            final_amount=order_dto.final_amount,
-            address_id=order_dto.address_id,
-            promo_code_id=order_dto.promo_code_id,
-            placed_at=order_dto.placed_at,
-        )
 
     def _validate_items(self, item_ids: List[str]):
 

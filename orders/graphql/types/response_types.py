@@ -99,7 +99,7 @@ class UserOrdersResponse(graphene.Union):
 
 class UserScheduledOrdersResponse(graphene.Union):
     class Meta:
-        types = (ScheduledOrdersType,)
+        types = (ScheduledOrderSummariesType,)
 
 
 class RestaurantOrdersResponse(graphene.Union):
