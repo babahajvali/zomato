@@ -1,6 +1,8 @@
 from datetime import datetime, time
 from unittest.mock import MagicMock, create_autospec
 
+from django.utils import timezone
+
 from orders.adapter.dtos import RestaurantTimingDTO
 from orders.constants.enums import OrderStatus
 from orders.interactors.order.release_scheduled_orders_interactor import (
@@ -24,7 +26,7 @@ class TestReleaseScheduledOrdersInteractor:
         scheduled_order = OrderDTOFactory(
             order_id="orders-1",
             restaurant_id="restaurants-1",
-            scheduled_for=datetime(2026, 1, 1, 12, 0),
+            scheduled_for=timezone.make_aware(datetime(2026, 1, 1, 12, 0)),
         )
 
         self.order_storage.get_scheduled_orders_due_for_release.return_value = [
@@ -79,7 +81,7 @@ class TestReleaseScheduledOrdersInteractor:
         scheduled_order = OrderDTOFactory(
             order_id="orders-1",
             restaurant_id="restaurants-1",
-            scheduled_for=datetime(2026, 1, 1, 23, 0),
+            scheduled_for=timezone.make_aware(datetime(2026, 1, 1, 9, 0)),
         )
 
         self.order_storage.get_scheduled_orders_due_for_release.return_value = [
@@ -124,7 +126,7 @@ class TestReleaseScheduledOrdersInteractor:
         order_dto = OrderDTOFactory(
             order_id="orders-1",
             restaurant_id="restaurants-1",
-            scheduled_for=datetime(2026, 1, 1, 23, 0),
+            scheduled_for=timezone.make_aware(datetime(2026, 1, 1, 9, 0)),
         )
 
         self.order_storage.get_order_item_ids.return_value = ["item-1"]
@@ -147,7 +149,7 @@ class TestReleaseScheduledOrdersInteractor:
         order_dto = OrderDTOFactory(
             order_id="orders-1",
             restaurant_id="restaurants-1",
-            scheduled_for=datetime(2026, 1, 1, 12, 0),
+            scheduled_for=timezone.make_aware(datetime(2026, 1, 1, 12, 0)),
         )
 
         self.order_storage.get_order_item_ids.return_value = ["item-1"]
@@ -185,7 +187,7 @@ class TestReleaseScheduledOrdersInteractor:
         assert result is False
 
     def test_is_restaurant_closed_returns_true_when_timing_not_found(self):
-        scheduled_for = datetime(2026, 1, 1, 12, 0)
+        scheduled_for = timezone.make_aware(datetime(2026, 1, 1, 9, 0))
 
         self.interactor.restaurant_adapter.get_restaurant_timing.return_value = None
 
@@ -197,7 +199,7 @@ class TestReleaseScheduledOrdersInteractor:
         assert result is True
 
     def test_is_restaurant_closed_returns_true_when_outside_timing(self):
-        scheduled_for = datetime(2026, 1, 1, 23, 0)
+        scheduled_for = timezone.make_aware(datetime(2026, 1, 1, 23, 0))
 
         self.interactor.restaurant_adapter.get_restaurant_timing.return_value = (
             RestaurantTimingDTO(
@@ -217,7 +219,7 @@ class TestReleaseScheduledOrdersInteractor:
         assert result is True
 
     def test_is_restaurant_closed_returns_false(self):
-        scheduled_for = datetime(2026, 1, 1, 12, 0)
+        scheduled_for = timezone.make_aware(datetime(2026, 1, 4, 12, 0))
 
         self.interactor.restaurant_adapter.get_restaurant_timing.return_value = (
             RestaurantTimingDTO(

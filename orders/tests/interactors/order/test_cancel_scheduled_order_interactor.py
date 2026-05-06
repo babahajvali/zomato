@@ -97,6 +97,7 @@ class TestCancelScheduledOrderInteractor:
             order_id="orders-1"
         )
 
+    @pytest.mark.django_db
     def test_cancel_scheduled_order_raises_order_not_found(self):
         self.order_storage.get_order.return_value = None
 
@@ -106,6 +107,7 @@ class TestCancelScheduledOrderInteractor:
                 user_id="customer-1",
             )
 
+    @pytest.mark.django_db
     def test_cancel_scheduled_order_raises_order_not_owned_by_user(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",

@@ -67,6 +67,7 @@ class TestOrderInteractor:
             order_id="orders-1", status=OrderStatus.CANCELLED
         )
 
+    @pytest.mark.django_db
     def test_cancel_order_raises_order_not_found(self):
         self.order_storage.get_order.return_value = None
 
@@ -79,6 +80,7 @@ class TestOrderInteractor:
         assert exc.value.order_id == "invalid-orders"
         self.order_storage.update_order_status.assert_not_called()
 
+    @pytest.mark.django_db
     def test_cancel_order_raises_order_does_not_belong_to_user(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
