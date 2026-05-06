@@ -65,7 +65,7 @@ class OrderDTO:
     final_amount: Decimal
     address_id: int
     placed_at: datetime
-    scheduled_for: datetime
+    scheduled_for: Optional[datetime]
 
 
 @dataclass

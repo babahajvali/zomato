@@ -17,6 +17,7 @@ from orders.exception.custom_exceptions import (
     MenuItemsUnavailable,
     RestaurantNotOpenAtScheduledTime,
     ScheduledTimeTooSoon,
+    PromoCodeUsageLimitReached,
 )
 from orders.interactors.order.place_scheduled_order_interactor import (
     PlaceScheduledOrderInteractor,
@@ -235,3 +236,28 @@ class TestPlaceScheduledOrderInteractor:
                 restaurant_id="restaurants-1",
                 scheduled_for=scheduled_for,
             )
+
+    @pytest.mark.django_db
+    def test_place_scheduled_order_raises_promo_usage_limit_reached(self):
+        scheduled_for = timezone.now() + timedelta(hours=2)
+        self._setup_valid_adapters(scheduled_for=scheduled_for)
+        promo_dto = PromoCodeDTOFactory(max_usage=1)
+        self.promo_code_storage.get_promo_code_by_id.return_value = promo_dto
+        self.order_storage.get_promo_code_usage.return_value = 1
+
+        with pytest.raises(PromoCodeUsageLimitReached):
+            self.interactor.place_scheduled_order(
+                order_data=PlaceScheduledOrderDTOFactory(
+                    scheduled_for=scheduled_for,
+                    promo_code_id=promo_dto.promo_code_id,
+                ),
+            )
+
+    def test_place_scheduled_order_raises_when_scheduled_for_is_in_the_past(self):
+        scheduled_for = timezone.now() - timedelta(hours=1)
+
+        with pytest.raises(ScheduledTimeTooSoon) as exc:
+            self.interactor.place_scheduled_order(
+                order_data=PlaceScheduledOrderDTOFactory(scheduled_for=scheduled_for),
+            )
+        assert exc.value.scheduled_for == scheduled_for

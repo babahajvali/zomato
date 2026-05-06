@@ -101,9 +101,7 @@ class OrderStorage(OrderStorageInterface):
 
         OrderItem.objects.bulk_create(order_items)
 
-    def update_order_status(
-        self, order_id: str, status: OrderStatus
-    ) -> OrderDTO | None:
+    def update_order_status(self, order_id: str, status: OrderStatus) -> OrderDTO:
         Order.objects.filter(id=order_id).update(status=status.value)
 
         return self.get_order(order_id=order_id)
@@ -130,14 +128,18 @@ class OrderStorage(OrderStorageInterface):
         ]
 
     def get_order_placed_at(self, order_id: str) -> datetime:
-        order_obj = Order.objects.get(id=order_id)
-
-        return order_obj.created_at
+        return (
+            Order.objects.filter(id=order_id)
+            .values_list("created_at", flat=True)
+            .first()
+        )
 
     def get_order_updated_at(self, order_id: str) -> datetime:
-        order_obj = Order.objects.get(id=order_id)
-
-        return order_obj.updated_at
+        return (
+            Order.objects.filter(id=order_id)
+            .values_list("updated_at", flat=True)
+            .first()
+        )
 
     def get_restaurant_orders(
         self,

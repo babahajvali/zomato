@@ -6,6 +6,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from orders.adapter.dtos import CartItemDTO
+from orders.constants.constants import REDIS_LOCK_TIMEOUT_SECS, RELEASE_WINDOW_MINS
 from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
     RestaurantNotOpenAtScheduledTime,
@@ -19,9 +20,6 @@ from orders.interactors.dtos import (
 )
 from orders.interactors.order.order_placement_base import OrderPlacementBase
 from utils.redis_util import redis_lock
-
-REDIS_LOCK_TIMEOUT = 30
-SCHEDULED_MIN_MINS = 30
 
 
 class PlaceScheduledOrderInteractor(OrderPlacementBase):
@@ -41,7 +39,7 @@ class PlaceScheduledOrderInteractor(OrderPlacementBase):
 
         with redis_lock(
             f"order:{order_data.customer_id}",
-            timeout=REDIS_LOCK_TIMEOUT,
+            timeout=REDIS_LOCK_TIMEOUT_SECS,
         ):
             cart_id = self._get_validated_cart_id(customer_id=order_data.customer_id)
             cart_items = self._get_validated_cart_items(cart_id=cart_id)
@@ -85,7 +83,7 @@ class PlaceScheduledOrderInteractor(OrderPlacementBase):
         if order_data.promo_code_id:
             with redis_lock(
                 f"promo:{order_data.promo_code_id}",
-                timeout=REDIS_LOCK_TIMEOUT,
+                timeout=REDIS_LOCK_TIMEOUT_SECS,
             ):
                 return run()
 
@@ -131,7 +129,7 @@ class PlaceScheduledOrderInteractor(OrderPlacementBase):
     @staticmethod
     def _validate_scheduled_time(scheduled_for: datetime):
         now = timezone.now()
-        min_time = now + timedelta(minutes=SCHEDULED_MIN_MINS)
+        min_time = now + timedelta(minutes=RELEASE_WINDOW_MINS)
 
         if scheduled_for < min_time:
             raise ScheduledTimeTooSoon(scheduled_for=scheduled_for)

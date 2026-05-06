@@ -5,6 +5,7 @@ from typing import List
 from django.db import transaction
 
 from orders.adapter.dtos import CartItemDTO
+from orders.constants.constants import REDIS_LOCK_TIMEOUT_SECS
 from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
     RestaurantClosed,
@@ -19,8 +20,6 @@ from orders.interactors.dtos import (
 from orders.interactors.order.order_placement_base import OrderPlacementBase
 from utils.redis_util import redis_lock
 
-REDIS_LOCK_TIMEOUT = 30
-
 
 class PlaceOrderInteractor(OrderPlacementBase):
     def place_order(self, order_data: PlaceOrderDTO) -> OrderSummaryDTO:
@@ -32,7 +31,9 @@ class PlaceOrderInteractor(OrderPlacementBase):
 
         self._validate_restaurant_timing(restaurant_id=order_data.restaurant_id)
 
-        with redis_lock(f"order:{order_data.customer_id}", timeout=REDIS_LOCK_TIMEOUT):
+        with redis_lock(
+            f"order:{order_data.customer_id}", timeout=REDIS_LOCK_TIMEOUT_SECS
+        ):
             cart_id = self._get_validated_cart_id(customer_id=order_data.customer_id)
             cart_items = self._get_validated_cart_items(cart_id=cart_id)
             items_total = self.calculate_items_total(cart_items=cart_items)
@@ -72,7 +73,7 @@ class PlaceOrderInteractor(OrderPlacementBase):
 
         if order_data.promo_code_id:
             with redis_lock(
-                f"promo:{order_data.promo_code_id}", timeout=REDIS_LOCK_TIMEOUT
+                f"promo:{order_data.promo_code_id}", timeout=REDIS_LOCK_TIMEOUT_SECS
             ):
                 return run()
 

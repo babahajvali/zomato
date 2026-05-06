@@ -1,6 +1,7 @@
 from decimal import Decimal, ROUND_HALF_UP
 from typing import Optional, List
 
+from orders.adapter.dtos import CartItemDTO
 from orders.constants.constants import TAX_PERCENTAGE
 from orders.constants.enums import OrderStatus, PromoCodeType
 from orders.exception.custom_exceptions import (
@@ -14,11 +15,11 @@ from orders.interactors.dtos import (
     OrderSummaryDTO,
     OrderItemSummaryDTO,
     ScheduledOrderDTO,
+    OrderItemDTO,
 )
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
 )
-from restaurants.interactors.dtos import CartItemDTO
 
 VALID_TRANSITIONS = {
     OrderStatus.PLACED: [OrderStatus.CONFIRMED],
@@ -162,3 +163,88 @@ class OrderMixin:
                 Decimal("0.01"), rounding=ROUND_HALF_UP
             )
         return discount_value
+
+    @staticmethod
+    def build_schedule_order_summaries(
+        order_items: list[OrderItemDTO], orders: list[OrderDTO]
+    ) -> list[ScheduledOrderDTO]:
+        items_by_order = {}
+        for item in order_items:
+            items_by_order.setdefault(item.order_id, []).append(item)
+
+        result = []
+
+        for order in orders:
+            items = items_by_order.get(order.order_id, [])
+
+            item_dtos = [
+                OrderItemSummaryDTO(
+                    item_id=i.item_id,
+                    quantity=i.quantity,
+                    item_price=i.item_price,
+                    subtotal=i.subtotal,
+                )
+                for i in items
+            ]
+
+            result.append(
+                ScheduledOrderDTO(
+                    order_id=order.order_id,
+                    customer_id=order.customer_id,
+                    restaurant_id=order.restaurant_id,
+                    promo_code_id=order.promo_code_id,
+                    status=order.status,
+                    items=item_dtos,
+                    items_total=order.items_total,
+                    delivery_fee=order.delivery_fee,
+                    tax_fee=order.tax_fee,
+                    final_amount=order.final_amount,
+                    placed_at=order.placed_at,
+                    address_id=order.address_id,
+                    scheduled_for=order.scheduled_for,
+                )
+            )
+
+        return result
+
+    @staticmethod
+    def build_order_summaries(
+        order_items: list[OrderItemDTO], orders: list[OrderDTO]
+    ) -> list[OrderSummaryDTO]:
+        items_by_order = {}
+        for item in order_items:
+            items_by_order.setdefault(item.order_id, []).append(item)
+
+        result = []
+
+        for order in orders:
+            items = items_by_order.get(order.order_id, [])
+
+            item_dtos = [
+                OrderItemSummaryDTO(
+                    item_id=i.item_id,
+                    quantity=i.quantity,
+                    item_price=i.item_price,
+                    subtotal=i.subtotal,
+                )
+                for i in items
+            ]
+
+            result.append(
+                OrderSummaryDTO(
+                    order_id=order.order_id,
+                    customer_id=order.customer_id,
+                    restaurant_id=order.restaurant_id,
+                    promo_code_id=order.promo_code_id,
+                    status=order.status,
+                    items=item_dtos,
+                    items_total=order.items_total,
+                    delivery_fee=order.delivery_fee,
+                    tax_fee=order.tax_fee,
+                    final_amount=order.final_amount,
+                    placed_at=order.placed_at,
+                    address_id=order.address_id,
+                )
+            )
+
+        return result

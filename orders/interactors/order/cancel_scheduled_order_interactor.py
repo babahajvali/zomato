@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.db import transaction
 from django.utils import timezone
 
-from orders.constants.constants import CANCEL_TIME
+from orders.constants.constants import CANCEL_TIME, REDIS_LOCK_TIMEOUT_SECS
 from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
     OrderCancellationWindowExpired,
@@ -25,17 +25,14 @@ class CancelScheduledOrderInteractor(OrderMixin):
 
     def cancel_scheduled_order(self, order_id: str, user_id: str) -> OrderDTO:
 
-        self.validate_order_exists(
-            order_id=order_id,
-            user_id=user_id,
-        )
-
         with redis_lock(
             lock_key=f"order_status_{order_id}",
-            timeout=10,
+            timeout=REDIS_LOCK_TIMEOUT_SECS,
         ):
             with transaction.atomic():
-                order_dto = self.order_storage.get_order(order_id=order_id)
+                order_dto = self.validate_order_exists(
+                    order_id=order_id, user_id=user_id
+                )
 
                 self._validate_not_already_cancelled(order_dto=order_dto)
                 self._validate_cancellable_status(order_dto=order_dto)

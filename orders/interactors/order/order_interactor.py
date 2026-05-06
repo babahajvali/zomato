@@ -17,8 +17,6 @@ from orders.interactors.dtos import (
     PeakHourDTO,
     TopSellingItemDTO,
     ScheduledOrderDTO,
-    OrderItemSummaryDTO,
-    OrderItemDTO,
 )
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
@@ -34,14 +32,14 @@ class OrderInteractor(OrderMixin):
 
     def cancel_order(self, order_id: str, user_id: str) -> OrderDTO:
 
-        self.validate_order_exists(order_id=order_id, user_id=user_id)
-
         with redis_lock(
             lock_key=f"order_status_{order_id}",
             timeout=10,
         ):
             with transaction.atomic():
-                order_dto = self.order_storage.get_order(order_id=order_id)
+                order_dto = self.validate_order_exists(
+                    order_id=order_id, user_id=user_id
+                )
 
                 self._validate_order_is_not_already_cancelled(order_dto=order_dto)
                 self._validate_order_is_cancellable(
@@ -114,7 +112,7 @@ class OrderInteractor(OrderMixin):
 
         order_items = self.order_storage.get_orders_items(order_ids=order_ids)
 
-        return self._build_schedule_order_summaries(
+        return self.build_schedule_order_summaries(
             order_items=order_items,
             orders=order_dtos,
         )
@@ -157,46 +155,3 @@ class OrderInteractor(OrderMixin):
             placed_at=order_dto.placed_at,
             address_id=order_dto.address_id,
         )
-
-    @staticmethod
-    def _build_schedule_order_summaries(
-        order_items: list[OrderItemDTO], orders: list[OrderDTO]
-    ) -> list[ScheduledOrderDTO]:
-        items_by_order = {}
-        for item in order_items:
-            items_by_order.setdefault(item.order_id, []).append(item)
-
-        result = []
-
-        for order in orders:
-            items = items_by_order.get(order.order_id, [])
-
-            item_dtos = [
-                OrderItemSummaryDTO(
-                    item_id=i.item_id,
-                    quantity=i.quantity,
-                    item_price=i.item_price,
-                    subtotal=i.subtotal,
-                )
-                for i in items
-            ]
-
-            result.append(
-                ScheduledOrderDTO(
-                    order_id=order.order_id,
-                    customer_id=order.customer_id,
-                    restaurant_id=order.restaurant_id,
-                    promo_code_id=order.promo_code_id,
-                    status=order.status,
-                    items=item_dtos,
-                    items_total=order.items_total,
-                    delivery_fee=order.delivery_fee,
-                    tax_fee=order.tax_fee,
-                    final_amount=order.final_amount,
-                    placed_at=order.placed_at,
-                    address_id=order.address_id,
-                    scheduled_for=order.scheduled_for,
-                )
-            )
-
-        return result
