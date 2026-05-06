@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta, date
-from typing import List, Optional
+from datetime import timedelta, date
+from typing import List
 from django.db import transaction
 from django.utils import timezone
 
@@ -44,9 +44,6 @@ class OrderInteractor(OrderMixin):
                 self._validate_order_is_not_already_cancelled(order_dto=order_dto)
                 self._validate_order_is_cancellable(
                     order_id=order_dto.order_id, order_status=order_dto.status.value
-                )
-                self._validate_cancel_order_time(
-                    placed_at=order_dto.placed_at, order_id=order_dto.order_id
                 )
 
                 return self.order_storage.update_order_status(
@@ -117,19 +114,15 @@ class OrderInteractor(OrderMixin):
             orders=order_dtos,
         )
 
-    def _validate_cancel_order_time(self, order_id: str, placed_at: Optional[datetime]):
-        if placed_at is None:
-            placed_at = self.order_storage.get_order_placed_at(order_id=order_id)
-        now = timezone.now()
+    def _validate_order_is_cancellable(self, order_status: str, order_id: str):
+        if order_status == OrderStatus.SCHEDULED.value:
+            return
 
-        if now - placed_at > timedelta(minutes=CANCEL_TIME):
-            raise OrderCancellationWindowExpired(order_id=order_id, minutes=CANCEL_TIME)
+        if order_status == OrderStatus.PLACED.value:
+            self._validate_cancellation_window(order_id=order_id)
+            return
 
-    @staticmethod
-    def _validate_order_is_cancellable(order_status: str, order_id: str):
-
-        if order_status != OrderStatus.PLACED.value:
-            raise OrderCancellationNotAllowed(order_id=order_id)
+        raise OrderCancellationNotAllowed(order_id=order_id)
 
     @staticmethod
     def _validate_order_is_not_already_cancelled(order_dto):
@@ -155,3 +148,11 @@ class OrderInteractor(OrderMixin):
             placed_at=order_dto.placed_at,
             address_id=order_dto.address_id,
         )
+
+    def _validate_cancellation_window(self, order_id: str):
+        now = timezone.now()
+        updated_at = self.order_storage.get_order_updated_at(order_id=order_id)
+        cancellation_limit = updated_at + timedelta(minutes=CANCEL_TIME)
+
+        if now > cancellation_limit:
+            raise OrderCancellationWindowExpired(order_id=order_id, minutes=CANCEL_TIME)
