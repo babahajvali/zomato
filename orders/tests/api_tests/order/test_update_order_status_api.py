@@ -124,13 +124,13 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
             id="orders-1",
             customer_id="customer-1",
             restaurant_id=restaurant_id,
-            status=OrderStatus.CONFIRMED.value,  # Start from CONFIRMED
+            status=OrderStatus.CONFIRMED.value,
         )
 
         variables = {
             "params": {
                 "orderId": "orders-1",
-                "status": OrderStatus.PREPARING.value,  # Transition to PREPARING
+                "status": OrderStatus.PREPARING.value,
             }
         }
 
@@ -151,13 +151,13 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
             id="orders-1",
             customer_id="customer-1",
             restaurant_id=restaurant_id,
-            status=OrderStatus.PREPARING.value,  # Start from PREPARING
+            status=OrderStatus.PREPARING.value,
         )
 
         variables = {
             "params": {
                 "orderId": "orders-1",
-                "status": OrderStatus.OUT_OF_DELIVERY.value,  # Transition to OUT_OF_DELIVERY
+                "status": OrderStatus.OUT_OF_DELIVERY.value,
             }
         }
 
@@ -178,13 +178,13 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
             id="orders-1",
             customer_id="customer-1",
             restaurant_id=restaurant_id,
-            status=OrderStatus.OUT_OF_DELIVERY.value,  # Start from OUT_OF_DELIVERY
+            status=OrderStatus.OUT_OF_DELIVERY.value,
         )
 
         variables = {
             "params": {
                 "orderId": "orders-1",
-                "status": OrderStatus.DELIVERED.value,  # Transition to DELIVERED
+                "status": OrderStatus.DELIVERED.value,
             }
         }
 
@@ -204,13 +204,13 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
             id="orders-1",
             customer_id="customer-1",
             restaurant_id=restaurant_id,
-            status=OrderStatus.CANCELLED.value,  # Start from CANCELLED
+            status=OrderStatus.CANCELLED.value,
         )
 
         variables = {
             "params": {
                 "orderId": "orders-1",
-                "status": OrderStatus.PREPARING.value,  # Try to transition from CANCELLED
+                "status": OrderStatus.PREPARING.value,
             }
         }
 

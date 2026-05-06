@@ -105,8 +105,7 @@ class TestCreateReviewApi(BaseCreateReviewTestCase):
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
 
-        # Create existing review
-        from restaurants.models import RestaurantReview
+                from restaurants.models import RestaurantReview
 
         RestaurantReview.objects.create(
             restaurant=restaurant,

@@ -135,7 +135,6 @@ class TestCreateReviewInteractor:
         self.mock_review_storage.create_review.assert_not_called()
 
     def test_create_review_boundary_rating_1(self):
-        # Test valid lower boundary (rating=1)
         create_review_dto = CreateReviewDTOFactory(rating=1)
         expected_review = ReviewDTOFactory(
             restaurant_id=create_review_dto.restaurant_id,
@@ -157,7 +156,6 @@ class TestCreateReviewInteractor:
         )
 
     def test_create_review_boundary_rating_5(self):
-        # Test valid upper boundary (rating=5)
         create_review_dto = CreateReviewDTOFactory(rating=5)
         expected_review = ReviewDTOFactory(
             restaurant_id=create_review_dto.restaurant_id,
