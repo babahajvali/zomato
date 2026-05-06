@@ -1,6 +1,8 @@
 import graphene
 from decimal import Decimal
 
+from django.utils import timezone
+
 from orders.exception import custom_exceptions
 from orders.graphql.types.error_types import (
     PromoCodeUsageLimitReached,
@@ -40,11 +42,15 @@ class PlaceScheduledOrderMutation(graphene.Mutation):
             order_storage=OrderStorage(),
         )
 
+        scheduled_for = params.scheduled_for
+        if timezone.is_naive(scheduled_for):
+            scheduled_for = timezone.make_aware(scheduled_for)
+
         place_scheduled_order_dto = PlaceScheduledOrderDTO(
             customer_id=info.context.user_id,
             restaurant_id=params.restaurant_id,
             address_id=params.address_id,
-            scheduled_for=params.scheduled_for,
+            scheduled_for=scheduled_for,
             promo_code_id=params.promo_code_id,
         )
 

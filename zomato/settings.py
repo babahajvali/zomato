@@ -78,7 +78,7 @@ WSGI_APPLICATION = "zomato.wsgi.application"
 CRONJOBS = [
     (
         "*/1 * * * *",
-        "orders.corn.release_scheduled_orders",
+        "orders.cron.release_scheduled_orders",
     )
 ]
 

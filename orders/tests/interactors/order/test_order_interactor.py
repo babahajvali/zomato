@@ -28,13 +28,18 @@ def no_op_lock(*args, **kwargs):
     yield
 
 
+TRANSACTION_ATOMIC = "orders.interactors.order.order_interactor.transaction.atomic"
+
+REDIS_LOCK = "orders.interactors.order.order_interactor.redis_lock"
+
+
 class TestOrderInteractor:
     def setup_method(self):
         self.order_storage = create_autospec(OrderStorageInterface)
         self.interactor = OrderInteractor(order_storage=self.order_storage)
 
-    @patch("orders.interactors.order.order_interactor.transaction.atomic", no_op_lock)
-    @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_cancel_order_successfully(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
@@ -113,8 +118,8 @@ class TestOrderInteractor:
         assert exc.value.order_id == "orders-1"
         self.order_storage.update_order_status.assert_not_called()
 
-    @patch("orders.interactors.order.order_interactor.transaction.atomic", no_op_lock)
-    @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_cancel_order_raises_already_cancelled(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
@@ -133,8 +138,8 @@ class TestOrderInteractor:
 
         self.order_storage.update_order_status.assert_not_called()
 
-    @patch("orders.interactors.order.order_interactor.transaction.atomic", no_op_lock)
-    @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_cancel_order_raises_order_not_cancellable(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
@@ -153,8 +158,8 @@ class TestOrderInteractor:
 
         self.order_storage.update_order_status.assert_not_called()
 
-    @patch("orders.interactors.order.order_interactor.transaction.atomic", no_op_lock)
-    @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_cancel_order_at_boundary_time_allowed(self):
         placed_at = timezone.now() - timedelta(minutes=2) + timedelta(seconds=5)
 
@@ -182,8 +187,8 @@ class TestOrderInteractor:
 
         assert result.status == OrderStatus.CANCELLED
 
-    @patch("orders.interactors.order.order_interactor.transaction.atomic", no_op_lock)
-    @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_cancel_order_just_after_boundary_fails(self):
         from orders.constants.constants import CANCEL_TIME
 

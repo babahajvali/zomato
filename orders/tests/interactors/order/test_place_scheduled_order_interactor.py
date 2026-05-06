@@ -39,6 +39,13 @@ def no_op_lock(*args, **kwargs):
     yield
 
 
+TRANSACTION_ATOMIC = (
+    "orders.interactors.order.place_scheduled_order_interactor.transaction.atomic"
+)
+
+REDIS_LOCK = "orders.interactors.order.place_scheduled_order_interactor.redis_lock"
+
+
 class TestPlaceScheduledOrderInteractor:
     def setup_method(self):
         self.promo_code_storage = create_autospec(PromoCodeStorageInterface)
@@ -88,14 +95,8 @@ class TestPlaceScheduledOrderInteractor:
         ]
         self.interactor.restaurant_adapter.get_unavailable_menu_items.return_value = []
 
-    @patch(
-        "orders.interactors.order.place_scheduled_order_interactor.transaction.atomic",
-        no_op_lock,
-    )
-    @patch(
-        "orders.interactors.order.place_scheduled_order_interactor.redis_lock",
-        no_op_lock,
-    )
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_place_scheduled_order_successfully_without_promo_code(self):
         scheduled_for = timezone.now() + timedelta(hours=2)
         self._setup_valid_adapters(scheduled_for=scheduled_for)
@@ -131,14 +132,8 @@ class TestPlaceScheduledOrderInteractor:
             cart_id="cart-1"
         )
 
-    @patch(
-        "orders.interactors.order.place_scheduled_order_interactor.transaction.atomic",
-        no_op_lock,
-    )
-    @patch(
-        "orders.interactors.order.place_scheduled_order_interactor.redis_lock",
-        no_op_lock,
-    )
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_place_scheduled_order_successfully_with_percentage_promo_code(self):
         scheduled_for = timezone.now() + timedelta(hours=2)
         self._setup_valid_adapters(scheduled_for=scheduled_for)
@@ -205,10 +200,7 @@ class TestPlaceScheduledOrderInteractor:
         assert exc.value.scheduled_for == scheduled_for
         self.order_storage.create_order.assert_not_called()
 
-    @patch(
-        "orders.interactors.order.place_scheduled_order_interactor.redis_lock",
-        no_op_lock,
-    )
+    @patch(REDIS_LOCK, no_op_lock)
     def test_place_scheduled_order_raises_menu_items_unavailable(self):
         scheduled_for = timezone.now() + timedelta(hours=2)
         self._setup_valid_adapters(scheduled_for=scheduled_for)

@@ -44,6 +44,13 @@ def no_op_lock(*args, **kwargs):
     yield
 
 
+TRANSACTION_ATOMIC = (
+    "orders.interactors.order.place_order_interactor.transaction.atomic"
+)
+
+REDIS_LOCK = "orders.interactors.order.place_order_interactor.redis_lock"
+
+
 class TestPlaceOrderInteractor:
     def setup_method(self):
         self.promo_code_storage = create_autospec(PromoCodeStorageInterface)
@@ -93,11 +100,8 @@ class TestPlaceOrderInteractor:
         )
         self.interactor.restaurant_adapter.get_unavailable_menu_items.return_value = []
 
-    @patch(
-        "orders.interactors.order.place_order_interactor.transaction.atomic",
-        no_op_lock,
-    )
-    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_place_order_successfully_with_flat_promo_code(self):
         self._setup_valid_adapters()
         promo_code = PromoCodeDTOFactory(
@@ -141,11 +145,8 @@ class TestPlaceOrderInteractor:
             cart_id="cart-1"
         )
 
-    @patch(
-        "orders.interactors.order.place_order_interactor.transaction.atomic",
-        no_op_lock,
-    )
-    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_place_order_successfully_without_promo_code(self):
         self._setup_valid_adapters()
         self.order_storage.create_order.return_value = OrderDTOFactory(
@@ -175,7 +176,7 @@ class TestPlaceOrderInteractor:
         assert create_order_dto.final_amount == 450.0
         assert create_order_dto.scheduled_for is None
 
-    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_place_order_raises_promo_code_not_found(self):
         self._setup_valid_adapters()
         self.promo_code_storage.get_promo_code_by_id.return_value = None
@@ -188,7 +189,7 @@ class TestPlaceOrderInteractor:
         assert exc.value.promo_code_id == 99
         self.order_storage.create_order.assert_not_called()
 
-    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_place_order_raises_promo_code_not_eligible(self):
         self._setup_valid_adapters()
         self.promo_code_storage.get_promo_code_by_id.return_value = PromoCodeDTOFactory(
@@ -205,11 +206,8 @@ class TestPlaceOrderInteractor:
         assert exc.value.items_total == 400.0
         self.order_storage.create_order.assert_not_called()
 
-    @patch(
-        "orders.interactors.order.place_order_interactor.transaction.atomic",
-        no_op_lock,
-    )
-    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_place_order_raises_promo_code_maximum_used(self):
         self._setup_valid_adapters()
         self.promo_code_storage.get_promo_code_by_id.return_value = PromoCodeDTOFactory(
@@ -226,7 +224,7 @@ class TestPlaceOrderInteractor:
         assert exc.value.max_usage_count == 2
         self.order_storage.create_order.assert_not_called()
 
-    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_place_order_raises_customer_cart_not_found(self):
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_customer_cart_id.return_value = None
@@ -239,7 +237,7 @@ class TestPlaceOrderInteractor:
         assert exc.value.customer_id == "customer-404"
         self.order_storage.create_order.assert_not_called()
 
-    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_place_order_raises_empty_cart_items_found(self):
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_customer_cart_items.return_value = []
@@ -252,7 +250,7 @@ class TestPlaceOrderInteractor:
         assert exc.value.cart_id == "cart-1"
         self.order_storage.create_order.assert_not_called()
 
-    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     @pytest.mark.django_db
     def test_place_order_raises_menu_items_unavailable(self):
         self._setup_valid_adapters()
@@ -336,11 +334,8 @@ class TestPlaceOrderInteractor:
         assert result[0].quantity == 2
         assert result[0].item_price == 200.0
 
-    @patch(
-        "orders.interactors.order.place_order_interactor.transaction.atomic",
-        no_op_lock,
-    )
-    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_place_order_raises_promo_code_expired(self):
         self._setup_valid_adapters()
         from django.utils import timezone
@@ -360,11 +355,8 @@ class TestPlaceOrderInteractor:
         assert exc.value.code == expired_promo.code
         self.order_storage.create_order.assert_not_called()
 
-    @patch(
-        "orders.interactors.order.place_order_interactor.transaction.atomic",
-        no_op_lock,
-    )
-    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_place_order_raises_promo_code_not_yet_valid(self):
         self._setup_valid_adapters()
         from django.utils import timezone
@@ -384,23 +376,15 @@ class TestPlaceOrderInteractor:
         assert exc.value.code == future_promo.code
         self.order_storage.create_order.assert_not_called()
 
-    @patch(
-        "orders.interactors.order.place_order_interactor.transaction.atomic",
-        no_op_lock,
-    )
-    @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_place_order_usage_at_limit_minus_one_should_succeed(self):
         self._setup_valid_adapters()
-        promo_code = PromoCodeDTOFactory(
-            promo_code_id=1,
-            max_usage=5,
-        )
+        promo_code = PromoCodeDTOFactory(promo_code_id=1, max_usage=5)
         order_dto = OrderDTOFactory(order_id="orders-1")
 
         self.promo_code_storage.get_promo_code_by_id.return_value = promo_code
-        self.order_storage.get_promo_code_usage.return_value = (
-            4
-        )
+        self.order_storage.get_promo_code_usage.return_value = 4
         self.order_storage.create_order.return_value = order_dto
 
         result = self.interactor.place_order(

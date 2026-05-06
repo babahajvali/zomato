@@ -27,19 +27,22 @@ def no_op_lock(*args, **kwargs):
     yield
 
 
+TRANSACTION_ATOMIC = (
+    "orders.interactors.order.cancel_scheduled_order_interactor.transaction.atomic"
+)
+
+REDIS_LOCK = "orders.interactors.order.cancel_scheduled_order_interactor.redis_lock"
+
+
 class TestCancelScheduledOrderInteractor:
     def setup_method(self):
         self.order_storage = create_autospec(OrderStorageInterface)
-        self.interactor = CancelScheduledOrderInteractor(order_storage=self.order_storage)
+        self.interactor = CancelScheduledOrderInteractor(
+            order_storage=self.order_storage
+        )
 
-    @patch(
-        "orders.interactors.order.cancel_scheduled_order_interactor.transaction.atomic",
-        no_op_lock,
-    )
-    @patch(
-        "orders.interactors.order.cancel_scheduled_order_interactor.redis_lock",
-        no_op_lock,
-    )
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_cancel_scheduled_order_successfully_from_scheduled_status(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
@@ -66,14 +69,8 @@ class TestCancelScheduledOrderInteractor:
             status=OrderStatus.CANCELLED,
         )
 
-    @patch(
-        "orders.interactors.order.cancel_scheduled_order_interactor.transaction.atomic",
-        no_op_lock,
-    )
-    @patch(
-        "orders.interactors.order.cancel_scheduled_order_interactor.redis_lock",
-        no_op_lock,
-    )
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_cancel_scheduled_order_successfully_from_recently_placed_status(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
@@ -122,14 +119,8 @@ class TestCancelScheduledOrderInteractor:
                 user_id="other-user",
             )
 
-    @patch(
-        "orders.interactors.order.cancel_scheduled_order_interactor.transaction.atomic",
-        no_op_lock,
-    )
-    @patch(
-        "orders.interactors.order.cancel_scheduled_order_interactor.redis_lock",
-        no_op_lock,
-    )
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_cancel_scheduled_order_raises_already_cancelled(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
@@ -144,14 +135,8 @@ class TestCancelScheduledOrderInteractor:
                 user_id="customer-1",
             )
 
-    @patch(
-        "orders.interactors.order.cancel_scheduled_order_interactor.transaction.atomic",
-        no_op_lock,
-    )
-    @patch(
-        "orders.interactors.order.cancel_scheduled_order_interactor.redis_lock",
-        no_op_lock,
-    )
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_cancel_scheduled_order_raises_cancellation_window_expired_for_placed_order(
         self,
     ):
@@ -161,8 +146,8 @@ class TestCancelScheduledOrderInteractor:
             status=OrderStatus.PLACED,
         )
         self.order_storage.get_order.side_effect = [order_dto, order_dto]
-        self.order_storage.get_order_updated_at.return_value = timezone.now() - timedelta(
-            minutes=10
+        self.order_storage.get_order_updated_at.return_value = (
+            timezone.now() - timedelta(minutes=10)
         )
 
         with pytest.raises(OrderCancellationWindowExpired):
@@ -171,14 +156,8 @@ class TestCancelScheduledOrderInteractor:
                 user_id="customer-1",
             )
 
-    @patch(
-        "orders.interactors.order.cancel_scheduled_order_interactor.transaction.atomic",
-        no_op_lock,
-    )
-    @patch(
-        "orders.interactors.order.cancel_scheduled_order_interactor.redis_lock",
-        no_op_lock,
-    )
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_cancel_scheduled_order_raises_not_cancellable_for_delivered_order(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
