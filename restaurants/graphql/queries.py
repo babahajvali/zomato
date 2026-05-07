@@ -6,6 +6,9 @@ from restaurants.graphql.resolvers.browse_restaurants_resolver import (
 from restaurants.graphql.resolvers.get_cart_items_resolver import (
     get_cart_items_resolver,
 )
+from restaurants.graphql.resolvers.get_customer_cart_id_resolver import (
+    get_customer_cart_id_resolver,
+)
 from restaurants.graphql.resolvers.get_restaurant_dashboard_resolver import (
     get_restaurant_dashboard_resolver,
 )
@@ -37,6 +40,7 @@ from restaurants.graphql.types.response_types import (
     GetRestaurantDashboardResponse,
     GetUserRestaurantReviewResponse,
     GetOwnerRestaurantsResponse,
+    GetCustomerCartIdResponse,
 )
 
 
@@ -77,4 +81,8 @@ class RestaurantQueries(graphene.ObjectType):
     get_owner_restaurants = graphene.Field(
         GetOwnerRestaurantsResponse,
         resolver=get_owner_restaurants_resolver,
+    )
+
+    get_customer_cart_id = graphene.Field(
+        GetCustomerCartIdResponse, resolver=get_customer_cart_id_resolver
     )

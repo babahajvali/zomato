@@ -31,6 +31,7 @@ from restaurants.graphql.types.types import (
     MenuItemType,
     DeleteMenuItemSuccessType,
     OwnerRestaurantsType,
+    CustomerCartIdType,
 )
 from utils.graphql_types import UserNotRestaurantOwner
 
@@ -174,3 +175,8 @@ class GetUserRestaurantReviewResponse(graphene.Union):
 class GetOwnerRestaurantsResponse(graphene.Union):
     class Meta:
         types = (OwnerRestaurantsType,)
+
+
+class GetCustomerCartIdResponse(graphene.Union):
+    class Meta:
+        types = (CustomerCartIdType,)

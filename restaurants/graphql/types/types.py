@@ -165,3 +165,7 @@ class OwnerRestaurantType(graphene.ObjectType):
 
 class OwnerRestaurantsType(graphene.ObjectType):
     restaurants = graphene.List(OwnerRestaurantType, required=True)
+
+
+class CustomerCartIdType(graphene.ObjectType):
+    cart_id = graphene.String(required=True)
