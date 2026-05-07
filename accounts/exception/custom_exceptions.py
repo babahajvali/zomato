@@ -38,3 +38,11 @@ class DuplicateAddresses(Exception):
 
     def __str__(self):
         return "Duplicate addresses found: {', '.join([f'{addr[0]} - {addr[1]}' for addr in addresses])}"
+
+
+class InvalidCredentials(Exception):
+    def __init__(self, email: str):
+        self.email = email
+
+    def __str__(self):
+        return f"Invalid credentials: {self.email}"

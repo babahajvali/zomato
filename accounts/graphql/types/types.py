@@ -10,6 +10,16 @@ class AddressType(graphene.ObjectType):
     is_default = graphene.Boolean(required=True)
     user_id = graphene.String(required=True)
 
+
 class UserAddressesType(graphene.ObjectType):
     user_id = graphene.String(required=True)
     addresses = graphene.List(AddressType)
+
+
+class UserLoginType(graphene.ObjectType):
+    user_id = graphene.String(required=True)
+    email = graphene.String(required=True)
+    name = graphene.String(required=True)
+    phone_number = graphene.String(required=True)
+    role = graphene.String(required=True)
+    access_token = graphene.String(required=True)

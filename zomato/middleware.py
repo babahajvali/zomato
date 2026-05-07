@@ -62,12 +62,14 @@ class JWTAuthenticationMiddleware:
             operation_name = data.get("operationName", "").lower()
             query = data.get("query", "").lower()
 
-            public_operations = {
-                "introspectionquery",
-            }
+            public_operations = {"introspectionquery", "userlogin"}
 
             if operation_name in public_operations:
                 return True
+
+            for op in public_operations:
+                if f"{op}(" in query or f"{op}{{" in query:
+                    return True
 
             return "__schema" in query or "__type(" in query
         except (json.JSONDecodeError, UnicodeDecodeError, AttributeError):
