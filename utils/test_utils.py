@@ -25,7 +25,7 @@ class GraphQLBaseTestCase:
         result = self.client.execute(
             query,
             variables=variables,
-            context_value=MockContext(user_id=user_id),
+            context_value=MockContext(user_id=user_id),  # ← always pass context
         )
 
         json_result = json.dumps(result, indent=2)

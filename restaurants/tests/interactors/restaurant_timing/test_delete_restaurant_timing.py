@@ -1,6 +1,7 @@
 from unittest.mock import create_autospec
 
 import pytest
+from django.core.cache import cache
 
 from accounts.tests.factories.interactor_factories import UserDTOFactory
 from restaurants.exception.custom_exceptions import (
@@ -26,6 +27,7 @@ from restaurants.tests.factories.interactor_factories import (
 
 class TestDeleteRestaurantTiming:
     def setup_method(self):
+        cache.clear()
         self.restaurant_timing_storage = create_autospec(
             RestaurantTimingStorageInterface
         )

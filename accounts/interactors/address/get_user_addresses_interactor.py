@@ -8,6 +8,7 @@ from accounts.interactors.storage_interface.user_storage_interface import (
     UserStorageInterface,
 )
 from accounts.mixin.user_mixin import UserMixin
+from utils.caching_decorators import interactor_cache
 
 
 class AddressesInteractor(UserMixin):
@@ -20,6 +21,7 @@ class AddressesInteractor(UserMixin):
         self.address_storage = address_storage
         self.user_storage = user_storage
 
+    @interactor_cache(cache_name="get_user_addresses", timeout=10 * 60)
     def get_user_addresses(self, user_id: str) -> List[AddressDTO]:
         self.validate_user_exists(user_id=user_id)
 
@@ -28,5 +30,3 @@ class AddressesInteractor(UserMixin):
     def get_address(self, address_id: int):
 
         return self.address_storage.get_address_by_id(address_id=address_id)
-
-

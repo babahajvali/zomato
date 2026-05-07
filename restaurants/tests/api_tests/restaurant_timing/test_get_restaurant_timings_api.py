@@ -1,4 +1,5 @@
 import pytest
+from django.core.cache import cache
 
 from accounts.tests.factories.storage_factories import UserFactory
 from restaurants.tests.api_tests.restaurant_timing import (
@@ -12,6 +13,9 @@ from restaurants.tests.factories.storage_factories import (
 
 @pytest.mark.django_db
 class TestGetRestaurantTimings(BaseGetRestaurantTimingsTestCase):
+    def setup_method(self):
+        cache.clear()
+
     def test_get_restaurant_timings_success(self, snapshot):
         restaurant_id = "test-restaurants-id"
 

@@ -7,6 +7,7 @@ from restaurants.interactors.storage_interface.restaurant_timing_storage_interfa
     RestaurantTimingStorageInterface,
 )
 from restaurants.mixins.restaurant_timing_mixin import TimingMixin
+from utils.caching_decorators import invalidate_interactor_cache
 
 
 class UpdateRestaurantTimingInteractor(TimingMixin):
@@ -14,6 +15,7 @@ class UpdateRestaurantTimingInteractor(TimingMixin):
         super().__init__(restaurant_timing_storage=restaurant_timing_storage)
         self.restaurant_timing_storage = restaurant_timing_storage
 
+    @invalidate_interactor_cache(cache_name="restaurant_timings")
     def update_restaurant_timing(
         self, update_restaurant_timing_dto: UpdateRestaurantTimingDTO
     ) -> RestaurantTimingDTO:

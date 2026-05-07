@@ -1,4 +1,5 @@
 import pytest
+from django.core.cache import cache
 
 from accounts.tests.factories.storage_factories import UserFactory
 from restaurants.tests.api_tests.review import BaseCreateReviewTestCase
@@ -10,6 +11,9 @@ from restaurants.tests.factories.storage_factories import (
 
 @pytest.mark.django_db
 class TestCreateReviewApi(BaseCreateReviewTestCase):
+    def setup_method(self):
+        cache.clear()
+
     def test_create_review_successfully(self, snapshot):
         # Arrange
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
@@ -107,6 +111,7 @@ class TestCreateReviewApi(BaseCreateReviewTestCase):
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
+
         RestaurantReviewFactory(restaurant=restaurant)
 
         variables = {

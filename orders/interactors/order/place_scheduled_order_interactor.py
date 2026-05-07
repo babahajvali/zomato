@@ -19,9 +19,11 @@ from orders.interactors.dtos import (
     ScheduledOrderDTO,
 )
 from orders.interactors.order.order_placement_base import OrderPlacementBase
+from utils.caching_decorators import invalidate_interactor_cache
 from utils.redis_util import redis_lock
 
 
+@invalidate_interactor_cache(cache_name="user_scheduled_orders")
 class PlaceScheduledOrderInteractor(OrderPlacementBase):
     def place_scheduled_order(
         self, order_data: PlaceScheduledOrderDTO

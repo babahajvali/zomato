@@ -82,6 +82,7 @@ class TestRestaurantOrdersApi(BaseRestaurantOrdersTestCase):
         UserFactory(id=user_id)
         RestaurantFactory(id=restaurant_id, owner_id=user_id)
 
+        # Create 5 orders for pagination testing
         for i in range(1, 6):
             OrderFactory(
                 id=f"orders-{i}",

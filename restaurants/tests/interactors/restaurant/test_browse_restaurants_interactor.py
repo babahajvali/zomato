@@ -70,7 +70,7 @@ class TestBrowseRestaurantsInteractor:
         )
 
     def test_browse_restaurants_with_invalid_min_rating(self):
-        filters_dto = BrowseRestaurantFiltersDTOFactory(min_rating=6.0)
+        filters_dto = BrowseRestaurantFiltersDTOFactory(min_rating=6.0)  # Invalid rating > 5
 
         with pytest.raises(InvalidMinRating) as exc:
             self.interactor.browse_restaurants(filters_dto=filters_dto)
@@ -149,6 +149,7 @@ class TestBrowseRestaurantsInteractor:
         assert result[0].is_open is False
 
     def test_browse_restaurants_empty_results(self):
+        # Test short-circuit with empty restaurant list
         filters_dto = BrowseRestaurantFiltersDTOFactory(min_rating=None)
 
         self.restaurant_storage.get_restaurants.return_value = []
@@ -156,6 +157,7 @@ class TestBrowseRestaurantsInteractor:
         result = self.interactor.browse_restaurants(filters_dto=filters_dto)
 
         assert result == []
+        # Storage methods are still called with empty restaurant_ids list
         self.restaurant_timing_storage.get_operating_hours_for_restaurants.assert_called_once_with(
             restaurant_ids=[]
         )

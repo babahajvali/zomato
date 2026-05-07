@@ -16,6 +16,7 @@ from restaurants.interactors.storage_interface.review_storage_interface import (
     ReviewStorageInterface,
 )
 from restaurants.mixins.restaurant_mixin import RestaurantMixin
+from utils.caching_decorators import invalidate_interactor_cache, interactor_cache
 
 
 class ReviewInteractor(RestaurantMixin):
@@ -28,6 +29,7 @@ class ReviewInteractor(RestaurantMixin):
         self.review_storage = review_storage
         self.restaurant_storage = restaurant_storage
 
+    @invalidate_interactor_cache(cache_name="user_review")
     def create_review(self, create_review_dto: CreateReviewDTO) -> ReviewDTO:
 
         self.validate_restaurant_exists(restaurant_id=create_review_dto.restaurant_id)
@@ -39,6 +41,7 @@ class ReviewInteractor(RestaurantMixin):
 
         return self.review_storage.create_review(create_review_dto=create_review_dto)
 
+    @interactor_cache(cache_name="user_review")
     def get_user_restaurant_review(self, user_id: str, restaurant_id: str) -> ReviewDTO:
 
         return self.review_storage.get_user_restaurant_review(

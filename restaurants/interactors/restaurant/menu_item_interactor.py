@@ -10,6 +10,7 @@ from restaurants.interactors.storage_interface.restaurant_storage_interface impo
     RestaurantStorageInterface,
 )
 from restaurants.mixins.restaurant_mixin import RestaurantMixin
+from utils.caching_decorators import invalidate_interactor_cache
 
 
 class MenuItemInteractor(RestaurantMixin):
@@ -17,6 +18,7 @@ class MenuItemInteractor(RestaurantMixin):
         super().__init__(restaurant_storage=restaurant_storage)
         self.restaurant_storage = restaurant_storage
 
+    @invalidate_interactor_cache(cache_name="menu_items")
     def create_menu_item(
         self,
         create_items_dto: List[CreateMenuItemDTO],
@@ -37,6 +39,7 @@ class MenuItemInteractor(RestaurantMixin):
             create_item_dtos=create_items_dto, restaurant_id=restaurant_id
         )
 
+    @invalidate_interactor_cache(cache_name="menu_items")
     def update_menu_item(
         self, update_menu_item_dto: UpdateMenuItemDTO, user_id: str
     ) -> MenuItemDTO:
@@ -56,6 +59,7 @@ class MenuItemInteractor(RestaurantMixin):
             update_menu_item_dto=update_menu_item_dto
         )
 
+    @invalidate_interactor_cache(cache_name="menu_items")
     def delete_menu_item(self, menu_item_id: str, user_id: str):
 
         menu_item_dto = self.validate_menu_item_exists(menu_item_id=menu_item_id)

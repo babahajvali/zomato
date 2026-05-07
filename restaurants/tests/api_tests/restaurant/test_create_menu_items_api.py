@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 import pytest
+from django.core.cache import cache
 
 from accounts.tests.factories.storage_factories import UserFactory
 from restaurants.tests.api_tests.restaurant import BaseCreateMenuItemsTestCase
@@ -12,6 +13,9 @@ factory.random.reseed_random(123)
 
 @pytest.mark.django_db
 class TestCreateMenuItemsApi(BaseCreateMenuItemsTestCase):
+    def setup_method(self):
+        cache.clear()
+
     @patch("uuid.uuid4")
     def test_create_enu_items_successfully(self, mock_uuid, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"

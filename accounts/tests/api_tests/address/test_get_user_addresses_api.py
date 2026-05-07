@@ -1,4 +1,5 @@
 import pytest
+from django.core.cache import cache
 
 from accounts.tests.api_tests.address import BaseGetUserAddressesTestCase
 from accounts.tests.factories.storage_factories import AddressFactory, UserFactory
@@ -10,6 +11,9 @@ factory.random.reseed_random(123)
 
 @pytest.mark.django_db
 class TestGetUserAddressesApi(BaseGetUserAddressesTestCase):
+    def setup_method(self):
+        cache.clear()
+
     def test_get_user_addresses_successfully(self, snapshot):
         # Arrange
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"

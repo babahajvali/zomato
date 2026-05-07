@@ -7,9 +7,12 @@ from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
 )
 from orders.mixin.order_mixin import OrderMixin
+from utils.caching_decorators import invalidate_interactor_cache
 from utils.redis_util import redis_lock
 
 
+@invalidate_interactor_cache(cache_name="user_scheduled_orders")
+@invalidate_interactor_cache(cache_name="user_orders")
 class UpdateOrderInteractor(OrderMixin):
     def __init__(self, order_storage: OrderStorageInterface):
         super().__init__(order_storage=order_storage)

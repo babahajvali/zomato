@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from unittest.mock import create_autospec, patch
 
 import pytest
+from django.core.cache import cache
 from django.utils import timezone
 
 from orders.constants.enums import OrderStatus
@@ -35,6 +36,7 @@ REDIS_LOCK = "orders.interactors.order.order_interactor.redis_lock"
 
 class TestOrderInteractor:
     def setup_method(self):
+        cache.clear()
         self.order_storage = create_autospec(OrderStorageInterface)
         self.interactor = OrderInteractor(order_storage=self.order_storage)
 

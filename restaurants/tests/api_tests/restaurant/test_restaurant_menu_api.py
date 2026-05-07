@@ -1,4 +1,5 @@
 import pytest
+from django.core.cache import cache
 
 from accounts.tests.factories.storage_factories import UserFactory
 from restaurants.tests.api_tests.restaurant import BaseRestaurantMenuTestCase
@@ -13,6 +14,9 @@ factory.random.reseed_random(123)
 
 @pytest.mark.django_db
 class TestRestaurantMenuAPI(BaseRestaurantMenuTestCase):
+    def setup_method(self):
+        cache.clear()
+
     def test_get_restaurant_menu_successful(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         restaurant_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"

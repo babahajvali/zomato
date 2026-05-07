@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from unittest.mock import patch
 
 import pytest
+from django.core.cache import cache
 
 from accounts.tests.factories.storage_factories import UserFactory
 from orders.constants.enums import OrderStatus
@@ -18,6 +19,9 @@ def no_op_lock(*args, **kwargs):
 
 @pytest.mark.django_db
 class TestCancelOrderApi(BaseCancelOrderTestCase):
+    def setup_method(self):
+        cache.clear()
+
     @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
     def test_cancel_order_successfully(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"

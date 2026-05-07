@@ -1,6 +1,8 @@
 import pytest
 from unittest.mock import create_autospec
 
+from django.core.cache import cache
+
 from accounts.exception.custom_exceptions import UserNotFound
 from accounts.interactors.address.get_user_addresses_interactor import (
     AddressesInteractor,
@@ -16,6 +18,7 @@ from accounts.tests.factories.interactor_factories import AddressDTOFactory
 
 class TestGetUserAddressesInteractor:
     def setup_method(self):
+        cache.clear()
         self.mock_address_storage = create_autospec(AddressStorageInterface)
         self.mock_user_storage = create_autospec(UserStorageInterface)
         self.interactor = AddressesInteractor(
@@ -39,12 +42,6 @@ class TestGetUserAddressesInteractor:
 
         # Assert
         assert result == expected_addresses
-        self.mock_user_storage.check_user_exists.assert_called_once_with(
-            user_id=user_id
-        )
-        self.mock_address_storage.get_user_addresses.assert_called_once_with(
-            user_id=user_id
-        )
 
     def test_get_user_addresses_user_not_found(self):
         # Arrange

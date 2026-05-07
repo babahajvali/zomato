@@ -127,7 +127,7 @@ class TestRestaurantDashboardInteractor:
         dashboard_input = DashboardFiltersDTO(
             restaurant_id="restaurant-1",
             date_from=date(2026, 4, 27),
-            date_to=date(2026, 4, 20),
+            date_to=date(2026, 4, 20),  # invalid
             owner_id="user-123",
         )
 

@@ -173,6 +173,7 @@ class TestCartItemInteractor:
         self.cart_storage.clear_cart_items.assert_not_called()
 
     def test_update_cart_item_with_min_valid_quantity(self):
+        # Test boundary: quantity=1 (minimum valid quantity)
         menu_item = MenuItemDTOFactory(id="item-123", price=350.0)
         cart_item = CartItemDTOFactory(
             cart_id="cart-123",
@@ -200,6 +201,7 @@ class TestCartItemInteractor:
         )
 
     def test_update_cart_item_with_max_valid_quantity_10(self):
+        # Test boundary: quantity=10 (maximum valid quantity)
         menu_item = MenuItemDTOFactory(id="item-123", price=350.0)
         cart_item = CartItemDTOFactory(
             cart_id="cart-123",
@@ -227,6 +229,7 @@ class TestCartItemInteractor:
         )
 
     def test_get_cart_items_successfully(self):
+        # Test get_cart_items() method
         cart_items = [
             CartItemDTOFactory(
                 cart_id="cart-123",
@@ -255,6 +258,7 @@ class TestCartItemInteractor:
         self.cart_storage.get_cart_items.assert_called_once_with(cart_id="cart-123")
 
     def test_get_cart_items_raises_cart_not_found(self):
+        # Test error path for get_cart_items
         self.cart_storage.get_cart.return_value = None
 
         with pytest.raises(CartNotFound) as exc:
@@ -264,6 +268,7 @@ class TestCartItemInteractor:
         self.cart_storage.get_cart_items.assert_not_called()
 
     def test_get_customer_cart_id(self):
+        # Test get_customer_cart_id() method
         self.cart_storage.get_customer_cart_id.return_value = "cart-123"
 
         result = self.interactor.get_customer_cart_id(customer_id="customer-1")

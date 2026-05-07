@@ -18,9 +18,11 @@ from orders.interactors.dtos import (
     PlaceOrderDTO,
 )
 from orders.interactors.order.order_placement_base import OrderPlacementBase
+from utils.caching_decorators import invalidate_interactor_cache
 from utils.redis_util import redis_lock
 
 
+@invalidate_interactor_cache(cache_name="user_orders")
 class PlaceOrderInteractor(OrderPlacementBase):
     def place_order(self, order_data: PlaceOrderDTO) -> OrderSummaryDTO:
 

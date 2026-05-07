@@ -1,6 +1,7 @@
 from unittest.mock import create_autospec
 
 import pytest
+from django.core.cache import cache
 
 from restaurants.constants.enums import Category
 from restaurants.exception.custom_exceptions import RestaurantNotFound
@@ -17,6 +18,7 @@ from restaurants.tests.factories.interactor_factories import (
 
 class TestViewRestaurantMenuInteractor:
     def setup_method(self):
+        cache.clear()
         self.restaurant_storage = create_autospec(RestaurantStorageInterface)
         self.interactor = ViewRestaurantMenuInteractor(
             restaurant_storage=self.restaurant_storage,

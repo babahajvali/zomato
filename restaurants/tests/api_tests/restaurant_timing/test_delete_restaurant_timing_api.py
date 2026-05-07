@@ -1,4 +1,5 @@
 import pytest
+from django.core.cache import cache
 
 from accounts.tests.factories.storage_factories import UserFactory
 from restaurants.tests.api_tests.restaurant_timing import (
@@ -12,6 +13,9 @@ from restaurants.tests.factories.storage_factories import (
 
 @pytest.mark.django_db
 class TestDeleteRestaurantTiming(BaseDeleteRestaurantTimingTestCase):
+    def setup_method(self):
+        cache.clear()
+
     def test_delete_restaurant_timing_success(self, snapshot):
         user_id = "user-id-123"
         restaurant_id = "restaurants-id-123"

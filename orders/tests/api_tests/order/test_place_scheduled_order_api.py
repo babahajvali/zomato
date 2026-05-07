@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import factory.random
 import pytest
+from django.core.cache import cache
 from django.utils import timezone
 
 from accounts.tests.factories.storage_factories import AddressFactory, UserFactory
@@ -35,6 +36,9 @@ def patch_created_order(order_id: str, placed_at, monkeypatch):
 
 @pytest.mark.django_db
 class TestPlaceScheduledOrderApi(BasePlaceScheduledOrderTestCase):
+    def setup_method(self):
+        cache.clear()
+
     def _create_customer_cart(self, user_id, restaurant, is_available=True):
         cart = CartFactory(
             id="49bb508e-c6d1-4882-95fd-1991d103f7dd",

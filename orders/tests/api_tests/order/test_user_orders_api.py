@@ -1,4 +1,5 @@
 import pytest
+from django.core.cache import cache
 
 from accounts.tests.factories.storage_factories import UserFactory
 from orders.constants.enums import OrderStatus
@@ -9,6 +10,9 @@ from restaurants.tests.factories.storage_factories import RestaurantFactory
 
 @pytest.mark.django_db
 class TestUserOrdersApi(BaseUserOrdersTestCase):
+    def setup_method(self):
+        cache.clear()
+
     def test_user_orders_successfully(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         other_user_id = "49bb508e-c6d1-4882-95fd-1991d103f7ce"
@@ -58,7 +62,8 @@ class TestUserOrdersApi(BaseUserOrdersTestCase):
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         UserFactory(id=user_id)
         RestaurantFactory(id=restaurant_id)
-        
+
+        # Create 5 orders for pagination testing
         for i in range(1, 6):
             OrderFactory(
                 id=f"orders-{i}",
@@ -67,6 +72,7 @@ class TestUserOrdersApi(BaseUserOrdersTestCase):
                 status=OrderStatus.PLACED.value,
             )
 
+        # Test first page with limit=2, offset=0
         variables = {"params": {"limit": 2, "offset": 0}}
         self.execute_schema(
             query=self.QUERY,

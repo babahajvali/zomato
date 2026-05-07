@@ -1,5 +1,7 @@
 from unittest.mock import create_autospec
 
+from django.core.cache import cache
+
 from restaurants.interactors.review.review_interactor import ReviewInteractor
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
     RestaurantStorageInterface,
@@ -12,6 +14,8 @@ from restaurants.tests.factories.interactor_factories import ReviewDTOFactory
 
 class TestGetReviewInteractor:
     def setup_method(self):
+        cache.clear()
+
         self.mock_review_storage = create_autospec(ReviewStorageInterface)
         self.mock_restaurant_storage = create_autospec(RestaurantStorageInterface)
         self.interactor = ReviewInteractor(

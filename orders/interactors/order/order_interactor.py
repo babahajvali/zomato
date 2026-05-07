@@ -22,6 +22,7 @@ from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
 )
 from orders.mixin.order_mixin import OrderMixin
+from utils.caching_decorators import interactor_cache, invalidate_interactor_cache
 from utils.redis_util import redis_lock
 
 
@@ -30,6 +31,8 @@ class OrderInteractor(OrderMixin):
         super().__init__(order_storage=order_storage)
         self.order_storage = order_storage
 
+    @invalidate_interactor_cache(cache_name="user_scheduled_orders")
+    @invalidate_interactor_cache(cache_name="user_orders")
     def cancel_order(self, order_id: str, user_id: str) -> OrderDTO:
 
         with redis_lock(
@@ -51,6 +54,7 @@ class OrderInteractor(OrderMixin):
                     status=OrderStatus.CANCELLED,
                 )
 
+    @interactor_cache(cache_name="user_orders", timeout=10 * 60)
     def get_user_orders(self, user_id: str, limit: int, offset: int) -> List[OrderDTO]:
 
         return self.order_storage.get_user_orders(
@@ -96,6 +100,7 @@ class OrderInteractor(OrderMixin):
             restaurant_id=restaurant_id, date_from=date_from, date_to=date_to
         )
 
+    @interactor_cache(cache_name="user_scheduled_orders", timeout=30 * 60)
     def get_user_scheduled_orders(
         self, user_id: str, limit: int, offset: int
     ) -> List[ScheduledOrderDTO]:

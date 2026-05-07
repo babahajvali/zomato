@@ -9,6 +9,7 @@ from restaurants.interactors.storage_interface.restaurant_timing_storage_interfa
 )
 from restaurants.mixins.restaurant_mixin import RestaurantMixin
 from restaurants.mixins.restaurant_timing_mixin import TimingMixin
+from utils.caching_decorators import invalidate_interactor_cache, interactor_cache
 
 
 class RestaurantTimingInteractor(RestaurantMixin, TimingMixin):
@@ -24,6 +25,7 @@ class RestaurantTimingInteractor(RestaurantMixin, TimingMixin):
         self.restaurant_timing_storage = restaurant_timing_storage
         self.restaurant_storage = restaurant_storage
 
+    @invalidate_interactor_cache(cache_name="restaurant_timings")
     def create_restaurant_timing(
         self, create_restaurant_timing_dto: CreateRestaurantTimingDTO, user_id: str
     ) -> RestaurantTimingDTO:
@@ -43,6 +45,7 @@ class RestaurantTimingInteractor(RestaurantMixin, TimingMixin):
             create_restaurant_timing_dto=[create_restaurant_timing_dto]
         )[0]
 
+    @interactor_cache(cache_name="restaurant_timings")
     def get_restaurant_timings(self, restaurant_id: str) -> List[RestaurantTimingDTO]:
         self.validate_restaurant_exists(restaurant_id=restaurant_id)
 
@@ -50,6 +53,7 @@ class RestaurantTimingInteractor(RestaurantMixin, TimingMixin):
             restaurant_id=restaurant_id
         )
 
+    @invalidate_interactor_cache(cache_name="restaurant_timings")
     def delete_restaurant_timing(self, timing_id: int, user_id: str):
         self.validate_restaurant_timing_exists(timing_id=timing_id)
         self.validate_user_is_restaurant_owner_through_timing_id(

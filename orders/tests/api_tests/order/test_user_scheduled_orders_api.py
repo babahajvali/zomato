@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
 import pytest
+from django.core.cache import cache
 
 from accounts.tests.factories.storage_factories import UserFactory
 from orders.constants.enums import OrderStatus
@@ -11,6 +12,9 @@ from restaurants.tests.factories.storage_factories import RestaurantFactory
 
 @pytest.mark.django_db
 class TestUserScheduledOrdersApi(BaseUserScheduledOrdersTestCase):
+    def setup_method(self):
+        cache.clear()
+
     def test_user_scheduled_orders_successfully(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         other_user_id = "49bb508e-c6d1-4882-95fd-1991d103f7ce"

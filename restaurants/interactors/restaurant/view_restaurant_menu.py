@@ -10,6 +10,7 @@ from restaurants.interactors.storage_interface.restaurant_storage_interface impo
     RestaurantStorageInterface,
 )
 from restaurants.mixins.restaurant_mixin import RestaurantMixin
+from utils.caching_decorators import interactor_cache
 
 
 class ViewRestaurantMenuInteractor(RestaurantMixin):
@@ -17,6 +18,7 @@ class ViewRestaurantMenuInteractor(RestaurantMixin):
         super().__init__(restaurant_storage=restaurant_storage)
         self.restaurant_storage = restaurant_storage
 
+    @interactor_cache(cache_name="menu_items")
     def view_restaurant_menu(self, restaurant_id: str) -> RestaurantMenuDTO:
 
         self.validate_restaurant_exists(restaurant_id=restaurant_id)

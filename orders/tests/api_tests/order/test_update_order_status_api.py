@@ -2,6 +2,7 @@ from contextlib import contextmanager
 from unittest.mock import patch
 
 import pytest
+from django.core.cache import cache
 
 from accounts.tests.factories.storage_factories import UserFactory
 from orders.constants.enums import OrderStatus
@@ -17,6 +18,9 @@ def no_op_lock(*args, **kwargs):
 
 @pytest.mark.django_db
 class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
+    def setup_method(self):
+        cache.clear()
+
     @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
     def test_update_order_status_successfully(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
@@ -124,13 +128,13 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
             id="orders-1",
             customer_id="customer-1",
             restaurant_id=restaurant_id,
-            status=OrderStatus.CONFIRMED.value,
+            status=OrderStatus.CONFIRMED.value,  # Start from CONFIRMED
         )
 
         variables = {
             "params": {
                 "orderId": "orders-1",
-                "status": OrderStatus.PREPARING.value,
+                "status": OrderStatus.PREPARING.value,  # Transition to PREPARING
             }
         }
 
@@ -151,13 +155,13 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
             id="orders-1",
             customer_id="customer-1",
             restaurant_id=restaurant_id,
-            status=OrderStatus.PREPARING.value,
+            status=OrderStatus.PREPARING.value,  # Start from PREPARING
         )
 
         variables = {
             "params": {
                 "orderId": "orders-1",
-                "status": OrderStatus.OUT_OF_DELIVERY.value,
+                "status": OrderStatus.OUT_OF_DELIVERY.value,  # Transition to OUT_OF_DELIVERY
             }
         }
 
@@ -178,13 +182,13 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
             id="orders-1",
             customer_id="customer-1",
             restaurant_id=restaurant_id,
-            status=OrderStatus.OUT_OF_DELIVERY.value,
+            status=OrderStatus.OUT_OF_DELIVERY.value,  # Start from OUT_OF_DELIVERY
         )
 
         variables = {
             "params": {
                 "orderId": "orders-1",
-                "status": OrderStatus.DELIVERED.value,
+                "status": OrderStatus.DELIVERED.value,  # Transition to DELIVERED
             }
         }
 
@@ -204,13 +208,13 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
             id="orders-1",
             customer_id="customer-1",
             restaurant_id=restaurant_id,
-            status=OrderStatus.CANCELLED.value,
+            status=OrderStatus.CANCELLED.value,  # Start from CANCELLED
         )
 
         variables = {
             "params": {
                 "orderId": "orders-1",
-                "status": OrderStatus.PREPARING.value,
+                "status": OrderStatus.PREPARING.value,  # Try to transition from CANCELLED
             }
         }
 
