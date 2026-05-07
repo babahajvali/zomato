@@ -24,9 +24,7 @@ from orders.graphql.types.error_types import (
 )
 from orders.graphql.types.types import (
     OrderType,
-    ScheduledOrderType,
     OrdersType,
-    ScheduledOrdersType,
     OrderSummaryType,
     ScheduledOrderSummaryType,
     PromoCodesType,
@@ -135,27 +133,6 @@ class CancelOrderResponse(graphene.Union):
             OrderCancellationWindowExpired,
             OrderCancellationNotAllowed,
             OrderAlreadyCancelled,
-        )
-
-
-class CancelScheduledOrderResponse(graphene.Union):
-    class Meta:
-        types = (
-            OrderType,
-            OrderNotFound,
-            OrderNotOwnedByUser,
-            OrderCancellationWindowExpired,
-            OrderCancellationNotAllowed,
-            OrderAlreadyCancelled,
-        )
-
-
-class AutoCancelOrderResponse(graphene.Union):
-    class Meta:
-        types = (
-            OrderType,
-            OrderNotFound,
-            OrderCancellationNotAllowed,
         )
 
 

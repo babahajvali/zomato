@@ -53,7 +53,3 @@ class GetTodayRestaurantScheduledOrdersInputParams(graphene.InputObjectType):
 
 class CancelOrderInputParams(graphene.InputObjectType):
     order_id = graphene.String(required=True)
-
-
-class AutoCancelOrderInputParams(graphene.InputObjectType):
-    order_id = graphene.String(required=True)

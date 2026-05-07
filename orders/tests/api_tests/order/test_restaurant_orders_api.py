@@ -82,7 +82,7 @@ class TestRestaurantOrdersApi(BaseRestaurantOrdersTestCase):
         UserFactory(id=user_id)
         RestaurantFactory(id=restaurant_id, owner_id=user_id)
 
-                for i in range(1, 6):
+        for i in range(1, 6):
             OrderFactory(
                 id=f"orders-{i}",
                 customer_id=f"customer-{i}",

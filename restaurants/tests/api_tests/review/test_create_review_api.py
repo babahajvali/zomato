@@ -2,7 +2,10 @@ import pytest
 
 from accounts.tests.factories.storage_factories import UserFactory
 from restaurants.tests.api_tests.review import BaseCreateReviewTestCase
-from restaurants.tests.factories.storage_factories import RestaurantFactory
+from restaurants.tests.factories.storage_factories import (
+    RestaurantFactory,
+    RestaurantReviewFactory,
+)
 
 
 @pytest.mark.django_db
@@ -104,15 +107,7 @@ class TestCreateReviewApi(BaseCreateReviewTestCase):
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-
-                from restaurants.models import RestaurantReview
-
-        RestaurantReview.objects.create(
-            restaurant=restaurant,
-            customer_id=user_id,
-            rating=3,
-            review_text="Previous review",
-        )
+        RestaurantReviewFactory(restaurant=restaurant)
 
         variables = {
             "params": {
