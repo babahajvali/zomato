@@ -1,7 +1,12 @@
 import factory
 
 from accounts.constants.enums import Role
-from accounts.interactors.dtos import AddressDTO, CreateAddressDTO, CreateUserDTO, UserDTO
+from accounts.interactors.dtos import (
+    AddressDTO,
+    CreateAddressDTO,
+    CreateUserDTO,
+    UserDTO,
+)
 
 
 class CreateUserDTOFactory(factory.Factory):

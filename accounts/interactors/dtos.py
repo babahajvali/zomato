@@ -40,3 +40,4 @@ class UserDTO:
     email: str
     phone_number: str
     role: Role
+    password: str

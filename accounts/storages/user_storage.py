@@ -15,6 +15,7 @@ class UserStorage(UserStorageInterface):
             name=user_obj.name,
             phone_number=user_obj.phone_number,
             role=user_obj.role,
+            password=user_obj.password,
         )
 
     def create_bulk_users(self, create_user_dtos: List[CreateUserDTO]):

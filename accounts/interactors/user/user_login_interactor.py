@@ -13,7 +13,9 @@ class UserLoginInteractor:
 
     def user_login(self, email: str, password: str) -> UserDTO:
         user_dto = self._validate_email(email=email)
-        self._validate_credentials(actual_password=password, password=password, email=email)
+        self._validate_credentials(
+            actual_password=user_dto.password, password=password, email=email
+        )
 
         return user_dto
 
