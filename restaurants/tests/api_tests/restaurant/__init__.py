@@ -212,3 +212,34 @@ class BaseGetOwnerRestaurantsTestCase(GraphQLBaseTestCase):
       }
     }
     """
+
+
+class BaseGetScoredRestaurantsTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    query GetUserRecommendedRestaurants($params: GetScoredRestaurantsInputParams!) {
+      getUserRecommendedRestaurants(params: $params) {
+        ... on ScoredRestaurantsType {
+          __typename
+          restaurants {
+            restaurantId
+            name
+            cuisineType
+            averageRating
+            totalReviews
+            score
+            isOpen
+            dayFrequent
+            orderVolume
+          }
+        }
+        ... on InvalidLimit {
+          __typename
+          limit
+        }
+        ... on InvalidOffset {
+          __typename
+          offset
+        }
+      }
+    }
+    """

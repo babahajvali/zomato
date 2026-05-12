@@ -259,3 +259,30 @@ class UpdateMenuItemDTO:
     preparation_time_in_minutes: Optional[int]
     price: Optional[Decimal]
     tags: Optional[List[str]]
+
+
+@dataclass
+class ScoredRestaurantDTO:
+    restaurant_id: str
+    name: str
+    cuisine_type: CuisineType
+    average_rating: Decimal
+    total_reviews: int
+    score: Decimal
+    is_open: bool
+    day_frequent: int
+    order_volume: int
+
+
+@dataclass
+class RestaurantReviewDTO:
+    restaurant_id: str
+    avg_rating: Decimal
+    total_reviews: int
+
+
+@dataclass
+class RestaurantOrderStatsDTO:
+    restaurant_id: str
+    order_count: int
+    daily_frequent: int

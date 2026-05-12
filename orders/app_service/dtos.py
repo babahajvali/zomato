@@ -15,3 +15,10 @@ class RestaurantOrdersSummaryDTO:
 class OrdersByStatusDTO:
     status: str
     count: int
+
+
+@dataclass
+class RestaurantOrderStatsDTO:
+    restaurant_id: str
+    order_count: int
+    daily_frequent: int

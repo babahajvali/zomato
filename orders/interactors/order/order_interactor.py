@@ -3,7 +3,11 @@ from typing import List
 from django.db import transaction
 from django.utils import timezone
 
-from orders.app_service.dtos import RestaurantOrdersSummaryDTO, OrdersByStatusDTO
+from orders.app_service.dtos import (
+    RestaurantOrdersSummaryDTO,
+    OrdersByStatusDTO,
+    RestaurantOrderStatsDTO,
+)
 from orders.constants.constants import CANCEL_TIME
 from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
@@ -117,6 +121,14 @@ class OrderInteractor(OrderMixin):
         return self.build_schedule_order_summaries(
             order_items=order_items,
             orders=order_dtos,
+        )
+
+    def get_user_restaurants_stats(
+        self, restaurant_ids: List[str], user_id: str
+    ) -> List[RestaurantOrderStatsDTO]:
+
+        return self.order_storage.get_user_restaurant_stats(
+            restaurant_ids=restaurant_ids, user_id=user_id
         )
 
     def _validate_order_is_cancellable(self, order_status: str, order_id: str):

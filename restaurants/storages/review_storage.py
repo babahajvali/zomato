@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from typing import List
 
 from django.db.models import Avg, Count
@@ -8,6 +8,7 @@ from restaurants.interactors.dtos import (
     ReviewDTO,
     RestaurantReviewSummaryDTO,
     RatingSummaryDTO,
+    RestaurantReviewDTO,
 )
 from restaurants.interactors.storage_interface.review_storage_interface import (
     ReviewStorageInterface,
@@ -106,3 +107,26 @@ class ReviewStorage(ReviewStorageInterface):
             return None
 
         return self._convert_to_review_dto(review_obj=review_obj)
+
+    def get_restaurants_reviews(
+        self, restaurant_ids: List[str]
+    ) -> List[RestaurantReviewDTO]:
+        reviews = (
+            RestaurantReview.objects.filter(restaurant_id__in=restaurant_ids)
+            .values("restaurant_id")
+            .annotate(
+                average_rating=Avg("rating"),
+                rating_count=Count("id"),
+            )
+        )
+
+        return [
+            RestaurantReviewDTO(
+                restaurant_id=review["restaurant_id"],
+                avg_rating=Decimal(str(review["average_rating"] or 0)).quantize(
+                    Decimal("0.01"), rounding=ROUND_HALF_UP
+                ),
+                total_reviews=review["rating_count"],
+            )
+            for review in reviews
+        ]

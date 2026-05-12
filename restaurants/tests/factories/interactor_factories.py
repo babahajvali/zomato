@@ -21,6 +21,7 @@ from restaurants.interactors.dtos import (
     CreateReviewDTO,
     ReviewDTO,
     RestaurantReviewSummaryDTO,
+    RestaurantReviewDTO,
 )
 
 
@@ -217,4 +218,13 @@ class RestaurantReviewSummaryDTOFactory(factory.Factory):
 
     restaurant_id = factory.Sequence(lambda n: f"restaurant-{n}")
     average_rating = 4.5
+    total_reviews = 2
+
+
+class RestaurantReviewDTOFactory(factory.Factory):
+    class Meta:
+        model = RestaurantReviewDTO
+
+    restaurant_id = factory.Sequence(lambda n: f"restaurant-{n}")
+    avg_rating = 4.5
     total_reviews = 2

@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 from typing import List
 
@@ -20,6 +21,20 @@ from restaurants.models.restaurant import Restaurant, MenuItem
 
 
 class RestaurantStorage(RestaurantStorageInterface):
+    @staticmethod
+    def _convert_to_restaurant_dto(restaurant_obj: Restaurant) -> RestaurantDTO:
+        return RestaurantDTO(
+            id=str(restaurant_obj.id),
+            name=restaurant_obj.name,
+            description=restaurant_obj.description,
+            cuisine_type=restaurant_obj.cuisine_type,
+            address=restaurant_obj.address,
+            pin_code=restaurant_obj.pin_code,
+            is_veg_only=restaurant_obj.is_veg_only,
+            is_deleted=restaurant_obj.is_deleted,
+            owner_id=restaurant_obj.owner_id,
+        )
+
     @staticmethod
     def _convert_to_menu_item_dto(item_obj: MenuItem) -> MenuItemDTO:
         return MenuItemDTO(
@@ -146,17 +161,7 @@ class RestaurantStorage(RestaurantStorageInterface):
         ]
 
         return [
-            RestaurantDTO(
-                id=str(restaurant.id),
-                name=restaurant.name,
-                description=restaurant.description,
-                cuisine_type=restaurant.cuisine_type,
-                address=restaurant.address,
-                pin_code=restaurant.pin_code,
-                is_veg_only=restaurant.is_veg_only,
-                is_deleted=restaurant.is_deleted,
-                owner_id=restaurant.owner_id,
-            )
+            self._convert_to_restaurant_dto(restaurant_obj=restaurant)
             for restaurant in queryset
         ]
 
@@ -242,3 +247,18 @@ class RestaurantStorage(RestaurantStorageInterface):
             )
             for restaurant in restaurant_objs
         ]
+
+    def get_delivered_pincode_restaurants(self, pincode: str) -> List[RestaurantDTO]:
+        now = datetime.now()
+        current_time = now.time()
+        today_day = now.isoweekday()
+
+        query = Restaurant.objects.filter(
+            is_deleted=False,
+            deliveryzone__pin_code=pincode,
+            restauranttiming__day_of_week=today_day,
+            restauranttiming__open_time__lte=current_time,
+            restauranttiming__close_time__gte=current_time,
+        ).distinct()
+
+        return [self._convert_to_restaurant_dto(restaurant_obj=item) for item in query]

@@ -1,7 +1,11 @@
 from datetime import date
 from typing import List
 
-from orders.app_service.dtos import RestaurantOrdersSummaryDTO, OrdersByStatusDTO
+from orders.app_service.dtos import (
+    RestaurantOrdersSummaryDTO,
+    OrdersByStatusDTO,
+    RestaurantOrderStatsDTO,
+)
 from orders.interactors.dtos import PeakHourDTO, TopSellingItemDTO
 from orders.interactors.order.order_interactor import OrderInteractor
 from orders.storages.order_storage import OrderStorage
@@ -35,7 +39,6 @@ class ServiceInterface:
 
         interactor = OrderInteractor(order_storage=self.order_storage)
 
-
         return interactor.get_peak_hours(
             restaurant_id=restaurant_id, date_from=date_from, date_to=date_to
         )
@@ -48,4 +51,14 @@ class ServiceInterface:
 
         return interactor.get_top_selling_items(
             restaurant_id=restaurant_id, date_from=date_from, date_to=date_to
+        )
+
+    def get_user_restaurants_stat(
+        self, restaurant_ids: List[str], user_id: str
+    ) -> List[RestaurantOrderStatsDTO]:
+
+        interactor = OrderInteractor(order_storage=self.order_storage)
+
+        return interactor.get_user_restaurants_stats(
+            restaurant_ids=restaurant_ids, user_id=user_id
         )

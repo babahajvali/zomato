@@ -169,3 +169,19 @@ class OwnerRestaurantsType(graphene.ObjectType):
 
 class CustomerCartIdType(graphene.ObjectType):
     cart_id = graphene.String(required=True)
+
+
+class ScoredRestaurantType(graphene.ObjectType):
+    restaurant_id = graphene.String(required=True)
+    name = graphene.String(required=True)
+    cuisine_type = graphene.String(required=True)
+    average_rating = graphene.Decimal(required=True)
+    total_reviews = graphene.Int(required=True)
+    score = graphene.Decimal(required=True)
+    is_open = graphene.Boolean(required=True)
+    day_frequent = graphene.Int(required=True)
+    order_volume = graphene.Int(required=True)
+
+
+class ScoredRestaurantsType(graphene.ObjectType):
+    restaurants = graphene.List(ScoredRestaurantType, required=True)

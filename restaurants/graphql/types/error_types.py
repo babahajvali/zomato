@@ -53,3 +53,11 @@ class InvalidRatingFound(graphene.ObjectType):
 class InvalidDateRange(graphene.ObjectType):
     date_from = graphene.Date(required=True)
     date_to = graphene.Date(required=True)
+
+
+class InvalidOffset(graphene.ObjectType):
+    offset = graphene.Int(required=True)
+
+
+class InvalidLimit(graphene.ObjectType):
+    limit = graphene.Int(required=True)

@@ -72,3 +72,7 @@ class RestaurantStorageInterface(ABC):
     @abstractmethod
     def get_owner_restaurants(self, owner_id: str) -> List[RestaurantDTO]:
         pass
+
+    @abstractmethod
+    def get_delivered_pincode_restaurants(self, pincode: str) -> List[RestaurantDTO]:
+        pass

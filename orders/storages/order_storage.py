@@ -2,10 +2,24 @@ from datetime import datetime, date, timedelta
 from decimal import Decimal, ROUND_HALF_UP
 from typing import List
 
-from django.db.models import Count, Q, Avg, Sum, ExpressionWrapper, F, DecimalField
-from django.db.models.functions import ExtractHour
+from django.db.models import (
+    Count,
+    Q,
+    Avg,
+    Sum,
+    ExpressionWrapper,
+    F,
+    DecimalField,
+    Value,
+    FloatField,
+)
+from django.db.models.functions import ExtractHour, Coalesce
 
-from orders.app_service.dtos import RestaurantOrdersSummaryDTO, OrdersByStatusDTO
+from orders.app_service.dtos import (
+    RestaurantOrdersSummaryDTO,
+    OrdersByStatusDTO,
+    RestaurantOrderStatsDTO,
+)
 from orders.constants.enums import OrderStatus
 from orders.interactors.dtos import (
     CreateOrderDTO,
@@ -347,3 +361,39 @@ class OrderStorage(OrderStorageInterface):
                 "item_id", flat=True
             )
         )
+
+    def get_user_restaurant_stats(
+        self, restaurant_ids: List[str], user_id: str
+    ) -> List[RestaurantOrderStatsDTO]:
+
+        now = datetime.now()
+        ten_days_ago = now - timedelta(days=10)
+
+        results = (
+            Order.objects.filter(
+                restaurant_id__in=restaurant_ids,
+                customer_id=user_id,
+            )
+            .values("restaurant_id")
+            .annotate(
+                order_count=Count("id"),
+                daily_frequent=Coalesce(
+                    Count(
+                        "id",
+                        filter=Q(created_at__gte=ten_days_ago),
+                    )
+                    / Value(10.0),
+                    Value(0.0),
+                    output_field=FloatField(),
+                ),
+            )
+        )
+
+        return [
+            RestaurantOrderStatsDTO(
+                restaurant_id=row["restaurant_id"],
+                order_count=row["order_count"],
+                daily_frequent=int(row["daily_frequent"]),
+            )
+            for row in results
+        ]

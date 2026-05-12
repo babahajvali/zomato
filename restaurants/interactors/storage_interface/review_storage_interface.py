@@ -6,6 +6,7 @@ from restaurants.interactors.dtos import (
     ReviewDTO,
     RestaurantReviewSummaryDTO,
     RatingSummaryDTO,
+    RestaurantReviewDTO,
 )
 
 
@@ -34,4 +35,10 @@ class ReviewStorageInterface(ABC):
 
     @abstractmethod
     def get_user_restaurant_review(self, restaurant_id: str, user_id: str) -> ReviewDTO:
+        pass
+
+    @abstractmethod
+    def get_restaurants_reviews(
+        self, restaurant_ids: List[str]
+    ) -> List[RestaurantReviewDTO]:
         pass

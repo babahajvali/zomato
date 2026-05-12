@@ -1,7 +1,6 @@
 from typing import List
 
 from orders.adapter.dtos import DeliveryZoneDTO, RestaurantTimingDTO, CartItemDTO
-from restaurants.interactors.dtos import MenuItemDTO
 
 
 class RestaurantAdapter:

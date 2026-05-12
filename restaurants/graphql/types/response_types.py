@@ -14,6 +14,8 @@ from restaurants.graphql.types.error_types import (
     RestaurantAlreadyReviewedByUser,
     InvalidRatingFound,
     InvalidDateRange,
+    InvalidOffset,
+    InvalidLimit,
 )
 from restaurants.graphql.types.types import (
     RestaurantTimingType,
@@ -32,6 +34,7 @@ from restaurants.graphql.types.types import (
     DeleteMenuItemSuccessType,
     OwnerRestaurantsType,
     CustomerCartIdType,
+    ScoredRestaurantsType,
 )
 from utils.graphql_types import UserNotRestaurantOwner
 
@@ -180,3 +183,8 @@ class GetOwnerRestaurantsResponse(graphene.Union):
 class GetCustomerCartIdResponse(graphene.Union):
     class Meta:
         types = (CustomerCartIdType,)
+
+
+class GetuserScoredRestaurantsResponse(graphene.Union):
+    class Meta:
+        types = (ScoredRestaurantsType, InvalidOffset, InvalidLimit)

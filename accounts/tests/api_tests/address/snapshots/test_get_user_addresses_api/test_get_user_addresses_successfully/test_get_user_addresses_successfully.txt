@@ -6,16 +6,16 @@
       "addresses": [
         {
           "addressId": "1",
-          "fullAddress": "8855 Erik Junction\nJacquelineburgh, AL 57684",
-          "city": "New Nicholastown",
+          "fullAddress": "12204 Berry Greens\nMonroeport, MA 68877",
+          "city": "Clarkhaven",
           "pincode": "500000",
           "label": "Home",
           "isDefault": true
         },
         {
           "addressId": "2",
-          "fullAddress": "01220 Pruitt Ports Suite 470\nMatthewfort, IL 80311",
-          "city": "Alexanderhaven",
+          "fullAddress": "68689 Meyer Manor Suite 802\nSouth Dominiqueburgh, MA 44661",
+          "city": "Hensonmouth",
           "pincode": "500001",
           "label": "Office",
           "isDefault": false

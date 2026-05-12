@@ -1,7 +1,11 @@
 from abc import ABC, abstractmethod
 from datetime import datetime, date
 from typing import List
-from orders.app_service.dtos import RestaurantOrdersSummaryDTO, OrdersByStatusDTO
+from orders.app_service.dtos import (
+    RestaurantOrdersSummaryDTO,
+    OrdersByStatusDTO,
+    RestaurantOrderStatsDTO,
+)
 from orders.constants.enums import OrderStatus
 from orders.interactors.dtos import (
     CreateOrderDTO,
@@ -112,4 +116,10 @@ class OrderStorageInterface(ABC):
 
     @abstractmethod
     def get_order_item_ids(self, order_id: str) -> List[str]:
+        pass
+
+    @abstractmethod
+    def get_user_restaurant_stats(
+        self, restaurant_ids: List[str], user_id: str
+    ) -> List[RestaurantOrderStatsDTO]:
         pass

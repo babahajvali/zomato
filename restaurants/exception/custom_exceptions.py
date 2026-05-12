@@ -165,3 +165,19 @@ class InvalidDateRange(Exception):
 class NothingToUpdate(Exception):
     def __str__(self):
         return "Nothing to update"
+
+
+class InvalidLimitFound(Exception):
+    def __init__(self, limit: int):
+        self.limit = limit
+
+    def __str__(self):
+        return f"Invalid limit: {self.limit}"
+
+
+class InvalidOffsetFound(Exception):
+    def __init__(self, offset: int):
+        self.offset = offset
+
+    def __str__(self):
+        return f"Invalid offset: {self.offset}"
