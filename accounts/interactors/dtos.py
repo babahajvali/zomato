@@ -52,6 +52,7 @@ class UserCreateDTO:
     role: Role
     password: str
 
+
 @dataclass
 class UpdateUserDTO:
     user_id: str

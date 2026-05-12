@@ -36,7 +36,7 @@ class OrderFactory(DjangoModelFactory):
     delivery_fee = 30.0
     tax_fee = 20.0
     final_amount = 450.0
-    address_id = "1"
+    address_id = 1
 
 
 class OrderItemFactory(DjangoModelFactory):

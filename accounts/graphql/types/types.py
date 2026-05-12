@@ -2,7 +2,7 @@ import graphene
 
 
 class AddressType(graphene.ObjectType):
-    address_id = graphene.String(required=True)
+    address_id = graphene.Int(required=True)
     full_address = graphene.String(required=True)
     city = graphene.String(required=True)
     pincode = graphene.String(required=True)

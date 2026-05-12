@@ -20,3 +20,7 @@ class AddressStorageInterface(ABC):
     @abstractmethod
     def get_user_addresses(self, user_id: str) -> List[AddressDTO]:
         pass
+
+    @abstractmethod
+    def update_bulk_addresses(self, address_dtos: List[CreateAddressDTO]):  # NEW
+        pass
