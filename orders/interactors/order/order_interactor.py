@@ -7,6 +7,7 @@ from orders.app_service.dtos import (
     RestaurantOrdersSummaryDTO,
     OrdersByStatusDTO,
     RestaurantOrderStatsDTO,
+    MenuItemOrderStatsDTO,
 )
 from orders.constants.constants import CANCEL_TIME
 from orders.constants.enums import OrderStatus
@@ -129,6 +130,14 @@ class OrderInteractor(OrderMixin):
 
         return self.order_storage.get_user_restaurant_stats(
             restaurant_ids=restaurant_ids, user_id=user_id
+        )
+
+    def get_menu_item_order_stats(
+        self, menu_item_ids: List[str], user_id: str
+    ) -> List[MenuItemOrderStatsDTO]:
+
+        return self.order_storage.get_menu_item_order_stats(
+            menu_item_ids=menu_item_ids, user_id=user_id
         )
 
     def _validate_order_is_cancellable(self, order_status: str, order_id: str):

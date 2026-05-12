@@ -1,0 +1,125 @@
+import pytest
+
+from accounts.tests.factories.storage_factories import UserFactory
+from restaurants.tests.api_tests.restaurant import BaseGetScoredRestaurantItemsTestCase
+from restaurants.tests.factories.storage_factories import (
+    MenuItemFactory,
+    RestaurantFactory,
+    RestaurantReviewFactory,
+)
+
+
+@pytest.mark.django_db
+class TestGetScoredRestaurantItemsApi(BaseGetScoredRestaurantItemsTestCase):
+    def test_get_scored_restaurant_items_successfully(self, snapshot):
+        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
+        restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
+        UserFactory(id=user_id)
+        restaurant = RestaurantFactory(id=restaurant_id, name="Restaurant 1")
+        MenuItemFactory(
+            id="49bb508e-c6d1-4882-95fd-1991d103f7de",
+            restaurant=restaurant,
+            name="Paneer Tikka",
+            price=200.0,
+            is_available=True,
+        )
+        RestaurantReviewFactory(
+            id=1,
+            restaurant=restaurant,
+            customer_id=user_id,
+            rating=5,
+            review_text="Great food",
+        )
+
+        variables = {
+            "params": {
+                "restaurantId": restaurant_id,
+                "limit": 10,
+                "offset": 0,
+            }
+        }
+
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )
+
+    def test_get_scored_restaurant_items_empty_list(self, snapshot):
+        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
+        restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
+        UserFactory(id=user_id)
+        RestaurantFactory(id=restaurant_id, name="Restaurant 1")
+
+        variables = {
+            "params": {
+                "restaurantId": restaurant_id,
+                "limit": 10,
+                "offset": 0,
+            }
+        }
+
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )
+
+    def test_restaurant_not_found(self, snapshot):
+        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
+        UserFactory(id=user_id)
+
+        variables = {
+            "params": {
+                "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7df",
+                "limit": 10,
+                "offset": 0,
+            }
+        }
+
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )
+
+    def test_invalid_limit_found(self, snapshot):
+        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
+        UserFactory(id=user_id)
+
+        variables = {
+            "params": {
+                "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7df",
+                "limit": -1,
+                "offset": 0,
+            }
+        }
+
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )
+
+    def test_invalid_offset_found(self, snapshot):
+        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
+        UserFactory(id=user_id)
+
+        variables = {
+            "params": {
+                "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7df",
+                "limit": 10,
+                "offset": -1,
+            }
+        }
+
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id=user_id,
+        )

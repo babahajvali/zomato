@@ -8,6 +8,7 @@ from restaurants.interactors.dtos import (
     PeakHourDTO,
     TopSellingItemDTO,
     RestaurantOrderStatsDTO,
+    MenuItemOrderStatsDTO,
 )
 
 
@@ -55,4 +56,12 @@ class OrderAdapter:
 
         return self.interface.get_user_restaurants_stat(
             restaurant_ids=restaurant_ids, user_id=user_id
+        )
+
+    def get_menu_item_order_stats(
+        self, menu_item_ids: List[str], user_id: str
+    ) -> List[MenuItemOrderStatsDTO]:
+
+        return self.interface.get_menu_item_order_stats(
+            menu_item_ids=menu_item_ids, user_id=user_id
         )

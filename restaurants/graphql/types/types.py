@@ -185,3 +185,19 @@ class ScoredRestaurantType(graphene.ObjectType):
 
 class ScoredRestaurantsType(graphene.ObjectType):
     restaurants = graphene.List(ScoredRestaurantType, required=True)
+
+
+class ScoreItemType(graphene.ObjectType):
+    menu_item_id = graphene.String(required=True)
+    restaurant_id = graphene.String(required=True)
+    name = graphene.String(required=True)
+    price = graphene.Decimal(required=True)
+    is_available = graphene.Boolean(required=True)
+    total_orders_count = graphene.Int(required=True)
+    recently_order_count = graphene.Int(required=True)
+    score = graphene.Decimal(required=True)
+    average_rating = graphene.Decimal(required=True)
+
+
+class ScoredItemsType(graphene.ObjectType):
+    menu_items = graphene.List(ScoreItemType)

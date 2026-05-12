@@ -19,6 +19,7 @@ from orders.app_service.dtos import (
     RestaurantOrdersSummaryDTO,
     OrdersByStatusDTO,
     RestaurantOrderStatsDTO,
+    MenuItemOrderStatsDTO,
 )
 from orders.constants.enums import OrderStatus
 from orders.interactors.dtos import (
@@ -396,4 +397,40 @@ class OrderStorage(OrderStorageInterface):
                 daily_frequent=int(row["daily_frequent"]),
             )
             for row in results
+        ]
+
+    def get_menu_item_order_stats(
+        self, menu_item_ids: List[str], user_id: str
+    ) -> List[MenuItemOrderStatsDTO]:
+
+        now = datetime.now()
+        one_week_ago = now - timedelta(days=7)
+
+        user_stats = (
+            OrderItem.objects.filter(
+                item_id__in=menu_item_ids,
+                order__customer_id=user_id,
+                order__created_at__gte=one_week_ago,
+            )
+            .values("item_id")
+            .annotate(order_count=Count("id"))
+        )
+        user_stats_map = {row["item_id"]: row["order_count"] for row in user_stats}
+
+        total_stats = (
+            OrderItem.objects.filter(item_id__in=menu_item_ids)
+            .values("item_id")
+            .annotate(total_order_count=Count("id"))
+        )
+        total_stats_map = {
+            row["item_id"]: row["total_order_count"] for row in total_stats
+        }
+
+        return [
+            MenuItemOrderStatsDTO(
+                item_id=item_id,
+                order_count=user_stats_map.get(item_id, 0),
+                total_order_count=total_stats_map.get(item_id, 0),
+            )
+            for item_id in menu_item_ids
         ]

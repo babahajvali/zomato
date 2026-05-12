@@ -5,6 +5,7 @@ from orders.app_service.dtos import (
     RestaurantOrdersSummaryDTO,
     OrdersByStatusDTO,
     RestaurantOrderStatsDTO,
+    MenuItemOrderStatsDTO,
 )
 from orders.constants.enums import OrderStatus
 from orders.interactors.dtos import (
@@ -122,4 +123,10 @@ class OrderStorageInterface(ABC):
     def get_user_restaurant_stats(
         self, restaurant_ids: List[str], user_id: str
     ) -> List[RestaurantOrderStatsDTO]:
+        pass
+
+    @abstractmethod
+    def get_menu_item_order_stats(
+        self, menu_item_ids: List[str], user_id: str
+    ) -> List[MenuItemOrderStatsDTO]:
         pass

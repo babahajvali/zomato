@@ -104,3 +104,9 @@ class GetScoredRestaurantsInputParams(graphene.InputObjectType):
     pincode = graphene.String(required=True)
     limit = graphene.Int(required=True)
     offset = graphene.Int(required=True)
+
+
+class GetScoredRestaurantItemsInputParams(graphene.InputObjectType):
+    restaurant_id = graphene.String(required=True)
+    limit = graphene.Int(required=True)
+    offset = graphene.Int(required=True)

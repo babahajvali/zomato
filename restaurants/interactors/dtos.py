@@ -286,3 +286,23 @@ class RestaurantOrderStatsDTO:
     restaurant_id: str
     order_count: int
     daily_frequent: int
+
+
+@dataclass
+class MenuItemScoredDTO:
+    restaurant_id: str
+    menu_item_id: str
+    name: str
+    price: Decimal
+    is_available: bool
+    score: Decimal
+    average_rating: Decimal
+    order_count: int
+    total_order_count: int
+
+
+@dataclass
+class MenuItemOrderStatsDTO:
+    item_id: str
+    order_count: int
+    total_order_count: int

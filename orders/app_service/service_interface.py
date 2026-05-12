@@ -5,6 +5,7 @@ from orders.app_service.dtos import (
     RestaurantOrdersSummaryDTO,
     OrdersByStatusDTO,
     RestaurantOrderStatsDTO,
+    MenuItemOrderStatsDTO,
 )
 from orders.interactors.dtos import PeakHourDTO, TopSellingItemDTO
 from orders.interactors.order.order_interactor import OrderInteractor
@@ -61,4 +62,14 @@ class ServiceInterface:
 
         return interactor.get_user_restaurants_stats(
             restaurant_ids=restaurant_ids, user_id=user_id
+        )
+
+    def get_menu_item_order_stats(
+        self, menu_item_ids: List[str], user_id: str
+    ) -> List[MenuItemOrderStatsDTO]:
+
+        interactor = OrderInteractor(order_storage=self.order_storage)
+
+        return interactor.get_menu_item_order_stats(
+            menu_item_ids=menu_item_ids, user_id=user_id
         )

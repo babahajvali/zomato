@@ -35,6 +35,7 @@ from restaurants.graphql.types.types import (
     OwnerRestaurantsType,
     CustomerCartIdType,
     ScoredRestaurantsType,
+    ScoredItemsType,
 )
 from utils.graphql_types import UserNotRestaurantOwner
 
@@ -188,3 +189,8 @@ class GetCustomerCartIdResponse(graphene.Union):
 class GetuserScoredRestaurantsResponse(graphene.Union):
     class Meta:
         types = (ScoredRestaurantsType, InvalidOffset, InvalidLimit)
+
+
+class GetScoredItemsResponse(graphene.Union):
+    class Meta:
+        types = (ScoredItemsType, RestaurantNotFound, InvalidOffset, InvalidLimit)

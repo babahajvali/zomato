@@ -243,3 +243,38 @@ class BaseGetScoredRestaurantsTestCase(GraphQLBaseTestCase):
       }
     }
     """
+
+
+class BaseGetScoredRestaurantItemsTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    query GetScoredRestaurantItems($params: GetScoredRestaurantItemsInputParams!) {
+      getScoredRestaurantItems(params: $params) {
+        ... on ScoredItemsType {
+          __typename
+          menuItems {
+            menuItemId
+            restaurantId
+            name
+            price
+            isAvailable
+            totalOrdersCount
+            recentlyOrderCount
+            score
+            averageRating
+          }
+        }
+        ... on RestaurantNotFound {
+          __typename
+          restaurantId
+        }
+        ... on InvalidLimit {
+          __typename
+          limit
+        }
+        ... on InvalidOffset {
+          __typename
+          offset
+        }
+      }
+    }
+    """

@@ -1,0 +1,8 @@
+{
+  "data": {
+    "getScoredRestaurantItems": {
+      "__typename": "InvalidOffset",
+      "offset": -1
+    }
+  }
+}
