@@ -27,3 +27,56 @@ class BaseUserLoginTestCase(GraphQLBaseTestCase):
       }
     }
     """
+
+
+class BaseCreateUserTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    mutation CreateUser($params: CreateUserInputParams!) {
+      createUser(params: $params) {
+        ... on UserType {
+          __typename
+          email
+          name
+          phoneNumber
+          role
+        }
+        ... on EmailAlreadyExists {
+          __typename
+          emails
+        }
+        ... on EmptyUserNameFound {
+          __typename
+          name
+        }
+      }
+    }
+    """
+
+
+class BaseUpdateUserTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    mutation UpdateUser($params: UpdateUserInputParams!) {
+      updateUser(params: $params) {
+        ... on UserType {
+          __typename
+          userId
+          email
+          name
+          phoneNumber
+          role
+        }
+        ... on UserNotFound {
+          __typename
+          userId
+        }
+        ... on EmptyUserNameFound {
+          __typename
+          name
+        }
+        ... on NothingToUpdateUserProperties {
+          __typename
+          userId
+        }
+      }
+    }
+    """

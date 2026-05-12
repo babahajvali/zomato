@@ -1,7 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from accounts.interactors.dtos import CreateUserDTO, UserDTO
+from accounts.interactors.dtos import (
+    CreateUserDTO,
+    UserDTO,
+    UserCreateDTO,
+    UpdateUserDTO,
+)
 
 
 class UserStorageInterface(ABC):
@@ -19,4 +24,16 @@ class UserStorageInterface(ABC):
 
     @abstractmethod
     def get_user_by_email(self, email: str) -> UserDTO:
+        pass
+
+    @abstractmethod
+    def get_user(self, user_id: str) -> UserDTO | None:
+        pass
+
+    @abstractmethod
+    def create_user(self, create_user_dto: UserCreateDTO) -> UserDTO:
+        pass
+
+    @abstractmethod
+    def update_user(self, update_user_dto: UpdateUserDTO) -> UserDTO:
         pass

@@ -23,3 +23,11 @@ class UserLoginType(graphene.ObjectType):
     phone_number = graphene.String(required=True)
     role = graphene.String(required=True)
     access_token = graphene.String(required=True)
+
+
+class UserType(graphene.ObjectType):
+    user_id = graphene.String(required=True)
+    email = graphene.String(required=True)
+    name = graphene.String(required=True)
+    phone_number = graphene.String(required=True)
+    role = graphene.String(required=True)

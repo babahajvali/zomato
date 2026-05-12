@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 from accounts.constants.enums import Role
 
@@ -41,3 +42,18 @@ class UserDTO:
     phone_number: str
     role: Role
     password: str
+
+
+@dataclass
+class UserCreateDTO:
+    name: str
+    email: str
+    phone_number: str
+    role: Role
+    password: str
+
+@dataclass
+class UpdateUserDTO:
+    user_id: str
+    name: Optional[str]
+    phone_number: Optional[str]

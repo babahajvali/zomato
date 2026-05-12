@@ -2,7 +2,12 @@ from typing import List
 from accounts.interactors.storage_interface.user_storage_interface import (
     UserStorageInterface,
 )
-from accounts.interactors.dtos import CreateUserDTO, UserDTO
+from accounts.interactors.dtos import (
+    CreateUserDTO,
+    UserDTO,
+    UserCreateDTO,
+    UpdateUserDTO,
+)
 from accounts.models.user import User
 
 
@@ -51,3 +56,36 @@ class UserStorage(UserStorageInterface):
             return None
 
         return self._convert_to_user_dto(user_obj=user_obj)
+
+    def get_user(self, user_id: str) -> UserDTO | None:
+
+        user_obj = User.objects.filter(id=user_id).first()
+
+        if user_obj is None:
+            return None
+        return self._convert_to_user_dto(user_obj=user_obj)
+
+    def create_user(self, create_user_dto: UserCreateDTO) -> UserDTO:
+        user_obj = User.objects.create(
+            name=create_user_dto.name,
+            email=create_user_dto.email,
+            phone_number=create_user_dto.phone_number,
+            role=create_user_dto.role.value,
+            password=create_user_dto.password,
+        )
+
+        return self._convert_to_user_dto(user_obj=user_obj)
+
+    def update_user(self, update_user_dto: UpdateUserDTO) -> UserDTO:
+
+        user_properties = {}
+
+        if update_user_dto.name:
+            user_properties["name"] = update_user_dto.name
+
+        if update_user_dto.phone_number:
+            user_properties["phone_number"] = update_user_dto.phone_number
+
+        User.objects.filter(id=update_user_dto.user_id).update(**user_properties)
+
+        return self.get_user(user_id=update_user_dto.user_id)
