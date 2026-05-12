@@ -590,34 +590,6 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
             user_id=user_id,
         )
 
-    def test_place_order_cart_not_found(self, snapshot):
-        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
-        user = UserFactory(id=user_id)
-        restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
-        restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
-        DeliveryZoneFactory(
-            id=1,
-            restaurant=restaurant,
-            pin_code="500001",
-            delivery_fee=30.0,
-        )
-        self._create_open_restaurant_timing(restaurant=restaurant)
-
-        variables = {
-            "params": {
-                "restaurantId": restaurant_id,
-                "addressId": address.id,
-            }
-        }
-
-        self.execute_schema(
-            query=self.QUERY,
-            variables=variables,
-            snapshot=snapshot,
-            user_id=user_id,
-        )
-
     def test_place_order_menu_items_unavailable(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)

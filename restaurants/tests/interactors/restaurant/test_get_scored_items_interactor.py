@@ -5,8 +5,6 @@ import pytest
 
 from orders.app_service.dtos import MenuItemOrderStatsDTO
 from restaurants.exception.custom_exceptions import (
-    InvalidLimitFound,
-    InvalidOffsetFound,
     RestaurantNotFound,
 )
 from restaurants.interactors.restaurant.get_scored_items_interactor import (
@@ -73,8 +71,6 @@ class TestGetScoredItemsInteractor:
         result = self.interactor.get_scored_restaurant_items(
             restaurant_id="restaurant-1",
             user_id="user-1",
-            limit=10,
-            offset=0,
         )
 
         assert len(result) == 2
@@ -100,7 +96,7 @@ class TestGetScoredItemsInteractor:
             user_id="user-1",
         )
 
-    def test_get_scored_restaurant_items_applies_limit_and_offset(self):
+    def test_get_scored_restaurant_items(self):
         items = [
             MenuItemWithTagsDTOFactory(item_id="item-1"),
             MenuItemWithTagsDTOFactory(item_id="item-2"),
@@ -134,12 +130,10 @@ class TestGetScoredItemsInteractor:
         result = self.interactor.get_scored_restaurant_items(
             restaurant_id="restaurant-1",
             user_id="user-1",
-            limit=1,
-            offset=1,
         )
 
-        assert len(result) == 1
-        assert result[0].menu_item_id == "item-2"
+        assert len(result) == 3
+        assert result[0].menu_item_id == "item-1"
 
     def test_get_scored_restaurant_items_defaults_missing_stats(self):
         self.restaurant_storage.check_restaurant_is_exist.return_value = True
@@ -154,8 +148,6 @@ class TestGetScoredItemsInteractor:
         result = self.interactor.get_scored_restaurant_items(
             restaurant_id="restaurant-1",
             user_id="user-1",
-            limit=10,
-            offset=0,
         )
 
         assert len(result) == 1
@@ -170,8 +162,6 @@ class TestGetScoredItemsInteractor:
         result = self.interactor.get_scored_restaurant_items(
             restaurant_id="restaurant-1",
             user_id="user-1",
-            limit=10,
-            offset=0,
         )
 
         assert result == []
@@ -185,33 +175,7 @@ class TestGetScoredItemsInteractor:
             self.interactor.get_scored_restaurant_items(
                 restaurant_id="restaurant-404",
                 user_id="user-1",
-                limit=10,
-                offset=0,
             )
 
         assert exc.value.restaurant_id == "restaurant-404"
         self.restaurant_storage.get_available_menu_items_by_restaurant.assert_not_called()
-
-    def test_get_scored_restaurant_items_with_invalid_limit(self):
-        with pytest.raises(InvalidLimitFound) as exc:
-            self.interactor.get_scored_restaurant_items(
-                restaurant_id="restaurant-1",
-                user_id="user-1",
-                limit=-1,
-                offset=0,
-            )
-
-        assert exc.value.limit == -1
-        self.restaurant_storage.check_restaurant_is_exist.assert_not_called()
-
-    def test_get_scored_restaurant_items_with_invalid_offset(self):
-        with pytest.raises(InvalidOffsetFound) as exc:
-            self.interactor.get_scored_restaurant_items(
-                restaurant_id="restaurant-1",
-                user_id="user-1",
-                limit=10,
-                offset=-1,
-            )
-
-        assert exc.value.offset == -1
-        self.restaurant_storage.check_restaurant_is_exist.assert_not_called()

@@ -37,10 +37,7 @@ class GetScoredItemsInteractor(RestaurantMixin):
         self,
         restaurant_id: str,
         user_id: str,
-        limit: int,
-        offset: int,
     ) -> List[MenuItemScoredDTO]:
-        self._validate_limit_offset(limit=limit, offset=offset)
         self.validate_restaurant_exists(restaurant_id=restaurant_id)
 
         item_dtos = self.restaurant_storage.get_available_menu_items_by_restaurant(
@@ -72,7 +69,7 @@ class GetScoredItemsInteractor(RestaurantMixin):
 
         scored_items = self._calculate_scores(items=scored_items)
 
-        return scored_items[offset : offset + limit]
+        return scored_items
 
     @staticmethod
     def _validate_limit_offset(limit: int, offset: int):

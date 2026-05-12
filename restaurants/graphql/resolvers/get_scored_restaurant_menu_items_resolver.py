@@ -1,7 +1,5 @@
 from restaurants.exception import custom_exceptions
 from restaurants.graphql.types.error_types import (
-    InvalidLimit,
-    InvalidOffset,
     RestaurantNotFound,
 )
 from restaurants.graphql.types.types import ScoreItemType, ScoredItemsType
@@ -25,8 +23,6 @@ def get_scored_restaurant_menu_items(root, info, params):
         scored_item_dtos = interactor.get_scored_restaurant_items(
             restaurant_id=params.restaurant_id,
             user_id=info.context.user_id,
-            limit=params.limit,
-            offset=params.offset,
         )
 
         result = [
@@ -48,7 +44,3 @@ def get_scored_restaurant_menu_items(root, info, params):
 
     except custom_exceptions.RestaurantNotFound as e:
         return RestaurantNotFound(restaurant_id=e.restaurant_id)
-    except custom_exceptions.InvalidLimitFound as e:
-        return InvalidLimit(limit=e.limit)
-    except custom_exceptions.InvalidOffsetFound as e:
-        return InvalidOffset(offset=e.offset)

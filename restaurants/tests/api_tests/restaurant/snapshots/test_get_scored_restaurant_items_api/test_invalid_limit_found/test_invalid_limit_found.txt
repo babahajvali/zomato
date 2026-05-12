@@ -1,8 +1,0 @@
-{
-  "data": {
-    "getScoredRestaurantItems": {
-      "__typename": "InvalidLimit",
-      "limit": -1
-    }
-  }
-}

@@ -98,6 +98,7 @@ class BaseCreateMenuItemsTestCase(GraphQLBaseTestCase):
     }
     """
 
+
 class BaseUpdateMenuItemTestCase(GraphQLBaseTestCase):
     QUERY = """
     mutation UpdateMenuItem($params: UpdateMenuItemInputParams!) {
@@ -126,6 +127,7 @@ class BaseUpdateMenuItemTestCase(GraphQLBaseTestCase):
       }
     }
     """
+
 
 class BaseDeleteMenuItemTestCase(GraphQLBaseTestCase):
     QUERY = """
@@ -266,14 +268,6 @@ class BaseGetScoredRestaurantItemsTestCase(GraphQLBaseTestCase):
         ... on RestaurantNotFound {
           __typename
           restaurantId
-        }
-        ... on InvalidLimit {
-          __typename
-          limit
-        }
-        ... on InvalidOffset {
-          __typename
-          offset
         }
       }
     }

@@ -193,4 +193,7 @@ class GetuserScoredRestaurantsResponse(graphene.Union):
 
 class GetScoredItemsResponse(graphene.Union):
     class Meta:
-        types = (ScoredItemsType, RestaurantNotFound, InvalidOffset, InvalidLimit)
+        types = (
+            ScoredItemsType,
+            RestaurantNotFound,
+        )

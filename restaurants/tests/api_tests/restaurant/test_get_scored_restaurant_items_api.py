@@ -34,8 +34,6 @@ class TestGetScoredRestaurantItemsApi(BaseGetScoredRestaurantItemsTestCase):
         variables = {
             "params": {
                 "restaurantId": restaurant_id,
-                "limit": 10,
-                "offset": 0,
             }
         }
 
@@ -55,8 +53,6 @@ class TestGetScoredRestaurantItemsApi(BaseGetScoredRestaurantItemsTestCase):
         variables = {
             "params": {
                 "restaurantId": restaurant_id,
-                "limit": 10,
-                "offset": 0,
             }
         }
 
@@ -74,46 +70,6 @@ class TestGetScoredRestaurantItemsApi(BaseGetScoredRestaurantItemsTestCase):
         variables = {
             "params": {
                 "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7df",
-                "limit": 10,
-                "offset": 0,
-            }
-        }
-
-        self.execute_schema(
-            query=self.QUERY,
-            variables=variables,
-            snapshot=snapshot,
-            user_id=user_id,
-        )
-
-    def test_invalid_limit_found(self, snapshot):
-        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
-        UserFactory(id=user_id)
-
-        variables = {
-            "params": {
-                "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7df",
-                "limit": -1,
-                "offset": 0,
-            }
-        }
-
-        self.execute_schema(
-            query=self.QUERY,
-            variables=variables,
-            snapshot=snapshot,
-            user_id=user_id,
-        )
-
-    def test_invalid_offset_found(self, snapshot):
-        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
-        UserFactory(id=user_id)
-
-        variables = {
-            "params": {
-                "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7df",
-                "limit": 10,
-                "offset": -1,
             }
         }
 
