@@ -44,7 +44,8 @@ class TestUserStorage(TestCase):
             emails=["alice@example.com", "notfound@example.com"]
         )
 
-        assert result == ["alice@example.com"]
+        assert len(result) == 1
+        assert result[0].email == "alice@example.com"
 
     def test_check_user_exists(self):
         user = UserFactory()

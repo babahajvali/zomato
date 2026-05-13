@@ -1,7 +1,7 @@
 from typing import List, Tuple
 
 from restaurants.exception.custom_exceptions import DuplicateDeliveryZones
-from restaurants.interactors.dtos import CreateDeliveryZoneDTO
+from restaurants.interactors.dtos import CreateDeliveryZoneDTO, UpdateDeliveryZoneDTO
 from restaurants.interactors.storage_interface.delivery_zone_storage_interface import (
     DeliveryZoneStorageInterface,
 )
@@ -18,24 +18,62 @@ class ImportDeliveryZones:
         combinations = self._parse_and_normalize_rows(rows)
 
         self._validate_duplicate_combinations(combinations)
-        self._validate_existing_delivery_zones(combinations)
 
         delivery_zones_dto = self._build_delivery_zone_dtos(rows)
-        created_delivery_zones = (
-            self.delivery_zone_storage_interface.create_bulk_delivery_zones(
-                delivery_zones_dto
-            )
+        to_create, to_update = self._split_new_and_existing(
+            delivery_zone_dtos=delivery_zones_dto,
+            combinations=combinations,
         )
 
-        return f"{len(created_delivery_zones)} delivery zones created"
+        created_delivery_zones = (
+            self.delivery_zone_storage_interface.create_bulk_delivery_zones(to_create)
+            if to_create
+            else []
+        )
+        updated_delivery_zones = (
+            self.delivery_zone_storage_interface.update_bulk_delivery_zones(to_update)
+            if to_update
+            else []
+        )
 
-    def _validate_existing_delivery_zones(self, combinations: List[Tuple[str, str]]):
-        existing = self.delivery_zone_storage_interface.get_existing_delivery_zones(
+        return (
+            f"{len(created_delivery_zones)} delivery zones created, "
+            f"{len(updated_delivery_zones)} delivery zones updated"
+        )
+
+    def _split_new_and_existing(
+        self,
+        delivery_zone_dtos: List[CreateDeliveryZoneDTO],
+        combinations: List[Tuple[str, str]],
+    ) -> tuple[List[CreateDeliveryZoneDTO], List[UpdateDeliveryZoneDTO]]:
+        existing = self.delivery_zone_storage_interface.get_existing_delivery_zone_dtos(
             combinations
         )
 
-        if existing:
-            raise DuplicateDeliveryZones(combinations=existing)
+        existing_lookup = {
+            (zone.restaurant_id, zone.pin_code): zone.delivery_zone_id
+            for zone in existing
+        }
+
+        to_create = []
+        to_update = []
+
+        for dto in delivery_zone_dtos:
+            key = (dto.restaurant_id, dto.pin_code)
+            if key in existing_lookup:
+                to_update.append(
+                    UpdateDeliveryZoneDTO(
+                        delivery_zone_id=existing_lookup[key],
+                        restaurant_id=dto.restaurant_id,
+                        pin_code=dto.pin_code,
+                        delivery_fee=dto.delivery_fee,
+                        estimated_delivery_mins=dto.estimated_delivery_mins,
+                    )
+                )
+            else:
+                to_create.append(dto)
+
+        return to_create, to_update
 
     @staticmethod
     def _validate_duplicate_combinations(combinations: List[Tuple[str, str]]):

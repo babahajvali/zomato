@@ -1,7 +1,11 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from orders.interactors.dtos import CreatePromoCodeDTO, PromoCodeDTO
+from orders.interactors.dtos import (
+    CreatePromoCodeDTO,
+    PromoCodeDTO,
+    UpdatePromoCodeDTO,
+)
 
 
 class PromoCodeStorageInterface(ABC):
@@ -10,8 +14,18 @@ class PromoCodeStorageInterface(ABC):
         pass
 
     @abstractmethod
+    def get_existing_promo_codes(self, codes: List[str]) -> List[PromoCodeDTO]:
+        pass
+
+    @abstractmethod
     def create_bulk_promo_codes(
         self, promo_code_dtos: List[CreatePromoCodeDTO]
+    ) -> List:
+        pass
+
+    @abstractmethod
+    def update_bulk_promo_codes(
+        self, promo_code_dtos: List[UpdatePromoCodeDTO]
     ) -> List:
         pass
 

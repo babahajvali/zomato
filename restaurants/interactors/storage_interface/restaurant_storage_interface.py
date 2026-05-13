@@ -9,6 +9,7 @@ from restaurants.interactors.dtos import (
     MenuItemWithTagsDTO,
     RestaurantDTO,
     UpdateMenuItemDTO,
+    UpdateRestaurantDTO,
 )
 
 
@@ -18,8 +19,18 @@ class RestaurantStorageInterface(ABC):
         pass
 
     @abstractmethod
+    def get_existing_restaurant_dtos(self, names: List[str]) -> List[RestaurantDTO]:
+        pass
+
+    @abstractmethod
     def create_bulk_restaurants(
         self, restaurant_dtos: List[CreateRestaurantDTO]
+    ) -> List:
+        pass
+
+    @abstractmethod
+    def update_bulk_restaurants(
+        self, restaurant_dtos: List[UpdateRestaurantDTO]
     ) -> List:
         pass
 

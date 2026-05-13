@@ -4,6 +4,7 @@ from restaurants.interactors.dtos import (
     CreateRestaurantTimingDTO,
     UpdateRestaurantTimingDTO,
     RestaurantTimingDTO,
+    BulkUpdateRestaurantTimingDTO,
 )
 from restaurants.interactors.storage_interface.restaurant_timing_storage_interface import (
     RestaurantTimingStorageInterface,
@@ -40,6 +41,37 @@ class RestaurantTimingStorage(RestaurantTimingStorageInterface):
         return [
             self._convert_to_timing_dto(timing_obj=data) for data in created_timings
         ]
+
+    def update_bulk_restaurant_timings(
+        self, update_restaurant_timing_dtos: List[BulkUpdateRestaurantTimingDTO]
+    ) -> List[RestaurantTiming]:
+        timings = [
+            RestaurantTiming(
+                id=dto.timing_id,
+                open_time=dto.open_time,
+                close_time=dto.close_time,
+            )
+            for dto in update_restaurant_timing_dtos
+        ]
+
+        RestaurantTiming.objects.bulk_update(timings, ["open_time", "close_time"])
+
+        return timings
+
+    def get_existing_restaurant_timings(
+        self, combinations: List[tuple[str, int]]
+    ) -> List[RestaurantTimingDTO]:
+        if not combinations:
+            return []
+
+        timings = RestaurantTiming.objects.none()
+        for restaurant_id, day_of_week in combinations:
+            timings = timings | RestaurantTiming.objects.filter(
+                restaurant_id=restaurant_id,
+                day_of_week=day_of_week,
+            )
+
+        return [self._convert_to_timing_dto(timing_obj=data) for data in timings]
 
     def update_restaurant_timing(
         self, update_restaurant_timing_dto: UpdateRestaurantTimingDTO

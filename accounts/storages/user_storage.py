@@ -39,11 +39,11 @@ class UserStorage(UserStorageInterface):
 
         return created_users
 
-    def get_existing_emails(self, emails: List[str]) -> List[str]:
+    def get_existing_emails(self, emails: List[str]) -> List[UserDTO]:
 
-        return list(
-            User.objects.filter(email__in=emails).values_list("email", flat=True)
-        )
+        user_objs = User.objects.filter(email__in=emails)
+
+        return [self._convert_to_user_dto(user_obj=user_obj) for user_obj in user_objs]
 
     def check_user_exists(self, user_id: str) -> bool:
         return User.objects.filter(id=user_id).exists()
@@ -89,3 +89,19 @@ class UserStorage(UserStorageInterface):
         User.objects.filter(id=update_user_dto.user_id).update(**user_properties)
 
         return self.get_user(user_id=update_user_dto.user_id)
+
+    def update_bulk_users(self, bulk_update_user_dtos: List[UpdateUserDTO]):
+
+        users = []
+        for update_user_dto in bulk_update_user_dtos:
+            user = User(
+                id=update_user_dto.user_id,
+                name=update_user_dto.name,
+                phone_number=update_user_dto.phone_number,
+            )
+
+            users.append(user)
+
+        User.objects.bulk_update(users, ["name", "phone_number"])
+
+        return users

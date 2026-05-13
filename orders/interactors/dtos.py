@@ -19,6 +19,18 @@ class CreatePromoCodeDTO:
 
 
 @dataclass
+class UpdatePromoCodeDTO:
+    promo_code_id: int
+    code: str
+    discount_type: str
+    discount_value: Decimal
+    min_order_value: Decimal
+    max_usage: int
+    valid_from: datetime
+    valid_until: datetime
+
+
+@dataclass
 class PromoCodeDTO:
     promo_code_id: int
     code: str

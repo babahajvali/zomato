@@ -5,7 +5,7 @@ from django.db.models import Q
 from accounts.interactors.storage_interface.address_storage_interface import (
     AddressStorageInterface,
 )
-from accounts.interactors.dtos import CreateAddressDTO, AddressDTO
+from accounts.interactors.dtos import CreateAddressDTO, AddressDTO, AddressLookupDTO
 from accounts.models import Address
 
 
@@ -40,13 +40,22 @@ class AddressStorage(AddressStorageInterface):
 
         return created_addresses
 
-    def get_existing_addresses(self, user_label_pairs: List[tuple]) -> List[tuple]:
+    def get_existing_addresses(self, pairs: List[AddressLookupDTO]) -> List[AddressDTO]:
+
+        if not pairs:
+            return []
+
         query = Q()
+        for pair in pairs:
+            query |= Q(
+                user_id=pair.user_id,
+                label=pair.label,
+                pin_code=pair.pincode,
+            )
 
-        for user_id, label in user_label_pairs:
-            query |= Q(user_id=user_id, label=label)
+        addresses = Address.objects.filter(query)
 
-        return list(Address.objects.filter(query).values_list("user_id", "label"))
+        return [self._convert_to_address_dto(address_obj=addr) for addr in addresses]
 
     def get_address_by_id(self, address_id: int) -> Optional[AddressDTO]:
         address_obj = Address.objects.filter(id=address_id).first()
@@ -62,3 +71,34 @@ class AddressStorage(AddressStorageInterface):
             self._convert_to_address_dto(address_obj=address_obj)
             for address_obj in address_objs
         ]
+
+    def update_bulk_addresses(self, address_dtos: List[CreateAddressDTO]):
+
+        addresses = []
+
+        for dto in address_dtos:
+            address = Address(
+                id=dto.id,
+                user_id=dto.user_id,
+                label=dto.label,
+                full_address=dto.full_address,
+                city=dto.city,
+                pin_code=dto.pincode,
+                is_default=dto.is_default,
+            )
+
+            addresses.append(address)
+
+        Address.objects.bulk_update(
+            addresses,
+            [
+                "user_id",
+                "label",
+                "full_address",
+                "city",
+                "pin_code",
+                "is_default",
+            ],
+        )
+
+        return addresses

@@ -24,6 +24,17 @@ class CreateAddressDTO:
 
 
 @dataclass
+class UpdateAddressDTO:
+    id: int
+    user_id: str
+    label: str
+    full_address: str
+    city: str
+    pincode: str
+    is_default: bool
+
+
+@dataclass
 class AddressDTO:
     address_id: int
     full_address: str
@@ -58,3 +69,10 @@ class UpdateUserDTO:
     user_id: str
     name: Optional[str]
     phone_number: Optional[str]
+
+
+@dataclass
+class AddressLookupDTO:
+    user_id: str
+    label: str
+    pincode: str

@@ -5,6 +5,7 @@ from restaurants.interactors.dtos import (
     UpdateRestaurantTimingDTO,
     CreateRestaurantTimingDTO,
     RestaurantTimingDTO,
+    BulkUpdateRestaurantTimingDTO,
 )
 
 
@@ -13,6 +14,18 @@ class RestaurantTimingStorageInterface(ABC):
     def create_bulk_restaurant_timing(
         self, create_restaurant_timing_dto: List[CreateRestaurantTimingDTO]
     ):
+        pass
+
+    @abstractmethod
+    def update_bulk_restaurant_timings(
+        self, update_restaurant_timing_dtos: List[BulkUpdateRestaurantTimingDTO]
+    ):
+        pass
+
+    @abstractmethod
+    def get_existing_restaurant_timings(
+        self, combinations: List[tuple[str, int]]
+    ) -> List[RestaurantTimingDTO]:
         pass
 
     @abstractmethod

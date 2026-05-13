@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from accounts.models import Address
 from accounts.storages.address_storage import AddressStorage
-from accounts.interactors.dtos import CreateAddressDTO
+from accounts.interactors.dtos import AddressLookupDTO, CreateAddressDTO
 from accounts.tests.factories.storage_factories import AddressFactory, UserFactory
 
 
@@ -32,11 +32,25 @@ class TestAddressStorage(TestCase):
 
     def test_get_existing_addresses(self):
         user = UserFactory(email="alice@example.com")
-        AddressFactory(user=user, label="Home")
-        AddressFactory(user=user, label="Office")
+        AddressFactory(user=user, label="Home", pin_code="500001")
+        AddressFactory(user=user, label="Office", pin_code="500002")
 
         result = self.storage.get_existing_addresses(
-            user_label_pairs=[(user.id, "Home"), (user.id, "Other")],
+            pairs=[
+                AddressLookupDTO(
+                    user_id=str(user.id),
+                    label="Home",
+                    pincode="500001",
+                ),
+                AddressLookupDTO(
+                    user_id=str(user.id),
+                    label="Other",
+                    pincode="500001",
+                ),
+            ],
         )
 
-        assert result == [(str(user.id), "Home")]
+        assert len(result) == 1
+        assert result[0].user_id == str(user.id)
+        assert result[0].label == "Home"
+        assert result[0].pincode == "500001"

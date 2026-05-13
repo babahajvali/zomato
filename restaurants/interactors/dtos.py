@@ -20,6 +20,19 @@ class CreateRestaurantDTO:
 
 
 @dataclass
+class UpdateRestaurantDTO:
+    id: str
+    name: str
+    owner_id: str
+    description: str
+    cuisine_type: CuisineType
+    address: str
+    pin_code: str
+    is_veg_only: bool
+    is_deleted: bool
+
+
+@dataclass
 class RestaurantDTO:
     id: str
     name: str
@@ -36,6 +49,13 @@ class RestaurantDTO:
 class CreateRestaurantTimingDTO:
     restaurant_id: str
     day_of_week: int
+    open_time: time
+    close_time: time
+
+
+@dataclass
+class BulkUpdateRestaurantTimingDTO:
+    timing_id: int
     open_time: time
     close_time: time
 
@@ -159,6 +179,15 @@ class CartItemDTO:
 
 @dataclass
 class CreateDeliveryZoneDTO:
+    restaurant_id: str
+    pin_code: str
+    delivery_fee: Decimal
+    estimated_delivery_mins: int
+
+
+@dataclass
+class UpdateDeliveryZoneDTO:
+    delivery_zone_id: int
     restaurant_id: str
     pin_code: str
     delivery_fee: Decimal

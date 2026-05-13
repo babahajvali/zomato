@@ -11,6 +11,7 @@ from restaurants.interactors.storage_interface.restaurant_timing_storage_interfa
 )
 from restaurants.tests.factories.interactor_factories import (
     CreateRestaurantTimingDTOFactory,
+    RestaurantTimingDTOFactory,
 )
 
 
@@ -26,7 +27,7 @@ class TestImportRestaurantTimings:
             RestaurantTimingStorageInterface
         )
         self.interactor = ImportRestaurantTimings(
-            restaurant_timing_storage_interface=self.restaurant_timing_storage
+            restaurant_timing_storage=self.restaurant_timing_storage
         )
 
     @patch(VALIDATE_ROW)
@@ -48,15 +49,17 @@ class TestImportRestaurantTimings:
         )
         expected_result = ["created-timing"]
         mock_read_csv.return_value = rows
+        self.restaurant_timing_storage.get_existing_restaurant_timings.return_value = []
         self.restaurant_timing_storage.create_bulk_restaurant_timing.return_value = (
             expected_result
         )
+        self.restaurant_timing_storage.update_bulk_restaurant_timings.return_value = []
 
         result = self.interactor.import_restaurant_timings(
             file_path="restaurant_timings.csv"
         )
 
-        assert result == "1 restaurant timings were created"
+        assert result == "1 restaurant timings created, 0 restaurant timings updated"
         mock_validate_row.assert_called_once_with(
             rows[0],
             ["restaurant", "day_of_week", "open_time", "close_time"],
@@ -65,6 +68,40 @@ class TestImportRestaurantTimings:
         self.restaurant_timing_storage.create_bulk_restaurant_timing.assert_called_once_with(
             [expected_dto]
         )
+
+    @patch(VALIDATE_ROW)
+    @patch(READ_CSV)
+    def test_import_restaurant_timings_updates_existing(
+        self, mock_read_csv, mock_validate_row
+    ):
+        rows = [
+            {
+                "restaurant": " restaurants-1 ",
+                "day_of_week": "1",
+                "open_time": "10:00:00",
+                "close_time": "22:00:00",
+            }
+        ]
+        mock_read_csv.return_value = rows
+        self.restaurant_timing_storage.get_existing_restaurant_timings.return_value = [
+            RestaurantTimingDTOFactory(
+                timing_id=1,
+                restaurant_id="restaurants-1",
+                day_of_week=1,
+            )
+        ]
+        self.restaurant_timing_storage.create_bulk_restaurant_timing.return_value = []
+        self.restaurant_timing_storage.update_bulk_restaurant_timings.return_value = [
+            "updated"
+        ]
+
+        result = self.interactor.import_restaurant_timings(
+            file_path="restaurant_timings.csv"
+        )
+
+        assert result == "0 restaurant timings created, 1 restaurant timings updated"
+        self.restaurant_timing_storage.create_bulk_restaurant_timing.assert_not_called()
+        self.restaurant_timing_storage.update_bulk_restaurant_timings.assert_called_once()
 
     @patch(VALIDATE_ROW)
     @patch(READ_CSV)

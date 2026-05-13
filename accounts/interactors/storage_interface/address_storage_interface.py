@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from accounts.interactors.dtos import CreateAddressDTO, AddressDTO
+from accounts.interactors.dtos import CreateAddressDTO, AddressDTO, AddressLookupDTO, \
+    UpdateAddressDTO
 
 
 class AddressStorageInterface(ABC):
     @abstractmethod
-    def get_existing_addresses(self, user_label_pairs: List[tuple]) -> List[tuple]:
+    def get_existing_addresses(self, pairs: List[AddressLookupDTO]) -> List[AddressDTO]:
         pass
 
     @abstractmethod
@@ -22,5 +23,5 @@ class AddressStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def update_bulk_addresses(self, address_dtos: List[CreateAddressDTO]):  # NEW
+    def update_bulk_addresses(self, address_dtos: List[UpdateAddressDTO]):
         pass

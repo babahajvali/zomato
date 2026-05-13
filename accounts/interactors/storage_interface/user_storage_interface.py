@@ -15,7 +15,7 @@ class UserStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def get_existing_emails(self, emails: List[str]) -> List[str]:
+    def get_existing_emails(self, emails: List[str]) -> List[UserDTO]:
         pass
 
     @abstractmethod
@@ -36,4 +36,8 @@ class UserStorageInterface(ABC):
 
     @abstractmethod
     def update_user(self, update_user_dto: UpdateUserDTO) -> UserDTO:
+        pass
+
+    @abstractmethod
+    def update_bulk_users(self, bulk_update_user_dtos: List[UpdateUserDTO]):
         pass

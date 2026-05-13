@@ -16,6 +16,7 @@ from restaurants.interactors.dtos import (
     MenuItemWithTagsDTO,
     RestaurantDTO,
     UpdateMenuItemDTO,
+    UpdateRestaurantDTO,
 )
 from restaurants.models.restaurant import Restaurant, MenuItem
 
@@ -92,6 +93,48 @@ class RestaurantStorage(RestaurantStorageInterface):
             Restaurant.objects.filter(name__in=names).values_list("name", flat=True)
         )
 
+    def get_existing_restaurant_dtos(self, names: List[str]) -> List[RestaurantDTO]:
+        restaurant_objs = Restaurant.objects.filter(name__in=names)
+
+        return [
+            self._convert_to_restaurant_dto(restaurant_obj=restaurant)
+            for restaurant in restaurant_objs
+        ]
+
+    def update_bulk_restaurants(
+        self, restaurant_dtos: List[UpdateRestaurantDTO]
+    ) -> List[Restaurant]:
+        restaurants = [
+            Restaurant(
+                id=dto.id,
+                name=dto.name,
+                owner_id=dto.owner_id,
+                description=dto.description,
+                cuisine_type=dto.cuisine_type,
+                address=dto.address,
+                pin_code=dto.pin_code,
+                is_veg_only=dto.is_veg_only,
+                is_deleted=dto.is_deleted,
+            )
+            for dto in restaurant_dtos
+        ]
+
+        Restaurant.objects.bulk_update(
+            restaurants,
+            [
+                "name",
+                "owner_id",
+                "description",
+                "cuisine_type",
+                "address",
+                "pin_code",
+                "is_veg_only",
+                "is_deleted",
+            ],
+        )
+
+        return restaurants
+
     def create_menu_items(
         self, create_item_dtos: List[CreateMenuItemDTO], restaurant_id: str
     ) -> List[MenuItemDTO]:
@@ -103,9 +146,11 @@ class RestaurantStorage(RestaurantStorageInterface):
                 name=item.name,
                 description=item.description,
                 price=item.price,
-                category=item.category.value
-                if hasattr(item.category, "value")
-                else item.category,
+                category=(
+                    item.category.value
+                    if hasattr(item.category, "value")
+                    else item.category
+                ),
                 is_veg=item.is_veg,
                 is_available=item.is_available,
                 tags=item.tags,

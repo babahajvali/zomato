@@ -1,7 +1,11 @@
-from typing import List, Any
+from typing import List
 
 from accounts.exception.custom_exceptions import DuplicateAddresses
-from accounts.interactors.dtos import CreateAddressDTO
+from accounts.interactors.dtos import (
+    CreateAddressDTO,
+    AddressLookupDTO,
+    UpdateAddressDTO,
+)
 from accounts.interactors.storage_interface.address_storage_interface import (
     AddressStorageInterface,
 )
@@ -15,9 +19,9 @@ class ImportAddresses:
     def import_addresses(self, file_path="./sample_data/addresses.csv"):
         rows = read_csv(file_path=file_path)
 
-        user_label_pairs = self._validate_rows_and_get_user_and_label(rows)
+        pairs = self._validate_rows_and_get_pairs(rows)
 
-        self._validate_duplicate_addresses(user_label_pairs)
+        self._validate_duplicate_addresses(pairs)
 
         address_dtos = [
             CreateAddressDTO(
@@ -31,9 +35,7 @@ class ImportAddresses:
             for row in rows
         ]
 
-        to_create, to_update = self._split_new_and_existing(
-            address_dtos, user_label_pairs
-        )
+        to_create, to_update = self._split_new_and_existing(address_dtos, pairs)
 
         created = (
             self.address_storage.create_bulk_addresses(to_create) if to_create else []
@@ -44,65 +46,94 @@ class ImportAddresses:
 
         return f"{len(created)} addresses created, {len(updated)} addresses updated"
 
+    @staticmethod
+    def _validate_rows_and_get_pairs(
+        rows: list,
+    ) -> List[AddressLookupDTO]:
+
+        pairs = []
+
+        for index, row in enumerate(rows, start=1):
+            validate_row(
+                row,
+                ["user_id", "label", "full_address", "pin_code", "city"],
+                f"address row {index}",
+            )
+
+            user_id = row["user_id"].strip()
+            label = row["label"].strip()
+            pincode = row["pin_code"].strip()
+
+            row["user_id"] = user_id
+            row["label"] = label
+            row["pin_code"] = pincode
+
+            pairs.append(
+                AddressLookupDTO(
+                    user_id=user_id,
+                    label=label,
+                    pincode=pincode,
+                )
+            )
+
+        return pairs
+
+    @staticmethod
+    def _validate_duplicate_addresses(
+        pairs: List[AddressLookupDTO],
+    ):
+        seen = set()
+        duplicates = []
+
+        for pair in pairs:
+            key = (pair.user_id, pair.label, pair.pincode)
+            if key in seen:
+                duplicates.append(pair)
+            seen.add(key)
+
+        if duplicates:
+            raise DuplicateAddresses(addresses=duplicates)
+
     def _split_new_and_existing(
         self,
         address_dtos: List[CreateAddressDTO],
-        user_label_pairs: List[tuple],
-    ) -> tuple[List[CreateAddressDTO], List[CreateAddressDTO]]:
+        pairs: List[AddressLookupDTO],
+    ) -> tuple[List[CreateAddressDTO], List[UpdateAddressDTO]]:
 
-        existing_addresses = self.address_storage.get_existing_addresses(
-            user_label_pairs=user_label_pairs
-        )
+        existing_addresses = self.address_storage.get_existing_addresses(pairs=pairs)
 
         existing_lookup = {
-            (addr.user_id, addr.label): addr.id for addr in existing_addresses
+            (addr.user_id, addr.label, addr.pincode): addr.address_id
+            for addr in existing_addresses
         }
 
         to_create = []
         to_update = []
 
         for dto in address_dtos:
-            key = (dto.user_id, dto.label)
+            key = (dto.user_id, dto.label, dto.pincode)
             if key in existing_lookup:
-                dto.id = existing_lookup[key]
-                to_update.append(dto)
+                address_id = existing_lookup[key]
+                update_dto = self._build_update_address_dto(
+                    address_dto=dto,
+                    id=address_id,
+                )
+                to_update.append(update_dto)
             else:
                 to_create.append(dto)
 
         return to_create, to_update
 
     @staticmethod
-    def _validate_rows_and_get_user_and_label(
-        rows: list[dict[Any, str | Any]],
-    ) -> list[Any]:
-        user_label_pairs = []
-
-        for index, row in enumerate(rows, start=1):
-            validate_row(
-                row,
-                ["user_id", "label", "full_address", "pincode", "city"],
-                f"address row {index}",
-            )
-
-            user_id = row["user_id"].strip()
-            label = row["label"].strip()
-
-            row["user_id"] = user_id
-            row["label"] = label
-
-            user_label_pairs.append((user_id, label))
-
-        return user_label_pairs
-
-    @staticmethod
-    def _validate_duplicate_addresses(user_label_pairs: List[tuple]):
-        seen = set()
-        duplicates = []
-
-        for user_id, label in user_label_pairs:
-            if (user_id, label) in seen:
-                duplicates.append((user_id, label))
-            seen.add((user_id, label))
-
-        if duplicates:
-            raise DuplicateAddresses(addresses=duplicates)
+    def _build_update_address_dto(
+        address_dto: CreateAddressDTO, id: int
+    ) -> UpdateAddressDTO:
+        return UpdateAddressDTO(
+            id=id,
+            user_id=address_dto.user_id,
+            label=address_dto.label,
+            pincode=address_dto.pincode,
+            full_address=address_dto.full_address,
+            is_default=address_dto.is_default,
+            city=address_dto.city,
+        )
