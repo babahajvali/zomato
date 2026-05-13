@@ -57,6 +57,7 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
         return self.cart_storage.get_customer_cart_id(customer_id=customer_id)
 
     @staticmethod
+    # TODO: duplicates the MinValue/MaxValue validators on CartItem.quantity — DRY violation.
     def _validate_quantity(quantity: int):
         if quantity <= 0 or quantity > 10:
             raise InvalidQuantity(quantity=quantity)

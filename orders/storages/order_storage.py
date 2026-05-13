@@ -1,25 +1,11 @@
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 from decimal import Decimal, ROUND_HALF_UP
 from typing import List
 
-from django.db.models import (
-    Count,
-    Q,
-    Avg,
-    Sum,
-    ExpressionWrapper,
-    F,
-    DecimalField,
-    Value,
-    FloatField,
-)
-from django.db.models.functions import ExtractHour, Coalesce
+from django.db.models import Count, Q, Avg, Sum, ExpressionWrapper, F, DecimalField
+from django.db.models.functions import ExtractHour
 
-from orders.app_service.dtos import (
-    RestaurantOrdersSummaryDTO,
-    OrdersByStatusDTO,
-    RestaurantOrderStatsDTO,
-)
+from orders.app_service.dtos import RestaurantOrdersSummaryDTO, OrdersByStatusDTO
 from orders.constants.enums import OrderStatus
 from orders.interactors.dtos import (
     CreateOrderDTO,
@@ -37,24 +23,25 @@ from orders.models import Order, OrderItem
 
 
 class OrderStorage(OrderStorageInterface):
+
+    # TODO: Private methods should be preferably at the last.
     @staticmethod
     def _convert_to_order_dto(order_obj: Order) -> OrderDTO:
         return OrderDTO(
             order_id=str(order_obj.id),
             customer_id=str(order_obj.customer_id),
             restaurant_id=str(order_obj.restaurant_id),
-            promo_code_id=order_obj.promo_code_id if order_obj.promo_code_id else None,
+            promo_code_id=order_obj.promo_code_id if order_obj.promo_code_id else None, # TODO: Why this if condition? 
             status=OrderStatus(order_obj.status),
-            items_total=Decimal(order_obj.items_total),
+            items_total=Decimal(order_obj.items_total), # TODO: I guess we will get decimal object why are we type castinig it again.
             delivery_fee=Decimal(order_obj.delivery_fee),
             tax_fee=Decimal(order_obj.tax_fee),
             final_amount=Decimal(order_obj.final_amount),
             address_id=order_obj.address_id,
             placed_at=order_obj.created_at,
-            scheduled_for=order_obj.scheduled_for,
         )
 
-    def get_order(self, order_id: str) -> OrderDTO | None:
+    def get_order(self, order_id: str) -> OrderDTO | None:  # TODO: This should be option instead of | None
         order_obj = Order.objects.filter(id=order_id).first()
 
         if order_obj is None:
@@ -78,6 +65,8 @@ class OrderStorage(OrderStorageInterface):
         ]
 
     def get_promo_code_usage(self, promo_code_id: int) -> int:
+        # TODO: Why is promocode usage method in this class?s
+        # TODO: also ignores valid_from/valid_until — counts lifetime usage even if the promo got reissued.
         return (
             Order.objects.filter(
                 promo_code_id=promo_code_id,
@@ -97,7 +86,6 @@ class OrderStorage(OrderStorageInterface):
             tax_fee=create_order_dto.tax_fee,
             final_amount=create_order_dto.final_amount,
             address_id=create_order_dto.address_id,
-            scheduled_for=create_order_dto.scheduled_for,
         )
 
         return self._convert_to_order_dto(order_obj=order_obj)
@@ -115,7 +103,9 @@ class OrderStorage(OrderStorageInterface):
 
         OrderItem.objects.bulk_create(order_items)
 
-    def update_order_status(self, order_id: str, status: OrderStatus) -> OrderDTO:
+    def update_order_status(
+        self, order_id: str, status: OrderStatus
+    ) -> OrderDTO | None:
         Order.objects.filter(id=order_id).update(status=status.value)
 
         return self.get_order(order_id=order_id)
@@ -127,33 +117,11 @@ class OrderStorage(OrderStorageInterface):
 
         return [self._convert_to_order_dto(order_obj=each) for each in user_order_objs]
 
-    def get_user_scheduled_orders(
-        self, user_id: str, limit: int, offset: int
-    ) -> List[OrderDTO]:
-        order_objs = (
-            Order.objects.filter(
-                customer_id=user_id,
-                status=OrderStatus.SCHEDULED.value,
-            ).order_by("-created_at")
-        )[offset : offset + limit]
-
-        return [
-            self._convert_to_order_dto(order_obj=order_obj) for order_obj in order_objs
-        ]
-
+    # TODO: .get() raises uncaught DoesNotExist. Also dead code — callers already have placed_at on the DTO.
     def get_order_placed_at(self, order_id: str) -> datetime:
-        return (
-            Order.objects.filter(id=order_id)
-            .values_list("created_at", flat=True)
-            .first()
-        )
+        order_obj = Order.objects.get(id=order_id)
 
-    def get_order_updated_at(self, order_id: str) -> datetime:
-        return (
-            Order.objects.filter(id=order_id)
-            .values_list("updated_at", flat=True)
-            .first()
-        )
+        return order_obj.created_at
 
     def get_restaurant_orders(
         self,
@@ -170,33 +138,18 @@ class OrderStorage(OrderStorageInterface):
 
         return [self._convert_to_order_dto(order_obj=each) for each in order_objs]
 
-    def get_today_restaurant_scheduled_orders(
+    # TODO: get_restaurant_orders excludes CANCELLED but this method doesn't — inconsistent restaurant-owner feed.
+    def get_today_restaurant_orders(
         self, restaurant_id: str, limit: int, offset: int
     ) -> List[OrderDTO]:
+
+        # TODO: date.today() is naive but created_at is tz-aware — drops/dupes orders near midnight. Use timezone.localdate().
         today = date.today()
 
         orders = Order.objects.filter(
             restaurant_id=restaurant_id,
             created_at__date=today,
-            status=OrderStatus.SCHEDULED.value,
         ).order_by("-created_at")[offset : offset + limit]
-
-        return [self._convert_to_order_dto(order_obj=order) for order in orders]
-
-    def get_today_restaurant_orders(
-        self, restaurant_id: str, limit: int, offset: int
-    ) -> List[OrderDTO]:
-
-        today = date.today()
-
-        orders = (
-            Order.objects.filter(
-                restaurant_id=restaurant_id,
-                created_at__date=today,
-            )
-            .order_by("-created_at")
-            .exclude(status=OrderStatus.SCHEDULED.value)[offset : offset + limit]
-        )
 
         return [self._convert_to_order_dto(order_obj=order) for order in orders]
 
@@ -283,6 +236,7 @@ class OrderStorage(OrderStorageInterface):
             .values("item_id")
             .annotate(
                 quantity_sold=Sum("quantity"),
+                # TODO: DecimalField() has no max_digits/decimal_places — risk of precision loss.
                 revenue=Sum(
                     ExpressionWrapper(
                         F("item_price") * F("quantity"),
@@ -290,7 +244,7 @@ class OrderStorage(OrderStorageInterface):
                     )
                 ),
             )
-            .order_by("-quantity_sold")[:5]
+            .order_by("-quantity_sold")[:5]  # TODO: magic number 5 — undocumented limit, not in the interface contract.
         )
 
         return [
@@ -334,66 +288,11 @@ class OrderStorage(OrderStorageInterface):
 
         return [
             OrderItemDTO(
-                order_id=obj.order_id,
+                order_id=obj.order.id, # TODO: this triggers a query per row (N+1). Use obj.order_id (FK column is already loaded).
                 item_id=obj.item_id,
                 quantity=obj.quantity,
                 item_price=obj.item_price,
                 subtotal=Decimal(str(obj.item_price * obj.quantity)),
             )
             for obj in order_item_objs
-        ]
-
-    def get_scheduled_orders_due_for_release(self) -> List[OrderDTO]:
-        now = datetime.now()
-        release_window = now + timedelta(minutes=30)
-
-        orders = Order.objects.filter(
-            status=OrderStatus.SCHEDULED.value,
-            scheduled_for__lte=release_window,
-            scheduled_for__gte=now,
-        ).select_for_update()
-
-        return [self._convert_to_order_dto(order_obj=order) for order in orders]
-
-    def get_order_item_ids(self, order_id: str) -> List[str]:
-        return list(
-            OrderItem.objects.filter(order_id=order_id).values_list(
-                "item_id", flat=True
-            )
-        )
-
-    def get_user_restaurant_stats(
-        self, restaurant_ids: List[str], user_id: str
-    ) -> List[RestaurantOrderStatsDTO]:
-
-        now = datetime.now()
-        ten_days_ago = now - timedelta(days=10)
-
-        results = (
-            Order.objects.filter(
-                restaurant_id__in=restaurant_ids,
-                customer_id=user_id,
-            )
-            .values("restaurant_id")
-            .annotate(
-                order_count=Count("id"),
-                daily_frequent=Coalesce(
-                    Count(
-                        "id",
-                        filter=Q(created_at__gte=ten_days_ago),
-                    )
-                    / Value(10.0),
-                    Value(0.0),
-                    output_field=FloatField(),
-                ),
-            )
-        )
-
-        return [
-            RestaurantOrderStatsDTO(
-                restaurant_id=row["restaurant_id"],
-                order_count=row["order_count"],
-                daily_frequent=int(row["daily_frequent"]),
-            )
-            for row in results
         ]

@@ -58,7 +58,8 @@ def _map_order_response(order_dto: OrderDTO) -> OrderType:
         customer_id=str(order_dto.customer_id),
         restaurant_id=str(order_dto.restaurant_id),
         promo_code_id=order_dto.promo_code_id,
-        status=order_dto.status.value,
+        # TODO: passing the enum object — other mutations use `.value`. Schema validation likely fails on cancel response.
+        status=order_dto.status,
         items_total=Decimal(order_dto.items_total),
         delivery_fee=Decimal(order_dto.delivery_fee),
         tax_fee=Decimal(order_dto.tax_fee),

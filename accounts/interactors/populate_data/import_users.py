@@ -56,9 +56,10 @@ class ImportUsers:
     def _validate_rows(rows: list[dict[Any, str | Any]]) -> List[str]:
         emails = []
         for index, row in enumerate(rows, start=1):
+            # TODO: phone_number is NOT NULL in the model but not in the required list — empty strings will silently get inserted.
             validate_row(row, ["id", "email", "name"], f"user row {index}")
 
-            id = row["id"].strip()
+            id = row["id"].strip()  # TODO: shadows built-in `id`.
             email = row["email"].strip().lower()
             row["id"] = id
             row["email"] = email

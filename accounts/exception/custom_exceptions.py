@@ -12,6 +12,7 @@ class EmailAlreadyExists(Exception):
 
 
 class EmailNotFound(Exception):
+    # TODO: declared but never raised anywhere — dead exception. Either wire it up or remove.
     def __init__(self, email: str):
         self.email = email
 
@@ -37,6 +38,7 @@ class DuplicateAddresses(Exception):
         self.addresses = addresses
 
     def __str__(self):
+        # TODO: this isn't an f-string and `addresses` is undefined (missing self.) — raises NameError when stringified.
         return "Duplicate addresses found: {', '.join([f'{addr[0]} - {addr[1]}' for addr in addresses])}"
 
 

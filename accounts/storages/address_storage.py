@@ -22,6 +22,7 @@ class AddressStorage(AddressStorageInterface):
             is_default=address_obj.is_default,
         )
 
+    # TODO: bulk_create not wrapped in transaction.atomic — partial failures leave inconsistent state.
     def create_bulk_addresses(self, address_dtos: List[CreateAddressDTO]):
         addresses = []
 
@@ -40,6 +41,7 @@ class AddressStorage(AddressStorageInterface):
 
         return created_addresses
 
+    # TODO: builds an unbounded Q OR chain — large CSVs hit SQL parameter limits. Prefilter with user_id__in / label__in then dedupe in Python.
     def get_existing_addresses(self, user_label_pairs: List[tuple]) -> List[tuple]:
         query = Q()
 
@@ -56,6 +58,7 @@ class AddressStorage(AddressStorageInterface):
         return self._convert_to_address_dto(address_obj=address_obj)
 
     def get_user_addresses(self, user_id: str) -> List[AddressDTO]:
+        # TODO: no .order_by() — result order is DB-implementation defined and will flake as data grows.
         address_objs = Address.objects.filter(user_id=user_id)
 
         return [

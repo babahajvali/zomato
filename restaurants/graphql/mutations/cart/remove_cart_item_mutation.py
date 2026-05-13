@@ -27,6 +27,7 @@ class RemoveCartItemMutation(graphene.Mutation):
         )
 
         try:
+            # TODO: cart_item_id is client-supplied with no ownership check — any user can remove any item from any cart.
             interactor.remove_cart_item(cart_item_id=params.cart_item_id)
 
             return RemoveCartItemSuccessType(

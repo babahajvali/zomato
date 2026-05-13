@@ -23,5 +23,6 @@ from graphene_django.views import GraphQLView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # TODO: graphiql=True is always on — should be gated by settings.DEBUG. csrf_exempt + GET bypass in middleware compounds the auth issue.
     path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True))),
 ]

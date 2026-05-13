@@ -30,6 +30,7 @@ class OrderFactory(DjangoModelFactory):
     restaurant_id = factory.Sequence(
         lambda n: f"00000000-0000-0000-0000-{n + 101:012d}"
     )
+    # TODO: defaulting every Order to a promo_code hides bugs in the no-promo path. Default None.
     promo_code = factory.SubFactory(PromoCodeFactory)
     status = OrderStatus.PLACED.value
     items_total = 400.0

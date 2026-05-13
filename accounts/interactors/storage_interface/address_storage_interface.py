@@ -14,6 +14,7 @@ class AddressStorageInterface(ABC):
         pass
 
     @abstractmethod
+    # TODO: implementation returns Optional[AddressDTO] but signature is non-optional — interface lies.
     def get_address_by_id(self, address_id: int) -> AddressDTO:
         pass
 

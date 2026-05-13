@@ -27,6 +27,7 @@ class ClearCartItemsMutation(graphene.Mutation):
         )
 
         try:
+            # TODO: cart_id is client-supplied with no ownership check — any user can clear any cart.
             interactor.clear_cart_items(cart_id=params.cart_id)
 
             return ClearCartItemsSuccessType(cart_id=params.cart_id, success=True)

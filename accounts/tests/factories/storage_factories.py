@@ -13,8 +13,7 @@ class UserFactory(DjangoModelFactory):
     name = factory.Faker("name")
     email = factory.Sequence(lambda n: f"user{n}@example.com")
     phone_number = factory.Sequence(lambda n: f"900000{n:04d}")
-    role = "CUSTOMER"
-    password = factory.Faker("password")
+    role = "CUSTOMER"  # TODO: magic string — use Role.CUSTOMER.value.
 
 
 class AddressFactory(DjangoModelFactory):

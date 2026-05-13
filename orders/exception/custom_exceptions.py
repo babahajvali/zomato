@@ -120,6 +120,7 @@ class UserNotRestaurantOwner(Exception):
         self.user_id = user_id
 
     def __str__(self):
+        # TODO: returning the bare user_id leaks identifier to logs/error responses. Either a clear message or no __str__.
         return str(self.user_id)
 
 

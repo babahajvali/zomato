@@ -26,6 +26,7 @@ def redis_lock(lock_key: str, timeout: int = 10):
         ex=timeout,
     )
 
+    # TODO: no retry/backoff — first contention fails immediately. Consider optional retries / retry_delay.
     if not acquired:
         raise ResourceLocked(lock_key=lock_key)
 

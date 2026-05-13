@@ -33,6 +33,7 @@ class CreateRestaurantTimingMutation(graphene.Mutation):
             restaurant_timing_storage=restaurant_timing_storage,
         )
 
+        # TODO: model uses CHOICES 1–7 but there's no app-layer guard on day_of_week — invalid values (0/8) only fail at Postgres-level integrity.
         create_timing_dto = CreateRestaurantTimingDTO(
             restaurant_id=params.restaurant_id,
             open_time=params.open_time,

@@ -21,6 +21,7 @@ class ImportPromoCodes:
         self.promo_code_storage = promo_code_storage
 
     def import_promo_codes(self, file_path="./sample_data/promo_codes.csv"):
+        # TODO: bulk import not wrapped in transaction.atomic — partial failures leave rows half-imported.
         rows = read_csv(file_path=file_path)
 
         codes = self._validate_promo_date_ranges(rows=rows)
@@ -30,7 +31,7 @@ class ImportPromoCodes:
 
         promo_codes_dto = [
             CreatePromoCodeDTO(
-                id=int(row["id"]),
+                id=int(row["id"]),  # TODO: caller-supplied PK desyncs with the AutoField sequence — let DB assign.
                 code=row["code"],
                 discount_type=row["discount_type"],
                 discount_value=Decimal(row["discount_value"]),

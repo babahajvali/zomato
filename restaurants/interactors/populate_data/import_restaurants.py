@@ -68,6 +68,7 @@ class ImportRestaurants:
                 id=row["id"],
                 name=row["name"],
                 owner_id=row["owner_id"],
+                # TODO: description is NOT NULL in the model — row.get() can return None and writes will blow up at DB layer.
                 description=row.get("description"),
                 cuisine_type=row["cuisine_type"],
                 address=row["address"],

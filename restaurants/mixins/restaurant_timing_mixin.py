@@ -1,6 +1,7 @@
 import datetime
 from typing import List, Optional
 
+# TODO: dead commented import — either use timezone (recommended) or remove this line.
 # from django.utils import timezone
 
 from restaurants.interactors.dtos import (
@@ -50,6 +51,7 @@ class TimingMixin:
     def validate_restaurant_timing_within_range(
         open_time: datetime.time, close_time: datetime.time
     ):
+        # TODO: this rejects legit overnight ranges (e.g., open 22:00 close 02:00) but _check_is_open supports them — conflicting assumptions.
         if open_time > close_time:
             raise InvalidTimingRange(open_time=open_time, close_time=close_time)
 
@@ -94,6 +96,7 @@ class TimingMixin:
         review_summaries: List[RestaurantReviewSummaryDTO],
     ) -> List[BrowseRestaurantDTO]:
 
+        # TODO: datetime.now() is naive — despite USE_TZ=True this returns local server time. Should use timezone.localtime().
         now = datetime.datetime.now()
         day_of_week = now.isoweekday()
         current_time = now.time()
@@ -136,6 +139,7 @@ class TimingMixin:
         if not timing or not timing.open_time or not timing.close_time:
             return False
 
+        # TODO: inclusive on both ends means close_time matches twice on overnight boundary. Use [open, close) for clarity.
         if timing.open_time < timing.close_time:
             return timing.open_time <= current_time <= timing.close_time
         else:

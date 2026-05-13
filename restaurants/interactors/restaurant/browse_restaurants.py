@@ -43,6 +43,7 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
 
         return self._get_browse_restaurants(restaurants=restaurants)
 
+    # TODO: this lives in BrowseRestaurantsInteractor but it's used cross-app by orders' ServiceInterface — SRP violation. Move to a dedicated RestaurantOwnerInteractor.
     def get_restaurant_owner_id(self, restaurant_id: str) -> str:
         self.validate_restaurant_exists(restaurant_id=restaurant_id)
 

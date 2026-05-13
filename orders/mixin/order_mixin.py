@@ -36,6 +36,7 @@ class OrderMixin:
         self.order_storage = order_storage
         super().__init__(**kwargs)
 
+    # TODO: this does double duty (existence + ownership) and the user_id=None "disable" pattern is exactly what makes IDOR possible. Split into two methods.
     def validate_order_exists(self, order_id: str, user_id: Optional[str]) -> OrderDTO:
 
         order_dto = self.order_storage.get_order(order_id=order_id)
@@ -69,6 +70,7 @@ class OrderMixin:
     @staticmethod
     def validate_user_is_restaurant_owner(user_id: str, owner_id: str):
 
+        # TODO: no None guard — if owner_id is None (missing restaurant), this still raises but with misleading semantics.
         if owner_id != user_id:
             raise UserNotRestaurantOwner(user_id=user_id)
 

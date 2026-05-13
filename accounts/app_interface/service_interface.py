@@ -11,6 +11,7 @@ class ServiceInterface:
         self.address_storage = AddressStorage()
         self.user_storage = UserStorage()
 
+    # TODO: Cross-app surface with no user_id — any app can fetch any user's address.
     def get_address_by_id(self, address_id: int) -> AddressDTO:
         interactor = AddressesInteractor(
             address_storage=self.address_storage,
