@@ -284,6 +284,7 @@ class RestaurantDashboardDTO:
 class UpdateMenuItemDTO:
     menu_item_id: str
     name: Optional[str]
+    description: Optional[str]
     is_available: Optional[bool]
     preparation_time_in_minutes: Optional[int]
     price: Optional[Decimal]

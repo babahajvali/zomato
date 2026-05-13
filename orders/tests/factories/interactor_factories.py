@@ -21,7 +21,6 @@ class CreatePromoCodeDTOFactory(factory.Factory):
     class Meta:
         model = CreatePromoCodeDTO
 
-    id = factory.Sequence(lambda n: n + 1)
     code = factory.Sequence(lambda n: f"CODE{n}")
     discount_type = "FLAT"
     discount_value = factory.Sequence(lambda n: float(n + 1))

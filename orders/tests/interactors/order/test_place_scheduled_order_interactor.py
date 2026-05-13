@@ -130,7 +130,7 @@ class TestPlaceScheduledOrderInteractor:
         self.promo_code_storage.get_promo_code_by_id.assert_not_called()
         self.order_storage.create_order_items.assert_called_once()
         self.interactor.restaurant_adapter.clear_customer_cart_items.assert_called_once_with(
-            cart_id="cart-1"
+            cart_id="cart-1", user_id="customer-1"
         )
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
@@ -145,7 +145,7 @@ class TestPlaceScheduledOrderInteractor:
             min_order_value=100.0,
             max_usage=5,
         )
-        self.order_storage.get_promo_code_usage.return_value = 0
+        self.order_storage.get_orders_count_for_promo_code.return_value = 0
         self.order_storage.create_order.return_value = OrderDTOFactory(
             order_id="orders-2",
             promo_code_id=1,
@@ -237,13 +237,14 @@ class TestPlaceScheduledOrderInteractor:
                 scheduled_for=scheduled_for,
             )
 
-    @pytest.mark.django_db
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_place_scheduled_order_raises_promo_usage_limit_reached(self):
         scheduled_for = timezone.now() + timedelta(hours=2)
         self._setup_valid_adapters(scheduled_for=scheduled_for)
         promo_dto = PromoCodeDTOFactory(max_usage=1)
         self.promo_code_storage.get_promo_code_by_id.return_value = promo_dto
-        self.order_storage.get_promo_code_usage.return_value = 1
+        self.order_storage.get_orders_count_for_promo_code.return_value = 1
 
         with pytest.raises(PromoCodeUsageLimitReached):
             self.interactor.place_scheduled_order(

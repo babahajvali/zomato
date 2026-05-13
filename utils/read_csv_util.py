@@ -1,11 +1,23 @@
 import csv
+from typing import Dict, List, Any
 
 
-def read_csv(file_path):
-    with open(file_path, newline='', encoding='utf-8') as file:
-        return list(csv.DictReader(file))
+def read_csv(file_path: str) -> List[Dict[str, str]]:
+    with open(file_path, newline="", encoding="utf-8") as file:
+        reader = csv.DictReader(file)
+        return list(reader)
 
-def validate_row(row, required_fields, row_type="row"):
+
+def validate_row(
+    row: Dict[str, Any],
+    required_fields: List[str],
+    row_type: str = "row",
+) -> None:
     for field in required_fields:
-        if not row.get(field) or not row[field].strip():
-            raise ValueError(f"Invalid {row_type}: {row}")
+        value = row.get(field)
+
+        if value is None:
+            raise ValueError(f"Missing field '{field}' in {row_type}: {row}")
+
+        if not str(value).strip():
+            raise ValueError(f"Empty field '{field}' in {row_type}: {row}")

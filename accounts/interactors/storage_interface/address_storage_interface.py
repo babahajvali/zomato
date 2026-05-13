@@ -1,8 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
-from accounts.interactors.dtos import CreateAddressDTO, AddressDTO, AddressLookupDTO, \
-    UpdateAddressDTO
+from accounts.interactors.dtos import (
+    CreateAddressDTO,
+    AddressDTO,
+    AddressLookupDTO,
+    UpdateAddressDTO,
+)
 
 
 class AddressStorageInterface(ABC):
@@ -15,7 +19,7 @@ class AddressStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def get_address_by_id(self, address_id: int) -> AddressDTO:
+    def get_address_by_id(self, address_id: int, user_id: str) -> Optional[AddressDTO]:
         pass
 
     @abstractmethod

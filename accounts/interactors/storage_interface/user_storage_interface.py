@@ -15,7 +15,7 @@ class UserStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def get_existing_emails(self, emails: List[str]) -> List[UserDTO]:
+    def get_users_by_emails(self, emails: List[str]) -> List[UserDTO]:
         pass
 
     @abstractmethod

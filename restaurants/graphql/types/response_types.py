@@ -16,6 +16,8 @@ from restaurants.graphql.types.error_types import (
     InvalidDateRange,
     InvalidOffset,
     InvalidLimit,
+    CartNotBelongsToUser,
+    InvalidDayOfWeek,
 )
 from restaurants.graphql.types.types import (
     RestaurantTimingType,
@@ -109,10 +111,7 @@ class RemoveCartItemResponse(graphene.Union):
 
 class ClearCartItemsResponse(graphene.Union):
     class Meta:
-        types = (
-            ClearCartItemsSuccessType,
-            CartNotFound,
-        )
+        types = (ClearCartItemsSuccessType, CartNotFound, CartNotBelongsToUser)
 
 
 class GetCartItemsResponse(graphene.Union):
@@ -150,6 +149,7 @@ class CreateRestaurantTimingResponse(graphene.Union):
             RestaurantNotFound,
             UserNotRestaurantOwner,
             InvalidTimingRange,
+            InvalidDayOfWeek,
         )
 
 
@@ -173,7 +173,7 @@ class DeleteMenuItemResponse(graphene.Union):
 
 class GetUserRestaurantReviewResponse(graphene.Union):
     class Meta:
-        types = (ReviewType,)
+        types = (ReviewType, RestaurantNotFound)
 
 
 class GetOwnerRestaurantsResponse(graphene.Union):

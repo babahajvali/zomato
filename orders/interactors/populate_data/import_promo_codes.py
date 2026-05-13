@@ -1,6 +1,7 @@
 from decimal import Decimal
 from typing import List, Any, Dict
 
+from django.db import transaction
 from django.utils.dateparse import parse_datetime
 
 from orders.exception.custom_exceptions import (
@@ -32,17 +33,17 @@ class ImportPromoCodes:
             promo_code_dtos=promo_codes_dto,
             codes=codes,
         )
-
-        created_promos = (
-            self.promo_code_storage.create_bulk_promo_codes(to_create)
-            if to_create
-            else []
-        )
-        updated_promos = (
-            self.promo_code_storage.update_bulk_promo_codes(to_update)
-            if to_update
-            else []
-        )
+        with transaction.atomic():
+            created_promos = (
+                self.promo_code_storage.create_bulk_promo_codes(to_create)
+                if to_create
+                else []
+            )
+            updated_promos = (
+                self.promo_code_storage.update_bulk_promo_codes(to_update)
+                if to_update
+                else []
+            )
 
         return (
             f"{len(created_promos)} promo codes created, "
@@ -53,7 +54,6 @@ class ImportPromoCodes:
     def _build_promo_code_dtos(rows: List[Dict[str, Any]]) -> List[CreatePromoCodeDTO]:
         return [
             CreatePromoCodeDTO(
-                id=int(row["id"]),
                 code=row["code"],
                 discount_type=row["discount_type"],
                 discount_value=Decimal(row["discount_value"]),

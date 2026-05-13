@@ -82,6 +82,7 @@ class TestUpdateMenuItemInteractor:
         update_dto = UpdateMenuItemDTO(
             menu_item_id="menu-1",
             name="Updated Item Name",
+            description="sample",
             is_available=None,
             preparation_time_in_minutes=None,
             price=None,
@@ -114,6 +115,7 @@ class TestUpdateMenuItemInteractor:
         update_dto = UpdateMenuItemDTO(
             menu_item_id="menu-1",
             name=None,
+            description=None,
             is_available=None,
             preparation_time_in_minutes=None,
             price=None,

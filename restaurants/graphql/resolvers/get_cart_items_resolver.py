@@ -16,7 +16,9 @@ def get_cart_items_resolver(root, info, params):
     )
 
     try:
-        cart_items = interactor.get_cart_items(cart_id=params.cart_id)
+        cart_items = interactor.get_cart_items(
+            cart_id=params.cart_id, user_id=info.context.user_id
+        )
 
         items = [
             CartItemType(

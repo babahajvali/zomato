@@ -32,9 +32,10 @@ class Order(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["restaurant_id"]),
+            models.Index(fields=["restaurant_id", "-created_at"]),
+            models.Index(fields=["customer_id", "-created_at"]),
+            models.Index(fields=["promo_code"]),
             models.Index(fields=["status"]),
-            models.Index(fields=["customer_id"]),
         ]
 
 

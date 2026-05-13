@@ -79,6 +79,7 @@ class UpdateMenuItemDTOFactory(factory.Factory):
 
     menu_item_id = factory.Sequence(lambda n: f"item-{n}")
     name = factory.Sequence(lambda n: f"Updated Item {n}")
+    description = factory.Faker("sentence")
     is_available = True
     preparation_time_in_minutes = 20
     price = 299.0

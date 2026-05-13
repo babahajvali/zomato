@@ -1,7 +1,7 @@
 import graphene
 
 from restaurants.exception import custom_exceptions
-from restaurants.graphql.types.error_types import CartNotFound
+from restaurants.graphql.types.error_types import CartNotFound, CartNotBelongsToUser
 from restaurants.graphql.types.input_types import ClearCartItemsInputParams
 from restaurants.graphql.types.response_types import ClearCartItemsResponse
 from restaurants.graphql.types.types import ClearCartItemsSuccessType
@@ -27,8 +27,12 @@ class ClearCartItemsMutation(graphene.Mutation):
         )
 
         try:
-            interactor.clear_cart_items(cart_id=params.cart_id)
+            interactor.clear_cart_items(
+                cart_id=params.cart_id, user_id=info.context.user_id
+            )
 
             return ClearCartItemsSuccessType(cart_id=params.cart_id, success=True)
         except custom_exceptions.CartNotFound as e:
             return CartNotFound(cart_id=e.cart_id)
+        except custom_exceptions.CartNotBelongsToUser as e:
+            return CartNotBelongsToUser(cart_id=e.cart_id, user_id=e.user_id)

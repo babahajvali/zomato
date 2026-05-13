@@ -13,7 +13,7 @@ class AddressType(graphene.ObjectType):
 
 class UserAddressesType(graphene.ObjectType):
     user_id = graphene.String(required=True)
-    addresses = graphene.List(AddressType)
+    addresses = graphene.List(AddressType, required=True)
 
 
 class UserLoginType(graphene.ObjectType):

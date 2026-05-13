@@ -1,9 +1,14 @@
 {
-  "data": {
-    "getUserAddress": {
-      "__typename": "UserAddressesType",
-      "userId": "49bb508e-c6d1-4882-95fd-1991d103f7cd",
-      "addresses": []
+  "errors": [
+    {
+      "message": "Cannot query field 'getUserAddress' on type 'Query'. Did you mean 'getUserAddresses'?",
+      "locations": [
+        {
+          "line": 3,
+          "column": 7
+        }
+      ]
     }
-  }
+  ],
+  "data": null
 }

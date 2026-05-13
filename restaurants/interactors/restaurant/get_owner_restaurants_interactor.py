@@ -4,10 +4,12 @@ from restaurants.interactors.dtos import RestaurantDTO
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
     RestaurantStorageInterface,
 )
+from restaurants.mixins.restaurant_mixin import RestaurantMixin
 
 
-class GetOwnerRestaurantsInteractor:
+class GetOwnerRestaurantsInteractor(RestaurantMixin):
     def __init__(self, restaurant_storage: RestaurantStorageInterface):
+        super().__init__(restaurant_storage=restaurant_storage)
         self.restaurant_storage = restaurant_storage
 
     def get_owner_restaurants(self, owner_id: str) -> List[RestaurantDTO]:
@@ -27,3 +29,10 @@ class GetOwnerRestaurantsInteractor:
             )
             for restaurant in restaurants
         ]
+
+    def get_restaurant_owner_id(self, restaurant_id: str) -> str:
+        self.validate_restaurant_exists(restaurant_id=restaurant_id)
+
+        return self.restaurant_storage.get_restaurant_owner_id(
+            restaurant_id=restaurant_id
+        )

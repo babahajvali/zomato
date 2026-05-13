@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from django.db import transaction
 from django.db.models import Q
 
 from accounts.interactors.storage_interface.address_storage_interface import (
@@ -18,10 +19,11 @@ class AddressStorage(AddressStorageInterface):
             user_id=address_obj.user_id,
             full_address=address_obj.full_address,
             city=address_obj.city,
-            pincode=address_obj.pin_code,
+            pincode=address_obj.pincode,
             is_default=address_obj.is_default,
         )
 
+    @transaction.atomic
     def create_bulk_addresses(self, address_dtos: List[CreateAddressDTO]):
         addresses = []
 
@@ -31,7 +33,7 @@ class AddressStorage(AddressStorageInterface):
                 label=dto.label,
                 full_address=dto.full_address,
                 city=dto.city,
-                pin_code=dto.pincode,
+                pincode=dto.pincode,
                 is_default=dto.is_default,
             )
             addresses.append(address)
@@ -50,22 +52,23 @@ class AddressStorage(AddressStorageInterface):
             query |= Q(
                 user_id=pair.user_id,
                 label=pair.label,
-                pin_code=pair.pincode,
+                pincode=pair.pincode,
             )
 
         addresses = Address.objects.filter(query)
 
         return [self._convert_to_address_dto(address_obj=addr) for addr in addresses]
 
-    def get_address_by_id(self, address_id: int) -> Optional[AddressDTO]:
-        address_obj = Address.objects.filter(id=address_id).first()
+    def get_address_by_id(self, address_id: int, user_id: str) -> Optional[AddressDTO]:
+        address_obj = Address.objects.filter(id=address_id, user_id=user_id).first()
 
         if address_obj is None:
             return None
+
         return self._convert_to_address_dto(address_obj=address_obj)
 
     def get_user_addresses(self, user_id: str) -> List[AddressDTO]:
-        address_objs = Address.objects.filter(user_id=user_id)
+        address_objs = Address.objects.filter(user_id=user_id).order_by("-created_at")
 
         return [
             self._convert_to_address_dto(address_obj=address_obj)
@@ -83,7 +86,7 @@ class AddressStorage(AddressStorageInterface):
                 label=dto.label,
                 full_address=dto.full_address,
                 city=dto.city,
-                pin_code=dto.pincode,
+                pincode=dto.pincode,
                 is_default=dto.is_default,
             )
 
@@ -96,7 +99,7 @@ class AddressStorage(AddressStorageInterface):
                 "label",
                 "full_address",
                 "city",
-                "pin_code",
+                "pincode",
                 "is_default",
             ],
         )

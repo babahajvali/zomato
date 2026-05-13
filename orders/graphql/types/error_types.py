@@ -6,7 +6,7 @@ class PromoCodeUsageLimitReached(graphene.ObjectType):
 
 
 class PromoCodeNotEligible(graphene.ObjectType):
-    min_order_value = graphene.Float(required=True)
+    min_order_value = graphene.Decimal(required=True)
     items_total = graphene.Decimal(required=True)
 
 

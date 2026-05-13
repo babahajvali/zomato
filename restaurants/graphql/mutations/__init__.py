@@ -12,7 +12,7 @@ from restaurants.graphql.mutations.cart.update_cart_item_mutation import (
 from restaurants.graphql.mutations.restaurant.create_menu_items_mutation import (
     CreateMenuItemsMutation,
 )
-from restaurants.graphql.mutations.restaurant.delete_mnu_item_mutation import (
+from restaurants.graphql.mutations.restaurant.delete_menu_item_mutation import (
     DeleteMenuItemMutation,
 )
 from restaurants.graphql.mutations.restaurant.update_menu_item_mutation import (

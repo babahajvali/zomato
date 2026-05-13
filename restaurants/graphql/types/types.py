@@ -25,7 +25,7 @@ class MenuItemType(graphene.ObjectType):
     restaurant_id = graphene.String(required=True)
     name = graphene.String(required=True)
     description = graphene.String(required=True)
-    price = graphene.Float(required=True)
+    price = graphene.Decimal(required=True)
     category = graphene.String(required=True)
     is_veg = graphene.Boolean(required=True)
     is_available = graphene.Boolean(required=True)
@@ -46,7 +46,7 @@ class BrowseRestaurantType(graphene.ObjectType):
     pin_code = graphene.String(required=True)
     is_veg_only = graphene.Boolean(required=True)
     is_deleted = graphene.Boolean(required=True)
-    average_rating = graphene.Float(required=True)
+    average_rating = graphene.Decimal(required=True)
     total_reviews = graphene.Int(required=True)
     is_open = graphene.Boolean(required=True)
 
@@ -59,7 +59,7 @@ class ViewMenuItemType(graphene.ObjectType):
     item_id = graphene.String()
     name = graphene.String()
     description = graphene.String()
-    price = graphene.Float()
+    price = graphene.Decimal()
     category = graphene.String()
     is_veg = graphene.Boolean()
     is_available = graphene.Boolean()
@@ -82,7 +82,7 @@ class CartItemType(graphene.ObjectType):
     cart_id = graphene.String(required=True)
     menu_item_id = graphene.String(required=True)
     quantity = graphene.Int(required=True)
-    item_price = graphene.Float(required=True)
+    item_price = graphene.Decimal(required=True)
 
 
 class CartItemsType(graphene.ObjectType):
@@ -108,7 +108,7 @@ class ReviewType(graphene.ObjectType):
     review_id = graphene.Int(required=True)
     restaurant_id = graphene.String(required=True)
     customer_id = graphene.String(required=True)
-    rating = graphene.Float(required=True)
+    rating = graphene.Int(required=True)
     review = graphene.String()
     created_at = graphene.DateTime()
 
@@ -135,7 +135,7 @@ class RatingSummaryType(graphene.ObjectType):
 class TopSellingItemType(graphene.ObjectType):
     menu_item_id = graphene.String(required=True)
     quantity = graphene.Int(required=True)
-    revenue = graphene.Float(required=True)
+    revenue = graphene.Decimal(required=True)
 
 
 class PeakHourType(graphene.ObjectType):

@@ -29,6 +29,7 @@ class RestaurantTimingInteractor(RestaurantMixin, TimingMixin):
     def create_restaurant_timing(
         self, create_restaurant_timing_dto: CreateRestaurantTimingDTO, user_id: str
     ) -> RestaurantTimingDTO:
+        self.validate_day_of_week(day_of_week=create_restaurant_timing_dto.day_of_week)
         self.validate_restaurant_exists(
             restaurant_id=create_restaurant_timing_dto.restaurant_id
         )

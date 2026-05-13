@@ -1,6 +1,8 @@
+from decimal import Decimal
 from typing import List
 import json
 
+from restaurants.constants.enums import Category
 from restaurants.interactors.dtos import CreateMenuItemDTO
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
     RestaurantStorageInterface,
@@ -68,10 +70,10 @@ class ImportMenuItems:
                 restaurant_id=row["restaurant"],
                 name=row["name"],
                 description=row.get("description"),
-                price=row["price"],
-                category=row["category"],
-                is_veg=row.get("is_veg") == "True",
-                is_available=row.get("is_available", "True") == "True",
+                price=Decimal(row["price"]),
+                category=Category[row["category"]],
+                is_veg=(row.get("is_veg", "").strip().lower() == "true"),
+                is_available=(row.get("is_available", "True").strip().lower() == "true"),
                 preparation_time_in_minutes=int(row["preparation_time_in_minutes"]),
                 tags=json.loads(row["tags"]) if row.get("tags") else [],
             )

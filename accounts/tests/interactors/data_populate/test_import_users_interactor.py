@@ -45,7 +45,7 @@ class TestImportUsers:
     def test_import_users_success(self, mock_read_csv, mock_validate_row):
         # Arrange
         mock_read_csv.return_value = [ALICE_ROW]
-        self.user_storage.get_existing_emails.return_value = []
+        self.user_storage.get_users_by_emails.return_value = []
 
         expected_dto = CreateUserDTOFactory(
             id="user-1",
@@ -61,10 +61,10 @@ class TestImportUsers:
         # Assert
         mock_validate_row.assert_called_once_with(
             ALICE_ROW,
-            ["id", "email", "name", "role"],
+            ["id", "email", "name", "role", "phone_number"],
             "user row 1",
         )
-        self.user_storage.get_existing_emails.assert_called_once_with(
+        self.user_storage.get_users_by_emails.assert_called_once_with(
             ["alice@example.com"]
         )
         self.user_storage.create_bulk_users.assert_called_once_with([expected_dto])
@@ -80,5 +80,5 @@ class TestImportUsers:
             self.interactor.import_users(file_path="users.csv")
 
         assert exc.value.emails == ["alice@example.com"]
-        self.user_storage.get_existing_emails.assert_not_called()
+        self.user_storage.get_users_by_emails.assert_not_called()
         self.user_storage.create_bulk_users.assert_not_called()

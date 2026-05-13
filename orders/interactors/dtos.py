@@ -8,7 +8,6 @@ from orders.constants.enums import OrderStatus
 
 @dataclass
 class CreatePromoCodeDTO:
-    id: int
     code: str
     discount_type: str
     discount_value: Decimal

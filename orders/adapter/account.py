@@ -9,6 +9,6 @@ class AccountAdapter:
 
         return ServiceInterface()
 
-    def get_address_by_id(self, address_id: int) -> AddressDTO:
+    def get_address_by_id(self, address_id: int, user_id: str) -> AddressDTO:
 
-        return self.interface.get_address_by_id(address_id)
+        return self.interface.get_address_by_id(address_id=address_id, user_id=user_id)

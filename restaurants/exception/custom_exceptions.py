@@ -181,3 +181,17 @@ class InvalidOffsetFound(Exception):
 
     def __str__(self):
         return f"Invalid offset: {self.offset}"
+
+
+class CartNotBelongsToUser(Exception):
+    def __init__(self, user_id: str, cart_id: str):
+        self.user_id = user_id
+        self.cart_id = cart_id
+
+    def __str__(self):
+        return f"{self.user_id} cart not belongs to user {self.cart_id}"
+
+
+class InvalidDayOfWeek(Exception):
+    def __init__(self, day_of_week: int):
+        self.day_of_week = day_of_week

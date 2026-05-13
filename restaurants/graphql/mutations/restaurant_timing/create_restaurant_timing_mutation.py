@@ -4,6 +4,7 @@ from restaurants.exception import custom_exceptions
 from restaurants.graphql.types.error_types import (
     RestaurantNotFound,
     InvalidTimingRange,
+    InvalidDayOfWeek,
 )
 from restaurants.graphql.types.input_types import CreateRestaurantTimingInputParams
 from restaurants.graphql.types.response_types import CreateRestaurantTimingResponse
@@ -59,3 +60,5 @@ class CreateRestaurantTimingMutation(graphene.Mutation):
             return UserNotRestaurantOwner(user_id=e.user_id)
         except custom_exceptions.InvalidTimingRange as e:
             return InvalidTimingRange(close_time=e.close_time, open_time=e.open_time)
+        except custom_exceptions.InvalidDayOfWeek as e:
+            return InvalidDayOfWeek(day_of_week=e.day_of_week)

@@ -30,6 +30,11 @@ class CartNotFound(graphene.ObjectType):
     cart_id = graphene.String(required=True)
 
 
+class CartNotBelongsToUser(graphene.ObjectType):
+    user_id = graphene.String(required=True)
+    cart_id = graphene.String(required=True)
+
+
 class MenuItemNotFound(graphene.ObjectType):
     menu_item_id = graphene.String(required=True)
 
@@ -61,3 +66,7 @@ class InvalidOffset(graphene.ObjectType):
 
 class InvalidLimit(graphene.ObjectType):
     limit = graphene.Int(required=True)
+
+
+class InvalidDayOfWeek(graphene.ObjectType):
+    day_of_week = graphene.Int(required=True)

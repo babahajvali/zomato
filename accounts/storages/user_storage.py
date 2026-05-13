@@ -1,4 +1,7 @@
 from typing import List
+
+from django.db import transaction
+
 from accounts.interactors.storage_interface.user_storage_interface import (
     UserStorageInterface,
 )
@@ -23,6 +26,7 @@ class UserStorage(UserStorageInterface):
             password=user_obj.password,
         )
 
+    @transaction.atomic
     def create_bulk_users(self, create_user_dtos: List[CreateUserDTO]):
         users = [
             User(
@@ -39,7 +43,7 @@ class UserStorage(UserStorageInterface):
 
         return created_users
 
-    def get_existing_emails(self, emails: List[str]) -> List[UserDTO]:
+    def get_users_by_emails(self, emails: List[str]) -> List[UserDTO]:
 
         user_objs = User.objects.filter(email__in=emails)
 

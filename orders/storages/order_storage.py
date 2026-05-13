@@ -1,6 +1,6 @@
 from datetime import datetime, date, timedelta
 from decimal import Decimal, ROUND_HALF_UP
-from typing import List
+from typing import List, Optional
 
 from django.db.models import (
     Count,
@@ -14,6 +14,7 @@ from django.db.models import (
     FloatField,
 )
 from django.db.models.functions import ExtractHour, Coalesce
+from django.utils import timezone
 
 from orders.app_service.dtos import (
     RestaurantOrdersSummaryDTO,
@@ -21,6 +22,7 @@ from orders.app_service.dtos import (
     RestaurantOrderStatsDTO,
     MenuItemOrderStatsDTO,
 )
+from orders.constants.constants import TOP_SELLING_ITEMS_LIMIT
 from orders.constants.enums import OrderStatus
 from orders.interactors.dtos import (
     CreateOrderDTO,
@@ -44,7 +46,7 @@ class OrderStorage(OrderStorageInterface):
             order_id=str(order_obj.id),
             customer_id=str(order_obj.customer_id),
             restaurant_id=str(order_obj.restaurant_id),
-            promo_code_id=order_obj.promo_code_id if order_obj.promo_code_id else None,
+            promo_code_id=order_obj.promo_code_id,
             status=OrderStatus(order_obj.status),
             items_total=Decimal(order_obj.items_total),
             delivery_fee=Decimal(order_obj.delivery_fee),
@@ -55,7 +57,7 @@ class OrderStorage(OrderStorageInterface):
             scheduled_for=order_obj.scheduled_for,
         )
 
-    def get_order(self, order_id: str) -> OrderDTO | None:
+    def get_order(self, order_id: str) -> Optional[OrderDTO]:
         order_obj = Order.objects.filter(id=order_id).first()
 
         if order_obj is None:
@@ -78,7 +80,7 @@ class OrderStorage(OrderStorageInterface):
             for order_item in order_items
         ]
 
-    def get_promo_code_usage(self, promo_code_id: int) -> int:
+    def get_orders_count_for_promo_code(self, promo_code_id: int) -> int:
         return (
             Order.objects.filter(
                 promo_code_id=promo_code_id,
@@ -142,13 +144,6 @@ class OrderStorage(OrderStorageInterface):
             self._convert_to_order_dto(order_obj=order_obj) for order_obj in order_objs
         ]
 
-    def get_order_placed_at(self, order_id: str) -> datetime:
-        return (
-            Order.objects.filter(id=order_id)
-            .values_list("created_at", flat=True)
-            .first()
-        )
-
     def get_order_updated_at(self, order_id: str) -> datetime:
         return (
             Order.objects.filter(id=order_id)
@@ -174,7 +169,7 @@ class OrderStorage(OrderStorageInterface):
     def get_today_restaurant_scheduled_orders(
         self, restaurant_id: str, limit: int, offset: int
     ) -> List[OrderDTO]:
-        today = date.today()
+        today = timezone.localtime().today()
 
         orders = Order.objects.filter(
             restaurant_id=restaurant_id,
@@ -287,11 +282,14 @@ class OrderStorage(OrderStorageInterface):
                 revenue=Sum(
                     ExpressionWrapper(
                         F("item_price") * F("quantity"),
-                        output_field=DecimalField(),
+                        output_field=DecimalField(
+                            max_digits=12,
+                            decimal_places=2,
+                        ),
                     )
                 ),
             )
-            .order_by("-quantity_sold")[:5]
+            .order_by("-quantity_sold")[:TOP_SELLING_ITEMS_LIMIT]
         )
 
         return [

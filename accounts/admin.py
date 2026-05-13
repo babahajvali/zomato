@@ -37,7 +37,7 @@ class AddressAdmin(admin.ModelAdmin):
         "label",
         "user",
         "city",
-        "pin_code",
+        "pincode",
         "is_default",
         "created_at",
     )
@@ -55,7 +55,7 @@ class AddressAdmin(admin.ModelAdmin):
                     "label",
                     "full_address",
                     "city",
-                    "pin_code",
+                    "pincode",
                     "is_default",
                 )
             },

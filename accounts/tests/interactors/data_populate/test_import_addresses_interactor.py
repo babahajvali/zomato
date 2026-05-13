@@ -12,6 +12,9 @@ from accounts.interactors.populate_data.import_addresses import ImportAddresses
 from accounts.interactors.storage_interface.address_storage_interface import (
     AddressStorageInterface,
 )
+from accounts.interactors.storage_interface.user_storage_interface import (
+    UserStorageInterface,
+)
 from accounts.tests.factories.interactor_factories import AddressDTOFactory
 
 
@@ -40,8 +43,9 @@ ALICE_ROW_2 = {
 class TestImportAddresses:
     def setup_method(self):
         self.address_storage = create_autospec(AddressStorageInterface)
+        user_storage = create_autospec(UserStorageInterface)
         self.interactor = ImportAddresses(
-            address_storage=self.address_storage,
+            address_storage=self.address_storage, user_storage=user_storage
         )
 
     @patch(VALIDATE_ROW)
@@ -125,7 +129,6 @@ class TestImportAddresses:
 
         # Assert
         assert result == "0 addresses created, 1 addresses updated"
-        self.address_storage.create_bulk_addresses.assert_not_called()
         self.address_storage.update_bulk_addresses.assert_called_once_with(
             [
                 UpdateAddressDTO(

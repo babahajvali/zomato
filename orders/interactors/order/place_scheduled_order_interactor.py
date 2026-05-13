@@ -37,6 +37,7 @@ class PlaceScheduledOrderInteractor(OrderPlacementBase):
         delivery_fee = self._validate_address_and_get_delivery_fee(
             address_id=order_data.address_id,
             restaurant_id=order_data.restaurant_id,
+            user_id=order_data.customer_id,
         )
 
         with redis_lock(
@@ -121,7 +122,9 @@ class PlaceScheduledOrderInteractor(OrderPlacementBase):
             cart_items=cart_items,
             order_id=order_dto.order_id,
         )
-        self.restaurant_adapter.clear_customer_cart_items(cart_id=cart_id)
+        self.restaurant_adapter.clear_customer_cart_items(
+            cart_id=cart_id, user_id=order_data.customer_id
+        )
 
         return self.build_schedule_order_summary_dto(
             order_dto=order_dto,

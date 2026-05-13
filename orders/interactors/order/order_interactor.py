@@ -45,7 +45,7 @@ class OrderInteractor(OrderMixin):
             timeout=10,
         ):
             with transaction.atomic():
-                order_dto = self.validate_order_exists(
+                order_dto = self.validate_order_belongs_to_user(
                     order_id=order_id, user_id=user_id
                 )
 
@@ -67,7 +67,7 @@ class OrderInteractor(OrderMixin):
         )
 
     def get_order(self, order_id: str) -> OrderSummaryDTO:
-        order_dto = self.validate_order_exists(order_id=order_id, user_id=None)
+        order_dto = self.validate_order_exists(order_id=order_id)
 
         order_items = self.order_storage.get_order_items(order_id=order_id)
 

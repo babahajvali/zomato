@@ -3,7 +3,6 @@ from contextlib import contextmanager
 from unittest.mock import create_autospec, patch
 
 import pytest
-from django.core.cache import cache
 from django.utils import timezone
 
 from orders.constants.enums import OrderStatus
@@ -36,7 +35,6 @@ REDIS_LOCK = "orders.interactors.order.order_interactor.redis_lock"
 
 class TestOrderInteractor:
     def setup_method(self):
-        cache.clear()
         self.order_storage = create_autospec(OrderStorageInterface)
         self.interactor = OrderInteractor(order_storage=self.order_storage)
 
@@ -71,7 +69,8 @@ class TestOrderInteractor:
             order_id="orders-1", status=OrderStatus.CANCELLED
         )
 
-    @pytest.mark.django_db
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_cancel_order_raises_order_not_found(self):
         self.order_storage.get_order.return_value = None
 
@@ -84,7 +83,8 @@ class TestOrderInteractor:
         assert exc.value.order_id == "invalid-orders"
         self.order_storage.update_order_status.assert_not_called()
 
-    @pytest.mark.django_db
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_cancel_order_raises_order_does_not_belong_to_user(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
@@ -102,7 +102,8 @@ class TestOrderInteractor:
         assert exc.value.user_id == "other-user"
         self.order_storage.update_order_status.assert_not_called()
 
-    @pytest.mark.django_db
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
+    @patch(REDIS_LOCK, no_op_lock)
     def test_cancel_order_raises_cancellation_time_exceeded(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",

@@ -1,8 +1,17 @@
 import uuid
 
+from django.core.validators import RegexValidator
 from django.db import models
 
-from accounts.constants.enums import Role
+
+phone_validator = RegexValidator(
+    regex=r"^\+?[1-9]\d{9,14}$", message="Enter a valid phone number."
+)
+
+
+class Role(models.TextChoices):
+    OWNER = "OWNER", "Owner"
+    CUSTOMER = "CUSTOMER", "Customer"
 
 
 class User(models.Model):
@@ -11,8 +20,11 @@ class User(models.Model):
     )
     name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True)
-    phone_number = models.CharField(max_length=255)
-    role = models.CharField(max_length=255, choices=Role.get_list_of_tuples())
+    phone_number = models.CharField(
+        max_length=15,
+        validators=[phone_validator],
+    )
+    role = models.CharField(max_length=255, choices=Role.choices)
     password = models.CharField(max_length=255, default=None, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -25,7 +37,7 @@ class Address(models.Model):
     label = models.CharField(max_length=255)
     full_address = models.TextField()
     city = models.CharField(max_length=255)
-    pin_code = models.CharField(max_length=10)
+    pincode = models.IntegerField(null=True, blank=True)
     is_default = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -40,7 +40,7 @@ class TestUserStorage(TestCase):
         UserFactory(email="alice@example.com")
         UserFactory(email="bob@example.com")
 
-        result = self.storage.get_existing_emails(
+        result = self.storage.get_users_by_emails(
             emails=["alice@example.com", "notfound@example.com"]
         )
 
@@ -80,9 +80,7 @@ class TestUserStorage(TestCase):
         assert result.name == "Sample User"
 
     def test_get_user_returns_none_when_user_not_found(self):
-        result = self.storage.get_user(
-            user_id="00000000-0000-0000-0000-000000000000"
-        )
+        result = self.storage.get_user(user_id="00000000-0000-0000-0000-000000000000")
 
         assert result is None
 

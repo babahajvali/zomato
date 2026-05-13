@@ -1,26 +1,14 @@
 {
-  "data": {
-    "getUserAddress": {
-      "__typename": "UserAddressesType",
-      "userId": "49bb508e-c6d1-4882-95fd-1991d103f7cd",
-      "addresses": [
+  "errors": [
+    {
+      "message": "Cannot query field 'getUserAddress' on type 'Query'. Did you mean 'getUserAddresses'?",
+      "locations": [
         {
-          "addressId": 1,
-          "fullAddress": "12204 Berry Greens\nMonroeport, MA 68877",
-          "city": "Clarkhaven",
-          "pincode": "500000",
-          "label": "Home",
-          "isDefault": true
-        },
-        {
-          "addressId": 2,
-          "fullAddress": "68689 Meyer Manor Suite 802\nSouth Dominiqueburgh, MA 44661",
-          "city": "Hensonmouth",
-          "pincode": "500001",
-          "label": "Office",
-          "isDefault": false
+          "line": 3,
+          "column": 7
         }
       ]
     }
-  }
+  ],
+  "data": null
 }

@@ -28,12 +28,12 @@ class TestAddressStorage(TestCase):
         assert len(result) == 1
         created = Address.objects.get(user_id=user.id, label="Home")
         assert created.full_address == "12 MG Road"
-        assert created.pin_code == "560001"
+        assert created.pincode == 560001
 
     def test_get_existing_addresses(self):
         user = UserFactory(email="alice@example.com")
-        AddressFactory(user=user, label="Home", pin_code="500001")
-        AddressFactory(user=user, label="Office", pin_code="500002")
+        AddressFactory(user=user, label="Home", pincode="500001")
+        AddressFactory(user=user, label="Office", pincode="500002")
 
         result = self.storage.get_existing_addresses(
             pairs=[
@@ -53,4 +53,4 @@ class TestAddressStorage(TestCase):
         assert len(result) == 1
         assert result[0].user_id == str(user.id)
         assert result[0].label == "Home"
-        assert result[0].pincode == "500001"
+        assert result[0].pincode == 500001

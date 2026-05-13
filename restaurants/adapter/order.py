@@ -13,10 +13,8 @@ from restaurants.interactors.dtos import (
 
 
 class OrderAdapter:
-    @property
-    def interface(self):
-
-        return ServiceInterface()
+    def __init__(self):
+        self.interface = ServiceInterface()
 
     def get_restaurant_orders_summary(
         self, restaurant_id: str, date_from: date, date_to: date

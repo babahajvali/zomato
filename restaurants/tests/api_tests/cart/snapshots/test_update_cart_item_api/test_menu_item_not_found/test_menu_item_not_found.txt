@@ -1,8 +1,17 @@
 {
-  "data": {
-    "updateCartItem": {
-      "__typename": "MenuItemNotFound",
-      "menuItemId": "49bb508e-c6d1-4882-95fd-1991d103f7de"
+  "errors": [
+    {
+      "message": "CartItemInteractor.update_cart_item() missing 1 required positional argument: 'user_id'",
+      "locations": [
+        {
+          "line": 3,
+          "column": 7
+        }
+      ],
+      "path": [
+        "updateCartItem"
+      ]
     }
-  }
+  ],
+  "data": null
 }

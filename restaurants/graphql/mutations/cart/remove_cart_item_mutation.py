@@ -27,7 +27,9 @@ class RemoveCartItemMutation(graphene.Mutation):
         )
 
         try:
-            interactor.remove_cart_item(cart_item_id=params.cart_item_id)
+            interactor.remove_cart_item(
+                cart_item_id=params.cart_item_id, user_id=info.context.user_id
+            )
 
             return RemoveCartItemSuccessType(
                 success=True, cart_item_id=params.cart_item_id

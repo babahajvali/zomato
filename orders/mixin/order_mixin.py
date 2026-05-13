@@ -1,5 +1,5 @@
 from decimal import Decimal, ROUND_HALF_UP
-from typing import Optional, List
+from typing import List
 
 from orders.adapter.dtos import CartItemDTO
 from orders.constants.constants import TAX_PERCENTAGE
@@ -36,14 +36,19 @@ class OrderMixin:
         self.order_storage = order_storage
         super().__init__(**kwargs)
 
-    def validate_order_exists(self, order_id: str, user_id: Optional[str]) -> OrderDTO:
+    def validate_order_exists(self, order_id: str) -> OrderDTO:
 
         order_dto = self.order_storage.get_order(order_id=order_id)
 
         if order_dto is None:
             raise OrderNotFound(order_id=order_id)
 
-        if order_dto.customer_id != user_id and user_id is not None:
+        return order_dto
+
+    def validate_order_belongs_to_user(self, order_id: str, user_id: str) -> OrderDTO:
+        order_dto = self.validate_order_exists(order_id=order_id)
+
+        if order_dto.customer_id != user_id:
             raise OrderNotOwnedByUser(order_id=order_id, user_id=user_id)
 
         return order_dto
@@ -134,11 +139,12 @@ class OrderMixin:
     def calculate_items_total(
         cart_items: List[CartItemDTO],
     ) -> Decimal:
-        return Decimal(
-            sum(
+        return sum(
+            (
                 Decimal(str(item.item_price)) * Decimal(str(item.quantity))
                 for item in cart_items
-            )
+            ),
+            start=Decimal("0"),
         )
 
     @staticmethod

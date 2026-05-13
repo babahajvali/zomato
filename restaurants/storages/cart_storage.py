@@ -1,6 +1,8 @@
 from decimal import Decimal
 from typing import List
 
+from django.db import transaction
+
 from restaurants.interactors.dtos import CartDTO, CartItemDTO
 from restaurants.interactors.storage_interface.cart_storage_interface import (
     CartStorageInterface,
@@ -46,6 +48,7 @@ class CartStorage(CartStorageInterface):
 
         return self._convert_to_cart_dto(cart_obj=cart_dto)
 
+    @transaction.atomic
     def create_or_update_cart_item(
         self, cart_id: str, menu_item_id: str, quantity: int, item_price=float
     ) -> CartItemDTO:

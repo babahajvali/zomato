@@ -1,8 +1,8 @@
 from accounts.exception import custom_exceptions
 from accounts.graphql.types.error_types import UserNotFound
 from accounts.graphql.types.types import AddressType, UserAddressesType
-from accounts.interactors.address.get_user_addresses_interactor import (
-    AddressesInteractor,
+from accounts.interactors.address.address_interactor import (
+    AddressInteractor,
 )
 from accounts.storages.address_storage import AddressStorage
 from accounts.storages.user_storage import UserStorage
@@ -13,7 +13,7 @@ def get_user_addresses_resolver(root, info):
     user_storage = UserStorage()
     address_storage = AddressStorage()
 
-    interactor = AddressesInteractor(
+    interactor = AddressInteractor(
         user_storage=user_storage, address_storage=address_storage
     )
 

@@ -120,7 +120,7 @@ class UserNotRestaurantOwner(Exception):
         self.user_id = user_id
 
     def __str__(self):
-        return str(self.user_id)
+        return f"User {self.user_id} is not restaurant owner"
 
 
 class InvalidOrderStatusTransition(Exception):

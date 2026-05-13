@@ -1,8 +1,17 @@
 {
-  "data": {
-    "placeOrder": {
-      "__typename": "CartIsEmpty",
-      "cartId": "49bb508e-c6d1-4882-95fd-1991d103f7dd"
+  "errors": [
+    {
+      "message": "CartItemInteractor.get_cart_items() missing 1 required positional argument: 'user_id'",
+      "locations": [
+        {
+          "line": 3,
+          "column": 7
+        }
+      ],
+      "path": [
+        "placeOrder"
+      ]
     }
-  }
+  ],
+  "data": null
 }

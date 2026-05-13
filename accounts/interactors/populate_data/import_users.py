@@ -46,7 +46,7 @@ class ImportUsers:
         emails: List[str],
     ) -> tuple[List[CreateUserDTO], List[UpdateUserDTO]]:
 
-        existing_users = self.user_storage.get_existing_emails(emails=emails)
+        existing_users = self.user_storage.get_users_by_emails(emails=emails)
 
         existing_lookup = {user.email: user.id for user in existing_users}
 
@@ -97,14 +97,14 @@ class ImportUsers:
         for index, row in enumerate(rows, start=1):
             validate_row(
                 row,
-                ["id", "email", "name", "role"],
+                ["id", "email", "name", "role", "phone_number"],
                 f"user row {index}",
             )
 
-            id = row["id"].strip()
+            user_id = row["id"].strip()
             email = row["email"].strip().lower()
 
-            row["id"] = id
+            row["id"] = user_id
             row["email"] = email
 
             emails.append(email)

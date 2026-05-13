@@ -1,8 +1,8 @@
-from datetime import datetime
 from decimal import Decimal
 from typing import List
 
 from django.db import transaction
+from django.utils import timezone
 
 from orders.adapter.dtos import CartItemDTO
 from orders.constants.constants import REDIS_LOCK_TIMEOUT_SECS
@@ -29,6 +29,7 @@ class PlaceOrderInteractor(OrderPlacementBase):
         delivery_fee = self._validate_address_and_get_delivery_fee(
             address_id=order_data.address_id,
             restaurant_id=order_data.restaurant_id,
+            user_id=order_data.customer_id,
         )
 
         self._validate_restaurant_timing(restaurant_id=order_data.restaurant_id)
@@ -109,12 +110,14 @@ class PlaceOrderInteractor(OrderPlacementBase):
             total_amount=total_amount,
         )
         self._save_order_items(cart_items=cart_items, order_id=order_dto.order_id)
-        self.restaurant_adapter.clear_customer_cart_items(cart_id=cart_id)
+        self.restaurant_adapter.clear_customer_cart_items(
+            cart_id=cart_id, user_id=order_data.customer_id
+        )
 
         return self.build_order_summary_dto(order_dto=order_dto, cart_items=cart_items)
 
     def _validate_restaurant_timing(self, restaurant_id: str):
-        now = datetime.now()
+        now = timezone.localtime()
         timing = self.restaurant_adapter.get_restaurant_timing(
             restaurant_id=restaurant_id,
             day_of_week=now.isoweekday(),

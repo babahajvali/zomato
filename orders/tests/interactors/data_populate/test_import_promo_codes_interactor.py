@@ -7,7 +7,6 @@ from orders.exception.custom_exceptions import (
     EmptyPromoCode,
     InvalidPromoCodeDateRange,
 )
-from orders.interactors.dtos import UpdatePromoCodeDTO
 from orders.interactors.populate_data.import_promo_codes import ImportPromoCodes
 from orders.interactors.storage_interface.promo_code_storage_interface import (
     PromoCodeStorageInterface,
@@ -18,6 +17,7 @@ from orders.tests.factories import CreatePromoCodeDTOFactory, PromoCodeDTOFactor
 READ_CSV = "orders.interactors.populate_data.import_promo_codes.read_csv"
 
 
+@pytest.mark.django_db
 class TestImportPromoCodes:
     def setup_method(self):
         self.promo_code_storage = create_autospec(PromoCodeStorageInterface)
@@ -40,7 +40,6 @@ class TestImportPromoCodes:
             }
         ]
         expected_dto = CreatePromoCodeDTOFactory(
-            id=1,
             code="SAVE50",
             discount_type="FLAT",
             discount_value=50.0,

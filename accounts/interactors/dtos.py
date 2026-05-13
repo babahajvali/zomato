@@ -30,7 +30,7 @@ class UpdateAddressDTO:
     label: str
     full_address: str
     city: str
-    pincode: str
+    pincode: int
     is_default: bool
 
 
@@ -39,7 +39,7 @@ class AddressDTO:
     address_id: int
     full_address: str
     city: str
-    pincode: str
+    pincode: int
     label: str
     is_default: bool
     user_id: str
@@ -75,4 +75,4 @@ class UpdateUserDTO:
 class AddressLookupDTO:
     user_id: str
     label: str
-    pincode: str
+    pincode: int

@@ -1,16 +1,19 @@
 {
-  "data": {
-    "getCartItems": {
-      "__typename": "CartItemsType",
-      "cartItems": [
+  "errors": [
+    {
+      "message": "49bb508e-c6d1-4882-95fd-1991d103f7cd cart not belongs to user 49bb508e-c6d1-4882-95fd-1991d103f7dd",
+      "locations": [
         {
-          "cartId": "49bb508e-c6d1-4882-95fd-1991d103f7dd",
-          "cartItemId": 1,
-          "itemPrice": 199.0,
-          "menuItemId": "49bb508e-c6d1-4882-95fd-1991d103f7de",
-          "quantity": 2
+          "line": 3,
+          "column": 7
         }
+      ],
+      "path": [
+        "getCartItems"
       ]
     }
+  ],
+  "data": {
+    "getCartItems": null
   }
 }

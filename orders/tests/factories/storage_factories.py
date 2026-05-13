@@ -30,7 +30,7 @@ class OrderFactory(DjangoModelFactory):
     restaurant_id = factory.Sequence(
         lambda n: f"00000000-0000-0000-0000-{n + 101:012d}"
     )
-    promo_code = factory.SubFactory(PromoCodeFactory)
+    promo_code = None
     status = OrderStatus.PLACED.value
     items_total = 400.0
     delivery_fee = 30.0

@@ -1,4 +1,5 @@
 import json
+import re
 
 import jwt
 from django.conf import settings
@@ -15,7 +16,10 @@ class JWTAuthenticationMiddleware:
         if not request.path.startswith("/graphql"):
             return self.get_response(request)
 
-        if request.method in {"GET", "OPTIONS"}:
+        if request.method == "GET":
+            return self.get_response(request)
+
+        if request.method == "OPTIONS":
             return self.get_response(request)
 
         if self._is_public_operation(request):
@@ -48,7 +52,6 @@ class JWTAuthenticationMiddleware:
             )
 
         request.user_id = payload.get("user_id")
-
         return self.get_response(request)
 
     @staticmethod
@@ -59,18 +62,35 @@ class JWTAuthenticationMiddleware:
                 return False
 
             data = json.loads(body.decode("utf-8"))
-            operation_name = data.get("operationName", "").lower()
-            query = data.get("query", "").lower()
+            operation_name = data.get("operationName", "")
+            query = data.get("query", "")
 
-            public_operations = {"introspectionquery", "userlogin"}
+            public_operations = {
+                "introspectionquery",
+                "userlogin",
+            }
 
-            if operation_name in public_operations:
+            if operation_name.lower() in public_operations:
                 return True
 
-            for op in public_operations:
-                if f"{op}(" in query or f"{op}{{" in query:
+            query_lower = query.lower().strip()
+
+            public_mutations = {
+                "userlogin",
+            }
+
+            for mutation in public_mutations:
+                if "mutation" in query_lower and mutation in query_lower:
                     return True
 
-            return "__schema" in query or "__type(" in query
+            introspection_pattern = re.compile(
+                r"\b(__schema|__type)\s*[({]",
+                re.IGNORECASE,
+            )
+            if introspection_pattern.search(query):
+                return True
+
+            return False
+
         except (json.JSONDecodeError, UnicodeDecodeError, AttributeError):
             return False

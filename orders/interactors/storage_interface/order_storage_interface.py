@@ -29,7 +29,7 @@ class OrderStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def get_promo_code_usage(self, promo_code_id: int) -> int:
+    def get_orders_count_for_promo_code(self, promo_code_id: int) -> int:
         pass
 
     @abstractmethod
@@ -52,10 +52,6 @@ class OrderStorageInterface(ABC):
     def get_user_scheduled_orders(
         self, user_id: str, limit: int, offset: int
     ) -> List[OrderDTO]:
-        pass
-
-    @abstractmethod
-    def get_order_placed_at(self, order_id: str) -> datetime:
         pass
 
     @abstractmethod

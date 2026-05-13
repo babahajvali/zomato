@@ -31,8 +31,8 @@ class RestaurantAdapter:
     def get_customer_cart_id(self, customer_id: str) -> str:
         return self.interface.get_customer_cart_id(customer_id=customer_id)
 
-    def clear_customer_cart_items(self, cart_id: str):
-        return self.interface.clear_cart_items(cart_id=cart_id)
+    def clear_customer_cart_items(self, cart_id: str, user_id: str):
+        return self.interface.clear_cart_items(cart_id=cart_id, user_id=user_id)
 
     def get_customer_cart_items(self, cart_id: str) -> List[CartItemDTO]:
         return self.interface.get_cart_items(cart_id=cart_id)

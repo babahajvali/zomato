@@ -1,6 +1,7 @@
 from typing import List
 
 from accounts.exception.custom_exceptions import DuplicateAddresses
+from accounts.interactors.address.address_interactor import AddressInteractor
 from accounts.interactors.dtos import (
     CreateAddressDTO,
     AddressLookupDTO,
@@ -9,19 +10,27 @@ from accounts.interactors.dtos import (
 from accounts.interactors.storage_interface.address_storage_interface import (
     AddressStorageInterface,
 )
+from accounts.interactors.storage_interface.user_storage_interface import (
+    UserStorageInterface,
+)
 from utils.read_csv_util import read_csv, validate_row
 
 
 class ImportAddresses:
-    def __init__(self, address_storage: AddressStorageInterface):
+    def __init__(
+        self,
+        address_storage: AddressStorageInterface,
+        user_storage: UserStorageInterface,
+    ):
         self.address_storage = address_storage
+        self.user_storage = user_storage
 
     def import_addresses(self, file_path="./sample_data/addresses.csv"):
         rows = read_csv(file_path=file_path)
 
-        pairs = self._validate_rows_and_get_pairs(rows)
+        address_lookups = self._validate_rows_and_get_address_lookups(rows)
 
-        self._validate_duplicate_addresses(pairs)
+        self._validate_duplicate_addresses(address_lookups)
 
         address_dtos = [
             CreateAddressDTO(
@@ -35,19 +44,21 @@ class ImportAddresses:
             for row in rows
         ]
 
-        to_create, to_update = self._split_new_and_existing(address_dtos, pairs)
+        to_create, to_update = self._split_new_and_existing(
+            address_dtos=address_dtos, pairs=address_lookups
+        )
 
-        created = (
-            self.address_storage.create_bulk_addresses(to_create) if to_create else []
+        interactor = AddressInteractor(
+            address_storage=self.address_storage, user_storage=self.user_storage
         )
-        updated = (
-            self.address_storage.update_bulk_addresses(to_update) if to_update else []
-        )
+
+        created = interactor.create_bulk_addresses(create_address_dtos=to_create)
+        updated = interactor.update_bulk_addresses(update_address_dtos=to_update)
 
         return f"{len(created)} addresses created, {len(updated)} addresses updated"
 
     @staticmethod
-    def _validate_rows_and_get_pairs(
+    def _validate_rows_and_get_address_lookups(
         rows: list,
     ) -> List[AddressLookupDTO]:
 

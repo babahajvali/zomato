@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import List
+from typing import List, Optional
 
 from django.utils import timezone
 
@@ -31,7 +31,6 @@ class PromoCodeStorage(PromoCodeStorageInterface):
     def create_bulk_promo_codes(self, promo_code_dtos: List[CreatePromoCodeDTO]):
         promo_codes = [
             PromoCode(
-                id=dto.id,
                 code=dto.code,
                 discount_type=dto.discount_type,
                 discount_value=dto.discount_value,
@@ -92,7 +91,7 @@ class PromoCodeStorage(PromoCodeStorageInterface):
             for each in promo_code_objs
         ]
 
-    def get_promo_code_by_id(self, promo_code_id: int) -> PromoCodeDTO:
+    def get_promo_code_by_id(self, promo_code_id: int) -> Optional[PromoCodeDTO]:
         promo_code_obj = PromoCode.objects.filter(id=promo_code_id).first()
         if promo_code_obj is None:
             return None

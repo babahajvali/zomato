@@ -1,8 +1,9 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import List
+from typing import List, Optional
 
-from django.db.models import Avg, Count, Q
+from django.db.models import Avg, Count, Q, Value
+from django.db.models.functions import Coalesce
 
 from restaurants.constants.enums import Category
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
@@ -163,8 +164,11 @@ class RestaurantStorage(RestaurantStorageInterface):
 
         return [self._convert_to_menu_item_dto(item_obj=item) for item in created_items]
 
-    def get_restaurant_owner_id(self, restaurant_id: str) -> str:
-        restaurant_data = Restaurant.objects.get(id=restaurant_id)
+    def get_restaurant_owner_id(self, restaurant_id: str) -> Optional[str]:
+        restaurant_data = Restaurant.objects.filter(id=restaurant_id).first()
+
+        if restaurant_data is None:
+            return None
 
         return restaurant_data.owner_id
 
@@ -194,8 +198,14 @@ class RestaurantStorage(RestaurantStorageInterface):
             queryset = queryset.filter(Q(name__icontains=filters_dto.search))
 
         queryset = queryset.annotate(
-            average_rating=Avg("restaurant_reviews__rating"),
-            total_reviews=Count("restaurant_reviews"),
+            average_rating=Coalesce(
+                Avg("restaurant_reviews__rating"),
+                Value(0.0),
+            ),
+            total_reviews=Count(
+                "restaurant_reviews",
+                distinct=True,
+            ),
         )
 
         if filters_dto.min_rating is not None:
@@ -240,6 +250,9 @@ class RestaurantStorage(RestaurantStorageInterface):
         update_properties = {}
         if update_menu_item_dto.name is not None:
             update_properties["name"] = update_menu_item_dto.name
+
+        if update_menu_item_dto.description is not None:
+            update_properties["description"] = update_menu_item_dto.description
 
         if update_menu_item_dto.price is not None:
             update_properties["price"] = update_menu_item_dto.price

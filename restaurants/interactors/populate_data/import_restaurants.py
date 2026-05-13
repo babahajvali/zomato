@@ -119,7 +119,7 @@ class ImportRestaurants:
                 id=row["id"],
                 name=row["name"],
                 owner_id=row["owner_id"],
-                description=row.get("description"),
+                description=row.get("description") or "",
                 cuisine_type=row["cuisine_type"],
                 address=row["address"],
                 pin_code=row["pin_code"],

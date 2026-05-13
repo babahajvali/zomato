@@ -56,7 +56,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         return cart
 
     def _create_open_restaurant_timing(self, restaurant):
-        now = datetime.now()
+        now = timezone.localtime()
 
         RestaurantTimingFactory(
             id=1,
@@ -78,7 +78,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
+        address = AddressFactory(id=1, user=user, pincode="500001")
         DeliveryZoneFactory(
             id=1,
             restaurant=restaurant,
@@ -127,7 +127,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
+        address = AddressFactory(id=1, user=user, pincode="500001")
         DeliveryZoneFactory(
             id=1,
             restaurant=restaurant,
@@ -168,7 +168,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
+        address = AddressFactory(id=1, user=user, pincode="500001")
         DeliveryZoneFactory(
             id=1,
             restaurant=restaurant,
@@ -223,7 +223,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
         self._create_open_restaurant_timing(restaurant=restaurant)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
+        address = AddressFactory(id=1, user=user, pincode="500001")
         DeliveryZoneFactory(
             id=1,
             restaurant=restaurant,
@@ -261,7 +261,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
+        address = AddressFactory(id=1, user=user, pincode="500001")
         DeliveryZoneFactory(
             id=1,
             restaurant=restaurant,
@@ -313,16 +313,14 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
             user_id=user_id,
         )
 
-    @patch("orders.interactors.order.place_order_interactor.datetime")
-    def test_place_order_restaurant_not_open(self, mock_datetime, snapshot):
-        mock_datetime.now.return_value = datetime.fromisoformat(
-            "2026-05-05T12:00:00+00:00"
-        )
+    @patch("orders.interactors.order.place_order_interactor.timezone.now")
+    def test_place_order_restaurant_open(self, mock_now, snapshot):
+        mock_now.return_value = datetime.fromisoformat("2026-05-05T12:00:00+00:00")
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
+        address = AddressFactory(id=1, user=user, pincode="500001")
         DeliveryZoneFactory(
             id=1,
             restaurant=restaurant,
@@ -346,16 +344,14 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
             user_id=user_id,
         )
 
-    @patch("orders.interactors.order.place_order_interactor.datetime")
-    def test_place_order_restaurant_closed(self, mock_datetime, snapshot):
-        mock_datetime.now.return_value = datetime.fromisoformat(
-            "2026-05-05T12:00:00+00:00"
-        )
+    @patch("orders.interactors.order.place_order_interactor.timezone.now")
+    def test_place_order_restaurant_closed(self, mock_now, snapshot):
+        mock_now.return_value = datetime.fromisoformat("2026-05-05T12:00:00+00:00")
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
+        address = AddressFactory(id=1, user=user, pincode="500001")
         DeliveryZoneFactory(
             id=1,
             restaurant=restaurant,
@@ -413,7 +409,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="999999")
+        address = AddressFactory(id=1, user=user, pincode="999999")
         self._create_open_restaurant_timing(restaurant=restaurant)
         self._create_customer_cart(user_id=user_id, restaurant=restaurant)
 
@@ -437,7 +433,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
+        address = AddressFactory(id=1, user=user, pincode="500001")
         DeliveryZoneFactory(
             id=1,
             restaurant=restaurant,
@@ -468,7 +464,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
+        address = AddressFactory(id=1, user=user, pincode="500001")
         DeliveryZoneFactory(
             id=1,
             restaurant=restaurant,
@@ -509,7 +505,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
+        address = AddressFactory(id=1, user=user, pincode="500001")
         DeliveryZoneFactory(
             id=1,
             restaurant=restaurant,
@@ -550,7 +546,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
+        address = AddressFactory(id=1, user=user, pincode="500001")
         DeliveryZoneFactory(
             id=1,
             restaurant=restaurant,
@@ -595,7 +591,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
+        address = AddressFactory(id=1, user=user, pincode="500001")
         DeliveryZoneFactory(
             id=1,
             restaurant=restaurant,
