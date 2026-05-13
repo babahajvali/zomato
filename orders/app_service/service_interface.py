@@ -8,6 +8,7 @@ from orders.storages.order_storage import OrderStorage
 
 
 class ServiceInterface:
+    # TODO: storage is held once but each method creates a fresh OrderInteractor — wasteful and inconsistent.
     def __init__(self):
         self.order_storage = OrderStorage()
 

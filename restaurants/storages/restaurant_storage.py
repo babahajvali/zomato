@@ -104,6 +104,7 @@ class RestaurantStorage(RestaurantStorageInterface):
         return [self._convert_to_menu_item_dto(item_obj=item) for item in created_items]
 
     def get_restaurant_owner_id(self, restaurant_id: str) -> str:
+        # TODO: .get() raises uncaught DoesNotExist if the restaurant is missing — use .filter().first() and return None.
         restaurant_data = Restaurant.objects.get(id=restaurant_id)
 
         return restaurant_data.owner_id
@@ -111,6 +112,7 @@ class RestaurantStorage(RestaurantStorageInterface):
     def check_restaurant_is_exist(self, restaurant_id: str) -> bool:
         return Restaurant.objects.filter(id=restaurant_id).exists()
 
+    # TODO: pagination/filter shaping belongs in the interactor, not storage. Storage should return a queryset or accept already-built filters.
     def get_restaurants(
         self, filters_dto: BrowseRestaurantFiltersDTO
     ) -> List[RestaurantDTO]:
@@ -133,6 +135,7 @@ class RestaurantStorage(RestaurantStorageInterface):
         if filters_dto.search:
             queryset = queryset.filter(Q(name__icontains=filters_dto.search))
 
+        # TODO: Avg("...") returns NULL when there are no reviews; min_rating filter silently drops restaurants with zero ratings. Wrap in Coalesce(Avg(...), 0) if that's not intentional.
         queryset = queryset.annotate(
             average_rating=Avg("restaurant_reviews__rating"),
             total_reviews=Count("restaurant_reviews"),
@@ -185,6 +188,7 @@ class RestaurantStorage(RestaurantStorageInterface):
 
         return self._convert_to_menu_item_dto(item_obj=menu_item_obj)
 
+    # TODO: UpdateMenuItemDTO doesn't have description/is_veg/category, so those fields can never be updated. Either extend the DTO or rename it to reflect what it actually patches.
     def update_menu_item(self, update_menu_item_dto: UpdateMenuItemDTO) -> MenuItemDTO:
 
         update_properties = {}
@@ -230,7 +234,7 @@ class RestaurantStorage(RestaurantStorageInterface):
 
         return [
             RestaurantDTO(
-                id=restaurant.id,
+                id=restaurant.id,  # TODO: get_restaurants uses str(restaurant.id) but here it's raw — inconsistent.
                 name=restaurant.name,
                 description=restaurant.description,
                 cuisine_type=restaurant.cuisine_type,

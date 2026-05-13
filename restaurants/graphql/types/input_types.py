@@ -18,6 +18,7 @@ class GetRestaurantTimingsInputParams(graphene.InputObjectType):
 class CreateMenuItemInputParams(graphene.InputObjectType):
     name = graphene.String(required=True)
     description = graphene.String(required=True)
+    # TODO: UpdateMenuItemInputParams uses graphene.Decimal — pick one, this Float drift will produce inconsistent precision across mutations.
     price = graphene.Float(required=True)
     category = graphene.String(required=True)
     is_veg = graphene.Boolean(required=True)
@@ -37,6 +38,7 @@ class BrowseRestaurantsInputParams(graphene.InputObjectType):
     pincode = graphene.String()
     min_rating = graphene.Float()
     search = graphene.String()
+    # TODO: limit is unbounded — client can request limit=100000. Enforce a server-side max.
     limit = graphene.Int()
     offset = graphene.Int()
 
@@ -48,6 +50,7 @@ class ViewRestaurantMenuInputParams(graphene.InputObjectType):
 class UpdateCartItemInputParams(graphene.InputObjectType):
     cart_id = graphene.String(required=True)
     menu_item_id = graphene.String(required=True)
+    # TODO: model bounds quantity 1–10 but the input doesn't — enforce at the input layer.
     quantity = graphene.Int(required=True)
 
 
@@ -97,4 +100,5 @@ class DeleteMenuItemInputParams(graphene.InputObjectType):
 
 class GetUserRestaurantReviewInputParams(graphene.InputObjectType):
     restaurant_id = graphene.String(required=True)
+    # TODO: user_id shouldn't come from the client — read it from info.context.user_id in the resolver.
     user_id = graphene.String(required=True)

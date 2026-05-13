@@ -31,6 +31,7 @@ class OrderInteractor(OrderMixin):
 
     def cancel_order(self, order_id: str, user_id: str) -> OrderDTO:
 
+        # TODO: validate happens outside the lock, then we re-fetch inside. We could reuse the first DTO and skip the second get_order.
         self.validate_order_exists(order_id=order_id, user_id=user_id)
 
         with redis_lock(
@@ -60,6 +61,7 @@ class OrderInteractor(OrderMixin):
         )
 
     def get_order(self, order_id: str) -> OrderSummaryDTO:
+        # TODO: passing user_id=None disables the ownership check — any user can read any order.
         order_dto = self.validate_order_exists(order_id=order_id, user_id=None)
 
         order_items = self.order_storage.get_order_items(order_id=order_id)
@@ -99,6 +101,7 @@ class OrderInteractor(OrderMixin):
         )
 
     def _validate_cancel_order_time(self, order_id: str, placed_at: Optional[datetime]):
+        # TODO: placed_at is always provided by the caller — this None branch is dead code.
         if placed_at is None:
             placed_at = self.order_storage.get_order_placed_at(order_id=order_id)
         now = timezone.now()

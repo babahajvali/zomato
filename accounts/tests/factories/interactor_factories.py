@@ -19,6 +19,7 @@ class CreateAddressDTOFactory(factory.Factory):
     class Meta:
         model = CreateAddressDTO
 
+    # TODO: `email` doesn't exist on CreateAddressDTO and required `user_id` is missing — factory breaks if called without overrides.
     email = factory.Sequence(lambda n: f"user{n}@example.com")
     label = factory.Sequence(lambda n: f"label-{n}")
     full_address = factory.Faker("address")

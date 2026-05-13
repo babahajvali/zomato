@@ -6,6 +6,7 @@ from restaurants.storages.restaurant_storage import RestaurantStorage
 
 
 def get_owner_restaurants_resolver(root, info):
+    # TODO: no None check on user_id — anonymous requests via GET middleware bypass will hit this with owner_id=None.
     owner_id = info.context.user_id
 
     restaurant_storage = RestaurantStorage()

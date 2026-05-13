@@ -25,6 +25,7 @@ class CartItem(models.Model):
     quantity = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(10)]
     )
+    # TODO: default=0.0 is a float — use Decimal("0.00") to avoid precision loss.
     item_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

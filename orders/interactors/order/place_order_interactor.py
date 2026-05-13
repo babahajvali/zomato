@@ -67,6 +67,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
 
         with redis_lock(f"order:{order_data.customer_id}", timeout=REDIS_LOCK_TIMEOUT):
             cart_id = self._get_validated_cart_id(customer_id=order_data.customer_id)
+            # TODO: cart items fetched outside the inner transaction — availability/price can change between this fetch and persist.
             cart_items = self._get_validated_cart_items(cart_id=cart_id)
             items_total = self._calculate_items_total(cart_items=cart_items)
 
@@ -156,8 +157,10 @@ class PlaceOrderInteractor(PromoCodeMixin):
             promo_code_id=promo_code_id
         )
 
+        # TODO: expiry checked here but _get_discount_price re-fetches without re-checking — expired promo can still apply if it expires between calls.
         self._validate_promo_code_expiry(promo_code_dto=promo_code_dto)
 
+        # TODO: min_order_value already Decimal — Decimal(str(...)) is redundant.
         if items_total < Decimal(str(promo_code_dto.min_order_value)):
             raise PromoCodeNotEligible(
                 min_order_value=promo_code_dto.min_order_value,
@@ -211,6 +214,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
 
     def _validate_restaurant_timing(self, restaurant_id: str):
 
+        # TODO: datetime.now() is naive — use timezone.localtime() to match USE_TZ.
         now = datetime.now()
         timing = self.restaurant_adapter.get_restaurant_timing(
             restaurant_id=restaurant_id,
@@ -239,6 +243,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
         )
 
     def _get_validated_pincode(self, address_id: int) -> str:
+        # TODO: shouldn't we verify address_dto.user_id == order_data.customer_id here? otherwise a user can deliver to someone else's address.
         address_dto = self.account_adapter.get_address_by_id(address_id=address_id)
         if address_dto is None:
             raise AddressNotFound(address_id=address_id)
@@ -308,6 +313,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
 
     @staticmethod
     def _calculate_items_total(cart_items: List[CartItemDTO]) -> Decimal:
+        # TODO: sum() starts with int 0 — pass start=Decimal("0") for safety. Outer Decimal() cast is also redundant.
         items_total = sum(
             Decimal(str(item.item_price)) * Decimal(str(item.quantity))
             for item in cart_items
@@ -327,6 +333,7 @@ class PlaceOrderInteractor(PromoCodeMixin):
                 Decimal("0.01"), rounding=ROUND_HALF_UP
             )
 
+        # TODO: FLAT discount uncapped — if discount_value > items_total, final_amount goes negative.
         return discount_value
 
     @staticmethod

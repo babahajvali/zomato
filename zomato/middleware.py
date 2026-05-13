@@ -15,6 +15,7 @@ class JWTAuthenticationMiddleware:
         if not request.path.startswith("/graphql"):
             return self.get_response(request)
 
+        # TODO: GET requests bypass auth entirely. GraphQL queries can be sent via GET so they'd run unauthenticated.
         if request.method in {"GET", "OPTIONS"}:
             return self.get_response(request)
 
@@ -69,6 +70,7 @@ class JWTAuthenticationMiddleware:
             if operation_name in public_operations:
                 return True
 
+            # TODO: substring match — any field named "__schema_xyz" or "x__type(" will be treated as public introspection. Parse the operation AST instead.
             return "__schema" in query or "__type(" in query
         except (json.JSONDecodeError, UnicodeDecodeError, AttributeError):
             return False

@@ -20,11 +20,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# TODO: SECRET_KEY hardcoded in source — should come from env.
 SECRET_KEY = "django-insecure-2%q0)o#h!-of&ue-%v82pjnpjew@3+pw=n954&+ojg!vzzioqr"
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# TODO: DEBUG=True shipped — should be env-driven and default to False.
 DEBUG = True
 
+# TODO: ALLOWED_HOSTS empty — combined with DEBUG=True this is unsafe for prod.
 ALLOWED_HOSTS = []
 
 
@@ -78,6 +81,7 @@ WSGI_APPLICATION = "zomato.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# TODO: sqlite as default DB — not safe for concurrent writers in prod. Move to Postgres.
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -85,6 +89,7 @@ DATABASES = {
     }
 }
 
+# TODO: Redis URL hardcoded — should be env-driven for different environments.
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -140,3 +145,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 GRAPHENE = {
     "SCHEMA": "zomato.schema.schema",
 }
+
+# TODO: no LOGGING config — errors and audit events have no structured destination.
+# TODO: no security headers configured (SECURE_HSTS_*, SESSION_COOKIE_SECURE, CSRF_COOKIE_SECURE, X_FRAME_OPTIONS).

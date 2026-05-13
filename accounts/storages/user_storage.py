@@ -7,6 +7,7 @@ from accounts.models.user import User
 
 
 class UserStorage(UserStorageInterface):
+    # TODO: bulk_create not wrapped in transaction.atomic — partial failures leave inconsistent state.
     def create_bulk_users(self, create_user_dtos: List[CreateUserDTO]):
         users = [
             User(

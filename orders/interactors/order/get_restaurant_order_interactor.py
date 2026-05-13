@@ -53,6 +53,7 @@ class GetRestaurantOrderInteractor(OrderMixin):
             offset=offset,
         )
 
+        # TODO: pagination is applied before this in-memory filter — page sizes will shrink unpredictably and pages can come back empty while more data exists.
         orders = self._filter_orders_after_cancellation_window(orders)
 
         if not orders:
@@ -65,6 +66,7 @@ class GetRestaurantOrderInteractor(OrderMixin):
         return self._build_order_summaries(order_items=order_items, orders=orders)
 
     @staticmethod
+    # TODO: lowercase list[...] mixed with List[...] elsewhere in the same file — pick one style.
     def _build_order_summaries(
         order_items: list[OrderItemDTO], orders: list[OrderDTO]
     ) -> list[OrderSummaryDTO]:
@@ -114,4 +116,5 @@ class GetRestaurantOrderInteractor(OrderMixin):
         now = timezone.now()
         cancellation_cutoff = now - timedelta(minutes=CANCEL_TIME)
 
+        # TODO: this looks inverted — keeps orders OLDER than CANCEL_TIME and drops new ones. Did we mean `>=`?
         return [order for order in orders if order.placed_at <= cancellation_cutoff]

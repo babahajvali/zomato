@@ -72,6 +72,7 @@ class CreateMenuItemsResponse(graphene.Union):
         )
 
 
+# TODO: no error types for invalid limit/offset (negative values silently slice to empty).
 class BrowseRestaurantsResponse(graphene.Union):
     class Meta:
         types = (
@@ -166,6 +167,7 @@ class DeleteMenuItemResponse(graphene.Union):
         )
 
 
+# TODO: single-type Unions defeat the point — return the type directly or add error types.
 class GetUserRestaurantReviewResponse(graphene.Union):
     class Meta:
         types = (ReviewType,)

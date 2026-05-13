@@ -11,11 +11,13 @@ from utils.uuid_util import generate_uuid
 
 
 class Restaurant(models.Model):
+    # TODO: use UUIDField, not CharField(36).
     id = models.CharField(
         max_length=36, default=uuid.uuid4, editable=False, primary_key=True
     )
     name = models.CharField(max_length=255)
     description = models.TextField()
+    # TODO: owner_id is the hot filter in get_owner_restaurants — needs db_index=True.
     owner_id = models.CharField(max_length=255)
     cuisine_type = models.CharField(
         max_length=255, choices=CuisineType.get_list_of_tuples()
@@ -31,6 +33,7 @@ class Restaurant(models.Model):
         return self.name
 
     class Meta:
+        # TODO: browse also filters by pin_code and orders by name — consider compound indexes (is_deleted, pin_code, name) and (is_deleted, cuisine_type, name).
         indexes = [models.Index(fields=["is_deleted", "cuisine_type"])]
 
 
@@ -51,6 +54,8 @@ class MenuItem(models.Model):
     tags = models.JSONField(default=list, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # TODO: no unique constraint on (restaurant, name) — duplicate menu items allowed.
 
     def __str__(self):
         return self.name

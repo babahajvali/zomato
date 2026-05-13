@@ -10,6 +10,9 @@ from accounts.interactors.storage_interface.user_storage_interface import (
 from accounts.mixin.user_mixin import UserMixin
 
 
+# TODO: Fix file name and interactor name mismatch
+
+# TODO: As there is only one module we dont need a package for address interactors.
 class AddressesInteractor(UserMixin):
     def __init__(
         self,
@@ -26,7 +29,7 @@ class AddressesInteractor(UserMixin):
         return self.address_storage.get_user_addresses(user_id=user_id)
 
     def get_address(self, address_id: int):
-
+        # TODO: Here the input should have user_id as well right?
         return self.address_storage.get_address_by_id(address_id=address_id)
 
 

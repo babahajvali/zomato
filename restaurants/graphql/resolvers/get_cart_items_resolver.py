@@ -16,6 +16,7 @@ def get_cart_items_resolver(root, info, params):
     )
 
     try:
+        # TODO: cart_id is client-supplied with no ownership check — any user can read any cart.
         cart_items = interactor.get_cart_items(cart_id=params.cart_id)
 
         items = [

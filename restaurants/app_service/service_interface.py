@@ -81,6 +81,7 @@ class ServiceInterface:
 
         return interactor.get_customer_cart_id(customer_id=customer_id)
 
+    # TODO: instantiating BrowseRestaurantsInteractor (which pulls 3 storages) just to fetch an owner_id is wasteful and architecturally wrong.
     def get_restaurant_owner_id(self, restaurant_id: str) -> str:
 
         interactor = BrowseRestaurantsInteractor(

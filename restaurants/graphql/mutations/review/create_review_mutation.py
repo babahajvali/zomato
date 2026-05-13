@@ -44,6 +44,7 @@ class CreateReviewMutation(graphene.Mutation):
         try:
             result = interactor.create_review(create_review_dto=create_review_dto)
 
+            # TODO: created_at not populated on the response though ReviewType declares it. Pass result.created_at through.
             return ReviewType(
                 review_id=result.review_id,
                 restaurant_id=result.restaurant_id,

@@ -11,6 +11,7 @@ from restaurants.interactors.dtos import (
 
 
 class OrderAdapter:
+    # TODO: a fresh ServiceInterface on every property access defeats any caching inside. Instantiate once in __init__.
     @property
     def interface(self):
 

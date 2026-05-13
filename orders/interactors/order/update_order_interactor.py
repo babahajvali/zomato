@@ -41,6 +41,7 @@ class UpdateOrderInteractor(OrderMixin):
         self.validate_user_is_restaurant_owner(user_id=user_id, owner_id=owner_id)
 
     def _revalidate_and_update(self, order_id: str, status: OrderStatus) -> OrderDTO:
+        # TODO: no None check — if the order was deleted between the outer validate and here, order_dto.status → AttributeError.
         order_dto = self.order_storage.get_order(order_id=order_id)
         self.validate_order_status_transition(
             current_status=order_dto.status,

@@ -25,6 +25,7 @@ class MenuItemType(graphene.ObjectType):
     restaurant_id = graphene.String(required=True)
     name = graphene.String(required=True)
     description = graphene.String(required=True)
+    # TODO: price is Decimal in the model — exposing as Float loses precision.
     price = graphene.Float(required=True)
     category = graphene.String(required=True)
     is_veg = graphene.Boolean(required=True)
@@ -82,6 +83,7 @@ class CartItemType(graphene.ObjectType):
     cart_id = graphene.String(required=True)
     menu_item_id = graphene.String(required=True)
     quantity = graphene.Int(required=True)
+    # TODO: item_price is Decimal in the model — exposing as Float loses precision.
     item_price = graphene.Float(required=True)
 
 
@@ -108,6 +110,7 @@ class ReviewType(graphene.ObjectType):
     review_id = graphene.Int(required=True)
     restaurant_id = graphene.String(required=True)
     customer_id = graphene.String(required=True)
+    # TODO: rating is IntegerField (1–5) in the model — should be graphene.Int.
     rating = graphene.Float(required=True)
     review = graphene.String()
     created_at = graphene.DateTime()
@@ -135,6 +138,7 @@ class RatingSummaryType(graphene.ObjectType):
 class TopSellingItemType(graphene.ObjectType):
     menu_item_id = graphene.String(required=True)
     quantity = graphene.Int(required=True)
+    # TODO: revenue is Decimal in storage — exposing as Float loses precision.
     revenue = graphene.Float(required=True)
 
 

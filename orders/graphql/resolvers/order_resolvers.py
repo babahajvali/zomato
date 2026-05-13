@@ -74,6 +74,7 @@ def get_order_resolver(root, info, params):
 
 
 def get_user_order_resolver(root, info, params):
+    # TODO: no try/except — any storage error surfaces as a GraphQL 500 instead of a typed payload.
     interactor = OrderInteractor(order_storage=OrderStorage())
     order_dtos = interactor.get_user_orders(
         user_id=info.context.user_id, limit=params.limit, offset=params.offset
