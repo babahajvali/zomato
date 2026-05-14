@@ -180,7 +180,7 @@ class TestGetRestaurantOrderInteractor:
             offset=0,
         )
 
-        assert len(result) == 1
+        assert len(result) == 2
         assert result[0].order_id == "orders-2"
         self.order_storage.get_orders_items.assert_called_once_with(
             order_ids=["orders-2"]

@@ -6,4 +6,4 @@ class UserNotRestaurantOwner(graphene.ObjectType):
 
 
 class UnauthorizedFound(graphene.ObjectType):
-    user_id = graphene.String()
+    context_user_id = graphene.String()

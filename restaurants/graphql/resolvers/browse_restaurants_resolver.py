@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from restaurants.exception import custom_exceptions
 
 from restaurants.graphql.types.error_types import (
@@ -27,7 +29,7 @@ def _map_browse_restaurants_response(restaurants):
             pin_code=each.pin_code,
             is_veg_only=each.is_veg_only,
             is_deleted=each.is_deleted,
-            average_rating=float(each.average_rating),
+            average_rating=Decimal(each.average_rating),
             total_reviews=each.total_reviews,
             is_open=each.is_open,
         )

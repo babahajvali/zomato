@@ -1,26 +1,21 @@
 {
-  "errors": [
-    {
-      "message": "Received not compatible Decimal \"0.0\"",
-      "locations": [
-        {
-          "line": 16,
-          "column": 13
-        }
-      ],
-      "path": [
-        "browseRestaurants",
-        "restaurants",
-        0,
-        "averageRating"
-      ]
-    }
-  ],
   "data": {
     "browseRestaurants": {
       "__typename": "BrowseRestaurantsType",
       "restaurants": [
-        null
+        {
+          "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7d5",
+          "name": "Restaurant 1",
+          "description": "Test restaurant",
+          "cuisineType": "NORTH_INDIAN",
+          "address": "Test Address",
+          "pinCode": "500001",
+          "isVegOnly": false,
+          "isDeleted": false,
+          "isOpen": false,
+          "averageRating": "0",
+          "totalReviews": 0
+        }
       ]
     }
   }

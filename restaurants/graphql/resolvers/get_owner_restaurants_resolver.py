@@ -9,7 +9,7 @@ from restaurants.storages.restaurant_storage import RestaurantStorage
 def get_owner_restaurants_resolver(root, info):
     owner_id = info.context.user_id
     if owner_id is None:
-        return UnauthorizedFound(user_id=owner_id)
+        return UnauthorizedFound(context_user_id=owner_id)
 
     restaurant_storage = RestaurantStorage()
     interactor = GetOwnerRestaurantsInteractor(restaurant_storage=restaurant_storage)

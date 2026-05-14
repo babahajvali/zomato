@@ -9,14 +9,12 @@ from accounts.graphql.types.error_types import (
     NothingToUpdateUserProperties,
 )
 from accounts.graphql.types.types import UserAddressesType, UserLoginType, UserType
+from utils.graphql_types import UnauthorizedFound
 
 
 class GetUserAddressResponse(graphene.Union):
     class Meta:
-        types = (
-            UserAddressesType,
-            UserNotFound,
-        )
+        types = (UserAddressesType, UserNotFound, UnauthorizedFound)
 
 
 class UserLoginResponse(graphene.Union):
@@ -31,4 +29,9 @@ class CreateUserResponse(graphene.Union):
 
 class UpdateUserResponse(graphene.Union):
     class Meta:
-        types = (UserType, UserNotFound, EmptyUserNameFound, NothingToUpdateUserProperties)
+        types = (
+            UserType,
+            UserNotFound,
+            EmptyUserNameFound,
+            NothingToUpdateUserProperties,
+        )

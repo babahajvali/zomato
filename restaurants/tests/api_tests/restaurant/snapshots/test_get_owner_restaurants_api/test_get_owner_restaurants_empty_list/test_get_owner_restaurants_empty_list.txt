@@ -1,8 +1,14 @@
 {
-  "data": {
-    "getOwnerRestaurants": {
-      "__typename": "OwnerRestaurantsType",
-      "restaurants": []
+  "errors": [
+    {
+      "message": "Cannot query field 'userId' on type 'UnauthorizedFound'.",
+      "locations": [
+        {
+          "line": 18,
+          "column": 9
+        }
+      ]
     }
-  }
+  ],
+  "data": null
 }

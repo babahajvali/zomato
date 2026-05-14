@@ -22,7 +22,7 @@ def get_user_addresses_resolver(root, info):
         user_id = info.context.user_id
 
         if user_id is None:
-            return UnauthorizedFound(user_id=user_id)
+            return UnauthorizedFound(context_user_id=user_id)
 
         result = interactor.get_user_addresses(user_id=user_id)
 
@@ -34,6 +34,7 @@ def get_user_addresses_resolver(root, info):
                 pincode=each.pincode,
                 is_default=each.is_default,
                 label=each.label,
+                user_id=each.user_id,
             )
             for each in result
         ]

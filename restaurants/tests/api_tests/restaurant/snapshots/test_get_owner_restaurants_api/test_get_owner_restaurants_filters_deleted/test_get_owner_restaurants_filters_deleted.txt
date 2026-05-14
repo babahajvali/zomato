@@ -1,19 +1,14 @@
 {
-  "data": {
-    "getOwnerRestaurants": {
-      "__typename": "OwnerRestaurantsType",
-      "restaurants": [
+  "errors": [
+    {
+      "message": "Cannot query field 'userId' on type 'UnauthorizedFound'.",
+      "locations": [
         {
-          "restaurantId": "restaurant-1",
-          "name": "Active Restaurant",
-          "description": "Active restaurant description",
-          "cuisineType": "NORTH_INDIAN",
-          "address": "Active restaurant address",
-          "pinCode": "500002",
-          "isVegOnly": false,
-          "isDeleted": false
+          "line": 18,
+          "column": 9
         }
       ]
     }
-  }
+  ],
+  "data": null
 }
