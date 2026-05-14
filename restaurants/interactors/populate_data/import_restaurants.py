@@ -13,7 +13,7 @@ class ImportRestaurants:
         self.restaurant_storage = restaurant_storage
 
     def import_restaurants(self, file_path="./sample_data/restaurants.csv"):
-        rows = read_csv(file_path=file_path)
+        rows = list(read_csv(file_path=file_path))
 
         names = self._parse_and_normalize_rows(rows=rows)
 

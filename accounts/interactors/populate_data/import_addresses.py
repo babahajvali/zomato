@@ -26,7 +26,7 @@ class ImportAddresses:
         self.user_storage = user_storage
 
     def import_addresses(self, file_path="./sample_data/addresses.csv"):
-        rows = read_csv(file_path=file_path)
+        rows = list(read_csv(file_path=file_path))
 
         address_lookups = self._validate_rows_and_get_address_lookups(rows)
 
@@ -38,7 +38,7 @@ class ImportAddresses:
                 label=row["label"],
                 full_address=row["full_address"],
                 city=row["city"],
-                pincode=row["pin_code"],
+                pincode=int(row["pin_code"]),
                 is_default=row.get("is_default", "").strip().lower() == "true",
             )
             for row in rows
@@ -73,7 +73,7 @@ class ImportAddresses:
 
             user_id = row["user_id"].strip()
             label = row["label"].strip()
-            pincode = row["pin_code"].strip()
+            pincode = int(row["pin_code"])
 
             row["user_id"] = user_id
             row["label"] = label

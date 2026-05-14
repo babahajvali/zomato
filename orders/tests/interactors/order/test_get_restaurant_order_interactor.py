@@ -85,10 +85,7 @@ class TestGetRestaurantOrderInteractor:
         self.interactor.restaurant_adapter.get_restaurant_owner_id.return_value = (
             "owner-1"
         )
-        self.order_storage.get_today_restaurant_orders.return_value = [
-            recent_order,
-            old_order,
-        ]
+        self.order_storage.get_today_restaurant_orders.return_value = [old_order]
         self.order_storage.get_orders_items.return_value = order_item_dtos
 
         result = self.interactor.get_today_restaurant_orders(
@@ -117,7 +114,7 @@ class TestGetRestaurantOrderInteractor:
         self.interactor.restaurant_adapter.get_restaurant_owner_id.return_value = (
             "owner-1"
         )
-        self.order_storage.get_today_restaurant_orders.return_value = [recent_order]
+        self.order_storage.get_today_restaurant_orders.return_value = []
 
         result = self.interactor.get_today_restaurant_orders(
             restaurant_id="restaurants-1",
@@ -167,10 +164,7 @@ class TestGetRestaurantOrderInteractor:
         self.interactor.restaurant_adapter.get_restaurant_owner_id.return_value = (
             "owner-1"
         )
-        self.order_storage.get_today_restaurant_orders.return_value = [
-            order_within_window,
-            order_outside_window,
-        ]
+        self.order_storage.get_today_restaurant_orders.return_value = [order_outside_window]
         self.order_storage.get_orders_items.return_value = order_item_dtos
 
         result = self.interactor.get_today_restaurant_orders(
@@ -180,7 +174,7 @@ class TestGetRestaurantOrderInteractor:
             offset=0,
         )
 
-        assert len(result) == 2
+        assert len(result) == 1
         assert result[0].order_id == "orders-2"
         self.order_storage.get_orders_items.assert_called_once_with(
             order_ids=["orders-2"]

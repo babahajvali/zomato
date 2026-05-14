@@ -18,7 +18,7 @@ class ImportRestaurantTimings:
     def import_restaurant_timings(
         self, file_path="./sample_data/restaurant_timings.csv"
     ):
-        rows = read_csv(file_path=file_path)
+        rows = list(read_csv(file_path=file_path))
 
         combinations = self._parse_and_normalize_rows(rows=rows)
         self._validate_duplicate_combinations(combinations)

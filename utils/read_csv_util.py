@@ -1,11 +1,11 @@
 import csv
-from typing import Dict, List, Any
+from typing import Any, Dict, Iterator, List
 
 
-def read_csv(file_path: str) -> List[Dict[str, str]]:
+def read_csv(file_path: str) -> Iterator[Dict[str, str]]:
     with open(file_path, newline="", encoding="utf-8") as file:
         reader = csv.DictReader(file)
-        return list(reader)
+        yield from reader
 
 
 def validate_row(

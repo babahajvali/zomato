@@ -13,7 +13,7 @@ class ImportUsers:
         self.user_storage = user_storage
 
     def import_users(self, file_path="./sample_data/users.csv"):
-        rows = read_csv(file_path=file_path)
+        rows = list(read_csv(file_path=file_path))
 
         emails = self._validate_rows(rows=rows)
 

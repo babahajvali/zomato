@@ -68,6 +68,7 @@ class JWTAuthenticationMiddleware:
             public_operations = {
                 "introspectionquery",
                 "userlogin",
+                "createuser",
             }
 
             if operation_name.lower() in public_operations:
@@ -77,6 +78,7 @@ class JWTAuthenticationMiddleware:
 
             public_mutations = {
                 "userlogin",
+                "createuser",
             }
 
             for mutation in public_mutations:

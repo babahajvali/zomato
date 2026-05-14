@@ -50,7 +50,7 @@ class TestBrowseRestaurantsInteractor:
             average_rating=4.5,
             total_reviews=2,
         )
-        filters_dto = Mock(min_rating=None)
+        filters_dto = BrowseRestaurantFiltersDTOFactory(min_rating=None)
 
         self.restaurant_storage.get_restaurants.return_value = [restaurant]
         self.restaurant_timing_storage.get_operating_hours_for_restaurants.return_value = [

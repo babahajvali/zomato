@@ -251,7 +251,7 @@ class TestPlaceOrderInteractor:
         self.order_storage.create_order.assert_not_called()
 
     @patch(REDIS_LOCK, no_op_lock)
-    @pytest.mark.django_db
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
     def test_place_order_raises_menu_items_unavailable(self):
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_unavailable_menu_items.return_value = [
@@ -300,7 +300,6 @@ class TestPlaceOrderInteractor:
         assert exc.value.address_id == 999
         self.order_storage.create_order.assert_not_called()
 
-    @pytest.mark.django_db
     def test_place_order_raises_invalid_delivery_zone_found(self):
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_delivery_zone_by_restaurant_id.return_value = None

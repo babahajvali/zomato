@@ -21,8 +21,7 @@ class ImportPromoCodes:
         self.promo_code_storage = promo_code_storage
 
     def import_promo_codes(self, file_path="./sample_data/promo_codes.csv"):
-        rows = read_csv(file_path=file_path)
-
+        rows = list(read_csv(file_path=file_path))
         codes = self._validate_promo_date_ranges(rows=rows)
         self._validate_empty_promo_codes(codes)
         self._validate_duplicate_codes(codes)

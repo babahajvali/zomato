@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from unittest.mock import create_autospec, patch
 
 import pytest
@@ -15,9 +16,16 @@ from orders.tests.factories import CreatePromoCodeDTOFactory, PromoCodeDTOFactor
 
 
 READ_CSV = "orders.interactors.populate_data.import_promo_codes.read_csv"
+TRANSACTION_ATOMIC = (
+    "orders.interactors.populate_data.import_promo_codes.transaction.atomic"
+)
 
 
-@pytest.mark.django_db
+@contextmanager
+def no_op_lock(*args, **kwargs):
+    yield
+
+
 class TestImportPromoCodes:
     def setup_method(self):
         self.promo_code_storage = create_autospec(PromoCodeStorageInterface)
@@ -25,6 +33,7 @@ class TestImportPromoCodes:
             promo_code_storage=self.promo_code_storage,
         )
 
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(READ_CSV)
     def test_import_promo_codes_success(self, mock_read_csv):
         rows = [
@@ -92,6 +101,7 @@ class TestImportPromoCodes:
 
         assert exc.value.codes == ["SAVE50"]
 
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(READ_CSV)
     def test_import_promo_codes_updates_existing(self, mock_read_csv):
         rows = [

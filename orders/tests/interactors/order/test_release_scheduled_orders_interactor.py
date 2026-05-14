@@ -1,5 +1,6 @@
 from datetime import datetime, time
-from unittest.mock import MagicMock, create_autospec
+from contextlib import contextmanager
+from unittest.mock import MagicMock, create_autospec, patch
 
 import pytest
 from django.utils import timezone
@@ -15,7 +16,16 @@ from orders.interactors.storage_interface.order_storage_interface import (
 from orders.tests.factories.interactor_factories import OrderDTOFactory
 
 
-@pytest.mark.django_db
+@contextmanager
+def no_op_lock(*args, **kwargs):
+    yield
+
+
+TRANSACTION_ATOMIC = (
+    "orders.interactors.order.release_scheduled_orders_interactor.transaction.atomic"
+)
+
+
 class TestReleaseScheduledOrdersInteractor:
     def setup_method(self):
         self.order_storage = create_autospec(OrderStorageInterface)
@@ -24,6 +34,7 @@ class TestReleaseScheduledOrdersInteractor:
         )
         self.interactor.restaurant_adapter = MagicMock()
 
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
     def test_release_scheduled_orders_updates_order_to_placed(self):
         scheduled_order = OrderDTOFactory(
             order_id="orders-1",
@@ -53,6 +64,7 @@ class TestReleaseScheduledOrdersInteractor:
             status=OrderStatus.PLACED,
         )
 
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
     def test_release_scheduled_orders_updates_order_to_cancelled_when_items_unavailable(
         self,
     ):
@@ -77,6 +89,7 @@ class TestReleaseScheduledOrdersInteractor:
             status=OrderStatus.CANCELLED,
         )
 
+    @patch(TRANSACTION_ATOMIC, no_op_lock)
     def test_release_scheduled_orders_updates_order_to_cancelled_when_restaurant_closed(
         self,
     ):

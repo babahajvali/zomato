@@ -19,7 +19,7 @@ class CreateAddressDTO:
     label: str
     full_address: str
     city: str
-    pincode: str
+    pincode: int
     is_default: bool
 
 

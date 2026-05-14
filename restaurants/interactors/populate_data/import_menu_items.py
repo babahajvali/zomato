@@ -16,7 +16,7 @@ class ImportMenuItems:
         self.restaurant_storage = restaurant_storage
 
     def import_menu_items(self, file_path="./sample_data/menu_items.csv"):
-        rows = read_csv(file_path=file_path)
+        rows = list(read_csv(file_path=file_path))
 
         restaurant_ids = self._parse_and_normalize_rows(rows=rows)
 
@@ -73,7 +73,9 @@ class ImportMenuItems:
                 price=Decimal(row["price"]),
                 category=Category[row["category"]],
                 is_veg=(row.get("is_veg", "").strip().lower() == "true"),
-                is_available=(row.get("is_available", "True").strip().lower() == "true"),
+                is_available=(
+                    row.get("is_available", "True").strip().lower() == "true"
+                ),
                 preparation_time_in_minutes=int(row["preparation_time_in_minutes"]),
                 tags=json.loads(row["tags"]) if row.get("tags") else [],
             )

@@ -13,7 +13,7 @@ class ImportDeliveryZones:
         self.delivery_zone_storage_interface = delivery_zone_storage_interface
 
     def import_delivery_zones(self, file_path="./sample_data/delivery_zones.csv"):
-        rows = read_csv(file_path=file_path)
+        rows = list(read_csv(file_path=file_path))
 
         combinations = self._parse_and_normalize_rows(rows)
 

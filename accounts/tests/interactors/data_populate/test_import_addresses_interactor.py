@@ -62,7 +62,7 @@ class TestImportAddresses:
             label="Home",
             full_address="12 MG Road",
             city="Bangalore",
-            pincode="560001",
+            pincode=560001,
             is_default=False,
         )
 
@@ -81,7 +81,7 @@ class TestImportAddresses:
                 AddressLookupDTO(
                     user_id="user-1",
                     label="Home",
-                    pincode="560001",
+                    pincode=560001,
                 )
             ],
         )
@@ -118,7 +118,7 @@ class TestImportAddresses:
                 address_id=1,
                 user_id="user-1",
                 label="Home",
-                pincode="560001",
+                pincode=560001,
             )
         ]
         self.address_storage.create_bulk_addresses.return_value = []
@@ -130,14 +130,14 @@ class TestImportAddresses:
         # Assert
         assert result == "0 addresses created, 1 addresses updated"
         self.address_storage.update_bulk_addresses.assert_called_once_with(
-            [
+            address_dtos=[
                 UpdateAddressDTO(
                     id=1,
                     user_id="user-1",
                     label="Home",
                     full_address="12 MG Road",
                     city="Bangalore",
-                    pincode="560001",
+                    pincode=560001,
                     is_default=False,
                 )
             ]
