@@ -82,19 +82,16 @@ class DeliveryZoneAdmin(admin.ModelAdmin):
 class RestaurantReviewAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "item_id",
         "restaurant",
         "customer_id",
         "rating",
+        "review_text",
         "created_at",
     )
     list_filter = ("rating", "created_at")
-    search_fields = ("item_id", "restaurant__name", "customer_id", "review_text")
+    search_fields = ("restaurant__name", "customer_id", "review_text")
     ordering = ("-created_at",)
-    readonly_fields = (
-        "item_id",
-        "created_at",
-    )
+    readonly_fields = ("created_at",)
 
 
 @admin.register(RestaurantTiming)

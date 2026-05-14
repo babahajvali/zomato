@@ -4,7 +4,6 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from restaurants.constants.enums import CuisineType, Category
-from utils.uuid_util import generate_uuid
 
 
 # Create your models here.
@@ -40,7 +39,7 @@ class Restaurant(models.Model):
 
 class MenuItem(models.Model):
     id = models.CharField(
-        max_length=36, default=generate_uuid, editable=False, primary_key=True
+        max_length=36, default=uuid.uuid4(), editable=False, primary_key=True
     )
     restaurant = models.ForeignKey(
         Restaurant, on_delete=models.CASCADE, related_name="menu_items"
