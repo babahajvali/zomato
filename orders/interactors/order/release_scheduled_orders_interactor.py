@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.db import transaction
 from django.utils import timezone
 
 from orders.adapter.restaurant import RestaurantAdapter
@@ -18,18 +19,19 @@ class ReleaseScheduledOrdersInteractor(OrderMixin):
         self.order_storage = order_storage
 
     def release_scheduled_orders(self):
-        scheduled_orders = self.order_storage.get_scheduled_orders_due_for_release()
-        for order_dto in scheduled_orders:
-            if self._should_cancel(order_dto=order_dto):
-                self.order_storage.update_order_status(
-                    order_id=order_dto.order_id,
-                    status=OrderStatus.CANCELLED,
-                )
-            else:
-                self.order_storage.update_order_status(
-                    order_id=order_dto.order_id,
-                    status=OrderStatus.PLACED,
-                )
+        with transaction.atomic():
+            scheduled_orders = self.order_storage.get_scheduled_orders_due_for_release()
+            for order_dto in scheduled_orders:
+                if self._should_cancel(order_dto=order_dto):
+                    self.order_storage.update_order_status(
+                        order_id=order_dto.order_id,
+                        status=OrderStatus.CANCELLED,
+                    )
+                else:
+                    self.order_storage.update_order_status(
+                        order_id=order_dto.order_id,
+                        status=OrderStatus.PLACED,
+                    )
 
     def _should_cancel(self, order_dto: OrderDTO) -> bool:
         return self._has_unavailable_items(

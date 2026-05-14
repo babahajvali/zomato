@@ -6,8 +6,7 @@ class PromoCodeUsageLimitReached(graphene.ObjectType):
 
 
 class PromoCodeNotEligible(graphene.ObjectType):
-    # TODO: min_order_value is Decimal in the DTO but exposed here as Float — lossy and inconsistent with items_total below.
-    min_order_value = graphene.Float(required=True)
+    min_order_value = graphene.Decimal(required=True)
     items_total = graphene.Decimal(required=True)
 
 
@@ -39,7 +38,6 @@ class RestaurantNotOpenAtScheduledTime(graphene.ObjectType):
 
 
 class PromoCodeNotFound(graphene.ObjectType):
-    # TODO: every other error type has required=True — inconsistent contract.
     promo_code_id = graphene.Int()
 
 

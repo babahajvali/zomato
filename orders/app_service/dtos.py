@@ -22,3 +22,10 @@ class RestaurantOrderStatsDTO:
     restaurant_id: str
     order_count: int
     daily_frequent: int
+
+
+@dataclass
+class MenuItemOrderStatsDTO:
+    item_id: str
+    order_count: int
+    total_order_count: int

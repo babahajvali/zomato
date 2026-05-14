@@ -1,5 +1,14 @@
 {
-  "data": {
-    "getUserRestaurantReview": null
-  }
+  "errors": [
+    {
+      "message": "Variable '$params' got invalid value {'restaurantId': '49bb508e-c6d1-4882-95fd-1991d103f7df', 'userId': '49bb508e-c6d1-4882-95fd-1991d103f7cd'}; Field 'userId' is not defined by type 'GetUserRestaurantReviewInputParams'.",
+      "locations": [
+        {
+          "line": 2,
+          "column": 35
+        }
+      ]
+    }
+  ],
+  "data": null
 }

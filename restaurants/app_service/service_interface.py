@@ -9,8 +9,8 @@ from restaurants.interactors.dtos import (
     RestaurantTimingDTO,
     CartItemDTO,
 )
-from restaurants.interactors.restaurant.browse_restaurants import (
-    BrowseRestaurantsInteractor,
+from restaurants.interactors.restaurant.get_owner_restaurants_interactor import (
+    GetOwnerRestaurantsInteractor,
 )
 from restaurants.interactors.restaurant.menu_item_interactor import MenuItemInteractor
 from restaurants.interactors.restaurant_timing.restaurant_timing_interactor import (
@@ -57,21 +57,21 @@ class ServiceInterface:
 
         return restaurant_day_timing
 
-    def get_cart_items(self, cart_id: str) -> List[CartItemDTO]:
+    def get_cart_items(self, cart_id: str, user_id: str) -> List[CartItemDTO]:
         interactor = CartItemInteractor(
             cart_storage=self.cart_storage,
             restaurant_storage=self.restaurant_storage,
         )
 
-        return interactor.get_cart_items(cart_id=cart_id)
+        return interactor.get_cart_items(cart_id=cart_id, user_id=user_id)
 
-    def clear_cart_items(self, cart_id: str):
+    def clear_cart_items(self, cart_id: str, user_id: str):
         interactor = CartItemInteractor(
             cart_storage=self.cart_storage,
             restaurant_storage=self.restaurant_storage,
         )
 
-        return interactor.clear_cart_items(cart_id=cart_id)
+        return interactor.clear_cart_items(cart_id=cart_id, user_id=user_id)
 
     def get_customer_cart_id(self, customer_id: str) -> str:
         interactor = CartItemInteractor(
@@ -84,10 +84,8 @@ class ServiceInterface:
     # TODO: instantiating BrowseRestaurantsInteractor (which pulls 3 storages) just to fetch an owner_id is wasteful and architecturally wrong.
     def get_restaurant_owner_id(self, restaurant_id: str) -> str:
 
-        interactor = BrowseRestaurantsInteractor(
+        interactor = GetOwnerRestaurantsInteractor(
             restaurant_storage=self.restaurant_storage,
-            restaurant_timing_storage=self.restaurant_timing_storage,
-            review_storage=self.review_storage,
         )
 
         return interactor.get_restaurant_owner_id(restaurant_id=restaurant_id)

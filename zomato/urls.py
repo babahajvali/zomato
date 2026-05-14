@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
@@ -23,6 +24,8 @@ from graphene_django.views import GraphQLView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    # TODO: graphiql=True is always on — should be gated by settings.DEBUG. csrf_exempt + GET bypass in middleware compounds the auth issue.
-    path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True))),
+    path(
+        "graphql/",
+        csrf_exempt(GraphQLView.as_view(graphiql=settings.DEBUG)),
+    ),
 ]

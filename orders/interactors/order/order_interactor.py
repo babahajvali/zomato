@@ -1,9 +1,14 @@
-from datetime import datetime, timedelta, date
-from typing import List, Optional
+from datetime import timedelta, date
+from typing import List
 from django.db import transaction
 from django.utils import timezone
 
-from orders.app_service.dtos import RestaurantOrdersSummaryDTO, OrdersByStatusDTO
+from orders.app_service.dtos import (
+    RestaurantOrdersSummaryDTO,
+    OrdersByStatusDTO,
+    RestaurantOrderStatsDTO,
+    MenuItemOrderStatsDTO,
+)
 from orders.constants.constants import CANCEL_TIME
 from orders.constants.enums import OrderStatus
 from orders.exception.custom_exceptions import (
@@ -16,11 +21,13 @@ from orders.interactors.dtos import (
     OrderSummaryDTO,
     PeakHourDTO,
     TopSellingItemDTO,
+    ScheduledOrderDTO,
 )
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
 )
 from orders.mixin.order_mixin import OrderMixin
+from utils.caching_decorators import interactor_cache, invalidate_interactor_cache
 from utils.redis_util import redis_lock
 
 
@@ -29,24 +36,22 @@ class OrderInteractor(OrderMixin):
         super().__init__(order_storage=order_storage)
         self.order_storage = order_storage
 
+    @invalidate_interactor_cache(cache_name="user_scheduled_orders")
+    @invalidate_interactor_cache(cache_name="user_orders")
     def cancel_order(self, order_id: str, user_id: str) -> OrderDTO:
-
-        # TODO: validate happens outside the lock, then we re-fetch inside. We could reuse the first DTO and skip the second get_order.
-        self.validate_order_exists(order_id=order_id, user_id=user_id)
 
         with redis_lock(
             lock_key=f"order_status_{order_id}",
             timeout=10,
         ):
             with transaction.atomic():
-                order_dto = self.order_storage.get_order(order_id=order_id)
+                order_dto = self.validate_order_belongs_to_user(
+                    order_id=order_id, user_id=user_id
+                )
 
                 self._validate_order_is_not_already_cancelled(order_dto=order_dto)
                 self._validate_order_is_cancellable(
                     order_id=order_dto.order_id, order_status=order_dto.status.value
-                )
-                self._validate_cancel_order_time(
-                    placed_at=order_dto.placed_at, order_id=order_dto.order_id
                 )
 
                 return self.order_storage.update_order_status(
@@ -54,6 +59,7 @@ class OrderInteractor(OrderMixin):
                     status=OrderStatus.CANCELLED,
                 )
 
+    @interactor_cache(cache_name="user_orders", timeout=10 * 60)
     def get_user_orders(self, user_id: str, limit: int, offset: int) -> List[OrderDTO]:
 
         return self.order_storage.get_user_orders(
@@ -61,8 +67,7 @@ class OrderInteractor(OrderMixin):
         )
 
     def get_order(self, order_id: str) -> OrderSummaryDTO:
-        # TODO: passing user_id=None disables the ownership check — any user can read any order.
-        order_dto = self.validate_order_exists(order_id=order_id, user_id=None)
+        order_dto = self.validate_order_exists(order_id=order_id)
 
         order_items = self.order_storage.get_order_items(order_id=order_id)
 
@@ -100,20 +105,50 @@ class OrderInteractor(OrderMixin):
             restaurant_id=restaurant_id, date_from=date_from, date_to=date_to
         )
 
-    def _validate_cancel_order_time(self, order_id: str, placed_at: Optional[datetime]):
-        # TODO: placed_at is always provided by the caller — this None branch is dead code.
-        if placed_at is None:
-            placed_at = self.order_storage.get_order_placed_at(order_id=order_id)
-        now = timezone.now()
+    @interactor_cache(cache_name="user_scheduled_orders", timeout=30 * 60)
+    def get_user_scheduled_orders(
+        self, user_id: str, limit: int, offset: int
+    ) -> List[ScheduledOrderDTO]:
 
-        if now - placed_at > timedelta(minutes=CANCEL_TIME):
-            raise OrderCancellationWindowExpired(order_id=order_id, minutes=CANCEL_TIME)
+        order_dtos = self.order_storage.get_user_scheduled_orders(
+            user_id=user_id,
+            limit=limit,
+            offset=offset,
+        )
+        order_ids = [order.order_id for order in order_dtos]
 
-    @staticmethod
-    def _validate_order_is_cancellable(order_status: str, order_id: str):
+        order_items = self.order_storage.get_orders_items(order_ids=order_ids)
 
-        if order_status != OrderStatus.PLACED.value:
-            raise OrderCancellationNotAllowed(order_id=order_id)
+        return self.build_schedule_order_summaries(
+            order_items=order_items,
+            orders=order_dtos,
+        )
+
+    def get_user_restaurants_stats(
+        self, restaurant_ids: List[str], user_id: str
+    ) -> List[RestaurantOrderStatsDTO]:
+
+        return self.order_storage.get_user_restaurant_stats(
+            restaurant_ids=restaurant_ids, user_id=user_id
+        )
+
+    def get_menu_item_order_stats(
+        self, menu_item_ids: List[str], user_id: str
+    ) -> List[MenuItemOrderStatsDTO]:
+
+        return self.order_storage.get_menu_item_order_stats(
+            menu_item_ids=menu_item_ids, user_id=user_id
+        )
+
+    def _validate_order_is_cancellable(self, order_status: str, order_id: str):
+        if order_status == OrderStatus.SCHEDULED.value:
+            return
+
+        if order_status == OrderStatus.PLACED.value:
+            self._validate_cancellation_window(order_id=order_id)
+            return
+
+        raise OrderCancellationNotAllowed(order_id=order_id)
 
     @staticmethod
     def _validate_order_is_not_already_cancelled(order_dto):
@@ -139,3 +174,11 @@ class OrderInteractor(OrderMixin):
             placed_at=order_dto.placed_at,
             address_id=order_dto.address_id,
         )
+
+    def _validate_cancellation_window(self, order_id: str):
+        now = timezone.now()
+        updated_at = self.order_storage.get_order_updated_at(order_id=order_id)
+        cancellation_limit = updated_at + timedelta(minutes=CANCEL_TIME)
+
+        if now > cancellation_limit:
+            raise OrderCancellationWindowExpired(order_id=order_id, minutes=CANCEL_TIME)

@@ -11,7 +11,13 @@ factory.random.reseed_random(123)
 class TestUserLoginApi(BaseUserLoginTestCase):
     def test_user_login_successfully(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
-        user = UserFactory(id=user_id, email="sample@gmail.com", password="Ravi1234")
+        user = UserFactory(
+            id=user_id,
+            email="sample@gmail.com",
+            name="Joshua Gray",
+            phone_number="9000000002",
+            password="Ravi1234",
+        )
 
         self.execute_schema(
             query=self.QUERY,

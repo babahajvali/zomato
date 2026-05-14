@@ -1,11 +1,9 @@
 import pytest
 from unittest.mock import create_autospec
 
-from django.core.cache import cache
-
 from accounts.exception.custom_exceptions import UserNotFound
-from accounts.interactors.address.get_user_addresses_interactor import (
-    AddressesInteractor,
+from accounts.interactors.address.address_interactor import (
+    AddressInteractor,
 )
 from accounts.interactors.storage_interface.address_storage_interface import (
     AddressStorageInterface,
@@ -18,10 +16,9 @@ from accounts.tests.factories.interactor_factories import AddressDTOFactory
 
 class TestGetUserAddressesInteractor:
     def setup_method(self):
-        cache.clear()
         self.mock_address_storage = create_autospec(AddressStorageInterface)
         self.mock_user_storage = create_autospec(UserStorageInterface)
-        self.interactor = AddressesInteractor(
+        self.interactor = AddressInteractor(
             address_storage=self.mock_address_storage,
             user_storage=self.mock_user_storage,
         )
@@ -62,30 +59,42 @@ class TestGetUserAddressesInteractor:
     def test_get_address_success(self):
         # Arrange
         address_id = 1
-        expected_address = AddressDTOFactory(address_id=address_id)
+        user_id = "test-user-id"
+        expected_address = AddressDTOFactory(
+            address_id=address_id,
+        )
 
+        self.mock_user_storage.check_user_exists.return_value = True
         self.mock_address_storage.get_address_by_id.return_value = expected_address
 
         # Act
-        result = self.interactor.get_address(address_id=address_id)
+        result = self.interactor.get_address(address_id=address_id, user_id=user_id)
 
         # Assert
         assert result == expected_address
+        self.mock_user_storage.check_user_exists.assert_called_once_with(
+            user_id=user_id
+        )
         self.mock_address_storage.get_address_by_id.assert_called_once_with(
-            address_id=address_id
+            address_id=address_id, user_id=user_id
         )
 
     def test_get_address_not_found(self):
         # Arrange
         address_id = 999
+        user_id = "test-user-id"
 
+        self.mock_user_storage.check_user_exists.return_value = True
         self.mock_address_storage.get_address_by_id.return_value = None
 
         # Act
-        result = self.interactor.get_address(address_id=address_id)
+        result = self.interactor.get_address(address_id=address_id, user_id=user_id)
 
         # Assert
         assert result is None
+        self.mock_user_storage.check_user_exists.assert_called_once_with(
+            user_id=user_id
+        )
         self.mock_address_storage.get_address_by_id.assert_called_once_with(
-            address_id=address_id
+            address_id=address_id, user_id=user_id
         )

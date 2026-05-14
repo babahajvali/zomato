@@ -20,6 +20,19 @@ class CreateRestaurantDTO:
 
 
 @dataclass
+class UpdateRestaurantDTO:
+    id: str
+    name: str
+    owner_id: str
+    description: str
+    cuisine_type: CuisineType
+    address: str
+    pin_code: str
+    is_veg_only: bool
+    is_deleted: bool
+
+
+@dataclass
 class RestaurantDTO:
     id: str
     name: str
@@ -36,6 +49,13 @@ class RestaurantDTO:
 class CreateRestaurantTimingDTO:
     restaurant_id: str
     day_of_week: int
+    open_time: time
+    close_time: time
+
+
+@dataclass
+class BulkUpdateRestaurantTimingDTO:
+    timing_id: int
     open_time: time
     close_time: time
 
@@ -166,6 +186,15 @@ class CreateDeliveryZoneDTO:
 
 
 @dataclass
+class UpdateDeliveryZoneDTO:
+    delivery_zone_id: int
+    restaurant_id: str
+    pin_code: str
+    delivery_fee: Decimal
+    estimated_delivery_mins: int
+
+
+@dataclass
 class DeliveryZoneDTO:
     delivery_zone_id: int
     restaurant_id: str
@@ -255,6 +284,7 @@ class RestaurantDashboardDTO:
 class UpdateMenuItemDTO:
     menu_item_id: str
     name: Optional[str]
+    description: Optional[str]
     is_available: Optional[bool]
     preparation_time_in_minutes: Optional[int]
     price: Optional[Decimal]
@@ -286,3 +316,23 @@ class RestaurantOrderStatsDTO:
     restaurant_id: str
     order_count: int
     daily_frequent: int
+
+
+@dataclass
+class MenuItemScoredDTO:
+    restaurant_id: str
+    menu_item_id: str
+    name: str
+    price: Decimal
+    is_available: bool
+    score: Decimal
+    average_rating: Decimal
+    order_count: int
+    total_order_count: int
+
+
+@dataclass
+class MenuItemOrderStatsDTO:
+    item_id: str
+    order_count: int
+    total_order_count: int

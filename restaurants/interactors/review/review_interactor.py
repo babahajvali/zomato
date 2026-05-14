@@ -43,6 +43,7 @@ class ReviewInteractor(RestaurantMixin):
 
     @interactor_cache(cache_name="user_review")
     def get_user_restaurant_review(self, user_id: str, restaurant_id: str) -> ReviewDTO:
+        self.validate_restaurant_exists(restaurant_id=restaurant_id)
 
         return self.review_storage.get_user_restaurant_review(
             user_id=user_id, restaurant_id=restaurant_id

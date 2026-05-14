@@ -1,23 +1,29 @@
 {
-  "errors": [
-    {
-      "message": "Cannot query field 'createdAt' on type 'OwnerRestaurantType'.",
-      "locations": [
+  "data": {
+    "getOwnerRestaurants": {
+      "__typename": "OwnerRestaurantsType",
+      "restaurants": [
         {
-          "line": 15,
-          "column": 13
-        }
-      ]
-    },
-    {
-      "message": "Cannot query field 'updatedAt' on type 'OwnerRestaurantType'.",
-      "locations": [
+          "restaurantId": "restaurant-2",
+          "name": "Restaurant 2",
+          "description": "Restaurant 2 description",
+          "cuisineType": "CHINESE",
+          "address": "Restaurant 2 address",
+          "pinCode": "500001",
+          "isVegOnly": false,
+          "isDeleted": false
+        },
         {
-          "line": 16,
-          "column": 13
+          "restaurantId": "restaurant-1",
+          "name": "Restaurant 1",
+          "description": "Restaurant 1 description",
+          "cuisineType": "INDIAN",
+          "address": "Restaurant 1 address",
+          "pinCode": "500000",
+          "isVegOnly": false,
+          "isDeleted": false
         }
       ]
     }
-  ],
-  "data": null
+  }
 }

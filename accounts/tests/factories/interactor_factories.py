@@ -5,6 +5,8 @@ from accounts.interactors.dtos import (
     AddressDTO,
     CreateAddressDTO,
     CreateUserDTO,
+    UpdateUserDTO,
+    UserCreateDTO,
     UserDTO,
 )
 
@@ -43,6 +45,26 @@ class UserDTOFactory(factory.Factory):
     phone_number = factory.Sequence(lambda n: f"900000{n:04d}")
     role = Role.CUSTOMER.value
     password = factory.Faker("password")
+
+
+class UserCreateDTOFactory(factory.Factory):
+    class Meta:
+        model = UserCreateDTO
+
+    name = factory.Faker("name")
+    email = factory.Sequence(lambda n: f"user{n}@example.com")
+    phone_number = factory.Sequence(lambda n: f"900000{n:04d}")
+    role = Role.CUSTOMER
+    password = factory.Faker("password")
+
+
+class UpdateUserDTOFactory(factory.Factory):
+    class Meta:
+        model = UpdateUserDTO
+
+    user_id = factory.Sequence(lambda n: f"user-{n}")
+    name = factory.Faker("name")
+    phone_number = factory.Sequence(lambda n: f"900000{n:04d}")
 
 
 class AddressDTOFactory(factory.Factory):

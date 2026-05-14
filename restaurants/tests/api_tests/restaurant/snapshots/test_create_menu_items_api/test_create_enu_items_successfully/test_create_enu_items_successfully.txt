@@ -8,7 +8,7 @@
           "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7de",
           "name": "Chicken Biryani",
           "description": "Test",
-          "price": 250.0,
+          "price": "250",
           "category": "MAIN_COURSE",
           "isVeg": false,
           "isAvailable": true,

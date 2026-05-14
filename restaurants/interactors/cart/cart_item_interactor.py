@@ -1,4 +1,7 @@
-from restaurants.exception.custom_exceptions import InvalidQuantity
+from restaurants.exception.custom_exceptions import (
+    InvalidQuantity,
+    CartNotBelongsToUser,
+)
 from restaurants.interactors.dtos import CartItemDTO
 from restaurants.interactors.storage_interface.cart_storage_interface import (
     CartStorageInterface,
@@ -23,10 +26,13 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
         self.restaurant_storage = restaurant_storage
 
     def update_cart_item(
-        self, cart_id: str, menu_item_id: str, quantity: int
+        self, cart_id: str, menu_item_id: str, quantity: int, user_id: str
     ) -> CartItemDTO:
 
-        self.validate_cart_exists(cart_id=cart_id)
+        cart_dto = self.validate_cart_exists(cart_id=cart_id)
+        self._validate_cart_is_users(
+            cart_id=cart_id, cart_owner_id=cart_dto.customer_id, user_id=user_id
+        )
         menu_item_dto = self.validate_menu_item_exists(menu_item_id=menu_item_id)
         self._validate_quantity(quantity=quantity)
 
@@ -37,18 +43,30 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
             item_price=menu_item_dto.price,
         )
 
-    def remove_cart_item(self, cart_item_id: int):
-        self.validate_cart_item_exists(cart_item_id=cart_item_id)
+    def remove_cart_item(self, cart_item_id: int, user_id: str):
+        cart_item_dto = self.validate_cart_item_exists(cart_item_id=cart_item_id)
+        cart_dto = self.validate_cart_exists(cart_id=cart_item_dto.cart_id)
+        self._validate_cart_is_users(
+            cart_id=cart_dto.cart_id,
+            user_id=user_id,
+            cart_owner_id=cart_dto.customer_id,
+        )
 
         return self.cart_storage.remove_cart_item(cart_item_id=cart_item_id)
 
-    def clear_cart_items(self, cart_id: str):
-        self.validate_cart_exists(cart_id=cart_id)
+    def clear_cart_items(self, cart_id: str, user_id: str):
+        cart_dto = self.validate_cart_exists(cart_id=cart_id)
+        self._validate_cart_is_users(
+            cart_id=cart_id, user_id=user_id, cart_owner_id=cart_dto.customer_id
+        )
 
         return self.cart_storage.clear_cart_items(cart_id=cart_id)
 
-    def get_cart_items(self, cart_id: str):
-        self.validate_cart_exists(cart_id=cart_id)
+    def get_cart_items(self, cart_id: str, user_id: str):
+        cart_dto = self.validate_cart_exists(cart_id=cart_id)
+        self._validate_cart_is_users(
+            cart_owner_id=cart_dto.customer_id, cart_id=cart_id, user_id=user_id
+        )
 
         return self.cart_storage.get_cart_items(cart_id=cart_id)
 
@@ -61,3 +79,9 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
     def _validate_quantity(quantity: int):
         if quantity <= 0 or quantity > 10:
             raise InvalidQuantity(quantity=quantity)
+
+    @staticmethod
+    def _validate_cart_is_users(cart_owner_id: str, user_id: str, cart_id: str):
+
+        if cart_owner_id != user_id:
+            raise CartNotBelongsToUser(cart_id=cart_id, user_id=user_id)

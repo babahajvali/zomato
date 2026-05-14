@@ -1,6 +1,7 @@
 from datetime import datetime, time
 from unittest.mock import MagicMock, create_autospec
 
+import pytest
 from django.utils import timezone
 
 from orders.adapter.dtos import RestaurantTimingDTO
@@ -14,6 +15,7 @@ from orders.interactors.storage_interface.order_storage_interface import (
 from orders.tests.factories.interactor_factories import OrderDTOFactory
 
 
+@pytest.mark.django_db
 class TestReleaseScheduledOrdersInteractor:
     def setup_method(self):
         self.order_storage = create_autospec(OrderStorageInterface)

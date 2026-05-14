@@ -1,0 +1,10 @@
+{
+  "data": {
+    "createUser": {
+      "__typename": "EmailAlreadyExists",
+      "emails": [
+        "sample@gmail.com"
+      ]
+    }
+  }
+}

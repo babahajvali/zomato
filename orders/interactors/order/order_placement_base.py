@@ -47,18 +47,18 @@ class OrderPlacementBase(PromoCodeMixin, OrderMixin):
         self.restaurant_adapter = RestaurantAdapter()
 
     def _validate_address_and_get_delivery_fee(
-        self,
-        address_id: int,
-        restaurant_id: str,
+        self, address_id: int, restaurant_id: str, user_id: str
     ) -> Decimal:
-        pincode = self._get_validated_pincode(address_id=address_id)
+        pincode = self._get_validated_pincode(address_id=address_id, user_id=user_id)
         return self._get_validated_delivery_fee(
             restaurant_id=restaurant_id,
             pincode=pincode,
         )
 
-    def _get_validated_pincode(self, address_id: int) -> str:
-        address_dto = self.account_adapter.get_address_by_id(address_id=address_id)
+    def _get_validated_pincode(self, address_id: int, user_id: str) -> str:
+        address_dto = self.account_adapter.get_address_by_id(
+            address_id=address_id, user_id=user_id
+        )
         if address_dto is None:
             raise AddressNotFound(address_id=address_id)
         return address_dto.pincode
@@ -85,8 +85,13 @@ class OrderPlacementBase(PromoCodeMixin, OrderMixin):
             raise CustomerCartNotFound(customer_id=customer_id)
         return cart_id
 
-    def _get_validated_cart_items(self, cart_id: str) -> List[CartItemDTO]:
-        cart_items = self.restaurant_adapter.get_customer_cart_items(cart_id=cart_id)
+    def _get_validated_cart_items(
+        self, cart_id: str, customer_id: str
+    ) -> List[CartItemDTO]:
+        cart_items = self.restaurant_adapter.get_customer_cart_items(
+            cart_id=cart_id,
+            user_id=customer_id,
+        )
         if not cart_items:
             raise CartIsEmpty(cart_id=cart_id)
         return cart_items
@@ -140,18 +145,20 @@ class OrderPlacementBase(PromoCodeMixin, OrderMixin):
             promo_code_id=promo_code_id,
             max_usage_count=promo_code_dto.max_usage,
         )
-        return self.calculate_discount_price(
-            items_total=items_total,
-            discount_type=promo_code_dto.discount_type,
-            discount_value=Decimal(str(promo_code_dto.discount_value)),
-        )
+        if items_total >= promo_code_dto.min_order_value:
+            return self.calculate_discount_price(
+                items_total=items_total,
+                discount_type=promo_code_dto.discount_type,
+                discount_value=Decimal(str(promo_code_dto.discount_value)),
+            )
+        return Decimal("0.00")
 
     def _validate_promo_code_usage_limit(
         self,
         promo_code_id: int,
         max_usage_count: int,
     ):
-        usage_count = self.order_storage.get_promo_code_usage(
+        usage_count = self.order_storage.get_orders_count_for_promo_code(
             promo_code_id=promo_code_id
         )
         if usage_count >= max_usage_count:

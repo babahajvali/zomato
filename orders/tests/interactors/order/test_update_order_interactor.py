@@ -102,7 +102,11 @@ class TestUpdateOrderStatusInteractor:
         assert exc.value.user_id == "other-user"
         self.order_storage.update_order_status.assert_not_called()
 
-    @pytest.mark.django_db
+    @patch(
+        "orders.interactors.order.update_order_interactor.transaction.atomic",
+        no_op_lock,
+    )
+    @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
     def test_update_order_status_raises_invalid_transition(self):
         self.order_storage.get_order.return_value = OrderDTOFactory(
             order_id="orders-1",

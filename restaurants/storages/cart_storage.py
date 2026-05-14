@@ -1,6 +1,8 @@
 from decimal import Decimal
 from typing import List
 
+from django.db import transaction
+
 from restaurants.interactors.dtos import CartDTO, CartItemDTO
 from restaurants.interactors.storage_interface.cart_storage_interface import (
     CartStorageInterface,
@@ -26,7 +28,6 @@ class CartStorage(CartStorageInterface):
             item_price=Decimal(cart_item_obj.item_price),
         )
 
-    # TODO: list[str] (lowercase) vs List[...] used elsewhere — pick one.
     def create_carts(self, customer_ids: list[str]) -> List[CartDTO]:
         carts = [
             Cart(
@@ -47,7 +48,7 @@ class CartStorage(CartStorageInterface):
 
         return self._convert_to_cart_dto(cart_obj=cart_dto)
 
-    # TODO: item_price=float — default value is the type `float` itself, not a number. Also update_or_create isn't wrapped in transaction.atomic + select_for_update, so concurrent updates can race.
+    @transaction.atomic
     def create_or_update_cart_item(
         self, cart_id: str, menu_item_id: str, quantity: int, item_price=float
     ) -> CartItemDTO:
@@ -86,5 +87,7 @@ class CartStorage(CartStorageInterface):
         ]
 
     def get_customer_cart_id(self, customer_id: str) -> str:
-        # TODO: .get() raises uncaught DoesNotExist if no cart exists for the customer. Use .filter().first() + None handling.
-        return Cart.objects.get(customer_id=customer_id).id
+        cart = Cart.objects.filter(customer_id=customer_id).first()
+        if cart is None:
+            cart = Cart.objects.create(customer_id=customer_id)
+        return cart.id

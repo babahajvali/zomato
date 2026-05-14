@@ -24,5 +24,9 @@ class RestaurantTiming(models.Model):
         return self.restaurant.name
 
     class Meta:
-        # TODO: unique_together is deprecated — prefer constraints=[UniqueConstraint(...)].
-        unique_together = ("restaurant", "day_of_week")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["restaurant", "day_of_week"],
+                name="unique_restaurant_day_of_week",
+            )
+        ]

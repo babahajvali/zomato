@@ -11,6 +11,16 @@ class EmailAlreadyExists(Exception):
         self.emails = emails
 
 
+class EmptyUserNameFound(Exception):
+    def __init__(self, name: str):
+        self.name = name
+
+
+class NothingToUpdateUserProperties(Exception):
+    def __init__(self, user_id: str):
+        self.user_id = user_id
+
+
 class EmailNotFound(Exception):
     # TODO: declared but never raised anywhere — dead exception. Either wire it up or remove.
     def __init__(self, email: str):

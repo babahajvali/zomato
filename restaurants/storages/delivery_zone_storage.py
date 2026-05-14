@@ -3,7 +3,11 @@ from typing import List, Tuple
 
 from django.db.models import Q
 
-from restaurants.interactors.dtos import CreateDeliveryZoneDTO, DeliveryZoneDTO
+from restaurants.interactors.dtos import (
+    CreateDeliveryZoneDTO,
+    DeliveryZoneDTO,
+    UpdateDeliveryZoneDTO,
+)
 from restaurants.interactors.storage_interface.delivery_zone_storage_interface import (
     DeliveryZoneStorageInterface,
 )
@@ -38,6 +42,35 @@ class DeliveryZoneStorage(DeliveryZoneStorageInterface):
 
         return [
             self._convert_to_delivery_zone_dto(zone_obj=each) for each in created_objs
+        ]
+
+    def update_bulk_delivery_zones(
+        self, update_delivery_zones: List[UpdateDeliveryZoneDTO]
+    ) -> List[DeliveryZoneDTO]:
+        delivery_zone_objs = [
+            DeliveryZone(
+                id=dto.delivery_zone_id,
+                restaurant_id=dto.restaurant_id,
+                pin_code=dto.pin_code,
+                delivery_fee=dto.delivery_fee,
+                estimated_delivery_mins=dto.estimated_delivery_mins,
+            )
+            for dto in update_delivery_zones
+        ]
+
+        DeliveryZone.objects.bulk_update(
+            delivery_zone_objs,
+            [
+                "restaurant_id",
+                "pin_code",
+                "delivery_fee",
+                "estimated_delivery_mins",
+            ],
+        )
+
+        return [
+            self._convert_to_delivery_zone_dto(zone_obj=each)
+            for each in delivery_zone_objs
         ]
 
     def get_delivery_zone_by_id(self, delivery_zone_id: int) -> DeliveryZoneDTO | None:
@@ -78,4 +111,20 @@ class DeliveryZoneStorage(DeliveryZoneStorageInterface):
             (restaurant_id, pin_code)
             for restaurant_id, pin_code in combinations
             if (restaurant_id, pin_code) in existing_set
+        ]
+
+    def get_existing_delivery_zone_dtos(
+        self, combinations: List[Tuple[str, str]]
+    ) -> List[DeliveryZoneDTO]:
+        if not combinations:
+            return []
+
+        query_filter = Q()
+        for restaurant_id, pin_code in combinations:
+            query_filter |= Q(restaurant_id=restaurant_id, pin_code=pin_code)
+
+        delivery_zones = DeliveryZone.objects.filter(query_filter)
+
+        return [
+            self._convert_to_delivery_zone_dto(zone_obj=each) for each in delivery_zones
         ]

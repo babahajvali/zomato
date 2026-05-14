@@ -35,7 +35,6 @@ class TestOrderStorage:
         assert result.order_id == "orders-1"
         assert result.customer_id == "customer-1"
         assert result.restaurant_id == "restaurants-1"
-        assert result.promo_code_id == order.promo_code.id
 
     def test_get_order_returns_none_when_not_found(self):
         result = self.storage.get_order(order_id="invalid-orders")
@@ -102,7 +101,9 @@ class TestOrderStorage:
         OrderFactory(promo_code=promo_code, status=OrderStatus.CONFIRMED.value)
         OrderFactory(promo_code=promo_code, status=OrderStatus.CANCELLED.value)
 
-        result = self.storage.get_promo_code_usage(promo_code_id=promo_code.id)
+        result = self.storage.get_orders_count_for_promo_code(
+            promo_code_id=promo_code.id
+        )
 
         assert result == 2
 

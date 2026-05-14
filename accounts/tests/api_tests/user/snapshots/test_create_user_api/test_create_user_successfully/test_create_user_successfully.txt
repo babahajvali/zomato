@@ -1,0 +1,11 @@
+{
+  "data": {
+    "createUser": {
+      "__typename": "UserType",
+      "email": "sample@gmail.com",
+      "name": "Sample User",
+      "phoneNumber": "9876543210",
+      "role": "CUSTOMER"
+    }
+  }
+}

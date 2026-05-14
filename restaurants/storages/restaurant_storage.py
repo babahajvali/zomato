@@ -1,8 +1,9 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import List
+from typing import List, Optional
 
-from django.db.models import Avg, Count, Q
+from django.db.models import Avg, Count, Q, Value
+from django.db.models.functions import Coalesce
 
 from restaurants.constants.enums import Category
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
@@ -16,6 +17,7 @@ from restaurants.interactors.dtos import (
     MenuItemWithTagsDTO,
     RestaurantDTO,
     UpdateMenuItemDTO,
+    UpdateRestaurantDTO,
 )
 from restaurants.models.restaurant import Restaurant, MenuItem
 
@@ -92,6 +94,48 @@ class RestaurantStorage(RestaurantStorageInterface):
             Restaurant.objects.filter(name__in=names).values_list("name", flat=True)
         )
 
+    def get_existing_restaurant_dtos(self, names: List[str]) -> List[RestaurantDTO]:
+        restaurant_objs = Restaurant.objects.filter(name__in=names)
+
+        return [
+            self._convert_to_restaurant_dto(restaurant_obj=restaurant)
+            for restaurant in restaurant_objs
+        ]
+
+    def update_bulk_restaurants(
+        self, restaurant_dtos: List[UpdateRestaurantDTO]
+    ) -> List[Restaurant]:
+        restaurants = [
+            Restaurant(
+                id=dto.id,
+                name=dto.name,
+                owner_id=dto.owner_id,
+                description=dto.description,
+                cuisine_type=dto.cuisine_type,
+                address=dto.address,
+                pin_code=dto.pin_code,
+                is_veg_only=dto.is_veg_only,
+                is_deleted=dto.is_deleted,
+            )
+            for dto in restaurant_dtos
+        ]
+
+        Restaurant.objects.bulk_update(
+            restaurants,
+            [
+                "name",
+                "owner_id",
+                "description",
+                "cuisine_type",
+                "address",
+                "pin_code",
+                "is_veg_only",
+                "is_deleted",
+            ],
+        )
+
+        return restaurants
+
     def create_menu_items(
         self, create_item_dtos: List[CreateMenuItemDTO], restaurant_id: str
     ) -> List[MenuItemDTO]:
@@ -103,9 +147,11 @@ class RestaurantStorage(RestaurantStorageInterface):
                 name=item.name,
                 description=item.description,
                 price=item.price,
-                category=item.category.value
-                if hasattr(item.category, "value")
-                else item.category,
+                category=(
+                    item.category.value
+                    if hasattr(item.category, "value")
+                    else item.category
+                ),
                 is_veg=item.is_veg,
                 is_available=item.is_available,
                 tags=item.tags,
@@ -118,16 +164,17 @@ class RestaurantStorage(RestaurantStorageInterface):
 
         return [self._convert_to_menu_item_dto(item_obj=item) for item in created_items]
 
-    def get_restaurant_owner_id(self, restaurant_id: str) -> str:
-        # TODO: .get() raises uncaught DoesNotExist if the restaurant is missing — use .filter().first() and return None.
-        restaurant_data = Restaurant.objects.get(id=restaurant_id)
+    def get_restaurant_owner_id(self, restaurant_id: str) -> Optional[str]:
+        restaurant_data = Restaurant.objects.filter(id=restaurant_id).first()
+
+        if restaurant_data is None:
+            return None
 
         return restaurant_data.owner_id
 
     def check_restaurant_is_exist(self, restaurant_id: str) -> bool:
         return Restaurant.objects.filter(id=restaurant_id).exists()
 
-    # TODO: pagination/filter shaping belongs in the interactor, not storage. Storage should return a queryset or accept already-built filters.
     def get_restaurants(
         self, filters_dto: BrowseRestaurantFiltersDTO
     ) -> List[RestaurantDTO]:
@@ -150,10 +197,15 @@ class RestaurantStorage(RestaurantStorageInterface):
         if filters_dto.search:
             queryset = queryset.filter(Q(name__icontains=filters_dto.search))
 
-        # TODO: Avg("...") returns NULL when there are no reviews; min_rating filter silently drops restaurants with zero ratings. Wrap in Coalesce(Avg(...), 0) if that's not intentional.
         queryset = queryset.annotate(
-            average_rating=Avg("restaurant_reviews__rating"),
-            total_reviews=Count("restaurant_reviews"),
+            average_rating=Coalesce(
+                Avg("restaurant_reviews__rating"),
+                Value(0.0),
+            ),
+            total_reviews=Count(
+                "restaurant_reviews",
+                distinct=True,
+            ),
         )
 
         if filters_dto.min_rating is not None:
@@ -193,12 +245,14 @@ class RestaurantStorage(RestaurantStorageInterface):
 
         return self._convert_to_menu_item_dto(item_obj=menu_item_obj)
 
-    # TODO: UpdateMenuItemDTO doesn't have description/is_veg/category, so those fields can never be updated. Either extend the DTO or rename it to reflect what it actually patches.
     def update_menu_item(self, update_menu_item_dto: UpdateMenuItemDTO) -> MenuItemDTO:
 
         update_properties = {}
         if update_menu_item_dto.name is not None:
             update_properties["name"] = update_menu_item_dto.name
+
+        if update_menu_item_dto.description is not None:
+            update_properties["description"] = update_menu_item_dto.description
 
         if update_menu_item_dto.price is not None:
             update_properties["price"] = update_menu_item_dto.price
@@ -239,7 +293,7 @@ class RestaurantStorage(RestaurantStorageInterface):
 
         return [
             RestaurantDTO(
-                id=restaurant.id,  # TODO: get_restaurants uses str(restaurant.id) but here it's raw — inconsistent.
+                id=restaurant.id,
                 name=restaurant.name,
                 description=restaurant.description,
                 cuisine_type=restaurant.cuisine_type,

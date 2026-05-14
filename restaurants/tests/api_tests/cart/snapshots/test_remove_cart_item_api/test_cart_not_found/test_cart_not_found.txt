@@ -1,0 +1,8 @@
+{
+  "data": {
+    "removeCartItem": {
+      "__typename": "CartItemNotFound",
+      "cartItemId": 1
+    }
+  }
+}

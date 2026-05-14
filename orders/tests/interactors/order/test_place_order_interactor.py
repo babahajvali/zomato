@@ -120,7 +120,7 @@ class TestPlaceOrderInteractor:
             final_amount=397.5,
         )
         self.promo_code_storage.get_promo_code_by_id.return_value = promo_code
-        self.order_storage.get_promo_code_usage.return_value = 0
+        self.order_storage.get_orders_count_for_promo_code.return_value = 0
         self.order_storage.create_order.return_value = order_dto
 
         result = self.interactor.place_order(
@@ -142,7 +142,7 @@ class TestPlaceOrderInteractor:
         assert create_order_dto.final_amount == 397.5
         self.order_storage.create_order_items.assert_called_once()
         self.interactor.restaurant_adapter.clear_customer_cart_items.assert_called_once_with(
-            cart_id="cart-1"
+            cart_id="cart-1", user_id="customer-1"
         )
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
@@ -214,7 +214,7 @@ class TestPlaceOrderInteractor:
             promo_code_id=1,
             max_usage=2,
         )
-        self.order_storage.get_promo_code_usage.return_value = 2
+        self.order_storage.get_orders_count_for_promo_code.return_value = 2
 
         with pytest.raises(PromoCodeUsageLimitReached) as exc:
             self.interactor.place_order(
@@ -384,7 +384,7 @@ class TestPlaceOrderInteractor:
         order_dto = OrderDTOFactory(order_id="orders-1")
 
         self.promo_code_storage.get_promo_code_by_id.return_value = promo_code
-        self.order_storage.get_promo_code_usage.return_value = 4
+        self.order_storage.get_orders_count_for_promo_code.return_value = 4
         self.order_storage.create_order.return_value = order_dto
 
         result = self.interactor.place_order(

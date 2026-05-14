@@ -1,23 +1,19 @@
 {
-  "errors": [
-    {
-      "message": "Cannot query field 'createdAt' on type 'OwnerRestaurantType'.",
-      "locations": [
+  "data": {
+    "getOwnerRestaurants": {
+      "__typename": "OwnerRestaurantsType",
+      "restaurants": [
         {
-          "line": 15,
-          "column": 13
-        }
-      ]
-    },
-    {
-      "message": "Cannot query field 'updatedAt' on type 'OwnerRestaurantType'.",
-      "locations": [
-        {
-          "line": 16,
-          "column": 13
+          "restaurantId": "restaurant-1",
+          "name": "Active Restaurant",
+          "description": "Active restaurant description",
+          "cuisineType": "NORTH_INDIAN",
+          "address": "Active restaurant address",
+          "pinCode": "500002",
+          "isVegOnly": false,
+          "isDeleted": false
         }
       ]
     }
-  ],
-  "data": null
+  }
 }

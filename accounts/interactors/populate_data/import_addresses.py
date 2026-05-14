@@ -1,30 +1,37 @@
-from typing import List, Any
+from typing import List
 
-from accounts.exception.custom_exceptions import (
-    AddressAlreadyExists,
-    DuplicateAddresses,
+from accounts.exception.custom_exceptions import DuplicateAddresses
+from accounts.interactors.address.address_interactor import AddressInteractor
+from accounts.interactors.dtos import (
+    CreateAddressDTO,
+    AddressLookupDTO,
+    UpdateAddressDTO,
 )
-from accounts.interactors.dtos import CreateAddressDTO
 from accounts.interactors.storage_interface.address_storage_interface import (
     AddressStorageInterface,
+)
+from accounts.interactors.storage_interface.user_storage_interface import (
+    UserStorageInterface,
 )
 from utils.read_csv_util import read_csv, validate_row
 
 
 class ImportAddresses:
-    def __init__(self, address_storage: AddressStorageInterface):
+    def __init__(
+        self,
+        address_storage: AddressStorageInterface,
+        user_storage: UserStorageInterface,
+    ):
         self.address_storage = address_storage
+        self.user_storage = user_storage
 
     def import_addresses(self, file_path="./sample_data/addresses.csv"):
-        # TODO: Clear separation of the csv handling, data cleaning and core logic should be seggregated.
         rows = read_csv(file_path=file_path)
 
-        user_label_pairs = self._validate_rows_and_get_user_and_label(rows)
+        address_lookups = self._validate_rows_and_get_address_lookups(rows)
 
-        self._validate_duplicate_addresses(user_label_pairs)
-        self._validate_existing_addresses(user_label_pairs)
+        self._validate_duplicate_addresses(address_lookups)
 
-        # TODO: Instead of writing logic in the import interactors, I guess we can write a create interactor and compose it in this import interactor.
         address_dtos = [
             CreateAddressDTO(
                 user_id=row["user_id"],
@@ -37,54 +44,107 @@ class ImportAddresses:
             for row in rows
         ]
 
-        created_addresses = self.address_storage.create_bulk_addresses(address_dtos)
+        to_create, to_update = self._split_new_and_existing(
+            address_dtos=address_dtos, pairs=address_lookups
+        )
 
-        return f"{len(created_addresses)} addresses imported"
+        interactor = AddressInteractor(
+            address_storage=self.address_storage, user_storage=self.user_storage
+        )
+
+        created = interactor.create_bulk_addresses(create_address_dtos=to_create)
+        updated = interactor.update_bulk_addresses(update_address_dtos=to_update)
+
+        return f"{len(created)} addresses created, {len(updated)} addresses updated"
 
     @staticmethod
-    def _validate_rows_and_get_user_and_label(
-        rows: list[dict[Any, str | Any]],
-    ) -> list[Any]:
-        user_label_pairs = []
+    def _validate_rows_and_get_address_lookups(
+        rows: list,
+    ) -> List[AddressLookupDTO]:
+
+        pairs = []
 
         for index, row in enumerate(rows, start=1):
-            # TODO: As per the db schema, pincode and city are not optional.
-
             validate_row(
-                row, ["user_id", "label", "full_address"], f"address row {index}"
+                row,
+                ["user_id", "label", "full_address", "pin_code", "city"],
+                f"address row {index}",
             )
 
             user_id = row["user_id"].strip()
             label = row["label"].strip()
+            pincode = row["pin_code"].strip()
 
             row["user_id"] = user_id
             row["label"] = label
+            row["pin_code"] = pincode
 
-            user_label_pairs.append((user_id, label)) # TODO: Why are we using tuples instead of DTOs? here?
+            pairs.append(
+                AddressLookupDTO(
+                    user_id=user_id,
+                    label=label,
+                    pincode=pincode,
+                )
+            )
 
-        return user_label_pairs
-
-    def _validate_existing_addresses(self, user_label_pairs: List[tuple]):
-        # TODO: This logic seems wrong or in appropriate in this context so plz do provide clarification
-
-        existing_addresses = self.address_storage.get_existing_addresses(
-            user_label_pairs=user_label_pairs
-        )
-
-        if existing_addresses:
-            raise AddressAlreadyExists(addresses=existing_addresses)
+        return pairs
 
     @staticmethod
-    def _validate_duplicate_addresses(user_label_pairs: List[tuple]):
-        # TODO: Wouldn't duplicate means adding the same address again instead of the label
-        
+    def _validate_duplicate_addresses(
+        pairs: List[AddressLookupDTO],
+    ):
         seen = set()
         duplicates = []
 
-        for user_id, label in user_label_pairs:
-            if (user_id, label) in seen:
-                duplicates.append((user_id, label))
-            seen.add((user_id, label))
+        for pair in pairs:
+            key = (pair.user_id, pair.label, pair.pincode)
+            if key in seen:
+                duplicates.append(pair)
+            seen.add(key)
 
         if duplicates:
             raise DuplicateAddresses(addresses=duplicates)
+
+    def _split_new_and_existing(
+        self,
+        address_dtos: List[CreateAddressDTO],
+        pairs: List[AddressLookupDTO],
+    ) -> tuple[List[CreateAddressDTO], List[UpdateAddressDTO]]:
+
+        existing_addresses = self.address_storage.get_existing_addresses(pairs=pairs)
+
+        existing_lookup = {
+            (addr.user_id, addr.label, addr.pincode): addr.address_id
+            for addr in existing_addresses
+        }
+
+        to_create = []
+        to_update = []
+
+        for dto in address_dtos:
+            key = (dto.user_id, dto.label, dto.pincode)
+            if key in existing_lookup:
+                address_id = existing_lookup[key]
+                update_dto = self._build_update_address_dto(
+                    address_dto=dto,
+                    id=address_id,
+                )
+                to_update.append(update_dto)
+            else:
+                to_create.append(dto)
+
+        return to_create, to_update
+
+    @staticmethod
+    def _build_update_address_dto(
+        address_dto: CreateAddressDTO, id: int
+    ) -> UpdateAddressDTO:
+        return UpdateAddressDTO(
+            id=id,
+            user_id=address_dto.user_id,
+            label=address_dto.label,
+            pincode=address_dto.pincode,
+            full_address=address_dto.full_address,
+            is_default=address_dto.is_default,
+            city=address_dto.city,
+        )

@@ -1,7 +1,8 @@
 import datetime
 from typing import List, Optional
 
-# TODO: dead commented import — either use timezone (recommended) or remove this line.
+from django.utils import timezone
+
 # from django.utils import timezone
 
 from restaurants.interactors.dtos import (
@@ -17,6 +18,7 @@ from restaurants.exception.custom_exceptions import (
     InvalidTimingRange,
     RestaurantTimingNotFound,
     UserNotRestaurantOwner,
+    InvalidDayOfWeek,
 )
 
 
@@ -51,7 +53,6 @@ class TimingMixin:
     def validate_restaurant_timing_within_range(
         open_time: datetime.time, close_time: datetime.time
     ):
-        # TODO: this rejects legit overnight ranges (e.g., open 22:00 close 02:00) but _check_is_open supports them — conflicting assumptions.
         if open_time > close_time:
             raise InvalidTimingRange(open_time=open_time, close_time=close_time)
 
@@ -75,16 +76,14 @@ class TimingMixin:
                 actual_open_time=actual_open_time, close_time=close_time
             )
 
-    def validate_open_time(
-        self, actual_close_time: datetime.time, open_time: datetime.time
-    ):
+    @staticmethod
+    def validate_open_time(actual_close_time: datetime.time, open_time: datetime.time):
 
         if open_time >= actual_close_time:
             raise InvalidTimingRange(open_time=open_time, close_time=actual_close_time)
 
-    def validate_close_time(
-        self, actual_open_time: datetime.time, close_time: datetime.time
-    ):
+    @staticmethod
+    def validate_close_time(actual_open_time: datetime.time, close_time: datetime.time):
 
         if close_time <= actual_open_time:
             raise InvalidTimingRange(open_time=actual_open_time, close_time=close_time)
@@ -96,8 +95,7 @@ class TimingMixin:
         review_summaries: List[RestaurantReviewSummaryDTO],
     ) -> List[BrowseRestaurantDTO]:
 
-        # TODO: datetime.now() is naive — despite USE_TZ=True this returns local server time. Should use timezone.localtime().
-        now = datetime.datetime.now()
+        now = timezone.localtime()
         day_of_week = now.isoweekday()
         current_time = now.time()
         review_summary_map = {
@@ -139,11 +137,10 @@ class TimingMixin:
         if not timing or not timing.open_time or not timing.close_time:
             return False
 
-        # TODO: inclusive on both ends means close_time matches twice on overnight boundary. Use [open, close) for clarity.
         if timing.open_time < timing.close_time:
             return timing.open_time <= current_time <= timing.close_time
         else:
-            return current_time >= timing.open_time or current_time <= timing.close_time
+            return current_time >= timing.open_time or current_time < timing.close_time
 
     @staticmethod
     def _build_browse_restaurant_dto(
@@ -164,3 +161,8 @@ class TimingMixin:
             is_open=is_open,
             cuisine_type=restaurant.cuisine_type,
         )
+
+    @staticmethod
+    def validate_day_of_week(day_of_week: int) -> None:
+        if day_of_week < 0 or day_of_week > 7:
+            raise InvalidDayOfWeek(day_of_week=day_of_week)

@@ -1,12 +1,17 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
-from accounts.interactors.dtos import CreateAddressDTO, AddressDTO
+from accounts.interactors.dtos import (
+    CreateAddressDTO,
+    AddressDTO,
+    AddressLookupDTO,
+    UpdateAddressDTO,
+)
 
 
 class AddressStorageInterface(ABC):
     @abstractmethod
-    def get_existing_addresses(self, user_label_pairs: List[tuple]) -> List[tuple]:
+    def get_existing_addresses(self, pairs: List[AddressLookupDTO]) -> List[AddressDTO]:
         pass
 
     @abstractmethod
@@ -14,10 +19,13 @@ class AddressStorageInterface(ABC):
         pass
 
     @abstractmethod
-    # TODO: implementation returns Optional[AddressDTO] but signature is non-optional — interface lies.
-    def get_address_by_id(self, address_id: int) -> AddressDTO:
+    def get_address_by_id(self, address_id: int, user_id: str) -> Optional[AddressDTO]:
         pass
 
     @abstractmethod
     def get_user_addresses(self, user_id: str) -> List[AddressDTO]:
+        pass
+
+    @abstractmethod
+    def update_bulk_addresses(self, address_dtos: List[UpdateAddressDTO]):
         pass

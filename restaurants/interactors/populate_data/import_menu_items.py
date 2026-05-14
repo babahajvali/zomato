@@ -1,6 +1,8 @@
+from decimal import Decimal
 from typing import List
 import json
 
+from restaurants.constants.enums import Category
 from restaurants.interactors.dtos import CreateMenuItemDTO
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
     RestaurantStorageInterface,
@@ -22,7 +24,6 @@ class ImportMenuItems:
 
         menu_items_dto = self._build_menu_item_dtos(rows=rows)
 
-        # TODO: restaurant_id=restaurant_ids[0] hardcodes the first row's restaurant for all rows — multi-restaurant CSVs are silently wrong. The DTOs already carry per-row restaurant_id; drop the param.
         created_items = self.restaurant_storage.create_menu_items(
             menu_items_dto, restaurant_id=restaurant_ids[0]
         )
@@ -69,13 +70,10 @@ class ImportMenuItems:
                 restaurant_id=row["restaurant"],
                 name=row["name"],
                 description=row.get("description"),
-                # TODO: price is a CSV string but DTO declares Decimal — cast with Decimal(row["price"]).
-                price=row["price"],
-                # TODO: category passed as raw string but DTO declares Category enum — storage compensates with hasattr(), which is a code smell.
-                category=row["category"],
-                # TODO: case-sensitive "True" match — import_restaurants uses .strip().lower() == "true". Be consistent.
-                is_veg=row.get("is_veg") == "True",
-                is_available=row.get("is_available", "True") == "True",
+                price=Decimal(row["price"]),
+                category=Category[row["category"]],
+                is_veg=(row.get("is_veg", "").strip().lower() == "true"),
+                is_available=(row.get("is_available", "True").strip().lower() == "true"),
                 preparation_time_in_minutes=int(row["preparation_time_in_minutes"]),
                 tags=json.loads(row["tags"]) if row.get("tags") else [],
             )

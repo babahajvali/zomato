@@ -1,23 +1,8 @@
 {
-  "errors": [
-    {
-      "message": "Cannot query field 'createdAt' on type 'OwnerRestaurantType'.",
-      "locations": [
-        {
-          "line": 15,
-          "column": 13
-        }
-      ]
-    },
-    {
-      "message": "Cannot query field 'updatedAt' on type 'OwnerRestaurantType'.",
-      "locations": [
-        {
-          "line": 16,
-          "column": 13
-        }
-      ]
+  "data": {
+    "getOwnerRestaurants": {
+      "__typename": "OwnerRestaurantsType",
+      "restaurants": []
     }
-  ],
-  "data": null
+  }
 }

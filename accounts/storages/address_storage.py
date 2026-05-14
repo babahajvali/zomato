@@ -1,11 +1,12 @@
 from typing import List, Optional
 
+from django.db import transaction
 from django.db.models import Q
 
 from accounts.interactors.storage_interface.address_storage_interface import (
     AddressStorageInterface,
 )
-from accounts.interactors.dtos import CreateAddressDTO, AddressDTO
+from accounts.interactors.dtos import CreateAddressDTO, AddressDTO, AddressLookupDTO
 from accounts.models import Address
 
 
@@ -18,11 +19,11 @@ class AddressStorage(AddressStorageInterface):
             user_id=address_obj.user_id,
             full_address=address_obj.full_address,
             city=address_obj.city,
-            pincode=address_obj.pin_code,
+            pincode=address_obj.pincode,
             is_default=address_obj.is_default,
         )
 
-    # TODO: bulk_create not wrapped in transaction.atomic — partial failures leave inconsistent state.
+    @transaction.atomic
     def create_bulk_addresses(self, address_dtos: List[CreateAddressDTO]):
         addresses = []
 
@@ -32,7 +33,7 @@ class AddressStorage(AddressStorageInterface):
                 label=dto.label,
                 full_address=dto.full_address,
                 city=dto.city,
-                pin_code=dto.pincode,
+                pincode=dto.pincode,
                 is_default=dto.is_default,
             )
             addresses.append(address)
@@ -41,27 +42,66 @@ class AddressStorage(AddressStorageInterface):
 
         return created_addresses
 
-    # TODO: builds an unbounded Q OR chain — large CSVs hit SQL parameter limits. Prefilter with user_id__in / label__in then dedupe in Python.
-    def get_existing_addresses(self, user_label_pairs: List[tuple]) -> List[tuple]:
+    def get_existing_addresses(self, pairs: List[AddressLookupDTO]) -> List[AddressDTO]:
+
+        if not pairs:
+            return []
+
         query = Q()
+        for pair in pairs:
+            query |= Q(
+                user_id=pair.user_id,
+                label=pair.label,
+                pincode=pair.pincode,
+            )
 
-        for user_id, label in user_label_pairs:
-            query |= Q(user_id=user_id, label=label)
+        addresses = Address.objects.filter(query)
 
-        return list(Address.objects.filter(query).values_list("user_id", "label"))
+        return [self._convert_to_address_dto(address_obj=addr) for addr in addresses]
 
-    def get_address_by_id(self, address_id: int) -> Optional[AddressDTO]:
-        address_obj = Address.objects.filter(id=address_id).first()
+    def get_address_by_id(self, address_id: int, user_id: str) -> Optional[AddressDTO]:
+        address_obj = Address.objects.filter(id=address_id, user_id=user_id).first()
 
         if address_obj is None:
             return None
+
         return self._convert_to_address_dto(address_obj=address_obj)
 
     def get_user_addresses(self, user_id: str) -> List[AddressDTO]:
-        # TODO: no .order_by() — result order is DB-implementation defined and will flake as data grows.
-        address_objs = Address.objects.filter(user_id=user_id)
+        address_objs = Address.objects.filter(user_id=user_id).order_by("-created_at")
 
         return [
             self._convert_to_address_dto(address_obj=address_obj)
             for address_obj in address_objs
         ]
+
+    def update_bulk_addresses(self, address_dtos: List[CreateAddressDTO]):
+
+        addresses = []
+
+        for dto in address_dtos:
+            address = Address(
+                id=dto.id,
+                user_id=dto.user_id,
+                label=dto.label,
+                full_address=dto.full_address,
+                city=dto.city,
+                pincode=dto.pincode,
+                is_default=dto.is_default,
+            )
+
+            addresses.append(address)
+
+        Address.objects.bulk_update(
+            addresses,
+            [
+                "user_id",
+                "label",
+                "full_address",
+                "city",
+                "pincode",
+                "is_default",
+            ],
+        )
+
+        return addresses

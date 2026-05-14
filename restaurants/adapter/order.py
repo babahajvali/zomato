@@ -8,15 +8,13 @@ from restaurants.interactors.dtos import (
     PeakHourDTO,
     TopSellingItemDTO,
     RestaurantOrderStatsDTO,
+    MenuItemOrderStatsDTO,
 )
 
 
 class OrderAdapter:
-    # TODO: a fresh ServiceInterface on every property access defeats any caching inside. Instantiate once in __init__.
-    @property
-    def interface(self):
-
-        return ServiceInterface()
+    def __init__(self):
+        self.interface = ServiceInterface()
 
     def get_restaurant_orders_summary(
         self, restaurant_id: str, date_from: date, date_to: date
@@ -56,4 +54,12 @@ class OrderAdapter:
 
         return self.interface.get_user_restaurants_stat(
             restaurant_ids=restaurant_ids, user_id=user_id
+        )
+
+    def get_menu_item_order_stats(
+        self, menu_item_ids: List[str], user_id: str
+    ) -> List[MenuItemOrderStatsDTO]:
+
+        return self.interface.get_menu_item_order_stats(
+            menu_item_ids=menu_item_ids, user_id=user_id
         )

@@ -11,19 +11,17 @@ from utils.uuid_util import generate_uuid
 
 
 class Restaurant(models.Model):
-    # TODO: use UUIDField, not CharField(36).
     id = models.CharField(
         max_length=36, default=uuid.uuid4, editable=False, primary_key=True
     )
     name = models.CharField(max_length=255)
-    description = models.TextField()
-    # TODO: owner_id is the hot filter in get_owner_restaurants — needs db_index=True.
+    description = models.TextField(null=True, blank=True)
     owner_id = models.CharField(max_length=255)
     cuisine_type = models.CharField(
         max_length=255, choices=CuisineType.get_list_of_tuples()
     )
     address = models.TextField()
-    pin_code = models.CharField(max_length=10)
+    pin_code = models.CharField(max_length=6)
     is_veg_only = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -33,8 +31,11 @@ class Restaurant(models.Model):
         return self.name
 
     class Meta:
-        # TODO: browse also filters by pin_code and orders by name — consider compound indexes (is_deleted, pin_code, name) and (is_deleted, cuisine_type, name).
-        indexes = [models.Index(fields=["is_deleted", "cuisine_type"])]
+        indexes = [
+            models.Index(fields=["is_deleted", "cuisine_type"]),
+            models.Index(fields=["is_deleted", "pin_code", "name"]),
+            models.Index(fields=["is_deleted", "cuisine_type", "name"]),
+        ]
 
 
 class MenuItem(models.Model):
@@ -55,7 +56,13 @@ class MenuItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # TODO: no unique constraint on (restaurant, name) — duplicate menu items allowed.
-
     def __str__(self):
         return self.name
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["restaurant", "name"],
+                name="unique_menu_item_per_restaurant",
+            )
+        ]

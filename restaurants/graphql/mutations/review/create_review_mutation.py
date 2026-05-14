@@ -51,6 +51,7 @@ class CreateReviewMutation(graphene.Mutation):
                 customer_id=result.customer_id,
                 rating=result.rating,
                 review=result.review,
+                created_at=result.created_at,
             )
 
         except custom_exceptions.RestaurantNotFound as e:

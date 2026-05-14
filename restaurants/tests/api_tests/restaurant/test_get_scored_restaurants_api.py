@@ -1,4 +1,4 @@
-from datetime import datetime, time
+from datetime import time
 
 import pytest
 
@@ -31,7 +31,7 @@ class TestGetScoredRestaurantsApi(BaseGetScoredRestaurantsTestCase):
         RestaurantTimingFactory(
             id=1,
             restaurant=restaurant,
-            day_of_week=datetime.now().isoweekday(),
+            day_of_week=1,
             open_time=time(0, 0),
             close_time=time(23, 59),
         )

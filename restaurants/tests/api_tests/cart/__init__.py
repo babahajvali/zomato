@@ -25,6 +25,11 @@ class BaseUpdateCartItemTestCase(GraphQLBaseTestCase):
           __typename
           menuItemId
         }
+        ... on CartNotBelongsToUser{
+          __typename
+          cartId
+          userId
+        }
       }
     }
     """
@@ -43,6 +48,15 @@ class BaseRemoveCartItemTestCase(GraphQLBaseTestCase):
           __typename
           cartItemId
         }
+        ... on CartNotFound {
+          __typename
+          cartId
+        }
+        ... on CartNotBelongsToUser {
+          __typename
+          cartId
+          userId
+        }
       }
     }
     """
@@ -60,6 +74,11 @@ class BaseClearCartItemsTestCase(GraphQLBaseTestCase):
         ... on CartNotFound {
           __typename
           cartId
+        }
+        ... on CartNotBelongsToUser {
+        __typename
+        cartId
+        userId
         }
       }
     }
@@ -83,6 +102,11 @@ class BaseGetCartItemsTestCase(GraphQLBaseTestCase):
         ... on CartNotFound {
           __typename
           cartId
+        }
+        ... on CartNotBelongsToUser {
+        __typename
+        cartId
+        userId
         }
       }
     }

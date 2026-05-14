@@ -1,7 +1,11 @@
 import graphene
 
 from restaurants.exception import custom_exceptions
-from restaurants.graphql.types.error_types import CartItemNotFound
+from restaurants.graphql.types.error_types import (
+    CartItemNotFound,
+    CartNotBelongsToUser,
+    CartNotFound,
+)
 from restaurants.graphql.types.input_types import RemoveCartItemInputParams
 from restaurants.graphql.types.response_types import RemoveCartItemResponse
 from restaurants.graphql.types.types import RemoveCartItemSuccessType
@@ -27,11 +31,16 @@ class RemoveCartItemMutation(graphene.Mutation):
         )
 
         try:
-            # TODO: cart_item_id is client-supplied with no ownership check — any user can remove any item from any cart.
-            interactor.remove_cart_item(cart_item_id=params.cart_item_id)
+            interactor.remove_cart_item(
+                cart_item_id=params.cart_item_id, user_id=info.context.user_id
+            )
 
             return RemoveCartItemSuccessType(
                 success=True, cart_item_id=params.cart_item_id
             )
         except custom_exceptions.CartItemNotFound as e:
             return CartItemNotFound(cart_item_id=e.cart_item_id)
+        except custom_exceptions.CartNotBelongsToUser as e:
+            return CartNotBelongsToUser(user_id=e.user_id, cart_id=e.cart_id)
+        except custom_exceptions.CartNotFound as e:
+            return CartNotFound(cart_id=e.cart_id)

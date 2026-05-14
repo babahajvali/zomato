@@ -2,10 +2,9 @@ from unittest.mock import create_autospec, patch
 
 import pytest
 
-from restaurants.exception.custom_exceptions import (
-    RestaurantAlreadyExists,
-    DuplicateRestaurants,
-)
+from restaurants.constants.enums import CuisineType
+from restaurants.exception.custom_exceptions import DuplicateRestaurants
+from restaurants.interactors.dtos import UpdateRestaurantDTO
 from restaurants.interactors.populate_data.import_restaurants import (
     ImportRestaurants,
 )
@@ -13,6 +12,7 @@ from restaurants.interactors.storage_interface.restaurant_storage_interface impo
     RestaurantStorageInterface,
 )
 from restaurants.tests.factories.interactor_factories import CreateRestaurantDTOFactory
+from restaurants.tests.factories.interactor_factories import RestaurantDTOFactory
 
 
 READ_CSV = "restaurants.interactors.populate_data.import_restaurants.read_csv"
@@ -23,7 +23,7 @@ class TestImportRestaurants:
     def setup_method(self):
         self.restaurant_storage = create_autospec(RestaurantStorageInterface)
         self.interactor = ImportRestaurants(
-            restaurant_storage_interface=self.restaurant_storage,
+            restaurant_storage=self.restaurant_storage,
         )
 
     @patch(VALIDATE_ROW)
@@ -56,12 +56,13 @@ class TestImportRestaurants:
         expected_result = ["created-restaurants"]
         mock_read_csv.return_value = rows
 
-        self.restaurant_storage.get_existing_restaurants.return_value = []
+        self.restaurant_storage.get_existing_restaurant_dtos.return_value = []
         self.restaurant_storage.create_bulk_restaurants.return_value = expected_result
+        self.restaurant_storage.update_bulk_restaurants.return_value = []
 
         result = self.interactor.import_restaurants(file_path="restaurants.csv")
 
-        assert result == expected_result
+        assert result == "1 restaurants created, 0 restaurants updated"
 
     @patch(VALIDATE_ROW)
     @patch(READ_CSV)
@@ -96,19 +97,21 @@ class TestImportRestaurants:
             self.interactor.import_restaurants(file_path="restaurants.csv")
 
         assert exc.value.names == ["Spice Hub"]
-        self.restaurant_storage.get_existing_restaurants.assert_not_called()
+        self.restaurant_storage.get_existing_restaurant_dtos.assert_not_called()
         self.restaurant_storage.create_bulk_restaurants.assert_not_called()
 
     @patch(VALIDATE_ROW)
     @patch(READ_CSV)
-    def test_import_restaurants_already_exists(self, mock_read_csv, mock_validate_row):
+    def test_import_restaurants_updates_existing(
+        self, mock_read_csv, mock_validate_row
+    ):
         rows = [
             {
                 "id": "restaurant-1",
                 "name": " Spice Hub ",
                 "owner_id": "00000000-0000-0000-0000-000000000001",
                 "description": "Popular spot",
-                "cuisine_type": "Indian",
+                "cuisine_type": CuisineType.NORTH_INDIAN,
                 "address": "12 Main Road",
                 "pin_code": "560001",
                 "is_veg_only": "true",
@@ -117,10 +120,28 @@ class TestImportRestaurants:
         ]
         mock_read_csv.return_value = rows
 
-        self.restaurant_storage.get_existing_restaurants.return_value = ["Spice Hub"]
+        self.restaurant_storage.get_existing_restaurant_dtos.return_value = [
+            RestaurantDTOFactory(id="existing-restaurant-id", name="Spice Hub")
+        ]
+        self.restaurant_storage.create_bulk_restaurants.return_value = []
+        self.restaurant_storage.update_bulk_restaurants.return_value = ["updated"]
 
-        with pytest.raises(RestaurantAlreadyExists) as exc:
-            self.interactor.import_restaurants(file_path="restaurants.csv")
+        result = self.interactor.import_restaurants(file_path="restaurants.csv")
 
-        assert exc.value.names == ["Spice Hub"]
+        assert result == "0 restaurants created, 1 restaurants updated"
         self.restaurant_storage.create_bulk_restaurants.assert_not_called()
+        self.restaurant_storage.update_bulk_restaurants.assert_called_once_with(
+            [
+                UpdateRestaurantDTO(
+                    id="existing-restaurant-id",
+                    name="Spice Hub",
+                    owner_id="00000000-0000-0000-0000-000000000001",
+                    description="Popular spot",
+                    cuisine_type=CuisineType.NORTH_INDIAN,
+                    address="12 Main Road",
+                    pin_code="560001",
+                    is_veg_only=True,
+                    is_deleted=False,
+                )
+            ]
+        )

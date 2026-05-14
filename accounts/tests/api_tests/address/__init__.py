@@ -4,7 +4,7 @@ from utils.test_utils import GraphQLBaseTestCase
 class BaseGetUserAddressesTestCase(GraphQLBaseTestCase):
     QUERY = """
     query GetUserAddresses {
-      getUserAddress {
+      getUserAddresses {
         ... on UserAddressesType {
           __typename
           userId

@@ -22,6 +22,7 @@ from restaurants.interactors.dtos import (
     ReviewDTO,
     RestaurantReviewSummaryDTO,
     RestaurantReviewDTO,
+    RatingSummaryDTO,
 )
 
 
@@ -78,6 +79,7 @@ class UpdateMenuItemDTOFactory(factory.Factory):
 
     menu_item_id = factory.Sequence(lambda n: f"item-{n}")
     name = factory.Sequence(lambda n: f"Updated Item {n}")
+    description = factory.Faker("sentence")
     is_available = True
     preparation_time_in_minutes = 20
     price = 299.0
@@ -228,3 +230,14 @@ class RestaurantReviewDTOFactory(factory.Factory):
     restaurant_id = factory.Sequence(lambda n: f"restaurant-{n}")
     avg_rating = 4.5
     total_reviews = 2
+
+
+class RatingSummaryDTOFactory(factory.Factory):
+    class Meta:
+        model = RatingSummaryDTO
+
+    average_rating = 4.5
+    total_reviews = 2
+    distribution = factory.LazyFunction(
+        lambda: {"1": 0, "2": 0, "3": 0, "4": 1, "5": 1}
+    )

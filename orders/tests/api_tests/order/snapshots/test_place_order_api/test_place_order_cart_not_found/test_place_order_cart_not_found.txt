@@ -1,8 +1,0 @@
-{
-  "data": {
-    "placeOrder": {
-      "__typename": "CartIsEmpty",
-      "cartId": "f4e8a2aa-a3ab-458e-9e15-5f6d1f1b4aa2"
-    }
-  }
-}

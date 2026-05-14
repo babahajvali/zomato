@@ -16,6 +16,9 @@ from restaurants.graphql.types.error_types import (
     InvalidDateRange,
     InvalidOffset,
     InvalidLimit,
+    CartNotBelongsToUser,
+    InvalidDayOfWeek,
+    UnauthorizedFound,
 )
 from restaurants.graphql.types.types import (
     RestaurantTimingType,
@@ -35,6 +38,7 @@ from restaurants.graphql.types.types import (
     OwnerRestaurantsType,
     CustomerCartIdType,
     ScoredRestaurantsType,
+    ScoredItemsType,
 )
 from utils.graphql_types import UserNotRestaurantOwner
 
@@ -96,7 +100,13 @@ class ViewRestaurantMenuResponse(graphene.Union):
 
 class UpdateCartItemResponse(graphene.Union):
     class Meta:
-        types = (CartItemType, CartNotFound, MenuItemNotFound, InvalidQuantity)
+        types = (
+            CartItemType,
+            CartNotFound,
+            MenuItemNotFound,
+            InvalidQuantity,
+            CartNotBelongsToUser,
+        )
 
 
 class RemoveCartItemResponse(graphene.Union):
@@ -104,23 +114,19 @@ class RemoveCartItemResponse(graphene.Union):
         types = (
             RemoveCartItemSuccessType,
             CartItemNotFound,
+            CartNotFound,
+            CartNotBelongsToUser,
         )
 
 
 class ClearCartItemsResponse(graphene.Union):
     class Meta:
-        types = (
-            ClearCartItemsSuccessType,
-            CartNotFound,
-        )
+        types = (ClearCartItemsSuccessType, CartNotFound, CartNotBelongsToUser)
 
 
 class GetCartItemsResponse(graphene.Union):
     class Meta:
-        types = (
-            CartItemsType,
-            CartNotFound,
-        )
+        types = (CartItemsType, CartNotFound, CartNotBelongsToUser)
 
 
 class CreateReviewResponse(graphene.Union):
@@ -150,6 +156,7 @@ class CreateRestaurantTimingResponse(graphene.Union):
             RestaurantNotFound,
             UserNotRestaurantOwner,
             InvalidTimingRange,
+            InvalidDayOfWeek,
         )
 
 
@@ -174,12 +181,12 @@ class DeleteMenuItemResponse(graphene.Union):
 # TODO: single-type Unions defeat the point — return the type directly or add error types.
 class GetUserRestaurantReviewResponse(graphene.Union):
     class Meta:
-        types = (ReviewType,)
+        types = (ReviewType, RestaurantNotFound)
 
 
 class GetOwnerRestaurantsResponse(graphene.Union):
     class Meta:
-        types = (OwnerRestaurantsType,)
+        types = (OwnerRestaurantsType, UnauthorizedFound)
 
 
 class GetCustomerCartIdResponse(graphene.Union):
@@ -190,3 +197,11 @@ class GetCustomerCartIdResponse(graphene.Union):
 class GetuserScoredRestaurantsResponse(graphene.Union):
     class Meta:
         types = (ScoredRestaurantsType, InvalidOffset, InvalidLimit)
+
+
+class GetScoredItemsResponse(graphene.Union):
+    class Meta:
+        types = (
+            ScoredItemsType,
+            RestaurantNotFound,
+        )

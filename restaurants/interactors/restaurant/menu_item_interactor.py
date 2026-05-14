@@ -86,6 +86,7 @@ class MenuItemInteractor(RestaurantMixin):
                 update_menu_item_dto.tags is None,
                 update_menu_item_dto.is_available is None,
                 update_menu_item_dto.preparation_time_in_minutes is None,
+                update_menu_item_dto.description is None,
             ]
         )
 

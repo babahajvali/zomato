@@ -1,0 +1,20 @@
+{
+  "data": {
+    "getScoredRestaurantItems": {
+      "__typename": "ScoredItemsType",
+      "menuItems": [
+        {
+          "menuItemId": "49bb508e-c6d1-4882-95fd-1991d103f7de",
+          "restaurantId": "49bb508e-c6d1-4882-95fd-1991d103f7df",
+          "name": "Paneer Tikka",
+          "price": "200.00",
+          "isAvailable": true,
+          "totalOrdersCount": 0,
+          "recentlyOrderCount": 0,
+          "score": "0.3500",
+          "averageRating": "5.00"
+        }
+      ]
+    }
+  }
+}

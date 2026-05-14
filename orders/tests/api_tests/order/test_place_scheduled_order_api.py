@@ -84,7 +84,7 @@ class TestPlaceScheduledOrderApi(BasePlaceScheduledOrderTestCase):
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
+        address = AddressFactory(id=1, user=user, pincode="500001")
         DeliveryZoneFactory(
             id=1,
             restaurant=restaurant,
@@ -182,7 +182,7 @@ class TestPlaceScheduledOrderApi(BasePlaceScheduledOrderTestCase):
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         restaurant = RestaurantFactory(id=restaurant_id)
-        address = AddressFactory(id=1, user=user, pin_code="500001")
+        address = AddressFactory(id=1, user=user, pincode="500001")
         DeliveryZoneFactory(
             id=1,
             restaurant=restaurant,

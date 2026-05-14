@@ -98,6 +98,7 @@ class BaseCreateMenuItemsTestCase(GraphQLBaseTestCase):
     }
     """
 
+
 class BaseUpdateMenuItemTestCase(GraphQLBaseTestCase):
     QUERY = """
     mutation UpdateMenuItem($params: UpdateMenuItemInputParams!) {
@@ -126,6 +127,7 @@ class BaseUpdateMenuItemTestCase(GraphQLBaseTestCase):
       }
     }
     """
+
 
 class BaseDeleteMenuItemTestCase(GraphQLBaseTestCase):
     QUERY = """
@@ -205,9 +207,10 @@ class BaseGetOwnerRestaurantsTestCase(GraphQLBaseTestCase):
             pinCode
             isVegOnly
             isDeleted
-            createdAt
-            updatedAt
           }
+        }
+        ... on UnauthorizedFound {
+        ownerId
         }
       }
     }
@@ -239,6 +242,33 @@ class BaseGetScoredRestaurantsTestCase(GraphQLBaseTestCase):
         ... on InvalidOffset {
           __typename
           offset
+        }
+      }
+    }
+    """
+
+
+class BaseGetScoredRestaurantItemsTestCase(GraphQLBaseTestCase):
+    QUERY = """
+    query GetScoredRestaurantItems($params: GetScoredRestaurantItemsInputParams!) {
+      getScoredRestaurantItems(params: $params) {
+        ... on ScoredItemsType {
+          __typename
+          menuItems {
+            menuItemId
+            restaurantId
+            name
+            price
+            isAvailable
+            totalOrdersCount
+            recentlyOrderCount
+            score
+            averageRating
+          }
+        }
+        ... on RestaurantNotFound {
+          __typename
+          restaurantId
         }
       }
     }

@@ -5,6 +5,7 @@ from restaurants.graphql.types.error_types import (
     CartNotFound,
     MenuItemNotFound,
     InvalidQuantity,
+    CartNotBelongsToUser,
 )
 from restaurants.graphql.types.input_types import UpdateCartItemInputParams
 from restaurants.graphql.types.response_types import UpdateCartItemResponse
@@ -36,6 +37,7 @@ class UpdateCartItemMutation(graphene.Mutation):
                 cart_id=params.cart_id,
                 menu_item_id=params.menu_item_id,
                 quantity=params.quantity,
+                user_id=info.context.user_id,
             )
 
             return CartItemType(
@@ -52,3 +54,5 @@ class UpdateCartItemMutation(graphene.Mutation):
             return MenuItemNotFound(menu_item_id=e.menu_item_id)
         except custom_exceptions.InvalidQuantity as e:
             return InvalidQuantity(quantity=e.quantity)
+        except custom_exceptions.CartNotBelongsToUser as e:
+            return CartNotBelongsToUser(cart_id=e.cart_id, user_id=e.user_id)
