@@ -6,11 +6,11 @@ from accounts.interactors.address.address_interactor import (
 )
 from accounts.storages.address_storage import AddressStorage
 from accounts.storages.user_storage import UserStorage
+from utils.graphql_types import UnauthorizedFound
 
 
 def get_user_addresses_resolver(root, info):
 
-    # TODO: storages instantiated inline — should be injected via ServiceInterface for testability.
     user_storage = UserStorage()
     address_storage = AddressStorage()
 
@@ -19,8 +19,11 @@ def get_user_addresses_resolver(root, info):
     )
 
     try:
-        # TODO: no None check on user_id — anonymous request reaches validate_user_exists and surfaces a misleading UserNotFound.
         user_id = info.context.user_id
+
+        if user_id is None:
+            return UnauthorizedFound(user_id=user_id)
+
         result = interactor.get_user_addresses(user_id=user_id)
 
         user_addresses = [

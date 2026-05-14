@@ -3,6 +3,8 @@ from restaurants.exception import custom_exceptions
 from restaurants.graphql.types.error_types import (
     InvalidCuisineTypeException,
     InvalidMinRating,
+    InvalidOffset,
+    InvalidLimit,
 )
 from restaurants.graphql.types.types import BrowseRestaurantType, BrowseRestaurantsType
 from restaurants.interactors.dtos import BrowseRestaurantFiltersDTO
@@ -58,3 +60,7 @@ def get_browse_restaurants_resolver(root, info, params=None):
         return InvalidCuisineTypeException(cuisine_type=str(exc.cuisine_type))
     except custom_exceptions.InvalidMinRating as exc:
         return InvalidMinRating(min_rating=exc.min_rating)
+    except custom_exceptions.InvalidOffsetFound as exc:
+        return InvalidOffset(offset=exc.offset)
+    except custom_exceptions.InvalidLimitFound as exc:
+        return InvalidLimit(limit=exc.limit)

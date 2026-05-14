@@ -7,6 +7,8 @@ from restaurants.exception.custom_exceptions import (
     RestaurantNotFound,
     InvalidMinRating,
     MenuItemNotFound,
+    InvalidLimitFound,
+    InvalidOffsetFound,
 )
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
     RestaurantStorageInterface,
@@ -61,3 +63,12 @@ class RestaurantMixin:
             raise MenuItemNotFound(menu_item_id=menu_item_id)
 
         return menu_item_dto
+
+    @staticmethod
+    def validate_limit_offset(limit: int, offset: int):
+
+        if limit < 0:
+            raise InvalidLimitFound(limit=limit)
+
+        if offset < 0:
+            raise InvalidOffsetFound(offset=offset)

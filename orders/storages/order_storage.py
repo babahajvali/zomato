@@ -22,7 +22,7 @@ from orders.app_service.dtos import (
     RestaurantOrderStatsDTO,
     MenuItemOrderStatsDTO,
 )
-from orders.constants.constants import TOP_SELLING_ITEMS_LIMIT
+from orders.constants.constants import TOP_SELLING_ITEMS_LIMIT, CANCEL_TIME
 from orders.constants.enums import OrderStatus
 from orders.interactors.dtos import (
     CreateOrderDTO,
@@ -184,11 +184,14 @@ class OrderStorage(OrderStorageInterface):
     ) -> List[OrderDTO]:
 
         today = date.today()
+        now = timezone.localtime()
+        cancellation_cutoff = now - timedelta(minutes=CANCEL_TIME)
 
         orders = (
             Order.objects.filter(
                 restaurant_id=restaurant_id,
                 created_at__date=today,
+                created_at__lte=cancellation_cutoff,
             )
             .order_by("-created_at")
             .exclude(status=OrderStatus.SCHEDULED.value)[offset : offset + limit]

@@ -38,6 +38,7 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
         filters_dto: BrowseRestaurantFiltersDTO,
     ) -> List[BrowseRestaurantDTO]:
         self._validate_filters(filters_dto=filters_dto)
+        self.validate_limit_offset(limit=filters_dto.limit, offset=filters_dto.offset)
 
         restaurants = self.restaurant_storage.get_restaurants(filters_dto=filters_dto)
 

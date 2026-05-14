@@ -18,7 +18,6 @@ from restaurants.graphql.types.error_types import (
     InvalidLimit,
     CartNotBelongsToUser,
     InvalidDayOfWeek,
-    UnauthorizedFound,
 )
 from restaurants.graphql.types.types import (
     RestaurantTimingType,
@@ -40,7 +39,7 @@ from restaurants.graphql.types.types import (
     ScoredRestaurantsType,
     ScoredItemsType,
 )
-from utils.graphql_types import UserNotRestaurantOwner
+from utils.graphql_types import UserNotRestaurantOwner, UnauthorizedFound
 
 
 class UpdateRestaurantTimingResponse(graphene.Union):
@@ -80,13 +79,14 @@ class CreateMenuItemsResponse(graphene.Union):
         )
 
 
-# TODO: no error types for invalid limit/offset (negative values silently slice to empty).
 class BrowseRestaurantsResponse(graphene.Union):
     class Meta:
         types = (
             BrowseRestaurantsType,
             InvalidCuisineTypeException,
             InvalidMinRating,
+            InvalidLimit,
+            InvalidOffset,
         )
 
 
@@ -178,7 +178,6 @@ class DeleteMenuItemResponse(graphene.Union):
         )
 
 
-# TODO: single-type Unions defeat the point — return the type directly or add error types.
 class GetUserRestaurantReviewResponse(graphene.Union):
     class Meta:
         types = (ReviewType, RestaurantNotFound)

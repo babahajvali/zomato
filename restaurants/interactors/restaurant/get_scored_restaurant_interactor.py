@@ -9,10 +9,6 @@ from restaurants.constants.constants import (
     TOTAL_REVIEWS,
     IS_OPEN,
 )
-from restaurants.exception.custom_exceptions import (
-    InvalidLimitFound,
-    InvalidOffsetFound,
-)
 from restaurants.interactors.dtos import ScoredRestaurantDTO, RestaurantDTO
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
     RestaurantStorageInterface,
@@ -37,7 +33,7 @@ class GetScoredRestaurantInteractor(RestaurantMixin):
     def get_scored_restaurant(
         self, pincode: str, limit: int, offset: int, user_id: str
     ) -> List[ScoredRestaurantDTO]:
-        self._validate_limit_offset(limit=limit, offset=offset)
+        self.validate_limit_offset(limit=limit, offset=offset)
         restaurant_dtos = self.restaurant_storage.get_delivered_pincode_restaurants(
             pincode=pincode
         )
@@ -63,15 +59,6 @@ class GetScoredRestaurantInteractor(RestaurantMixin):
         scored = self._calculate_scores(restaurants=scored)
 
         return scored[offset : offset + limit]
-
-    @staticmethod
-    def _validate_limit_offset(limit: int, offset: int):
-
-        if limit < 0:
-            raise InvalidLimitFound(limit=limit)
-
-        if offset < 0:
-            raise InvalidOffsetFound(offset=offset)
 
     def _build_scored_dtos(
         self, restaurants: List[RestaurantDTO], stats_map: dict, reviews_map: dict

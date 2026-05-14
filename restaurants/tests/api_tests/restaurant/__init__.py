@@ -210,7 +210,7 @@ class BaseGetOwnerRestaurantsTestCase(GraphQLBaseTestCase):
           }
         }
         ... on UnauthorizedFound {
-        ownerId
+        userId
         }
       }
     }

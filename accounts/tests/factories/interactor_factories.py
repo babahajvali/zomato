@@ -3,7 +3,6 @@ import factory
 from accounts.constants.enums import Role
 from accounts.interactors.dtos import (
     AddressDTO,
-    CreateAddressDTO,
     CreateUserDTO,
     UpdateUserDTO,
     UserCreateDTO,
@@ -20,19 +19,6 @@ class CreateUserDTOFactory(factory.Factory):
     email = factory.Sequence(lambda n: f"user{n}@example.com")
     phone_number = factory.Sequence(lambda n: f"900000{n:04d}")
     role = Role.CUSTOMER.value
-
-
-class CreateAddressDTOFactory(factory.Factory):
-    class Meta:
-        model = CreateAddressDTO
-
-    # TODO: `email` doesn't exist on CreateAddressDTO and required `user_id` is missing — factory breaks if called without overrides.
-    email = factory.Sequence(lambda n: f"user{n}@example.com")
-    label = factory.Sequence(lambda n: f"label-{n}")
-    full_address = factory.Faker("address")
-    city = factory.Faker("city")
-    pincode = factory.Sequence(lambda n: f"500{n:03d}")
-    is_default = False
 
 
 class UserDTOFactory(factory.Factory):

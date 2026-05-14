@@ -1,4 +1,4 @@
-from restaurants.graphql.types.error_types import UnauthorizedFound
+from utils.graphql_types import UnauthorizedFound
 from restaurants.graphql.types.types import OwnerRestaurantType, OwnerRestaurantsType
 from restaurants.interactors.restaurant.get_owner_restaurants_interactor import (
     GetOwnerRestaurantsInteractor,
@@ -7,10 +7,9 @@ from restaurants.storages.restaurant_storage import RestaurantStorage
 
 
 def get_owner_restaurants_resolver(root, info):
-    # TODO: no None check on user_id — anonymous requests via GET middleware bypass will hit this with owner_id=None.
     owner_id = info.context.user_id
     if owner_id is None:
-        return UnauthorizedFound(owner_id=owner_id)
+        return UnauthorizedFound(user_id=owner_id)
 
     restaurant_storage = RestaurantStorage()
     interactor = GetOwnerRestaurantsInteractor(restaurant_storage=restaurant_storage)

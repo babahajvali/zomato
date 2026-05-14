@@ -6,7 +6,7 @@ from restaurants.models.restaurant import Restaurant
 
 class DeliveryZone(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
-    pin_code = models.CharField(max_length=6)  # TODO: Restaurant.pin_code is max_length=10 — pick one.
+    pin_code = models.CharField(max_length=6)
     delivery_fee = models.DecimalField(
         max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
     )

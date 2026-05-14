@@ -1,10 +1,7 @@
-from datetime import timedelta
 from typing import List
 
-from django.utils import timezone
 
 from orders.adapter.restaurant import RestaurantAdapter
-from orders.constants.constants import CANCEL_TIME
 from orders.interactors.dtos import (
     OrderDTO,
     OrderSummaryDTO,
@@ -53,9 +50,6 @@ class GetRestaurantOrderInteractor(OrderMixin):
             offset=offset,
         )
 
-        # TODO: pagination is applied before this in-memory filter — page sizes will shrink unpredictably and pages can come back empty while more data exists.
-        orders = self._filter_orders_after_cancellation_window(orders)
-
         if not orders:
             return []
 
@@ -66,10 +60,9 @@ class GetRestaurantOrderInteractor(OrderMixin):
         return self._build_order_summaries(order_items=order_items, orders=orders)
 
     @staticmethod
-    # TODO: lowercase list[...] mixed with List[...] elsewhere in the same file — pick one style.
     def _build_order_summaries(
-        order_items: list[OrderItemDTO], orders: list[OrderDTO]
-    ) -> list[OrderSummaryDTO]:
+        order_items: List[OrderItemDTO], orders: List[OrderDTO]
+    ) -> List[OrderSummaryDTO]:
         items_by_order = {}
         for item in order_items:
             items_by_order.setdefault(item.order_id, []).append(item)
@@ -107,14 +100,3 @@ class GetRestaurantOrderInteractor(OrderMixin):
             )
 
         return result
-
-    @staticmethod
-    def _filter_orders_after_cancellation_window(
-        orders: List[OrderDTO],
-    ) -> List[OrderDTO]:
-
-        now = timezone.now()
-        cancellation_cutoff = now - timedelta(minutes=CANCEL_TIME)
-
-        # TODO: this looks inverted — keeps orders OLDER than CANCEL_TIME and drops new ones. Did we mean `>=`?
-        return [order for order in orders if order.placed_at <= cancellation_cutoff]

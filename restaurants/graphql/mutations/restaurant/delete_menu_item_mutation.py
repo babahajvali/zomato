@@ -1,4 +1,3 @@
-# TODO: filename typo "delete_mnu_item_mutation.py" — should be "delete_menu_item_mutation.py".
 import graphene
 
 from restaurants.exception import custom_exceptions

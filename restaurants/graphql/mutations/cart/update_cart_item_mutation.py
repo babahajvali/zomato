@@ -32,7 +32,6 @@ class UpdateCartItemMutation(graphene.Mutation):
         )
 
         try:
-            # TODO: cart_id is client-supplied with no ownership check — any user can mutate any cart.
             result = interactor.update_cart_item(
                 cart_id=params.cart_id,
                 menu_item_id=params.menu_item_id,

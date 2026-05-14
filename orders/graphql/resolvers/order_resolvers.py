@@ -69,7 +69,9 @@ def map_scheduled_orders_response(order_dtos) -> ScheduledOrdersType:
     )
 
 
-def map_scheduled_order_summary_response(order_summary_dto) -> ScheduledOrderSummaryType:
+def map_scheduled_order_summary_response(
+    order_summary_dto,
+) -> ScheduledOrderSummaryType:
     return ScheduledOrderSummaryType(
         order_id=str(order_summary_dto.order_id),
         customer_id=str(order_summary_dto.customer_id),
@@ -142,7 +144,6 @@ def get_order_resolver(root, info, params):
 
 
 def get_user_order_resolver(root, info, params):
-    # TODO: no try/except — any storage error surfaces as a GraphQL 500 instead of a typed payload.
     interactor = OrderInteractor(order_storage=OrderStorage())
     order_dtos = interactor.get_user_orders(
         user_id=info.context.user_id, limit=params.limit, offset=params.offset
@@ -159,9 +160,7 @@ def get_user_scheduled_order_resolver(root, info, params):
         offset=params.offset,
     )
 
-    return map_scheduled_order_summaries_response(
-        order_summary_dtos=order_summary_dtos
-    )
+    return map_scheduled_order_summaries_response(order_summary_dtos=order_summary_dtos)
 
 
 def get_restaurant_order_resolver(root, info, params):
