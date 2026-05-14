@@ -57,13 +57,13 @@ class ServiceInterface:
 
         return restaurant_day_timing
 
-    def get_cart_items(self, cart_id: str) -> List[CartItemDTO]:
+    def get_cart_items(self, cart_id: str, user_id: str) -> List[CartItemDTO]:
         interactor = CartItemInteractor(
             cart_storage=self.cart_storage,
             restaurant_storage=self.restaurant_storage,
         )
 
-        return interactor.get_cart_items(cart_id=cart_id)
+        return interactor.get_cart_items(cart_id=cart_id, user_id=user_id)
 
     def clear_cart_items(self, cart_id: str, user_id: str):
         interactor = CartItemInteractor(

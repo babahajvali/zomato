@@ -18,6 +18,7 @@ from restaurants.graphql.types.error_types import (
     InvalidLimit,
     CartNotBelongsToUser,
     InvalidDayOfWeek,
+    UnauthorizedFound,
 )
 from restaurants.graphql.types.types import (
     RestaurantTimingType,
@@ -98,7 +99,13 @@ class ViewRestaurantMenuResponse(graphene.Union):
 
 class UpdateCartItemResponse(graphene.Union):
     class Meta:
-        types = (CartItemType, CartNotFound, MenuItemNotFound, InvalidQuantity)
+        types = (
+            CartItemType,
+            CartNotFound,
+            MenuItemNotFound,
+            InvalidQuantity,
+            CartNotBelongsToUser,
+        )
 
 
 class RemoveCartItemResponse(graphene.Union):
@@ -106,6 +113,8 @@ class RemoveCartItemResponse(graphene.Union):
         types = (
             RemoveCartItemSuccessType,
             CartItemNotFound,
+            CartNotFound,
+            CartNotBelongsToUser,
         )
 
 
@@ -116,10 +125,7 @@ class ClearCartItemsResponse(graphene.Union):
 
 class GetCartItemsResponse(graphene.Union):
     class Meta:
-        types = (
-            CartItemsType,
-            CartNotFound,
-        )
+        types = (CartItemsType, CartNotFound, CartNotBelongsToUser)
 
 
 class CreateReviewResponse(graphene.Union):
@@ -178,7 +184,7 @@ class GetUserRestaurantReviewResponse(graphene.Union):
 
 class GetOwnerRestaurantsResponse(graphene.Union):
     class Meta:
-        types = (OwnerRestaurantsType,)
+        types = (OwnerRestaurantsType, UnauthorizedFound)
 
 
 class GetCustomerCartIdResponse(graphene.Union):

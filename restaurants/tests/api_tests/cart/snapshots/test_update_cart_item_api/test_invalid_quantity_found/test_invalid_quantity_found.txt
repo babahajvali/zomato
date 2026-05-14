@@ -1,17 +1,8 @@
 {
-  "errors": [
-    {
-      "message": "CartItemInteractor.update_cart_item() missing 1 required positional argument: 'user_id'",
-      "locations": [
-        {
-          "line": 3,
-          "column": 7
-        }
-      ],
-      "path": [
-        "updateCartItem"
-      ]
+  "data": {
+    "updateCartItem": {
+      "__typename": "InvalidQuantity",
+      "quantity": 0
     }
-  ],
-  "data": null
+  }
 }

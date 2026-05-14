@@ -45,4 +45,4 @@ class Address(models.Model):
         return self.label
 
     class Meta:
-        unique_together = ("user", "label")
+        unique_together = ("user", "label", "pincode")

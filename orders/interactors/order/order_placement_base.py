@@ -85,8 +85,13 @@ class OrderPlacementBase(PromoCodeMixin, OrderMixin):
             raise CustomerCartNotFound(customer_id=customer_id)
         return cart_id
 
-    def _get_validated_cart_items(self, cart_id: str) -> List[CartItemDTO]:
-        cart_items = self.restaurant_adapter.get_customer_cart_items(cart_id=cart_id)
+    def _get_validated_cart_items(
+        self, cart_id: str, customer_id: str
+    ) -> List[CartItemDTO]:
+        cart_items = self.restaurant_adapter.get_customer_cart_items(
+            cart_id=cart_id,
+            user_id=customer_id,
+        )
         if not cart_items:
             raise CartIsEmpty(cart_id=cart_id)
         return cart_items

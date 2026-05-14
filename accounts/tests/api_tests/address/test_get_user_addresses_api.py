@@ -41,3 +41,15 @@ class TestGetUserAddressesApi(BaseGetUserAddressesTestCase):
             snapshot=snapshot,
             user_id=user_id,
         )
+
+    def test_user_not_found(self, snapshot):
+        # Arrange
+        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
+
+        # Act & Assert
+        self.execute_schema(
+            query=self.QUERY,
+            variables={},
+            snapshot=snapshot,
+            user_id=user_id,
+        )

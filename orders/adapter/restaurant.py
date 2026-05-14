@@ -4,12 +4,10 @@ from orders.adapter.dtos import DeliveryZoneDTO, RestaurantTimingDTO, CartItemDT
 
 
 class RestaurantAdapter:
-    @property
-    def interface(self):
-
+    def __init__(self):
         from restaurants.app_service.service_interface import ServiceInterface
 
-        return ServiceInterface()
+        self.interface = ServiceInterface()
 
     def get_delivery_zone_by_restaurant_id(
         self, restaurant_id: str, pin_code: str
@@ -34,8 +32,8 @@ class RestaurantAdapter:
     def clear_customer_cart_items(self, cart_id: str, user_id: str):
         return self.interface.clear_cart_items(cart_id=cart_id, user_id=user_id)
 
-    def get_customer_cart_items(self, cart_id: str) -> List[CartItemDTO]:
-        return self.interface.get_cart_items(cart_id=cart_id)
+    def get_customer_cart_items(self, cart_id: str, user_id: str) -> List[CartItemDTO]:
+        return self.interface.get_cart_items(cart_id=cart_id, user_id=user_id)
 
     def get_restaurant_owner_id(self, restaurant_id: str):
         return self.interface.get_restaurant_owner_id(restaurant_id=restaurant_id)

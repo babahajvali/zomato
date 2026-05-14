@@ -45,7 +45,10 @@ class PlaceScheduledOrderInteractor(OrderPlacementBase):
             timeout=REDIS_LOCK_TIMEOUT_SECS,
         ):
             cart_id = self._get_validated_cart_id(customer_id=order_data.customer_id)
-            cart_items = self._get_validated_cart_items(cart_id=cart_id)
+            cart_items = self._get_validated_cart_items(
+                cart_id=cart_id,
+                customer_id=order_data.customer_id,
+            )
             items_total = self.calculate_items_total(cart_items=cart_items)
 
             self._validate_items_available(cart_items=cart_items)

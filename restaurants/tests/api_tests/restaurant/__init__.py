@@ -207,9 +207,10 @@ class BaseGetOwnerRestaurantsTestCase(GraphQLBaseTestCase):
             pinCode
             isVegOnly
             isDeleted
-            createdAt
-            updatedAt
           }
+        }
+        ... on UnauthorizedFound {
+        ownerId
         }
       }
     }

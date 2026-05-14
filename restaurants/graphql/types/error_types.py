@@ -14,6 +14,10 @@ class RestaurantNotFound(graphene.ObjectType):
     restaurant_id = graphene.String(required=True)
 
 
+class UnauthorizedFound(graphene.ObjectType):
+    owner_id = graphene.String()
+
+
 class InvalidCategories(graphene.ObjectType):
     categories = graphene.List(graphene.String, required=True)
 

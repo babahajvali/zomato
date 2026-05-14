@@ -1,5 +1,5 @@
 from restaurants.exception import custom_exceptions
-from restaurants.graphql.types.error_types import CartNotFound
+from restaurants.graphql.types.error_types import CartNotFound, CartNotBelongsToUser
 from restaurants.graphql.types.types import CartItemsType, CartItemType
 from restaurants.interactors.cart.cart_item_interactor import CartItemInteractor
 from restaurants.storages.cart_storage import CartStorage
@@ -34,3 +34,5 @@ def get_cart_items_resolver(root, info, params):
         return CartItemsType(cart_items=items)
     except custom_exceptions.CartNotFound as e:
         return CartNotFound(cart_id=e.cart_id)
+    except custom_exceptions.CartNotBelongsToUser as e:
+        return CartNotBelongsToUser(cart_id=e.cart_id, user_id=e.user_id)

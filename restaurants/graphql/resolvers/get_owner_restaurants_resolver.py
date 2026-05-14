@@ -1,3 +1,4 @@
+from restaurants.graphql.types.error_types import UnauthorizedFound
 from restaurants.graphql.types.types import OwnerRestaurantType, OwnerRestaurantsType
 from restaurants.interactors.restaurant.get_owner_restaurants_interactor import (
     GetOwnerRestaurantsInteractor,
@@ -8,7 +9,7 @@ from restaurants.storages.restaurant_storage import RestaurantStorage
 def get_owner_restaurants_resolver(root, info):
     owner_id = info.context.user_id
     if owner_id is None:
-        raise UnauthorizedException()
+        return UnauthorizedFound(owner_id=owner_id)
 
     restaurant_storage = RestaurantStorage()
     interactor = GetOwnerRestaurantsInteractor(restaurant_storage=restaurant_storage)

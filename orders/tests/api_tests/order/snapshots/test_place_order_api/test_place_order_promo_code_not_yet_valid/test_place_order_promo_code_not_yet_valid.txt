@@ -1,17 +1,8 @@
 {
-  "errors": [
-    {
-      "message": "CartItemInteractor.get_cart_items() missing 1 required positional argument: 'user_id'",
-      "locations": [
-        {
-          "line": 3,
-          "column": 7
-        }
-      ],
-      "path": [
-        "placeOrder"
-      ]
+  "data": {
+    "placeOrder": {
+      "__typename": "PromoCodeNotYetValid",
+      "code": "FUTURE_CODE"
     }
-  ],
-  "data": null
+  }
 }

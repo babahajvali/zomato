@@ -1,7 +1,11 @@
 import graphene
 
 from restaurants.exception import custom_exceptions
-from restaurants.graphql.types.error_types import CartItemNotFound
+from restaurants.graphql.types.error_types import (
+    CartItemNotFound,
+    CartNotBelongsToUser,
+    CartNotFound,
+)
 from restaurants.graphql.types.input_types import RemoveCartItemInputParams
 from restaurants.graphql.types.response_types import RemoveCartItemResponse
 from restaurants.graphql.types.types import RemoveCartItemSuccessType
@@ -36,3 +40,7 @@ class RemoveCartItemMutation(graphene.Mutation):
             )
         except custom_exceptions.CartItemNotFound as e:
             return CartItemNotFound(cart_item_id=e.cart_item_id)
+        except custom_exceptions.CartNotBelongsToUser as e:
+            return CartNotBelongsToUser(user_id=e.user_id, cart_id=e.cart_id)
+        except custom_exceptions.CartNotFound as e:
+            return CartNotFound(cart_id=e.cart_id)

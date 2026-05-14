@@ -2,12 +2,10 @@ from orders.adapter.dtos import AddressDTO
 
 
 class AccountAdapter:
-    @property
-    def interface(self):
-
+    def __init__(self):
         from accounts.app_interface.service_interface import ServiceInterface
 
-        return ServiceInterface()
+        self.interface = ServiceInterface()
 
     def get_address_by_id(self, address_id: int, user_id: str) -> AddressDTO:
 
