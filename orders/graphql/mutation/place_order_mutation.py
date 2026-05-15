@@ -22,6 +22,7 @@ from orders.graphql.types.types import OrderSummaryType, OrderItemType
 from orders.interactors.dtos import PlaceOrderDTO, OrderSummaryDTO
 from orders.interactors.order.place_order_interactor import PlaceOrderInteractor
 from orders.storages.order_storage import OrderStorage
+from utils.auth_decorators import require_auth
 
 from orders.storages.promo_code_storage import PromoCodeStorage
 
@@ -33,6 +34,7 @@ class PlaceOrderMutation(graphene.Mutation):
     Output = PlaceOrderResponse
 
     @staticmethod
+    @require_auth
     def mutate(root, info, params):
         interactor = PlaceOrderInteractor(
             promo_code_storage=PromoCodeStorage(),

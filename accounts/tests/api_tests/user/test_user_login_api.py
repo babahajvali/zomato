@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 
 from accounts.tests.api_tests.user import BaseUserLoginTestCase
@@ -5,6 +7,7 @@ from accounts.tests.factories.storage_factories import UserFactory
 import factory.random
 
 factory.random.reseed_random(123)
+MOCK_TOKEN = "mocked.jwt.token"
 
 
 @pytest.mark.django_db
@@ -19,12 +22,16 @@ class TestUserLoginApi(BaseUserLoginTestCase):
             password="Ravi1234",
         )
 
-        self.execute_schema(
-            query=self.QUERY,
-            variables={"params": {"email": user.email, "password": "Ravi1234"}},
-            snapshot=snapshot,
-            user_id=user_id,
-        )
+        with patch(
+            "accounts.graphql.mutation.user_login_mutation._generate_access_token",
+            return_value=MOCK_TOKEN,
+        ):
+            self.execute_schema(
+                query=self.QUERY,
+                variables={"params": {"email": user.email, "password": "Ravi1234"}},
+                snapshot=snapshot,
+                user_id=user_id,
+            )
 
     def test_email_not_found(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"

@@ -27,6 +27,10 @@ class UserStorageInterface(ABC):
         pass
 
     @abstractmethod
+    def get_user_password(self, email: str) -> str:
+        pass
+
+    @abstractmethod
     def get_user(self, user_id: str) -> UserDTO | None:
         pass
 

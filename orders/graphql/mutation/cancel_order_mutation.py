@@ -16,6 +16,7 @@ from orders.graphql.types.types import OrderType
 from orders.interactors.dtos import OrderDTO
 from orders.interactors.order.order_interactor import OrderInteractor
 from orders.storages.order_storage import OrderStorage
+from utils.auth_decorators import require_auth
 
 
 class CancelOrderMutation(graphene.Mutation):
@@ -25,6 +26,7 @@ class CancelOrderMutation(graphene.Mutation):
     Output = CancelOrderResponse
 
     @staticmethod
+    @require_auth
     def mutate(root, info, params):
         interactor = OrderInteractor(order_storage=OrderStorage())
 

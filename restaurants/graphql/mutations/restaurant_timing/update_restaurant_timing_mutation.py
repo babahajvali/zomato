@@ -15,6 +15,7 @@ from restaurants.graphql.types.response_types import UpdateRestaurantTimingRespo
 from restaurants.graphql.types.types import RestaurantTimingType
 from restaurants.storages.restaurant_timing_storage import RestaurantTimingStorage
 from utils.graphql_types import UserNotRestaurantOwner
+from utils.auth_decorators import require_auth
 
 
 class UpdateRestaurantTimingMutation(graphene.Mutation):
@@ -24,6 +25,7 @@ class UpdateRestaurantTimingMutation(graphene.Mutation):
     Output = UpdateRestaurantTimingResponse
 
     @staticmethod
+    @require_auth
     def mutate(root, info, params):
         restaurant_timing_storage = RestaurantTimingStorage()
         interactor = UpdateRestaurantTimingInteractor(

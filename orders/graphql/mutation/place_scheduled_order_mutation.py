@@ -27,6 +27,7 @@ from orders.interactors.order.place_scheduled_order_interactor import (
 )
 from orders.storages.order_storage import OrderStorage
 from orders.storages.promo_code_storage import PromoCodeStorage
+from utils.auth_decorators import require_auth
 
 
 class PlaceScheduledOrderMutation(graphene.Mutation):
@@ -36,6 +37,7 @@ class PlaceScheduledOrderMutation(graphene.Mutation):
     Output = PlaceScheduledOrderResponse
 
     @staticmethod
+    @require_auth
     def mutate(root, info, params):
         interactor = PlaceScheduledOrderInteractor(
             promo_code_storage=PromoCodeStorage(),

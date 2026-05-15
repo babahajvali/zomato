@@ -13,6 +13,7 @@ from restaurants.graphql.types.types import CartItemType
 from restaurants.interactors.cart.cart_item_interactor import CartItemInteractor
 from restaurants.storages.cart_storage import CartStorage
 from restaurants.storages.restaurant_storage import RestaurantStorage
+from utils.auth_decorators import require_auth
 
 
 class UpdateCartItemMutation(graphene.Mutation):
@@ -22,6 +23,7 @@ class UpdateCartItemMutation(graphene.Mutation):
     Output = UpdateCartItemResponse
 
     @staticmethod
+    @require_auth
     def mutate(root, info, params):
         cart_storage = CartStorage()
         restaurant_storage = RestaurantStorage()

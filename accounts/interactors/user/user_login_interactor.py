@@ -1,5 +1,3 @@
-from typing import Optional
-
 from accounts.exception.custom_exceptions import EmailNotFound, InvalidCredentials
 from accounts.interactors.dtos import UserDTO
 from accounts.interactors.storage_interface.user_storage_interface import (
@@ -13,13 +11,14 @@ class UserLoginInteractor:
 
     def user_login(self, email: str, password: str) -> UserDTO:
         user_dto = self._validate_email(email=email)
+        actual_password = self.user_storage.get_user_password(email=email)
         self._validate_credentials(
-            actual_password=user_dto.password, password=password, email=email
+            actual_password=actual_password, password=password, email=email
         )
 
         return user_dto
 
-    def _validate_email(self, email: str) -> Optional[UserDTO]:
+    def _validate_email(self, email: str) -> UserDTO:
 
         user_dto = self.user_storage.get_user_by_email(email=email)
 

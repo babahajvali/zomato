@@ -14,6 +14,7 @@ from restaurants.storages.restaurant_storage import RestaurantStorage
 
 from restaurants.storages.restaurant_timing_storage import RestaurantTimingStorage
 from utils.graphql_types import UserNotRestaurantOwner
+from utils.auth_decorators import require_auth
 
 
 class DeleteRestaurantTimingMutation(graphene.Mutation):
@@ -23,6 +24,7 @@ class DeleteRestaurantTimingMutation(graphene.Mutation):
     Output = DeleteRestaurantTimingResponse
 
     @staticmethod
+    @require_auth
     def mutate(root, info, params):
         restaurant_timing_storage = RestaurantTimingStorage()
         restaurant_storage = RestaurantStorage()

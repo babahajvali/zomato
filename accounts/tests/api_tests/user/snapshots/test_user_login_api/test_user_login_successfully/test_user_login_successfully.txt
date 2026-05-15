@@ -2,7 +2,7 @@
   "data": {
     "userLogin": {
       "__typename": "UserLoginType",
-      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDliYjUwOGUtYzZkMS00ODgyLTk1ZmQtMTk5MWQxMDNmN2NkIiwidHlwZSI6ImFjY2VzcyJ9.NNbAwKvv88QFv1jbQnmIJesEhd5I-FWiTqwAFZuyG_U",
+      "accessToken": "mocked.jwt.token",
       "email": "sample@gmail.com",
       "name": "Joshua Gray",
       "phoneNumber": "9000000002",

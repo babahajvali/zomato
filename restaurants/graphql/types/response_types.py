@@ -49,6 +49,7 @@ class UpdateRestaurantTimingResponse(graphene.Union):
             RestaurantTimingNotFound,
             InvalidTimingRange,
             UserNotRestaurantOwner,
+            UnauthorizedFound,
         )
 
 
@@ -58,6 +59,7 @@ class DeleteRestaurantTimingResponse(graphene.Union):
             DeleteRestaurantTimingSuccessType,
             RestaurantTimingNotFound,
             UserNotRestaurantOwner,
+            UnauthorizedFound,
         )
 
 
@@ -76,6 +78,7 @@ class CreateMenuItemsResponse(graphene.Union):
             RestaurantNotFound,
             InvalidCategories,
             UserNotRestaurantOwner,
+            UnauthorizedFound,
         )
 
 
@@ -106,6 +109,7 @@ class UpdateCartItemResponse(graphene.Union):
             MenuItemNotFound,
             InvalidQuantity,
             CartNotBelongsToUser,
+            UnauthorizedFound,
         )
 
 
@@ -116,12 +120,18 @@ class RemoveCartItemResponse(graphene.Union):
             CartItemNotFound,
             CartNotFound,
             CartNotBelongsToUser,
+            UnauthorizedFound,
         )
 
 
 class ClearCartItemsResponse(graphene.Union):
     class Meta:
-        types = (ClearCartItemsSuccessType, CartNotFound, CartNotBelongsToUser)
+        types = (
+            ClearCartItemsSuccessType,
+            CartNotFound,
+            CartNotBelongsToUser,
+            UnauthorizedFound,
+        )
 
 
 class GetCartItemsResponse(graphene.Union):
@@ -136,6 +146,7 @@ class CreateReviewResponse(graphene.Union):
             RestaurantNotFound,
             RestaurantAlreadyReviewedByUser,
             InvalidRatingFound,
+            UnauthorizedFound,
         )
 
 
@@ -157,6 +168,7 @@ class CreateRestaurantTimingResponse(graphene.Union):
             UserNotRestaurantOwner,
             InvalidTimingRange,
             InvalidDayOfWeek,
+            UnauthorizedFound,
         )
 
 
@@ -166,6 +178,7 @@ class UpdateMenuItemResponse(graphene.Union):
             MenuItemType,
             MenuItemNotFound,
             UserNotRestaurantOwner,
+            UnauthorizedFound,
         )
 
 
@@ -175,6 +188,7 @@ class DeleteMenuItemResponse(graphene.Union):
             DeleteMenuItemSuccessType,
             MenuItemNotFound,
             UserNotRestaurantOwner,
+            UnauthorizedFound,
         )
 
 

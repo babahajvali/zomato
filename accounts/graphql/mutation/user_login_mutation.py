@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta, timezone
+
 import graphene
 import jwt
 
@@ -47,7 +49,12 @@ class UserLoginMutation(graphene.Mutation):
 
 
 def _generate_access_token(user_id):
+    payload = {
+        "user_id": str(user_id),
+        "type": "access",
+        "exp": datetime.now(timezone.utc) + timedelta(days=1),
+    }
 
-    payload = {"user_id": str(user_id), "type": "access"}
     token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
+
     return token

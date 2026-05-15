@@ -14,6 +14,7 @@ from orders.interactors.dtos import OrderDTO
 from orders.interactors.order.update_order_interactor import UpdateOrderInteractor
 from orders.storages.order_storage import OrderStorage
 from utils.graphql_types import UserNotRestaurantOwner
+from utils.auth_decorators import require_auth
 
 
 class UpdateOrderStatusMutation(graphene.Mutation):
@@ -23,6 +24,7 @@ class UpdateOrderStatusMutation(graphene.Mutation):
     Output = UpdateOrderStatusResponse
 
     @staticmethod
+    @require_auth
     def mutate(root, info, params):
         interactor = UpdateOrderInteractor(order_storage=OrderStorage())
 

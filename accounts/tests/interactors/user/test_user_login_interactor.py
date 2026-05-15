@@ -11,9 +11,10 @@ class TestUserLoginInteractor:
         # Arrange
         user_storage = Mock()
 
-        user_dto = UserDTOFactory(id=1, email="test@gmail.com", password="password123")
+        user_dto = UserDTOFactory(id=1, email="test@gmail.com")
 
         user_storage.get_user_by_email.return_value = user_dto
+        user_storage.get_user_password.return_value = "password123"
 
         interactor = UserLoginInteractor(user_storage=user_storage)
 
@@ -45,7 +46,8 @@ class TestUserLoginInteractor:
         user_storage = Mock()
 
         user_dto = UserDTOFactory(
-            id=1, email="test@gmail.com", password="correct_password"
+            id=1,
+            email="test@gmail.com",
         )
 
         user_storage.get_user_by_email.return_value = user_dto

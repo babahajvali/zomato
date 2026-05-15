@@ -12,6 +12,7 @@ from accounts.graphql.types.types import UserType
 from accounts.interactors.dtos import UpdateUserDTO
 from accounts.interactors.user.user_interactor import UserInteractor
 from accounts.storages.user_storage import UserStorage
+from utils.auth_decorators import require_auth
 
 
 class UpdateUserMutation(graphene.Mutation):
@@ -21,6 +22,7 @@ class UpdateUserMutation(graphene.Mutation):
     Output = UpdateUserResponse
 
     @staticmethod
+    @require_auth
     def mutate(root, info, params):
         user_storage = UserStorage()
         interactor = UserInteractor(user_storage=user_storage)

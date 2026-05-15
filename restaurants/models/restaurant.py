@@ -39,7 +39,7 @@ class Restaurant(models.Model):
 
 class MenuItem(models.Model):
     id = models.CharField(
-        max_length=36, default=uuid.uuid4(), editable=False, primary_key=True
+        max_length=36, default=uuid.uuid4, editable=False, primary_key=True
     )
     restaurant = models.ForeignKey(
         Restaurant, on_delete=models.CASCADE, related_name="menu_items"

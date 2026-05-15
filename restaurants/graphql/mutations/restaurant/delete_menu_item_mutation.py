@@ -8,6 +8,7 @@ from restaurants.graphql.types.types import DeleteMenuItemSuccessType
 from restaurants.interactors.restaurant.menu_item_interactor import MenuItemInteractor
 from restaurants.storages.restaurant_storage import RestaurantStorage
 from utils.graphql_types import UserNotRestaurantOwner
+from utils.auth_decorators import require_auth
 
 
 class DeleteMenuItemMutation(graphene.Mutation):
@@ -17,6 +18,7 @@ class DeleteMenuItemMutation(graphene.Mutation):
     Output = DeleteMenuItemResponse
 
     @staticmethod
+    @require_auth
     def mutate(root, info, params):
 
         restaurant_storage = RestaurantStorage()

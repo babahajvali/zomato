@@ -30,7 +30,6 @@ class UserDTOFactory(factory.Factory):
     name = factory.Faker("name")
     phone_number = factory.Sequence(lambda n: f"900000{n:04d}")
     role = Role.CUSTOMER.value
-    password = factory.Faker("password")
 
 
 class UserCreateDTOFactory(factory.Factory):

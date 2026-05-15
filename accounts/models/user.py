@@ -45,4 +45,9 @@ class Address(models.Model):
         return self.label
 
     class Meta:
-        unique_together = ("user", "label", "pincode")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "label", "pincode"],
+                name="unique_user_address",
+            )
+        ]

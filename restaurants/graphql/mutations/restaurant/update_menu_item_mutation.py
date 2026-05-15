@@ -11,6 +11,7 @@ from restaurants.interactors.dtos import UpdateMenuItemDTO
 from restaurants.interactors.restaurant.menu_item_interactor import MenuItemInteractor
 from restaurants.storages.restaurant_storage import RestaurantStorage
 from utils.graphql_types import UserNotRestaurantOwner
+from utils.auth_decorators import require_auth
 
 
 class UpdateMenuItemMutation(graphene.Mutation):
@@ -20,6 +21,7 @@ class UpdateMenuItemMutation(graphene.Mutation):
     Output = UpdateMenuItemResponse
 
     @staticmethod
+    @require_auth
     def mutate(root, info, params):
 
         restaurant_storage = RestaurantStorage()

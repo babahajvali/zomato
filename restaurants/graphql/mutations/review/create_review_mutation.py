@@ -15,6 +15,7 @@ from restaurants.interactors.review.review_interactor import (
 )
 from restaurants.storages.restaurant_storage import RestaurantStorage
 from restaurants.storages.review_storage import ReviewStorage
+from utils.auth_decorators import require_auth
 
 
 class CreateReviewMutation(graphene.Mutation):
@@ -24,6 +25,7 @@ class CreateReviewMutation(graphene.Mutation):
     Output = CreateReviewResponse
 
     @staticmethod
+    @require_auth
     def mutate(root, info, params):
 
         restaurant_storage = RestaurantStorage()

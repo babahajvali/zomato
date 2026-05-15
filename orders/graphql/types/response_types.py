@@ -31,7 +31,7 @@ from orders.graphql.types.types import (
     OrderSummariesType,
     ScheduledOrderSummariesType,
 )
-from utils.graphql_types import UserNotRestaurantOwner
+from utils.graphql_types import UnauthorizedFound, UserNotRestaurantOwner
 
 
 class PlaceOrderResponse(graphene.Union):
@@ -50,6 +50,7 @@ class PlaceOrderResponse(graphene.Union):
             MenuItemsUnavailable,
             PromoCodeExpired,
             PromoCodeNotYetValid,
+            UnauthorizedFound,
         )
 
 
@@ -69,6 +70,7 @@ class PlaceScheduledOrderResponse(graphene.Union):
             MenuItemsUnavailable,
             PromoCodeExpired,
             PromoCodeNotYetValid,
+            UnauthorizedFound,
         )
 
 
@@ -79,6 +81,7 @@ class UpdateOrderStatusResponse(graphene.Union):
             OrderNotFound,
             UserNotRestaurantOwner,
             InvalidOrderStatusTransition,
+            UnauthorizedFound,
         )
 
 
@@ -133,6 +136,7 @@ class CancelOrderResponse(graphene.Union):
             OrderCancellationWindowExpired,
             OrderCancellationNotAllowed,
             OrderAlreadyCancelled,
+            UnauthorizedFound,
         )
 
 

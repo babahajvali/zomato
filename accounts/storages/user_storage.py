@@ -23,7 +23,6 @@ class UserStorage(UserStorageInterface):
             name=user_obj.name,
             phone_number=user_obj.phone_number,
             role=user_obj.role,
-            password=user_obj.password,
         )
 
     @transaction.atomic
@@ -60,6 +59,9 @@ class UserStorage(UserStorageInterface):
             return None
 
         return self._convert_to_user_dto(user_obj=user_obj)
+
+    def get_user_password(self, email: str) -> str:
+        return User.objects.filter(email=email).first().password
 
     def get_user(self, user_id: str) -> UserDTO | None:
 

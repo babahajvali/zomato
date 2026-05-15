@@ -346,7 +346,7 @@ class OrderStorage(OrderStorageInterface):
         ]
 
     def get_scheduled_orders_due_for_release(self) -> List[OrderDTO]:
-        now = datetime.now()
+        now = timezone.localtime()
         release_window = now + timedelta(minutes=30)
 
         orders = Order.objects.filter(
@@ -368,7 +368,7 @@ class OrderStorage(OrderStorageInterface):
         self, restaurant_ids: List[str], user_id: str
     ) -> List[RestaurantOrderStatsDTO]:
 
-        now = datetime.now()
+        now = timezone.localtime()
         ten_days_ago = now - timedelta(days=10)
 
         results = (
@@ -404,7 +404,7 @@ class OrderStorage(OrderStorageInterface):
         self, menu_item_ids: List[str], user_id: str
     ) -> List[MenuItemOrderStatsDTO]:
 
-        now = datetime.now()
+        now = timezone.localtime()
         one_week_ago = now - timedelta(days=7)
 
         user_stats = (

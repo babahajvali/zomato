@@ -1,9 +1,9 @@
-from datetime import datetime
 from decimal import Decimal
 from typing import List, Optional
 
 from django.db.models import Avg, Count, Q, Value
 from django.db.models.functions import Coalesce
+from django.utils import timezone
 
 from restaurants.constants.enums import Category
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
@@ -307,7 +307,7 @@ class RestaurantStorage(RestaurantStorageInterface):
         ]
 
     def get_delivered_pincode_restaurants(self, pincode: str) -> List[RestaurantDTO]:
-        now = datetime.now()
+        now = timezone.localtime()
         current_time = now.time()
         today_day = now.isoweekday()
 

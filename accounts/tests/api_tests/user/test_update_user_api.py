@@ -22,7 +22,9 @@ class TestUpdateUserApi(BaseUpdateUserTestCase):
             }
         }
 
-        self.execute_schema(query=self.QUERY, variables=variables, snapshot=snapshot)
+        self.execute_schema(
+            query=self.QUERY, variables=variables, snapshot=snapshot, user_id=user_id
+        )
 
     def test_update_user_with_phone_number_only(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
@@ -39,7 +41,9 @@ class TestUpdateUserApi(BaseUpdateUserTestCase):
             }
         }
 
-        self.execute_schema(query=self.QUERY, variables=variables, snapshot=snapshot)
+        self.execute_schema(
+            query=self.QUERY, variables=variables, snapshot=snapshot, user_id=user_id
+        )
 
     def test_update_user_not_found(self, snapshot):
         variables = {
@@ -49,7 +53,12 @@ class TestUpdateUserApi(BaseUpdateUserTestCase):
             }
         }
 
-        self.execute_schema(query=self.QUERY, variables=variables, snapshot=snapshot)
+        self.execute_schema(
+            query=self.QUERY,
+            variables=variables,
+            snapshot=snapshot,
+            user_id="49bb508e-c6d1-4882-95fd-1991d103f7cd",
+        )
 
     def test_update_user_with_empty_name(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
@@ -61,7 +70,9 @@ class TestUpdateUserApi(BaseUpdateUserTestCase):
             }
         }
 
-        self.execute_schema(query=self.QUERY, variables=variables, snapshot=snapshot)
+        self.execute_schema(
+            query=self.QUERY, variables=variables, snapshot=snapshot, user_id=user_id
+        )
 
     def test_update_user_with_no_properties(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
@@ -72,4 +83,6 @@ class TestUpdateUserApi(BaseUpdateUserTestCase):
             }
         }
 
-        self.execute_schema(query=self.QUERY, variables=variables, snapshot=snapshot)
+        self.execute_schema(
+            query=self.QUERY, variables=variables, snapshot=snapshot, user_id=user_id
+        )

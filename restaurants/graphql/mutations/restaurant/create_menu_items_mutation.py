@@ -19,6 +19,7 @@ from restaurants.interactors.restaurant.menu_item_interactor import (
 from restaurants.storages.restaurant_storage import RestaurantStorage
 from utils.graphql_types import UserNotRestaurantOwner
 from utils.uuid_util import generate_uuid
+from utils.auth_decorators import require_auth
 
 
 class CreateMenuItemsMutation(graphene.Mutation):
@@ -28,6 +29,7 @@ class CreateMenuItemsMutation(graphene.Mutation):
     Output = CreateMenuItemsResponse
 
     @staticmethod
+    @require_auth
     def mutate(root, info, params):
         restaurant_storage = RestaurantStorage()
         interactor = MenuItemInteractor(

@@ -34,4 +34,5 @@ class UpdateUserResponse(graphene.Union):
             UserNotFound,
             EmptyUserNameFound,
             NothingToUpdateUserProperties,
+            UnauthorizedFound,
         )
