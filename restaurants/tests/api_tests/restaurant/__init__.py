@@ -233,6 +233,10 @@ class BaseGetScoredRestaurantsTestCase(GraphQLBaseTestCase):
             isOpen
             dayFrequent
             orderVolume
+            address
+            pincode
+            isVegOnly
+            isDeleted
           }
         }
         ... on InvalidLimit {

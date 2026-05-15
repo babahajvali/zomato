@@ -80,6 +80,10 @@ class GetScoredRestaurantInteractor(RestaurantMixin):
                     r.id, self._empty_stats(r.id)
                 ).daily_frequent,
                 score=Decimal(0.0),
+                address=r.address,
+                pin_code=r.pin_code,
+                is_veg_only=r.is_veg_only,
+                is_deleted=r.is_deleted,
             )
             for r in restaurants
         ]

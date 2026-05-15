@@ -181,6 +181,10 @@ class ScoredRestaurantType(graphene.ObjectType):
     is_open = graphene.Boolean(required=True)
     day_frequent = graphene.Int(required=True)
     order_volume = graphene.Int(required=True)
+    address = graphene.String(required=True)
+    pincode = graphene.String(required=True)
+    is_veg_only = graphene.Boolean(required=True)
+    is_deleted = graphene.Boolean(required=True)
 
 
 class ScoredRestaurantsType(graphene.ObjectType):

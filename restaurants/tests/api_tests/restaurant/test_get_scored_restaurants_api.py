@@ -3,6 +3,7 @@ from datetime import time
 import pytest
 
 from accounts.tests.factories.storage_factories import UserFactory
+from restaurants.constants.enums import CuisineType
 from restaurants.tests.api_tests.restaurant import BaseGetScoredRestaurantsTestCase
 from restaurants.tests.factories.storage_factories import (
     DeliveryZoneFactory,
@@ -21,7 +22,7 @@ class TestGetScoredRestaurantsApi(BaseGetScoredRestaurantsTestCase):
         restaurant = RestaurantFactory(
             id=restaurant_id,
             name="Restaurant 1",
-            cuisine_type="INDIAN",
+            cuisine_type=CuisineType.NORTH_INDIAN.value,
             is_deleted=False,
         )
         DeliveryZoneFactory(

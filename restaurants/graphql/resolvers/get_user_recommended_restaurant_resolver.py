@@ -36,6 +36,10 @@ def get_user_recommended_restaurant_resolver(root, info, params):
                 is_open=each.is_open,
                 day_frequent=each.day_frequent,
                 order_volume=each.order_volume,
+                address=each.address,
+                pincode=each.pin_code,
+                is_veg_only=each.is_veg_only,
+                is_deleted=each.is_deleted,
             )
             for each in result
         ]

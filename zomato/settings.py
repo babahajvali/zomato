@@ -207,4 +207,5 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "https://zomato-frontend-2026.s3-website.ap-south-1.amazonaws.com",
 ]

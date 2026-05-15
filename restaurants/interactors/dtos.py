@@ -302,6 +302,10 @@ class ScoredRestaurantDTO:
     is_open: bool
     day_frequent: int
     order_volume: int
+    address: str
+    pin_code: str
+    is_veg_only: bool
+    is_deleted: bool
 
 
 @dataclass
