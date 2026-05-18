@@ -407,31 +407,30 @@ class OrderStorage(OrderStorageInterface):
         now = timezone.localtime()
         one_week_ago = now - timedelta(days=7)
 
-        user_stats = (
+        stats = (
             OrderItem.objects.filter(
                 item_id__in=menu_item_ids,
                 order__customer_id=user_id,
-                order__created_at__gte=one_week_ago,
             )
             .values("item_id")
-            .annotate(order_count=Count("id"))
+            .annotate(
+                total_order_count=Count("id"),
+                order_count=Count(
+                    "id",
+                    filter=Q(order__created_at__gte=one_week_ago),
+                ),
+            )
         )
-        user_stats_map = {row["item_id"]: row["order_count"] for row in user_stats}
 
-        total_stats = (
-            OrderItem.objects.filter(item_id__in=menu_item_ids)
-            .values("item_id")
-            .annotate(total_order_count=Count("id"))
-        )
-        total_stats_map = {
-            row["item_id"]: row["total_order_count"] for row in total_stats
-        }
+        stats_map = {row["item_id"]: row for row in stats}
 
         return [
             MenuItemOrderStatsDTO(
                 item_id=item_id,
-                order_count=user_stats_map.get(item_id, 0),
-                total_order_count=total_stats_map.get(item_id, 0),
+                order_count=stats_map.get(item_id, {}).get("order_count", 0),
+                total_order_count=stats_map.get(item_id, {}).get(
+                    "total_order_count", 0
+                ),
             )
             for item_id in menu_item_ids
         ]
