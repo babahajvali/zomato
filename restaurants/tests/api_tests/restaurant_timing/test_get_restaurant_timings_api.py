@@ -16,7 +16,7 @@ class TestGetRestaurantTimings(BaseGetRestaurantTimingsTestCase):
     def setup_method(self):
         cache.clear()
 
-    def test_get_restaurant_timings_success(self, snapshot):
+    def test_get_restaurant_timings_with_valid_data_success(self, snapshot):
         restaurant_id = "test-restaurants-id"
 
         RestaurantFactory(id=restaurant_id)
@@ -32,7 +32,7 @@ class TestGetRestaurantTimings(BaseGetRestaurantTimingsTestCase):
             snapshot=snapshot,
         )
 
-    def test_restaurant_not_found(self, snapshot):
+    def test_get_restaurant_timings_with_restaurant_not_found_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         UserFactory(id=user_id)
         restaurant_id = "test-restaurants-id"

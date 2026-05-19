@@ -39,7 +39,7 @@ class TestRestaurantDashboardInteractor:
 
         self.interactor.order_adapter = create_autospec(OrderAdapter)
 
-    def test_get_restaurant_dashboard_success(self):
+    def test_get_restaurant_dashboard_with_valid_data_success(self):
         dashboard_input = DashboardFiltersDTO(
             restaurant_id="restaurant-1",
             date_from=date(2026, 4, 20),
@@ -85,7 +85,7 @@ class TestRestaurantDashboardInteractor:
         assert result.orders_by_status == orders_status
         assert result.rating_summary == rating_summary
 
-    def test_get_restaurant_dashboard_restaurant_not_found(self):
+    def test_get_restaurant_dashboard_with_restaurant_not_found_raises_error(self):
         dashboard_input = DashboardFiltersDTO(
             restaurant_id="restaurant-1",
             date_from=date(2026, 4, 20),
@@ -105,7 +105,7 @@ class TestRestaurantDashboardInteractor:
         self.restaurant_storage.get_restaurant_owner_id.assert_not_called()
         self.review_storage.get_rating_summary.assert_not_called()
 
-    def test_get_restaurant_dashboard_user_not_owner(self):
+    def test_get_restaurant_dashboard_with_user_not_owner_raises_error(self):
         dashboard_input = DashboardFiltersDTO(
             restaurant_id="restaurant-1",
             date_from=date(2026, 4, 20),
@@ -123,7 +123,7 @@ class TestRestaurantDashboardInteractor:
 
         assert exc.value.user_id == "user-123"
 
-    def test_get_restaurant_dashboard_invalid_date_range(self):
+    def test_get_restaurant_dashboard_with_invalid_date_range_raises_error(self):
         dashboard_input = DashboardFiltersDTO(
             restaurant_id="restaurant-1",
             date_from=date(2026, 4, 27),

@@ -9,7 +9,7 @@ from restaurants.tests.factories.storage_factories import RestaurantFactory
 
 @pytest.mark.django_db
 class TestRestaurantOrdersApi(BaseRestaurantOrdersTestCase):
-    def test_restaurant_orders_successfully(self, snapshot):
+    def test_restaurant_orders_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         other_restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7d0"
@@ -44,7 +44,7 @@ class TestRestaurantOrdersApi(BaseRestaurantOrdersTestCase):
             user_id=user_id,
         )
 
-    def test_user_is_not_restaurant_owner(self, snapshot):
+    def test_restaurant_orders_with_user_not_restaurant_owner_raises_error(self, snapshot):
         owner_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7ce"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -61,7 +61,7 @@ class TestRestaurantOrdersApi(BaseRestaurantOrdersTestCase):
             user_id=user_id,
         )
 
-    def test_restaurant_orders_empty(self, snapshot):
+    def test_restaurant_orders_with_empty_result_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         UserFactory(id=user_id)
@@ -76,7 +76,7 @@ class TestRestaurantOrdersApi(BaseRestaurantOrdersTestCase):
             user_id=user_id,
         )
 
-    def test_get_order_pagination(self, snapshot):
+    def test_restaurant_orders_with_pagination_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         UserFactory(id=user_id)

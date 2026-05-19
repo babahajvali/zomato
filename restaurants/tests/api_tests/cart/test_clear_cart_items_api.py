@@ -12,7 +12,7 @@ from restaurants.tests.factories.storage_factories import (
 
 @pytest.mark.django_db
 class TestClearCartItemsApi(BaseClearCartItemsTestCase):
-    def test_clear_cart_items_api_successful(self, snapshot):
+    def test_clear_cart_items_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         cart_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
@@ -32,7 +32,7 @@ class TestClearCartItemsApi(BaseClearCartItemsTestCase):
             user_id=user_id,
         )
 
-    def test_cart_not_found(self, snapshot):
+    def test_clear_cart_items_with_cart_not_found_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         cart_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
@@ -50,7 +50,7 @@ class TestClearCartItemsApi(BaseClearCartItemsTestCase):
             user_id=user_id,
         )
 
-    def test_cart_not_belongs_to_user(self, snapshot):
+    def test_clear_cart_items_with_cart_not_belongs_to_user_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         cart_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"

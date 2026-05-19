@@ -16,6 +16,10 @@ from orders.exception.custom_exceptions import (
     PromoCodeNotYetValid,
     PromoCodeUsageLimitReached,
 )
+from accounts.exception.custom_exceptions import (
+    AddressNotFound as AccountAddressNotFound,
+    AddressNotBelongsToUser as AccountAddressNotBelongsToUser,
+)
 from orders.interactors.dtos import (
     CreateOrderItemDTO,
     PromoCodeDTO,
@@ -28,7 +32,6 @@ from orders.interactors.storage_interface.promo_code_storage_interface import (
 )
 from orders.mixin.order_mixin import OrderMixin
 from orders.mixin.promocode_mixin import PromoCodeMixin
-from utils.exceptions import AddressNotBelongsToUser, AddressNotFound
 
 
 class OrderPlacementBase(PromoCodeMixin, OrderMixin):
@@ -58,9 +61,13 @@ class OrderPlacementBase(PromoCodeMixin, OrderMixin):
             )
             return address_dto.pincode
 
-        except AddressNotFound:
+        except AccountAddressNotFound:
+            from orders.exception.account_exception import AddressNotFound
+
             raise AddressNotFound(address_id=address_id)
-        except AddressNotBelongsToUser:
+        except AccountAddressNotBelongsToUser:
+            from orders.exception.account_exception import AddressNotBelongsToUser
+
             raise AddressNotBelongsToUser(address_id=address_id, user_id=user_id)
 
     def _get_validated_delivery_fee(

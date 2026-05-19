@@ -2,7 +2,12 @@ from typing import List
 
 from django.db import transaction
 
-from accounts.exception.custom_exceptions import DuplicateAddresses, InvalidUsersFound
+from accounts.exception.custom_exceptions import (
+    DuplicateAddresses,
+    InvalidUsersFound,
+    AddressNotBelongsToUser,
+    AddressNotFound,
+)
 from accounts.interactors.dtos import (
     AddressDTO,
     CreateAddressDTO,
@@ -17,7 +22,6 @@ from accounts.interactors.storage_interface.user_storage_interface import (
 )
 from accounts.mixin.user_mixin import UserMixin
 from utils.caching_decorators import interactor_cache
-from utils.exceptions import AddressNotFound, AddressNotBelongsToUser
 
 
 class AddressInteractor(UserMixin):

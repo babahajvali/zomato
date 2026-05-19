@@ -34,7 +34,7 @@ class TestUpdateOrderStatusInteractor:
         no_op_lock,
     )
     @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
-    def test_update_order_status_successfully(self):
+    def test_update_order_status_with_valid_data_success(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
             restaurant_id="restaurants-1",
@@ -68,7 +68,7 @@ class TestUpdateOrderStatusInteractor:
             status=OrderStatus.CONFIRMED,
         )
 
-    def test_update_order_status_raises_order_not_found(self):
+    def test_update_order_status_with_order_not_found_raises_error(self):
         self.order_storage.get_order.return_value = None
 
         with pytest.raises(OrderNotFound) as exc:
@@ -82,7 +82,7 @@ class TestUpdateOrderStatusInteractor:
         self.interactor.restaurant_adapter.get_restaurant_owner_id.assert_not_called()
         self.order_storage.update_order_status.assert_not_called()
 
-    def test_update_order_status_raises_user_is_not_restaurant_owner(self):
+    def test_update_order_status_with_user_is_not_restaurant_owner_raises_error(self):
         self.order_storage.get_order.return_value = OrderDTOFactory(
             order_id="orders-1",
             restaurant_id="restaurants-1",
@@ -107,7 +107,7 @@ class TestUpdateOrderStatusInteractor:
         no_op_lock,
     )
     @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
-    def test_update_order_status_raises_invalid_transition(self):
+    def test_update_order_status_with_invalid_transition_raises_error(self):
         self.order_storage.get_order.return_value = OrderDTOFactory(
             order_id="orders-1",
             restaurant_id="restaurants-1",

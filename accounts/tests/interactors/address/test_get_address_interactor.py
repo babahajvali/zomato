@@ -2,7 +2,11 @@ from unittest.mock import create_autospec
 
 import pytest
 
-from accounts.exception.custom_exceptions import UserNotFound
+from accounts.exception.custom_exceptions import (
+    UserNotFound,
+    AddressNotBelongsToUser,
+    AddressNotFound,
+)
 from accounts.interactors.address.address_interactor import AddressInteractor
 from accounts.interactors.storage_interface.address_storage_interface import (
     AddressStorageInterface,
@@ -17,7 +21,6 @@ from accounts.tests.interactors.address.test_address_interactor import (
     INVALID_ADDRESS_ID,
     OTHER_USER_ID,
 )
-from utils.exceptions import AddressNotFound, AddressNotBelongsToUser
 
 
 @pytest.fixture
@@ -57,7 +60,7 @@ class TestGetAddress:
         assert result == expected_address
         address_storage.get_address_by_id.assert_called_once_with(address_id=ADDRESS_ID)
 
-    def test_get_address_with_invalid_address_raises_not_found(
+    def test_get_address_with_invalid_address_raises_error(
         self, address_interactor, address_storage, user_storage
     ):
         # Arrange

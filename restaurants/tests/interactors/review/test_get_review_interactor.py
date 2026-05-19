@@ -23,7 +23,7 @@ class TestGetReviewInteractor:
             restaurant_storage=self.mock_restaurant_storage,
         )
 
-    def test_get_user_restaurant_review_success(self):
+    def test_get_user_restaurant_review_with_valid_data_success(self):
         expected_review = ReviewDTOFactory(
             review_id=1,
             restaurant_id="restaurant-1",
@@ -46,7 +46,7 @@ class TestGetReviewInteractor:
             restaurant_id="restaurant-1",
         )
 
-    def test_get_user_restaurant_review_returns_none(self):
+    def test_get_user_restaurant_review_with_missing_data_success(self):
         self.mock_review_storage.get_user_restaurant_review.return_value = None
 
         result = self.interactor.get_user_restaurant_review(

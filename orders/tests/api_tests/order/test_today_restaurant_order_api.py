@@ -11,7 +11,7 @@ from restaurants.tests.factories.storage_factories import RestaurantFactory
 
 @pytest.mark.django_db
 class TestTodayRestaurantOrdersApi(BaseTodayRestaurantOrdersTestCase):
-    def test_today_restaurant_orders_successfully(self, snapshot):
+    def test_today_restaurant_orders_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         other_restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7d0"
@@ -76,7 +76,7 @@ class TestTodayRestaurantOrdersApi(BaseTodayRestaurantOrdersTestCase):
             user_id=user_id,
         )
 
-    def test_today_restaurant_orders_user_is_not_restaurant_owner(self, snapshot):
+    def test_today_restaurant_orders_with_user_is_not_restaurant_owner_raises_error(self, snapshot):
         owner_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7ce"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"

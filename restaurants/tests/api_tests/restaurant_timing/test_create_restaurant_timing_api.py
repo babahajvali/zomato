@@ -15,7 +15,7 @@ class TestCreateRestaurantTimingAPI(BaseCreateRestaurantTimingTestCase):
     def setup_method(self):
         cache.clear()
 
-    def test_create_restaurant_timing_success(self, snapshot):
+    def test_create_restaurant_timing_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         restaurant_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
 
@@ -38,7 +38,7 @@ class TestCreateRestaurantTimingAPI(BaseCreateRestaurantTimingTestCase):
             user_id=user_id,
         )
 
-    def test_create_restaurant_timing_restaurant_not_found(self, snapshot):
+    def test_create_restaurant_timing_with_restaurant_not_found_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
 
         UserFactory(id=user_id)
@@ -59,7 +59,7 @@ class TestCreateRestaurantTimingAPI(BaseCreateRestaurantTimingTestCase):
             user_id=user_id,
         )
 
-    def test_create_restaurant_timing_user_not_owner(self, snapshot):
+    def test_create_restaurant_timing_with_user_not_owner_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         other_user_id = "99999999-9999-9999-9999-999999999999"
         restaurant_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
@@ -84,7 +84,7 @@ class TestCreateRestaurantTimingAPI(BaseCreateRestaurantTimingTestCase):
             user_id=user_id,
         )
 
-    def test_create_open_time_greater_than_close_time(self, snapshot):
+    def test_create_restaurant_timing_with_open_time_greater_than_close_time_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         restaurant_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
 
@@ -107,7 +107,7 @@ class TestCreateRestaurantTimingAPI(BaseCreateRestaurantTimingTestCase):
             user_id=user_id,
         )
 
-    def test_create_open_time_equal_to_close_time(self, snapshot):
+    def test_create_restaurant_timing_with_open_time_equal_to_close_time_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         restaurant_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
 
@@ -130,7 +130,7 @@ class TestCreateRestaurantTimingAPI(BaseCreateRestaurantTimingTestCase):
             user_id=user_id,
         )
 
-    def test_create_restaurant_timing_different_day(self, snapshot):
+    def test_create_restaurant_timing_with_different_day_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         restaurant_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
 

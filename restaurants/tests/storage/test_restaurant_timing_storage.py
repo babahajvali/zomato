@@ -17,7 +17,7 @@ class TestRestaurantTimingStorage(TestCase):
     def setUp(self):
         self.storage = RestaurantTimingStorage()
 
-    def test_create_bulk_restaurant_timing_success(self):
+    def test_create_bulk_restaurant_timing_with_valid_data_success(self):
         restaurant = RestaurantFactory()
         create_dto = [
             CreateRestaurantTimingDTO(
@@ -38,7 +38,7 @@ class TestRestaurantTimingStorage(TestCase):
         assert result[0].open_time == time(9, 0)
         assert result[0].close_time == time(21, 0)
 
-    def test_get_restaurant_timing_success(self):
+    def test_get_restaurant_timing_with_valid_data_success(self):
         timing = RestaurantTimingFactory(
             day_of_week=2,
             open_time=time(10, 0),
@@ -53,12 +53,12 @@ class TestRestaurantTimingStorage(TestCase):
         assert result.open_time == time(10, 0)
         assert result.close_time == time(20, 0)
 
-    def test_get_restaurant_timing_not_found(self):
+    def test_get_restaurant_timing_with_not_found_raises_error(self):
         result = self.storage.get_restaurant_timing(timing_id=99999)
 
         assert result is None
 
-    def test_update_restaurant_timing_success(self):
+    def test_update_restaurant_timing_with_valid_data_success(self):
         timing = RestaurantTimingFactory(
             open_time=time(9, 0),
             close_time=time(21, 0),
@@ -77,14 +77,14 @@ class TestRestaurantTimingStorage(TestCase):
         assert result.open_time == time(11, 0)
         assert result.close_time == time(22, 0)
 
-    def test_get_restaurant_owner_id(self):
+    def test_get_restaurant_owner_id_with_valid_data_success(self):
         timing = RestaurantTimingFactory()
 
         result = self.storage.get_restaurant_owner_id(timing_id=timing.id)
 
         assert result == str(timing.restaurant.owner_id)
 
-    def test_delete_restaurant_timing_success(self):
+    def test_delete_restaurant_timing_with_valid_data_success(self):
         id = 1
         RestaurantTimingFactory(id=id)
 
@@ -94,7 +94,7 @@ class TestRestaurantTimingStorage(TestCase):
 
         assert not RestaurantTiming.objects.filter(id=id).exists()
 
-    def test_get_restaurant_timings_success(self):
+    def test_get_restaurant_timings_with_valid_data_success(self):
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         RestaurantFactory(id=restaurant_id)
         RestaurantTimingFactory.create_batch(3, restaurant_id=restaurant_id)

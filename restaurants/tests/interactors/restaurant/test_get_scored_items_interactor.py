@@ -34,7 +34,7 @@ class TestGetScoredItemsInteractor:
             self.interactor.order_adapter, instance=True
         )
 
-    def test_get_scored_restaurant_items_success(self):
+    def test_get_scored_restaurant_items_with_partial_order_stats_success(self):
         item_1 = MenuItemWithTagsDTOFactory(
             item_id="item-1",
             name="Paneer Tikka",
@@ -96,7 +96,7 @@ class TestGetScoredItemsInteractor:
             user_id="user-1",
         )
 
-    def test_get_scored_restaurant_items(self):
+    def test_get_scored_restaurant_items_with_valid_data_success(self):
         items = [
             MenuItemWithTagsDTOFactory(item_id="item-1"),
             MenuItemWithTagsDTOFactory(item_id="item-2"),
@@ -135,7 +135,7 @@ class TestGetScoredItemsInteractor:
         assert len(result) == 3
         assert result[0].menu_item_id == "item-1"
 
-    def test_get_scored_restaurant_items_defaults_missing_stats(self):
+    def test_get_scored_restaurant_items_with_missing_stats_success(self):
         self.restaurant_storage.check_restaurant_is_exist.return_value = True
         self.restaurant_storage.get_available_menu_items_by_restaurant.return_value = [
             MenuItemWithTagsDTOFactory(item_id="item-1")
@@ -155,7 +155,7 @@ class TestGetScoredItemsInteractor:
         assert result[0].total_order_count == 0
         assert result[0].score == Decimal("0.1500")
 
-    def test_get_scored_restaurant_items_empty_results(self):
+    def test_get_scored_restaurant_items_with_empty_results_success(self):
         self.restaurant_storage.check_restaurant_is_exist.return_value = True
         self.restaurant_storage.get_available_menu_items_by_restaurant.return_value = []
 
@@ -168,7 +168,7 @@ class TestGetScoredItemsInteractor:
         self.review_storage.get_rating_summary.assert_not_called()
         self.interactor.order_adapter.get_menu_item_order_stats.assert_not_called()
 
-    def test_get_scored_restaurant_items_restaurant_not_found(self):
+    def test_get_scored_restaurant_items_with_restaurant_not_found_raises_error(self):
         self.restaurant_storage.check_restaurant_is_exist.return_value = False
 
         with pytest.raises(RestaurantNotFound) as exc:

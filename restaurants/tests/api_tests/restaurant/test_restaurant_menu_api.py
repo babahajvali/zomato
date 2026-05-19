@@ -17,7 +17,7 @@ class TestRestaurantMenuAPI(BaseRestaurantMenuTestCase):
     def setup_method(self):
         cache.clear()
 
-    def test_get_restaurant_menu_successful(self, snapshot):
+    def test_get_restaurant_menu_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         restaurant_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
         UserFactory(id=user_id)
@@ -44,7 +44,7 @@ class TestRestaurantMenuAPI(BaseRestaurantMenuTestCase):
             user_id=user_id,
         )
 
-    def test_restaurant_not_found(self, snapshot):
+    def test_get_restaurant_menu_with_restaurant_not_found_raises_error(self, snapshot):
         restaurant_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
 

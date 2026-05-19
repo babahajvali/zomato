@@ -17,7 +17,7 @@ class TestCreateMenuItemsApi(BaseCreateMenuItemsTestCase):
         cache.clear()
 
     @patch("uuid.uuid4")
-    def test_create_enu_items_successfully(self, mock_uuid, snapshot):
+    def test_create_menu_items_with_valid_data_success(self, mock_uuid, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7de"
         UserFactory(id=user_id)
@@ -49,7 +49,7 @@ class TestCreateMenuItemsApi(BaseCreateMenuItemsTestCase):
             user_id=user_id,
         )
 
-    def test_restaurant_not_found(self, snapshot):
+    def test_create_menu_items_with_restaurant_not_found_raises_error(self, snapshot):
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7de"
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         UserFactory(id=user_id)
@@ -79,7 +79,7 @@ class TestCreateMenuItemsApi(BaseCreateMenuItemsTestCase):
             user_id=user_id,
         )
 
-    def test_user_is_not_restaurant_owner(self, snapshot):
+    def test_create_menu_items_with_user_not_restaurant_owner_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7de"
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -112,7 +112,7 @@ class TestCreateMenuItemsApi(BaseCreateMenuItemsTestCase):
             user_id=user_id,
         )
 
-    def test_invalid_categories_found(self, snapshot):
+    def test_create_menu_items_with_invalid_categories_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7de"
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"

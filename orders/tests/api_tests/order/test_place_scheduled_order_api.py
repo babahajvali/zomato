@@ -72,7 +72,7 @@ class TestPlaceScheduledOrderApi(BasePlaceScheduledOrderTestCase):
         "orders.interactors.order.place_scheduled_order_interactor.redis_lock",
         no_op_lock,
     )
-    def test_place_scheduled_order_successfully(self, snapshot, monkeypatch):
+    def test_place_scheduled_order_with_valid_data_success(self, snapshot, monkeypatch):
         placed_at = datetime.fromisoformat("2026-05-05T10:00:00+00:00")
         scheduled_for = datetime.fromisoformat("2026-05-05T12:00:00+00:00")
         patch_created_order(
@@ -122,7 +122,7 @@ class TestPlaceScheduledOrderApi(BasePlaceScheduledOrderTestCase):
             user_id=user_id,
         )
 
-    def test_place_scheduled_order_time_too_soon(self, snapshot, monkeypatch):
+    def test_place_scheduled_order_with_time_too_soon_raises_error(self, snapshot, monkeypatch):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         placed_at = datetime.fromisoformat("2026-05-05T10:00:00+00:00")
@@ -144,7 +144,7 @@ class TestPlaceScheduledOrderApi(BasePlaceScheduledOrderTestCase):
             user_id=user_id,
         )
 
-    def test_place_scheduled_order_restaurant_not_open_at_scheduled_time(
+    def test_place_scheduled_order_with_restaurant_not_open_at_scheduled_time_raises_error(
         self, snapshot
     ):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
@@ -170,7 +170,7 @@ class TestPlaceScheduledOrderApi(BasePlaceScheduledOrderTestCase):
         "orders.interactors.order.place_scheduled_order_interactor.redis_lock",
         no_op_lock,
     )
-    def test_place_scheduled_order_menu_items_unavailable(self, snapshot, monkeypatch):
+    def test_place_scheduled_order_with_unavailable_menu_items_raises_error(self, snapshot, monkeypatch):
         placed_at = datetime.fromisoformat("2026-05-05T10:00:00+00:00")
         scheduled_for = datetime.fromisoformat("2026-05-05T12:00:00+00:00")
         patch_created_order(

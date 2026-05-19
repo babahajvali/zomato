@@ -13,7 +13,7 @@ class TestUserOrdersApi(BaseUserOrdersTestCase):
     def setup_method(self):
         cache.clear()
 
-    def test_user_orders_successfully(self, snapshot):
+    def test_get_user_orders_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         other_user_id = "49bb508e-c6d1-4882-95fd-1991d103f7ce"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -46,7 +46,7 @@ class TestUserOrdersApi(BaseUserOrdersTestCase):
             user_id=user_id,
         )
 
-    def test_user_orders_empty(self, snapshot):
+    def test_user_orders_with_empty_result_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
 
@@ -57,7 +57,7 @@ class TestUserOrdersApi(BaseUserOrdersTestCase):
             user_id=user_id,
         )
 
-    def test_user_orders_pagination(self, snapshot):
+    def test_user_orders_with_pagination_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         UserFactory(id=user_id)

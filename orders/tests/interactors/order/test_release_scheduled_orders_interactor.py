@@ -2,7 +2,6 @@ from datetime import datetime, time
 from contextlib import contextmanager
 from unittest.mock import MagicMock, create_autospec, patch
 
-import pytest
 from django.utils import timezone
 
 from orders.adapter.dtos import RestaurantTimingDTO
@@ -35,7 +34,7 @@ class TestReleaseScheduledOrdersInteractor:
         self.interactor.restaurant_adapter = MagicMock()
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
-    def test_release_scheduled_orders_updates_order_to_placed(self):
+    def test_release_scheduled_orders_with_order_to_placed_success(self):
         scheduled_order = OrderDTOFactory(
             order_id="orders-1",
             restaurant_id="restaurants-1",
@@ -65,7 +64,7 @@ class TestReleaseScheduledOrdersInteractor:
         )
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
-    def test_release_scheduled_orders_updates_order_to_cancelled_when_items_unavailable(
+    def test_release_scheduled_orders_with_unavailable_items_success(
         self,
     ):
         scheduled_order = OrderDTOFactory(
@@ -90,7 +89,7 @@ class TestReleaseScheduledOrdersInteractor:
         )
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
-    def test_release_scheduled_orders_updates_order_to_cancelled_when_restaurant_closed(
+    def test_release_scheduled_orders_with_restaurant_closed_success(
         self,
     ):
         scheduled_order = OrderDTOFactory(
@@ -121,7 +120,7 @@ class TestReleaseScheduledOrdersInteractor:
             status=OrderStatus.CANCELLED,
         )
 
-    def test_should_cancel_returns_true_when_items_unavailable(self):
+    def test_should_cancel_with_unavailable_items_success(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
             restaurant_id="restaurants-1",
@@ -137,7 +136,7 @@ class TestReleaseScheduledOrdersInteractor:
 
         assert result is True
 
-    def test_should_cancel_returns_true_when_restaurant_closed(self):
+    def test_should_cancel_with_restaurant_closed_success(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
             restaurant_id="restaurants-1",
@@ -160,7 +159,7 @@ class TestReleaseScheduledOrdersInteractor:
 
         assert result is True
 
-    def test_should_cancel_returns_false(self):
+    def test_should_cancel_with_false_result_success(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
             restaurant_id="restaurants-1",
@@ -183,7 +182,7 @@ class TestReleaseScheduledOrdersInteractor:
 
         assert result is False
 
-    def test_has_unavailable_items_returns_true(self):
+    def test_has_unavailable_items_with_unavailable_items_success(self):
         self.order_storage.get_order_item_ids.return_value = ["item-1"]
         self.interactor.restaurant_adapter.get_unavailable_menu_items.return_value = [
             "item-1"
@@ -193,7 +192,7 @@ class TestReleaseScheduledOrdersInteractor:
 
         assert result is True
 
-    def test_has_unavailable_items_returns_false(self):
+    def test_has_unavailable_items_with_available_items_success(self):
         self.order_storage.get_order_item_ids.return_value = ["item-1"]
         self.interactor.restaurant_adapter.get_unavailable_menu_items.return_value = []
 
@@ -201,7 +200,7 @@ class TestReleaseScheduledOrdersInteractor:
 
         assert result is False
 
-    def test_is_restaurant_closed_returns_true_when_timing_not_found(self):
+    def test_is_restaurant_closed_with_timing_not_found_success(self):
         scheduled_for = timezone.make_aware(datetime(2026, 1, 1, 9, 0))
 
         self.interactor.restaurant_adapter.get_restaurant_timing.return_value = None
@@ -213,7 +212,7 @@ class TestReleaseScheduledOrdersInteractor:
 
         assert result is True
 
-    def test_is_restaurant_closed_returns_true_when_outside_timing(self):
+    def test_is_restaurant_closed_with_outside_timing_success(self):
         scheduled_for = timezone.make_aware(datetime(2026, 1, 1, 23, 0))
 
         self.interactor.restaurant_adapter.get_restaurant_timing.return_value = (
@@ -233,7 +232,7 @@ class TestReleaseScheduledOrdersInteractor:
 
         assert result is True
 
-    def test_is_restaurant_closed_returns_false(self):
+    def test_is_restaurant_closed_with_inside_timing_success(self):
         scheduled_for = timezone.make_aware(datetime(2026, 1, 4, 12, 0))
 
         self.interactor.restaurant_adapter.get_restaurant_timing.return_value = (

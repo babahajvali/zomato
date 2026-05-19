@@ -3,7 +3,8 @@ from decimal import Decimal
 
 from django.utils import timezone
 
-from orders.exception import custom_exceptions
+from accounts.exception import custom_exceptions
+from orders.exception import custom_exceptions, account_exception
 from orders.graphql.types.error_types import (
     PromoCodeUsageLimitReached,
     PromoCodeNotEligible,
@@ -27,7 +28,6 @@ from orders.interactors.order.place_scheduled_order_interactor import (
 )
 from orders.storages.order_storage import OrderStorage
 from orders.storages.promo_code_storage import PromoCodeStorage
-from utils import exceptions
 from utils.auth_decorators import require_auth
 
 
@@ -77,7 +77,7 @@ class PlaceScheduledOrderMutation(graphene.Mutation):
                 items_total=exc.items_total,
             )
 
-        except exceptions.AddressNotFound as exc:
+        except account_exception.AddressNotFound as exc:
             return AddressIdNotFound(address_id=exc.address_id)
 
         except custom_exceptions.DeliveryUnavailableForAddress as exc:

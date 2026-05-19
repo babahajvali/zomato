@@ -98,7 +98,7 @@ class TestPlaceScheduledOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_place_scheduled_order_successfully_without_promo_code(self):
+    def test_place_scheduled_order_with_without_promo_code_success(self):
         scheduled_for = timezone.now() + timedelta(hours=2)
         self._setup_valid_adapters(scheduled_for=scheduled_for)
         self.order_storage.create_order.return_value = OrderDTOFactory(
@@ -135,7 +135,7 @@ class TestPlaceScheduledOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_place_scheduled_order_successfully_with_percentage_promo_code(self):
+    def test_place_scheduled_order_with_percentage_promo_code_success(self):
         scheduled_for = timezone.now() + timedelta(hours=2)
         self._setup_valid_adapters(scheduled_for=scheduled_for)
         self.promo_code_storage.get_promo_code_by_id.return_value = PromoCodeDTOFactory(
@@ -173,7 +173,7 @@ class TestPlaceScheduledOrderInteractor:
         assert create_order_dto.tax_fee == Decimal("18.00")
         assert create_order_dto.final_amount == Decimal("408.00")
 
-    def test_place_scheduled_order_raises_scheduled_time_too_soon(self):
+    def test_place_scheduled_order_with_scheduled_time_too_soon_raises_error(self):
         scheduled_for = timezone.now() + timedelta(minutes=10)
 
         with pytest.raises(ScheduledTimeTooSoon) as exc:
@@ -184,7 +184,7 @@ class TestPlaceScheduledOrderInteractor:
         assert exc.value.scheduled_for == scheduled_for
         self.order_storage.create_order.assert_not_called()
 
-    def test_place_scheduled_order_raises_restaurant_not_open_at_scheduled_time(self):
+    def test_place_scheduled_order_with_restaurant_not_open_at_scheduled_time_raises_error(self):
         scheduled_for = timezone.now() + timedelta(hours=2)
         self._setup_valid_adapters(scheduled_for=scheduled_for)
         self.interactor.restaurant_adapter.get_restaurant_timing.return_value = None
@@ -202,7 +202,7 @@ class TestPlaceScheduledOrderInteractor:
         self.order_storage.create_order.assert_not_called()
 
     @patch(REDIS_LOCK, no_op_lock)
-    def test_place_scheduled_order_raises_menu_items_unavailable(self):
+    def test_place_scheduled_order_with_menu_items_unavailable_raises_error(self):
         scheduled_for = timezone.now() + timedelta(hours=2)
         self._setup_valid_adapters(scheduled_for=scheduled_for)
         self.interactor.restaurant_adapter.get_unavailable_menu_items.return_value = [
@@ -217,7 +217,7 @@ class TestPlaceScheduledOrderInteractor:
         assert exc.value.unavailable_item_ids == ["item-1"]
         self.order_storage.create_order.assert_not_called()
 
-    def test_validate_restaurant_timing_for_scheduled_time_raises_when_time_is_outside_window(
+    def test_validate_restaurant_timing_for_scheduled_time_with_time_is_outside_window_raises_error(
         self,
     ):
         scheduled_for = datetime.now() + timedelta(hours=2)
@@ -239,7 +239,7 @@ class TestPlaceScheduledOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_place_scheduled_order_raises_promo_usage_limit_reached(self):
+    def test_place_scheduled_order_with_promo_usage_limit_reached_raises_error(self):
         scheduled_for = timezone.now() + timedelta(hours=2)
         self._setup_valid_adapters(scheduled_for=scheduled_for)
         promo_dto = PromoCodeDTOFactory(max_usage=1)
@@ -254,7 +254,7 @@ class TestPlaceScheduledOrderInteractor:
                 ),
             )
 
-    def test_place_scheduled_order_raises_when_scheduled_for_is_in_the_past(self):
+    def test_place_scheduled_order_with_scheduled_for_is_in_the_past_raises_error(self):
         scheduled_for = timezone.now() - timedelta(hours=1)
 
         with pytest.raises(ScheduledTimeTooSoon) as exc:

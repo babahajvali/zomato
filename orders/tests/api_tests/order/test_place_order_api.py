@@ -67,7 +67,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         )
 
     @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
-    def test_place_order_with_flat_promo_code_successfully(self, snapshot, monkeypatch):
+    def test_place_order_with_flat_promo_code_success(self, snapshot, monkeypatch):
         placed_at = datetime.fromisoformat("2026-04-27T10:00:00.000000+00:00")
         patch_created_order(
             order_id="2a174989-0c91-4ccd-ad46-cacebe226e1d",
@@ -114,7 +114,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         )
 
     @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
-    def test_place_order_with_percentage_promo_code_successfully(
+    def test_place_order_with_percentage_promo_code_success(
         self, snapshot, monkeypatch
     ):
         placed_at = datetime.fromisoformat("2026-04-27T04:00:07.508492+00:00")
@@ -163,7 +163,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         )
 
     @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
-    def test_promo_code_not_eligible_min_order_value(self, snapshot):
+    def test_place_order_with_promo_code_min_order_not_eligible_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -217,7 +217,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
             user_id=user_id,
         )
 
-    def test_empty_cart_items_found(self, snapshot):
+    def test_place_order_with_empty_cart_items_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -251,7 +251,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         )
 
     @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
-    def test_place_order_with_multiple_items_successfully(self, snapshot, monkeypatch):
+    def test_place_order_with_multiple_items_success(self, snapshot, monkeypatch):
         patch_created_order(
             order_id="454a5524-cf0a-4a67-be1a-16b4dea2ae91",
             placed_at=datetime.fromisoformat("2026-04-27T04:00:07.562308+00:00"),
@@ -314,7 +314,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         )
 
     @patch("orders.interactors.order.place_order_interactor.timezone.now")
-    def test_place_order_restaurant_open(self, mock_now, snapshot):
+    def test_place_order_with_open_restaurant_success(self, mock_now, snapshot):
         mock_now.return_value = datetime.fromisoformat("2026-05-05T12:00:00+00:00")
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
@@ -345,7 +345,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         )
 
     @patch("orders.interactors.order.place_order_interactor.timezone.now")
-    def test_place_order_restaurant_closed(self, mock_now, snapshot):
+    def test_place_order_with_restaurant_closed_raises_error(self, mock_now, snapshot):
         mock_now.return_value = datetime.fromisoformat("2026-05-05T12:00:00+00:00")
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
@@ -382,7 +382,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
             user_id=user_id,
         )
 
-    def test_place_order_address_not_found(self, snapshot):
+    def test_place_order_with_address_not_found_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -404,7 +404,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
             user_id=user_id,
         )
 
-    def test_place_order_delivery_unavailable(self, snapshot):
+    def test_place_order_with_delivery_unavailable_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -428,7 +428,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         )
 
     @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
-    def test_place_order_promo_code_not_found(self, snapshot):
+    def test_place_order_with_promo_code_not_found_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -459,7 +459,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         )
 
     @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
-    def test_place_order_promo_code_expired(self, snapshot):
+    def test_place_order_with_expired_promo_code_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -500,7 +500,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         )
 
     @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
-    def test_place_order_promo_code_not_yet_valid(self, snapshot):
+    def test_place_order_with_not_yet_valid_promo_code_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -541,7 +541,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
         )
 
     @patch("orders.interactors.order.place_order_interactor.redis_lock", no_op_lock)
-    def test_place_order_promo_code_max_usage_reached(self, snapshot):
+    def test_place_order_with_max_usage_reached_promo_code_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -586,7 +586,7 @@ class TestPlaceOrderApi(BasePlaceOrderTestCase):
             user_id=user_id,
         )
 
-    def test_place_order_menu_items_unavailable(self, snapshot):
+    def test_place_order_with_unavailable_menu_items_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"

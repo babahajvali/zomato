@@ -15,7 +15,7 @@ from restaurants.tests.factories.storage_factories import (
 
 @pytest.mark.django_db
 class TestGetScoredRestaurantsApi(BaseGetScoredRestaurantsTestCase):
-    def test_get_scored_restaurants_successfully(self, snapshot):
+    def test_get_scored_restaurants_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         UserFactory(id=user_id)
@@ -59,7 +59,7 @@ class TestGetScoredRestaurantsApi(BaseGetScoredRestaurantsTestCase):
             user_id=user_id,
         )
 
-    def test_get_scored_restaurants_empty_list(self, snapshot):
+    def test_get_scored_restaurants_with_empty_list_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
 
@@ -78,7 +78,7 @@ class TestGetScoredRestaurantsApi(BaseGetScoredRestaurantsTestCase):
             user_id=user_id,
         )
 
-    def test_invalid_limit_found(self, snapshot):
+    def test_get_scored_restaurants_with_invalid_limit_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
 
@@ -97,7 +97,7 @@ class TestGetScoredRestaurantsApi(BaseGetScoredRestaurantsTestCase):
             user_id=user_id,
         )
 
-    def test_invalid_offset_found(self, snapshot):
+    def test_get_scored_restaurants_with_invalid_offset_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
 

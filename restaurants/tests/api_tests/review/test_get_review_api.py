@@ -14,7 +14,7 @@ class TestGetUserRestaurantReviewApi(BaseGetUserRestaurantReviewTestCase):
     def setup_method(self):
         cache.clear()
 
-    def test_get_user_restaurant_review_successfully(self, snapshot):
+    def test_get_user_restaurant_review_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         other_user_id = "49bb508e-c6d1-4882-95fd-1991d103f7ce"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -50,7 +50,7 @@ class TestGetUserRestaurantReviewApi(BaseGetUserRestaurantReviewTestCase):
             user_id=user_id,
         )
 
-    def test_get_user_restaurant_review_returns_null(self, snapshot):
+    def test_get_user_restaurant_review_with_missing_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         RestaurantFactory(id=restaurant_id)

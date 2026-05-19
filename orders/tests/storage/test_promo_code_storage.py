@@ -13,7 +13,7 @@ class TestPromoCodeStorage(TestCase):
     def setUp(self):
         self.storage = PromoCodeStorage()
 
-    def test_create_bulk_promo_codes_success(self):
+    def test_create_bulk_promo_codes_with_valid_data_success(self):
         now = timezone.now()
         promo_codes_dto = [
             CreatePromoCodeDTOFactory(
@@ -32,7 +32,7 @@ class TestPromoCodeStorage(TestCase):
         assert len(result) == 1
         assert PromoCode.objects.filter(code="SAVE50").exists()
 
-    def test_get_existing_codes(self):
+    def test_get_existing_codes_with_valid_data_success(self):
         PromoCodeFactory(code="SAVE50")
         PromoCodeFactory(code="WELCOME10")
 
@@ -42,7 +42,7 @@ class TestPromoCodeStorage(TestCase):
 
         assert result == ["SAVE50"]
 
-    def test_get_promo_code_by_id(self):
+    def test_get_promo_code_by_id_with_valid_data_success(self):
         promo_code = PromoCodeFactory(
             code="SAVE50",
             discount_type="FLAT",

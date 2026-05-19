@@ -20,7 +20,7 @@ class TestDeleteMenuItemInteractor:
             restaurant_storage=self.restaurant_storage,
         )
 
-    def test_delete_menu_item_success(self):
+    def test_delete_menu_item_with_valid_data_success(self):
         menu_item_id = "menu-1"
         user_id = "user-123"
 
@@ -35,7 +35,7 @@ class TestDeleteMenuItemInteractor:
             menu_item_id=menu_item_id
         )
 
-    def test_delete_menu_item_not_found(self):
+    def test_delete_menu_item_with_menu_item_not_found_raises_error(self):
         menu_item_id = "menu-1"
 
         self.restaurant_storage.get_menu_item.side_effect = MenuItemNotFound(
@@ -49,7 +49,7 @@ class TestDeleteMenuItemInteractor:
 
         self.restaurant_storage.delete_menu_item.assert_not_called()
 
-    def test_delete_menu_item_user_not_owner(self):
+    def test_delete_menu_item_with_user_not_owner_raises_error(self):
         menu_item_id = "menu-1"
 
         existing_item = MenuItemDTOFactory(restaurant_id="restaurant-1")

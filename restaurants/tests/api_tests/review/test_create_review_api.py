@@ -14,7 +14,7 @@ class TestCreateReviewApi(BaseCreateReviewTestCase):
     def setup_method(self):
         cache.clear()
 
-    def test_create_review_successfully(self, snapshot):
+    def test_create_review_with_valid_data_success(self, snapshot):
         # Arrange
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
@@ -37,7 +37,7 @@ class TestCreateReviewApi(BaseCreateReviewTestCase):
             user_id=user_id,
         )
 
-    def test_create_review_restaurant_not_found(self, snapshot):
+    def test_create_review_with_restaurant_not_found_raises_error(self, snapshot):
         # Arrange
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
@@ -59,7 +59,7 @@ class TestCreateReviewApi(BaseCreateReviewTestCase):
             user_id=user_id,
         )
 
-    def test_create_review_invalid_rating_low(self, snapshot):
+    def test_create_review_with_invalid_rating_low_raises_error(self, snapshot):
         # Arrange
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
@@ -82,7 +82,7 @@ class TestCreateReviewApi(BaseCreateReviewTestCase):
             user_id=user_id,
         )
 
-    def test_create_review_invalid_rating_high(self, snapshot):
+    def test_create_review_with_invalid_rating_high_raises_error(self, snapshot):
         # Arrange
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
@@ -105,7 +105,7 @@ class TestCreateReviewApi(BaseCreateReviewTestCase):
             user_id=user_id,
         )
 
-    def test_create_review_user_already_reviewed(self, snapshot):
+    def test_create_review_with_user_already_reviewed_success(self, snapshot):
         # Arrange
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)

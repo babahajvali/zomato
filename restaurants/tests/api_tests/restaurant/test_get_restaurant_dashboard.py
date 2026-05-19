@@ -13,7 +13,7 @@ from restaurants.tests.factories.storage_factories import (
 
 @pytest.mark.django_db
 class TestGetRestaurantDashboard(BaseGetRestaurantDashboardTestCase):
-    def test_get_restaurant_dashboard(self, snapshot):
+    def test_get_restaurant_dashboard_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7de"
         order_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -40,7 +40,7 @@ class TestGetRestaurantDashboard(BaseGetRestaurantDashboardTestCase):
             user_id=user_id,
         )
 
-    def test_restaurant_not_found(self, snapshot):
+    def test_get_restaurant_dashboard_with_restaurant_not_found_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7de"
         UserFactory(id=user_id)
@@ -60,7 +60,9 @@ class TestGetRestaurantDashboard(BaseGetRestaurantDashboardTestCase):
             user_id=user_id,
         )
 
-    def test_user_not_restaurant_owner(self, snapshot):
+    def test_get_restaurant_dashboard_with_user_not_restaurant_owner_raises_error(
+        self, snapshot
+    ):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7de"
         order_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -87,7 +89,9 @@ class TestGetRestaurantDashboard(BaseGetRestaurantDashboardTestCase):
             user_id=user_id,
         )
 
-    def test_invalid_date_range(self, snapshot):
+    def test_get_restaurant_dashboard_with_invalid_date_range_raises_error(
+        self, snapshot
+    ):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7de"
         order_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"

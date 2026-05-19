@@ -24,7 +24,7 @@ from orders.exception.custom_exceptions import (
     RestaurantClosed,
     RestaurantNotOpen,
 )
-from utils.exceptions import AddressNotFound
+from orders.exception.account_exception import AddressNotFound
 from orders.interactors.order.place_order_interactor import PlaceOrderInteractor
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,
@@ -102,7 +102,7 @@ class TestPlaceOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_place_order_successfully_with_flat_promo_code(self):
+    def test_place_order_with_flat_promo_code_success(self):
         self._setup_valid_adapters()
         promo_code = PromoCodeDTOFactory(
             promo_code_id=1,
@@ -147,7 +147,7 @@ class TestPlaceOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_place_order_successfully_without_promo_code(self):
+    def test_place_order_with_without_promo_code_success(self):
         self._setup_valid_adapters()
         self.order_storage.create_order.return_value = OrderDTOFactory(
             order_id="orders-1",
@@ -177,7 +177,7 @@ class TestPlaceOrderInteractor:
         assert create_order_dto.scheduled_for is None
 
     @patch(REDIS_LOCK, no_op_lock)
-    def test_place_order_raises_promo_code_not_found(self):
+    def test_place_order_with_promo_code_not_found_raises_error(self):
         self._setup_valid_adapters()
         self.promo_code_storage.get_promo_code_by_id.return_value = None
 
@@ -190,7 +190,7 @@ class TestPlaceOrderInteractor:
         self.order_storage.create_order.assert_not_called()
 
     @patch(REDIS_LOCK, no_op_lock)
-    def test_place_order_raises_promo_code_not_eligible(self):
+    def test_place_order_with_promo_code_not_eligible_raises_error(self):
         self._setup_valid_adapters()
         self.promo_code_storage.get_promo_code_by_id.return_value = PromoCodeDTOFactory(
             promo_code_id=1,
@@ -208,7 +208,7 @@ class TestPlaceOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_place_order_raises_promo_code_maximum_used(self):
+    def test_place_order_with_promo_code_maximum_used_raises_error(self):
         self._setup_valid_adapters()
         self.promo_code_storage.get_promo_code_by_id.return_value = PromoCodeDTOFactory(
             promo_code_id=1,
@@ -225,7 +225,7 @@ class TestPlaceOrderInteractor:
         self.order_storage.create_order.assert_not_called()
 
     @patch(REDIS_LOCK, no_op_lock)
-    def test_place_order_raises_customer_cart_not_found(self):
+    def test_place_order_with_customer_cart_not_found_raises_error(self):
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_customer_cart_id.return_value = None
 
@@ -238,7 +238,7 @@ class TestPlaceOrderInteractor:
         self.order_storage.create_order.assert_not_called()
 
     @patch(REDIS_LOCK, no_op_lock)
-    def test_place_order_raises_empty_cart_items_found(self):
+    def test_place_order_with_empty_cart_items_found_raises_error(self):
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_customer_cart_items.return_value = []
 
@@ -252,7 +252,7 @@ class TestPlaceOrderInteractor:
 
     @patch(REDIS_LOCK, no_op_lock)
     @patch(TRANSACTION_ATOMIC, no_op_lock)
-    def test_place_order_raises_menu_items_unavailable(self):
+    def test_place_order_with_menu_items_unavailable_raises_error(self):
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_unavailable_menu_items.return_value = [
             "item-1"
@@ -264,7 +264,7 @@ class TestPlaceOrderInteractor:
         assert exc.value.unavailable_item_ids == ["item-1"]
         self.order_storage.create_order.assert_not_called()
 
-    def test_place_order_raises_restaurant_day_timing_not_found(self):
+    def test_place_order_with_restaurant_day_timing_not_found_raises_error(self):
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_restaurant_timing.return_value = None
 
@@ -273,7 +273,7 @@ class TestPlaceOrderInteractor:
 
         self.order_storage.create_order.assert_not_called()
 
-    def test_place_order_raises_restaurant_closed(self):
+    def test_place_order_with_restaurant_closed_raises_error(self):
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_restaurant_timing.return_value = (
             RestaurantTimingDTO(
@@ -290,9 +290,11 @@ class TestPlaceOrderInteractor:
 
         self.order_storage.create_order.assert_not_called()
 
-    def test_place_order_raises_invalid_address_found(self):
+    def test_place_order_with_invalid_address_found_raises_error(self):
         self._setup_valid_adapters()
-        self.interactor.account_adapter.get_address_by_id.return_value = None
+        self.interactor.account_adapter.get_address_by_id.side_effect = AddressNotFound(
+            address_id=999
+        )
 
         with pytest.raises(AddressNotFound) as exc:
             self.interactor.place_order(order_data=PlaceOrderDTOFactory(address_id=999))
@@ -300,7 +302,7 @@ class TestPlaceOrderInteractor:
         assert exc.value.address_id == 999
         self.order_storage.create_order.assert_not_called()
 
-    def test_place_order_raises_invalid_delivery_zone_found(self):
+    def test_place_order_with_invalid_delivery_zone_found_raises_error(self):
         self._setup_valid_adapters()
         self.interactor.restaurant_adapter.get_delivery_zone_by_restaurant_id.return_value = None
 
@@ -313,7 +315,7 @@ class TestPlaceOrderInteractor:
         assert exc.value.pin_code == "500001"
         self.order_storage.create_order.assert_not_called()
 
-    def test_build_order_items(self):
+    def test_build_order_items_with_valid_data_success(self):
         result = self.interactor._build_order_items(
             cart_items=[
                 CartItemDTO(
@@ -335,7 +337,7 @@ class TestPlaceOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_place_order_raises_promo_code_expired(self):
+    def test_place_order_with_promo_code_expired_raises_error(self):
         self._setup_valid_adapters()
         from django.utils import timezone
         from datetime import timedelta
@@ -356,7 +358,7 @@ class TestPlaceOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_place_order_raises_promo_code_not_yet_valid(self):
+    def test_place_order_with_promo_code_not_yet_valid_raises_error(self):
         self._setup_valid_adapters()
         from django.utils import timezone
         from datetime import timedelta
@@ -377,7 +379,9 @@ class TestPlaceOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_place_order_usage_at_limit_minus_one_should_succeed(self):
+    def test_place_order_with_promo_usage_limit_minus_one_success(
+        self,
+    ):
         self._setup_valid_adapters()
         promo_code = PromoCodeDTOFactory(promo_code_id=1, max_usage=5)
         order_dto = OrderDTOFactory(order_id="orders-1")

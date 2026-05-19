@@ -12,7 +12,7 @@ class TestCartStorage:
     def setup_method(self):
         self.storage = CartStorage()
 
-    def test_create_carts_successfully(self):
+    def test_create_carts_with_valid_data_success(self):
         customer_ids = [
             "00000000-0000-0000-0000-000000000001",
             "00000000-0000-0000-0000-000000000002",
@@ -24,7 +24,7 @@ class TestCartStorage:
         assert result[0].customer_id == customer_ids[0]
         assert result[1].customer_id == customer_ids[1]
 
-    def test_create_carts_returns_cart_dto(self):
+    def test_create_carts_returns_cart_dto_with_valid_data_success(self):
         customer_ids = ["00000000-0000-0000-0000-000000000001"]
 
         result = self.storage.create_carts(customer_ids=customer_ids)
@@ -32,7 +32,7 @@ class TestCartStorage:
         assert result[0].cart_id is not None
         assert result[0].customer_id == customer_ids[0]
 
-    def test_get_cart_successfully(self):
+    def test_get_cart_with_valid_data_success(self):
         cart = CartFactory()
 
         result = self.storage.get_cart(cart_id=str(cart.id))
@@ -41,12 +41,12 @@ class TestCartStorage:
         assert result.cart_id == str(cart.id)
         assert result.customer_id == cart.customer_id
 
-    def test_get_cart_returns_none_when_not_found(self):
+    def test_get_cart_with_not_found_success(self):
         result = self.storage.get_cart(cart_id="invalid-cart-id")
 
         assert result is None
 
-    def test_create_cart_item_when_not_exists(self):
+    def test_create_cart_item_with_not_existing_item_success(self):
         cart = CartFactory()
         menu_item = MenuItemFactory()
 
@@ -62,7 +62,7 @@ class TestCartStorage:
         assert result.quantity == 2
         assert result.item_price == 199.0
 
-    def test_update_cart_item_when_already_exists(self):
+    def test_update_cart_item_with_existing_item_success(self):
         cart_item = CartItemFactory(quantity=2, item_price=199.0)
 
         result = self.storage.create_or_update_cart_item(
@@ -75,7 +75,7 @@ class TestCartStorage:
         assert result.quantity == 5
         assert result.item_price == 299.0
 
-    def test_create_or_update_does_not_create_duplicate(self):
+    def test_create_or_update_cart_item_with_existing_item_success(self):
         from restaurants.models import CartItem
 
         cart_item = CartItemFactory(quantity=2)
@@ -93,7 +93,7 @@ class TestCartStorage:
         ).count()
         assert count == 1
 
-    def test_get_cart_item_by_id_successfully(self):
+    def test_get_cart_item_by_id_with_valid_data_success(self):
         cart_item = CartItemFactory()
 
         result = self.storage.get_cart_item_by_id(cart_item_id=cart_item.pk)
@@ -102,12 +102,12 @@ class TestCartStorage:
         assert result.cart_item_id == cart_item.pk
         assert result.quantity == cart_item.quantity
 
-    def test_get_cart_item_by_id_returns_none_when_not_found(self):
+    def test_get_cart_item_by_id_with_not_found_success(self):
         result = self.storage.get_cart_item_by_id(cart_item_id=9999)
 
         assert result is None
 
-    def test_remove_cart_item_successfully(self):
+    def test_remove_cart_item_with_valid_data_success(self):
         from restaurants.models import CartItem
 
         cart_item = CartItemFactory()
@@ -117,10 +117,10 @@ class TestCartStorage:
         exists = CartItem.objects.filter(pk=cart_item.pk).exists()
         assert exists is False
 
-    def test_remove_cart_item_non_existing_does_not_raise(self):
+    def test_remove_cart_item_with_non_existing_item_success(self):
         self.storage.remove_cart_item(cart_item_id=9999)
 
-    def test_clear_cart_items_successfully(self):
+    def test_clear_cart_items_with_valid_data_success(self):
         from restaurants.models import CartItem
 
         cart = CartFactory()
@@ -133,7 +133,7 @@ class TestCartStorage:
         count = CartItem.objects.filter(cart_id=cart.id).count()
         assert count == 0
 
-    def test_clear_cart_items_only_clears_given_cart(self):
+    def test_clear_cart_items_with_given_cart_success(self):
         from restaurants.models import CartItem
 
         cart_1 = CartFactory()
@@ -151,7 +151,7 @@ class TestCartStorage:
         cart_2_count = CartItem.objects.filter(cart_id=cart_2.id).count()
         assert cart_2_count == 1
 
-    def test_clear_cart_items_empty_cart_does_not_raise(self):
+    def test_clear_cart_items_with_empty_cart_success(self):
         cart = CartFactory()
 
         self.storage.clear_cart_items(cart_id=str(cart.id))

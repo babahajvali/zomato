@@ -16,7 +16,7 @@ class TestDeleteRestaurantTiming(BaseDeleteRestaurantTimingTestCase):
     def setup_method(self):
         cache.clear()
 
-    def test_delete_restaurant_timing_success(self, snapshot):
+    def test_delete_restaurant_timing_with_valid_data_success(self, snapshot):
         user_id = "user-id-123"
         restaurant_id = "restaurants-id-123"
 
@@ -34,7 +34,7 @@ class TestDeleteRestaurantTiming(BaseDeleteRestaurantTimingTestCase):
             user_id=user_id,
         )
 
-    def test_restaurant_timing_not_found(self, snapshot):
+    def test_delete_restaurant_timing_with_not_found_raises_error(self, snapshot):
         user_id = "user-id-123"
         restaurant_id = "restaurants-id-123"
         UserFactory(id=user_id)
@@ -50,7 +50,7 @@ class TestDeleteRestaurantTiming(BaseDeleteRestaurantTimingTestCase):
             user_id=user_id,
         )
 
-    def test_user_is_not_restaurant_owner(self, snapshot):
+    def test_delete_restaurant_timing_with_user_not_restaurant_owner_raises_error(self, snapshot):
         user_id = "user-id-123"
         restaurant_id = "restaurants-id-123"
         RestaurantFactory(id=restaurant_id)

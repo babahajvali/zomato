@@ -17,7 +17,7 @@ class TestUpdateMenuItemApi(BaseUpdateMenuItemTestCase):
     def setup_method(self):
         cache.clear()
 
-    def test_update_menu_item_successfully(self, snapshot):
+    def test_update_menu_item_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7de"
         menu_item_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -52,7 +52,7 @@ class TestUpdateMenuItemApi(BaseUpdateMenuItemTestCase):
             user_id=user_id,
         )
 
-    def test_menu_item_not_found(self, snapshot):
+    def test_update_menu_item_with_menu_item_not_found_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         UserFactory(id=user_id)
 
@@ -75,7 +75,7 @@ class TestUpdateMenuItemApi(BaseUpdateMenuItemTestCase):
             user_id=user_id,
         )
 
-    def test_user_is_not_restaurant_owner(self, snapshot):
+    def test_update_menu_item_with_user_not_restaurant_owner_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         other_user_id = "49bb508e-c6d1-4882-95fd-1991d103f7aa"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7de"

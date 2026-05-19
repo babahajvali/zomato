@@ -30,7 +30,7 @@ class TestCreateReviewInteractor:
             restaurant_storage=self.mock_restaurant_storage,
         )
 
-    def test_create_review_success(self):
+    def test_create_review_with_valid_data_success(self):
         # Arrange
         create_review_dto = CreateReviewDTOFactory()
         expected_review = ReviewDTOFactory(
@@ -60,7 +60,7 @@ class TestCreateReviewInteractor:
             create_review_dto=create_review_dto
         )
 
-    def test_create_review_restaurant_not_found(self):
+    def test_create_review_with_restaurant_not_found_raises_error(self):
         # Arrange
         create_review_dto = CreateReviewDTOFactory()
 
@@ -79,7 +79,7 @@ class TestCreateReviewInteractor:
         self.mock_review_storage.check_user_review_exists.assert_not_called()
         self.mock_review_storage.create_review.assert_not_called()
 
-    def test_create_review_invalid_rating_low(self):
+    def test_create_review_with_invalid_rating_low_raises_error(self):
         # Arrange
         create_review_dto = CreateReviewDTOFactory(rating=0)
 
@@ -96,7 +96,7 @@ class TestCreateReviewInteractor:
         self.mock_review_storage.check_user_review_exists.assert_not_called()
         self.mock_review_storage.create_review.assert_not_called()
 
-    def test_create_review_invalid_rating_high(self):
+    def test_create_review_with_invalid_rating_high_raises_error(self):
         # Arrange
         create_review_dto = CreateReviewDTOFactory(rating=6)
 
@@ -113,7 +113,7 @@ class TestCreateReviewInteractor:
         self.mock_review_storage.check_user_review_exists.assert_not_called()
         self.mock_review_storage.create_review.assert_not_called()
 
-    def test_create_review_user_already_reviewed(self):
+    def test_create_review_with_user_already_reviewed_success(self):
         # Arrange
         create_review_dto = CreateReviewDTOFactory()
 
@@ -134,7 +134,7 @@ class TestCreateReviewInteractor:
         )
         self.mock_review_storage.create_review.assert_not_called()
 
-    def test_create_review_boundary_rating_1(self):
+    def test_create_review_with_boundary_rating_1_success(self):
         # Test valid lower boundary (rating=1)
         create_review_dto = CreateReviewDTOFactory(rating=1)
         expected_review = ReviewDTOFactory(
@@ -156,7 +156,7 @@ class TestCreateReviewInteractor:
             create_review_dto=create_review_dto
         )
 
-    def test_create_review_boundary_rating_5(self):
+    def test_create_review_with_boundary_rating_5_success(self):
         # Test valid upper boundary (rating=5)
         create_review_dto = CreateReviewDTOFactory(rating=5)
         expected_review = ReviewDTOFactory(

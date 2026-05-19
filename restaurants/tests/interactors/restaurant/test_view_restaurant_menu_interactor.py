@@ -24,7 +24,7 @@ class TestViewRestaurantMenuInteractor:
             restaurant_storage=self.restaurant_storage,
         )
 
-    def test_view_restaurant_menu_success(self):
+    def test_view_restaurant_menu_with_valid_data_success(self):
         starter_item = MenuItemWithTagsDTOFactory(
             item_id="item-1",
             category=Category.STARTER,
@@ -56,7 +56,7 @@ class TestViewRestaurantMenuInteractor:
             restaurant_id="restaurants-1"
         )
 
-    def test_view_restaurant_menu_groups_same_category_items(self):
+    def test_view_restaurant_menu_with_same_category_items_success(self):
         item_1 = MenuItemWithTagsDTOFactory(
             item_id="item-1",
             category=Category.STARTER,
@@ -79,7 +79,7 @@ class TestViewRestaurantMenuInteractor:
         assert result.categories[0].category == Category.STARTER
         assert result.categories[0].items == [item_1, item_2]
 
-    def test_view_restaurant_menu_empty_items(self):
+    def test_view_restaurant_menu_with_empty_items_success(self):
         self.restaurant_storage.check_restaurant_is_exist.return_value = True
         self.restaurant_storage.get_available_menu_items_by_restaurant.return_value = []
 
@@ -90,7 +90,7 @@ class TestViewRestaurantMenuInteractor:
         assert result.restaurant_id == "restaurants-1"
         assert result.categories == []
 
-    def test_view_restaurant_menu_restaurant_not_found(self):
+    def test_view_restaurant_menu_with_restaurant_not_found_raises_error(self):
         self.restaurant_storage.check_restaurant_is_exist.return_value = False
 
         with pytest.raises(RestaurantNotFound) as exc:

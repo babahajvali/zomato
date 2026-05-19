@@ -17,8 +17,8 @@ class TestOrderStorage:
     def setup_method(self):
         self.storage = OrderStorage()
 
-    def test_get_order_successfully(self):
-        order = OrderFactory(
+    def test_get_order_with_valid_data_success(self):
+        OrderFactory(
             id="orders-1",
             customer_id="customer-1",
             restaurant_id="restaurants-1",
@@ -36,12 +36,12 @@ class TestOrderStorage:
         assert result.customer_id == "customer-1"
         assert result.restaurant_id == "restaurants-1"
 
-    def test_get_order_returns_none_when_not_found(self):
+    def test_get_order_with_not_found_success(self):
         result = self.storage.get_order(order_id="invalid-orders")
 
         assert result is None
 
-    def test_get_order_items_successfully(self):
+    def test_get_order_items_with_valid_data_success(self):
         order = OrderFactory(
             id="orders-1",
             customer_id="customer-1",
@@ -62,12 +62,12 @@ class TestOrderStorage:
         assert result[0].quantity == 2
         assert result[0].item_price == 100.0
 
-    def test_get_order_items_returns_empty_when_not_found(self):
+    def test_get_order_items_with_not_found_success(self):
         result = self.storage.get_order_items(order_id="invalid-orders")
 
         assert result == []
 
-    def test_create_order_successfully_with_promo_code(self):
+    def test_create_order_with_promo_code_success(self):
         promo_code = PromoCodeFactory()
         create_order_dto = CreateOrderDTOFactory(
             customer_id="customer-1",
@@ -87,7 +87,7 @@ class TestOrderStorage:
         assert result.restaurant_id == "restaurants-1"
         assert result.promo_code_id == promo_code.id
 
-    def test_create_order_successfully_without_promo_code(self):
+    def test_create_order_with_without_promo_code_success(self):
         create_order_dto = CreateOrderDTOFactory(promo_code_id=None)
 
         result = self.storage.create_order(create_order_dto=create_order_dto)
@@ -95,7 +95,7 @@ class TestOrderStorage:
         assert result.order_id is not None
         assert result.promo_code_id is None
 
-    def test_get_promo_code_usage_excludes_cancelled_orders(self):
+    def test_get_promo_code_usage_excludes_cancelled_orders_with_valid_data_success(self):
         promo_code = PromoCodeFactory()
         OrderFactory(promo_code=promo_code, status=OrderStatus.PLACED.value)
         OrderFactory(promo_code=promo_code, status=OrderStatus.CONFIRMED.value)
@@ -107,7 +107,7 @@ class TestOrderStorage:
 
         assert result == 2
 
-    def test_create_order_items_successfully(self):
+    def test_create_order_items_with_valid_data_success(self):
         order = OrderFactory(id="orders-1")
         order_item_dtos = [
             CreateOrderItemDTO(
@@ -129,7 +129,7 @@ class TestOrderStorage:
         order_items = OrderItem.objects.filter(order_id=order.id).order_by("item_id")
         assert order_items.count() == 2
 
-    def test_update_order_status_successfully(self):
+    def test_update_order_status_with_valid_data_success(self):
         OrderFactory(id="orders-1", status=OrderStatus.PLACED.value)
 
         result = self.storage.update_order_status(
@@ -141,7 +141,7 @@ class TestOrderStorage:
         assert result.order_id == "orders-1"
         assert result.status == OrderStatus.CONFIRMED
 
-    def test_update_order_status_returns_none_when_order_not_found(self):
+    def test_update_order_status_with_order_not_found_success(self):
         result = self.storage.update_order_status(
             order_id="invalid-orders",
             status=OrderStatus.CONFIRMED,

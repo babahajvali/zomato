@@ -15,7 +15,7 @@ class TestRestaurantStorage(TestCase):
     def setUp(self):
         self.storage = RestaurantStorage()
 
-    def test_create_bulk_restaurants_success(self):
+    def test_create_bulk_restaurants_with_valid_data_success(self):
         user = UserFactory(email="owner@example.com", role="OWNER")
         restaurants_dto = [
             CreateRestaurantDTO(
@@ -36,7 +36,7 @@ class TestRestaurantStorage(TestCase):
         assert len(result) == 1
         assert Restaurant.objects.filter(name="Spice Hub").exists()
 
-    def test_create_bulk_restaurants_with_owner_id(self):
+    def test_create_bulk_restaurants_with_owner_id_success(self):
         restaurants_dto = [
             CreateRestaurantDTO(
                 id="restaurant-1",
@@ -59,7 +59,7 @@ class TestRestaurantStorage(TestCase):
             owner_id="00000000-0000-0000-0000-000000000001"
         ).exists()
 
-    def test_get_existing_restaurants(self):
+    def test_get_existing_restaurants_with_valid_data_success(self):
         RestaurantFactory(name="Spice Hub")
         RestaurantFactory(name="Cafe Nova")
 
@@ -69,9 +69,9 @@ class TestRestaurantStorage(TestCase):
 
         assert result == ["Spice Hub"]
 
-    def test_get_available_menu_items_by_restaurant(self):
+    def test_get_available_menu_items_by_restaurant_with_valid_data_success(self):
         restaurant = RestaurantFactory()
-        available_item = MenuItemFactory(
+        MenuItemFactory(
             restaurant=restaurant,
             name="Paneer Tikka",
             category="STARTER",
@@ -96,7 +96,7 @@ class TestRestaurantStorage(TestCase):
 
         assert len(result) == 2
 
-    def test_get_available_menu_items_by_restaurant_returns_sorted_items(self):
+    def test_get_available_menu_items_by_restaurant_with_sorted_items_success(self):
         restaurant = RestaurantFactory()
         MenuItemFactory(
             restaurant=restaurant,

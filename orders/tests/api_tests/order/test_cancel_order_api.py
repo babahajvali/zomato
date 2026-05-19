@@ -23,7 +23,7 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
         cache.clear()
 
     @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
-    def test_cancel_order_successfully(self, snapshot):
+    def test_cancel_order_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -59,7 +59,7 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
         )
 
     @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
-    def test_cancel_order_not_found(self, snapshot):
+    def test_cancel_order_with_not_found_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
 
@@ -77,7 +77,7 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
         )
 
     @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
-    def test_cancel_order_not_belongs_to_user(self, snapshot):
+    def test_cancel_order_with_not_belongs_to_user_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         other_user_id = "49bb508e-c6d1-4882-95fd-1991d103f7ce"
         UserFactory(id=user_id)
@@ -115,7 +115,7 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
         )
 
     @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
-    def test_cancel_order_time_exceeded(self, snapshot):
+    def test_cancel_order_with_time_exceeded_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -151,7 +151,7 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
         )
 
     @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
-    def test_cancel_order_already_cancelled(self, snapshot):
+    def test_cancel_order_with_already_cancelled_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -187,7 +187,7 @@ class TestCancelOrderApi(BaseCancelOrderTestCase):
         )
 
     @patch("orders.interactors.order.order_interactor.redis_lock", no_op_lock)
-    def test_cancel_order_raises_not_cancellable_delivered_status(self, snapshot):
+    def test_cancel_order_with_not_cancellable_delivered_status_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"

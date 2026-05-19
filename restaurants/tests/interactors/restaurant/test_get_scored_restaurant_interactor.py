@@ -35,7 +35,7 @@ class TestGetScoredRestaurantInteractor:
             self.interactor.order_adapter, instance=True
         )
 
-    def test_get_scored_restaurant_success(self):
+    def test_get_scored_restaurant_with_valid_data_success(self):
         restaurant_1 = RestaurantDTOFactory(
             id="restaurant-1",
             name="Restaurant 1",
@@ -103,7 +103,7 @@ class TestGetScoredRestaurantInteractor:
             user_id="user-1",
         )
 
-    def test_get_scored_restaurant_applies_limit_and_offset(self):
+    def test_get_scored_restaurant_with_limit_and_offset_success(self):
         restaurants = [
             RestaurantDTOFactory(id="restaurant-1"),
             RestaurantDTOFactory(id="restaurant-2"),
@@ -142,7 +142,7 @@ class TestGetScoredRestaurantInteractor:
         assert len(result) == 1
         assert result[0].restaurant_id == "restaurant-2"
 
-    def test_get_scored_restaurant_defaults_missing_reviews_and_stats(self):
+    def test_get_scored_restaurant_with_missing_reviews_and_stats_success(self):
         restaurant = RestaurantDTOFactory(id="restaurant-1")
         self.restaurant_storage.get_delivered_pincode_restaurants.return_value = [
             restaurant
@@ -164,7 +164,7 @@ class TestGetScoredRestaurantInteractor:
         assert result[0].day_frequent == 0
         assert result[0].score == Decimal("0.1000")
 
-    def test_get_scored_restaurant_empty_results(self):
+    def test_get_scored_restaurant_with_empty_results_success(self):
         self.restaurant_storage.get_delivered_pincode_restaurants.return_value = []
         self.review_storage.get_restaurants_reviews.return_value = []
         self.interactor.order_adapter.get_user_restaurants_stat.return_value = []
@@ -185,7 +185,7 @@ class TestGetScoredRestaurantInteractor:
             user_id="user-1",
         )
 
-    def test_get_scored_restaurant_with_invalid_limit(self):
+    def test_get_scored_restaurant_with_invalid_limit_raises_error(self):
         with pytest.raises(InvalidLimitFound) as exc:
             self.interactor.get_scored_restaurant(
                 pincode="500001",
@@ -197,7 +197,7 @@ class TestGetScoredRestaurantInteractor:
         assert exc.value.limit == -1
         self.restaurant_storage.get_delivered_pincode_restaurants.assert_not_called()
 
-    def test_get_scored_restaurant_with_invalid_offset(self):
+    def test_get_scored_restaurant_with_invalid_offset_raises_error(self):
         with pytest.raises(InvalidOffsetFound) as exc:
             self.interactor.get_scored_restaurant(
                 pincode="500001",

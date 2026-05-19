@@ -67,7 +67,7 @@ class TestCreateRestaurantTimingInteractor:
             storage_response if storage_response else [self._get_response_dto()]
         )
 
-    def test_create_restaurant_timing_success(self, snapshot):
+    def test_create_restaurant_timing_with_valid_data_success(self, snapshot):
         dto = self._get_create_dto()
         expected = [self._get_response_dto()]
         self._setup_dependencies(storage_response=expected)
@@ -86,7 +86,7 @@ class TestCreateRestaurantTimingInteractor:
             create_restaurant_timing_dto=[dto]
         )
 
-    def test_create_restaurant_timing_restaurant_not_found(self, snapshot):
+    def test_create_restaurant_timing_with_restaurant_not_found_raises_error(self, snapshot):
         dto = self._get_create_dto()
         self._setup_dependencies(restaurant_exists=False)
 
@@ -104,7 +104,7 @@ class TestCreateRestaurantTimingInteractor:
         self.storage.get_restaurant_owner_id.assert_not_called()
         self.storage.create_bulk_restaurant_timing.assert_not_called()
 
-    def test_create_restaurant_timing_user_not_owner(self, snapshot):
+    def test_create_restaurant_timing_with_user_not_owner_raises_error(self, snapshot):
         dto = self._get_create_dto()
         self._setup_dependencies(owner_id="owner-456")
 
@@ -121,7 +121,9 @@ class TestCreateRestaurantTimingInteractor:
 
         self.storage.create_bulk_restaurant_timing.assert_not_called()
 
-    def test_create_restaurant_timing_open_time_greater_than_close_time(self):
+    def test_create_restaurant_timing_with_open_time_greater_than_close_time_success(
+        self,
+    ):
         dto = CreateRestaurantTimingDTO(
             restaurant_id="restaurant-1",
             day_of_week=1,

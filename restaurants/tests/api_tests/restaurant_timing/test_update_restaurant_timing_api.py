@@ -14,7 +14,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
     def setup_method(self):
         cache.clear()
 
-    def test_update_restaurant_timing_successfully(self, snapshot):
+    def test_update_restaurant_timing_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         timing_id = 1
         restaurant_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
@@ -44,7 +44,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
             user_id=user_id,
         )
 
-    def test_update_restaurant_timing_not_found(self, snapshot):
+    def test_update_restaurant_timing_with_not_found_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         timing_id = 999
 
@@ -65,7 +65,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
             user_id=user_id,
         )
 
-    def test_update_restaurant_timing_user_not_owner(self, snapshot):
+    def test_update_restaurant_timing_with_user_not_owner_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         other_user_id = "99999999-9999-9999-9999-999999999999"
         timing_id = 1
@@ -100,7 +100,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
             user_id=user_id,
         )
 
-    def test_update_open_time_greater_than_close_time(self, snapshot):
+    def test_update_restaurant_timing_with_open_time_greater_than_close_time_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         timing_id = 1
         restaurant_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
@@ -130,7 +130,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
             user_id=user_id,
         )
 
-    def test_update_only_open_time(self, snapshot):
+    def test_update_restaurant_timing_with_only_open_time_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         timing_id = 1
         restaurant_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
@@ -159,7 +159,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
             user_id=user_id,
         )
 
-    def test_update_only_close_time(self, snapshot):
+    def test_update_restaurant_timing_with_only_close_time_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         timing_id = 1
         restaurant_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
@@ -188,7 +188,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
             user_id=user_id,
         )
 
-    def test_update_open_time_equal_to_existing_close_time(self, snapshot):
+    def test_update_restaurant_timing_with_open_time_equal_to_existing_close_time_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         timing_id = 1
         restaurant_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
@@ -217,7 +217,7 @@ class TestUpdateRestaurantTimingAPI(BaseUpdateRestaurantTiming):
             user_id=user_id,
         )
 
-    def test_update_close_time_equal_to_existing_open_time(self, snapshot):
+    def test_update_restaurant_timing_with_close_time_equal_to_existing_open_time_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         timing_id = 1
         restaurant_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"

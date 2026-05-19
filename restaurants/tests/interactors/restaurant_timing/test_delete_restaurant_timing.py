@@ -37,7 +37,7 @@ class TestDeleteRestaurantTiming:
             restaurant_storage=self.restaurant_storage,
         )
 
-    def test_delete_restaurant_timing_successful(self):
+    def test_delete_restaurant_timing_with_valid_data_success(self):
         id = 1
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7de"
         UserDTOFactory.create(id=user_id)
@@ -52,7 +52,7 @@ class TestDeleteRestaurantTiming:
             timing_id=id
         )
 
-    def test_restaurant_timing_not_exists(self):
+    def test_delete_restaurant_timing_with_not_existing_timing_success(self):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7de"
         id = 2
         self.restaurant_timing_storage.get_restaurant_timing.return_value = None
@@ -61,7 +61,7 @@ class TestDeleteRestaurantTiming:
 
         assert e.value.id == id
 
-    def test_user_is_not_restaurant_owner(self):
+    def test_delete_restaurant_timing_with_user_not_restaurant_owner_raises_error(self):
         id = 1
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7de"
         UserDTOFactory.create(id=user_id)
@@ -71,7 +71,7 @@ class TestDeleteRestaurantTiming:
 
         assert e.value.user_id == user_id
 
-    def test_get_restaurant_timings_successful(self):
+    def test_get_restaurant_timings_with_valid_data_success(self):
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
 
         timings = RestaurantTimingDTOFactory.create_batch(
@@ -85,7 +85,7 @@ class TestDeleteRestaurantTiming:
 
         assert len(result) == 3
 
-    def test_invalid_restaurant_found(self):
+    def test_get_restaurant_timings_with_invalid_restaurant_raises_error(self):
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         self.restaurant_storage.check_restaurant_is_exist.return_value = False
 

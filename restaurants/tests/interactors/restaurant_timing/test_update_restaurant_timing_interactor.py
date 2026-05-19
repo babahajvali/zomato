@@ -59,7 +59,7 @@ class TestUpdateRestaurantTimingInteractor:
             storage_result if storage_result is not None else self._get_timing_dto()
         )
 
-    def test_update_restaurant_timing_success(self, snapshot):
+    def test_update_restaurant_timing_with_valid_data_success(self, snapshot):
         update_dto = UpdateRestaurantTimingDTO(
             timing_id=1,
             user_id="user-123",
@@ -84,7 +84,7 @@ class TestUpdateRestaurantTimingInteractor:
             update_restaurant_timing_dto=update_dto
         )
 
-    def test_update_restaurant_timing_not_found(self, snapshot):
+    def test_update_restaurant_timing_with_not_found_raises_error(self, snapshot):
         update_dto = UpdateRestaurantTimingDTO(
             timing_id=1,
             user_id="user-123",
@@ -105,7 +105,7 @@ class TestUpdateRestaurantTimingInteractor:
         self.restaurant_timing_storage.get_restaurant_owner_id.assert_not_called()
         self.restaurant_timing_storage.update_restaurant_timing.assert_not_called()
 
-    def test_update_restaurant_timing_non_owner(self, snapshot):
+    def test_update_restaurant_timing_with_non_owner_raises_error(self, snapshot):
         update_dto = UpdateRestaurantTimingDTO(
             timing_id=1,
             user_id="user-123",
@@ -125,7 +125,7 @@ class TestUpdateRestaurantTimingInteractor:
         )
         self.restaurant_timing_storage.update_restaurant_timing.assert_not_called()
 
-    def test_update_restaurant_timing_open_time_greater_than_close_time(self):
+    def test_update_restaurant_timing_with_open_time_greater_than_close_time_success(self):
         update_dto = UpdateRestaurantTimingDTO(
             timing_id=1,
             user_id="user-123",
@@ -142,7 +142,7 @@ class TestUpdateRestaurantTimingInteractor:
         assert str(exc.value) == "22:00:00 --> 10:00:00"
         self.restaurant_timing_storage.update_restaurant_timing.assert_not_called()
 
-    def test_update_restaurant_timing_open_time_equal_to_existing_close_time(self):
+    def test_update_restaurant_timing_with_open_time_equal_to_existing_close_time_success(self):
         update_dto = UpdateRestaurantTimingDTO(
             timing_id=1,
             user_id="user-123",
@@ -159,7 +159,7 @@ class TestUpdateRestaurantTimingInteractor:
         assert str(exc.value) == "21:00:00 --> 21:00:00"
         self.restaurant_timing_storage.update_restaurant_timing.assert_not_called()
 
-    def test_update_restaurant_timing_close_time_equal_to_existing_open_time(self):
+    def test_update_restaurant_timing_with_close_time_equal_to_existing_open_time_success(self):
         update_dto = UpdateRestaurantTimingDTO(
             timing_id=1,
             user_id="user-123",
@@ -176,7 +176,7 @@ class TestUpdateRestaurantTimingInteractor:
         assert str(exc.value) == "09:00:00 --> 09:00:00"
         self.restaurant_timing_storage.update_restaurant_timing.assert_not_called()
 
-    def test_update_restaurant_timing_only_open_time_success(self, snapshot):
+    def test_update_restaurant_timing_with_only_open_time_success(self, snapshot):
         update_dto = UpdateRestaurantTimingDTO(
             timing_id=1,
             user_id="user-123",
@@ -201,7 +201,7 @@ class TestUpdateRestaurantTimingInteractor:
             update_restaurant_timing_dto=update_dto
         )
 
-    def test_update_restaurant_timing_only_close_time_success(self, snapshot):
+    def test_update_restaurant_timing_with_only_close_time_success(self, snapshot):
         update_dto = UpdateRestaurantTimingDTO(
             timing_id=1,
             user_id="user-123",
@@ -226,7 +226,7 @@ class TestUpdateRestaurantTimingInteractor:
             update_restaurant_timing_dto=update_dto
         )
 
-    def test_update_restaurant_nothing_update(self, snapshot):
+    def test_update_restaurant_timing_with_nothing_to_update_raises_error(self, snapshot):
         update_dto = UpdateRestaurantTimingDTO(
             timing_id=1,
             user_id="user-123",

@@ -17,7 +17,7 @@ from restaurants.tests.factories.storage_factories import RestaurantFactory
 
 @pytest.mark.django_db
 class TestGetOrderApi(BaseGetOrderTestCase):
-    def test_get_order_successfully(self, snapshot):
+    def test_get_order_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
         UserFactory(id=user_id)
@@ -48,7 +48,7 @@ class TestGetOrderApi(BaseGetOrderTestCase):
             user_id=user_id,
         )
 
-    def test_order_not_found(self, snapshot):
+    def test_get_order_with_not_found_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
 

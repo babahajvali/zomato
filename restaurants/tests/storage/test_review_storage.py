@@ -13,7 +13,7 @@ class TestReviewStorage(TestCase):
     def setUp(self):
         self.storage = ReviewStorage()
 
-    def test_create_review_success(self):
+    def test_create_review_with_valid_data_success(self):
         # Arrange
         restaurant = RestaurantFactory()
         create_review_dto = CreateReviewDTOFactory(
@@ -30,7 +30,7 @@ class TestReviewStorage(TestCase):
         assert result.rating == 4
         assert result.review == "Great food and service!"
 
-    def test_get_restaurant_reviews_success(self):
+    def test_get_restaurant_reviews_with_valid_data_success(self):
         # Arrange
         restaurant_id = "test-restaurant"
         restaurant = RestaurantFactory(id=restaurant_id)
@@ -51,7 +51,7 @@ class TestReviewStorage(TestCase):
         for review in result:
             assert review.restaurant_id == restaurant.id
 
-    def test_get_restaurant_review_summaries_success(self):
+    def test_get_restaurant_review_summaries_with_valid_data_success(self):
         restaurant_1 = RestaurantFactory(id="restaurant-1")
         restaurant_2 = RestaurantFactory(id="restaurant-2")
 
@@ -71,7 +71,7 @@ class TestReviewStorage(TestCase):
         assert result[1].average_rating == 3.0
         assert result[1].total_reviews == 1
 
-    def test_get_restaurant_reviews_empty(self):
+    def test_get_restaurant_reviews_with_empty_result_success(self):
         # Arrange
         restaurant = RestaurantFactory()
 
@@ -81,7 +81,7 @@ class TestReviewStorage(TestCase):
         # Assert
         self.assertEqual(len(result), 0)
 
-    def test_check_user_review_exists_true(self):
+    def test_check_user_review_exists_with_existing_review_success(self):
         # Arrange
         restaurant = RestaurantFactory()
         customer_id = "test-user"
@@ -98,7 +98,7 @@ class TestReviewStorage(TestCase):
         # Assert
         self.assertTrue(result)
 
-    def test_check_user_review_exists_false(self):
+    def test_check_user_review_exists_with_missing_review_success(self):
         # Arrange
         restaurant = RestaurantFactory()
         customer_id = "test-user"
@@ -111,7 +111,7 @@ class TestReviewStorage(TestCase):
         # Assert
         self.assertFalse(result)
 
-    def test_check_user_review_exists_different_restaurant(self):
+    def test_check_user_review_exists_with_different_restaurant_success(self):
         # Arrange
         restaurant1 = RestaurantFactory()
         restaurant2 = RestaurantFactory()

@@ -24,7 +24,7 @@ class TestUpdateMenuItemInteractor:
             restaurant_storage=self.restaurant_storage,
         )
 
-    def test_update_menu_item_success(self):
+    def test_update_menu_item_with_valid_data_success(self):
         update_dto = CreateMenuItemDTOFactory()
         update_dto.menu_item_id = "menu-1"
 
@@ -44,7 +44,7 @@ class TestUpdateMenuItemInteractor:
             update_menu_item_dto=update_dto
         )
 
-    def test_update_menu_item_not_found(self):
+    def test_update_menu_item_with_menu_item_not_found_raises_error(self):
         update_dto = CreateMenuItemDTOFactory()
         update_dto.menu_item_id = "menu-1"
 
@@ -59,7 +59,7 @@ class TestUpdateMenuItemInteractor:
 
         self.restaurant_storage.update_menu_item.assert_not_called()
 
-    def test_update_menu_item_user_not_owner(self):
+    def test_update_menu_item_with_user_not_owner_raises_error(self):
         update_dto = CreateMenuItemDTOFactory()
         update_dto.menu_item_id = "menu-1"
 
@@ -76,7 +76,7 @@ class TestUpdateMenuItemInteractor:
 
         self.restaurant_storage.update_menu_item.assert_not_called()
 
-    def test_update_menu_item_with_partial_fields(self):
+    def test_update_menu_item_with_partial_fields_success(self):
         from restaurants.interactors.dtos import UpdateMenuItemDTO
 
         update_dto = UpdateMenuItemDTO(
@@ -109,7 +109,7 @@ class TestUpdateMenuItemInteractor:
             update_menu_item_dto=update_dto
         )
 
-    def test_update_menu_item_with_all_none_fields(self):
+    def test_update_menu_item_with_all_none_fields_success(self):
         from restaurants.interactors.dtos import UpdateMenuItemDTO
 
         update_dto = UpdateMenuItemDTO(
@@ -126,7 +126,7 @@ class TestUpdateMenuItemInteractor:
             restaurant_id="restaurant-1",
             name="Original Name",
         )
-        unchanged_item = MenuItemDTOFactory(
+        MenuItemDTOFactory(
             restaurant_id="restaurant-1",
             name="Original Name",
         )

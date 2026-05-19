@@ -40,7 +40,7 @@ class TestOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_cancel_order_successfully(self):
+    def test_cancel_order_with_valid_data_success(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
             customer_id="customer-1",
@@ -71,7 +71,7 @@ class TestOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_cancel_order_raises_order_not_found(self):
+    def test_cancel_order_with_order_not_found_raises_error(self):
         self.order_storage.get_order.return_value = None
 
         with pytest.raises(OrderNotFound) as exc:
@@ -85,7 +85,7 @@ class TestOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_cancel_order_raises_order_does_not_belong_to_user(self):
+    def test_cancel_order_with_order_does_not_belong_to_user_raises_error(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
             customer_id="customer-1",
@@ -104,7 +104,7 @@ class TestOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_cancel_order_raises_cancellation_time_exceeded(self):
+    def test_cancel_order_with_cancellation_time_exceeded_raises_error(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
             customer_id="customer-1",
@@ -127,7 +127,7 @@ class TestOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_cancel_order_raises_already_cancelled(self):
+    def test_cancel_order_with_already_cancelled_raises_error(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
             customer_id="customer-1",
@@ -149,7 +149,7 @@ class TestOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_cancel_order_raises_order_not_cancellable(self):
+    def test_cancel_order_with_order_not_cancellable_raises_error(self):
         order_dto = OrderDTOFactory(
             order_id="orders-1",
             customer_id="customer-1",
@@ -171,7 +171,7 @@ class TestOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_cancel_order_at_boundary_time_allowed(self):
+    def test_cancel_order_with_allowed_boundary_time_success(self):
         placed_at = timezone.now() - timedelta(minutes=2) + timedelta(seconds=5)
 
         order_dto = OrderDTOFactory(
@@ -200,7 +200,7 @@ class TestOrderInteractor:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(REDIS_LOCK, no_op_lock)
-    def test_cancel_order_just_after_boundary_fails(self):
+    def test_cancel_order_with_disallowed_boundary_time_raises_error(self):
         from orders.constants.constants import CANCEL_TIME
 
         placed_at = (
@@ -223,7 +223,7 @@ class TestOrderInteractor:
                 user_id="customer-1",
             )
 
-    def test_user_orders_successfully(self):
+    def test_get_user_orders_with_valid_data_success(self):
         order_dtos = [
             OrderDTOFactory(order_id="orders-1", customer_id="customer-1"),
             OrderDTOFactory(order_id="orders-2", customer_id="customer-1"),
@@ -243,7 +243,7 @@ class TestOrderInteractor:
             offset=0,
         )
 
-    def test_get_user_orders_empty_list(self):
+    def test_get_user_orders_with_empty_list_success(self):
         self.order_storage.get_user_orders.return_value = []
 
         result = self.interactor.get_user_orders(
@@ -259,7 +259,7 @@ class TestOrderInteractor:
             offset=0,
         )
 
-    def test_get_order_successfully(self):
+    def test_get_order_with_valid_data_success(self):
         placed_at = timezone.now()
         order_dto = OrderDTOFactory(
             order_id="orders-1",
@@ -279,7 +279,7 @@ class TestOrderInteractor:
         assert result == order_summary_dto
         self.order_storage.get_order_items.assert_called_once_with(order_id="orders-1")
 
-    def test_get_order_raises_order_not_found(self):
+    def test_get_order_with_order_not_found_raises_error(self):
         self.order_storage.get_order.return_value = None
 
         with pytest.raises(OrderNotFound) as exc:

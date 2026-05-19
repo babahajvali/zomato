@@ -10,7 +10,7 @@ factory.random.reseed_random(123)
 
 @pytest.mark.django_db
 class TestBrowseRestaurantsAPI(BaseBrowseRestaurantsTestCase):
-    def test_browse_restaurants_success(self, snapshot):
+    def test_browse_restaurants_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7d5"
@@ -38,7 +38,7 @@ class TestBrowseRestaurantsAPI(BaseBrowseRestaurantsTestCase):
             user_id=user_id,
         )
 
-    def test_invalid_cuisine_type_found(self, snapshot):
+    def test_browse_restaurants_with_invalid_cuisine_type_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         UserFactory(id=user_id)
         cuisine_type = "invalid"
@@ -57,7 +57,7 @@ class TestBrowseRestaurantsAPI(BaseBrowseRestaurantsTestCase):
             user_id=user_id,
         )
 
-    def test_invalid_min_rating_found(self, snapshot):
+    def test_browse_restaurants_with_invalid_min_rating_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7dd"
         UserFactory(id=user_id)
         min_rating = -10

@@ -31,7 +31,7 @@ class TestCartItemInteractor:
             restaurant_storage=self.restaurant_storage,
         )
 
-    def test_update_cart_item_successfully(self):
+    def test_update_cart_item_with_valid_data_success(self):
         menu_item = MenuItemDTOFactory(id="item-123", price=350.0)
         user_id = "user-1"
         cart_item = CartItemDTOFactory(
@@ -65,7 +65,7 @@ class TestCartItemInteractor:
             item_price=menu_item.price,
         )
 
-    def test_update_cart_item_raises_cart_not_found(self):
+    def test_update_cart_item_with_cart_not_found_raises_error(self):
         self.cart_storage.get_cart.return_value = None
 
         with pytest.raises(CartNotFound) as exc:
@@ -79,7 +79,7 @@ class TestCartItemInteractor:
         assert exc.value.cart_id == "invalid-cart"
         self.cart_storage.create_or_update_cart_item.assert_not_called()
 
-    def test_update_cart_item_raises_menu_item_not_found(self):
+    def test_update_cart_item_with_menu_item_not_found_raises_error(self):
         cart = CartDTOFactory(cart_id="cart-123")
         self.cart_storage.get_cart.return_value = cart
         self.restaurant_storage.get_menu_item.return_value = None
@@ -94,7 +94,7 @@ class TestCartItemInteractor:
 
         self.cart_storage.create_or_update_cart_item.assert_not_called()
 
-    def test_update_cart_item_raises_invalid_quantity_when_zero(self):
+    def test_update_cart_item_with_invalid_quantity_when_zero_raises_error(self):
         cart = CartDTOFactory(cart_id="cart-123")
         self.cart_storage.get_cart.return_value = cart
         self.restaurant_storage.get_menu_item.return_value = MenuItemDTOFactory()
@@ -110,7 +110,7 @@ class TestCartItemInteractor:
         assert exc.value.quantity == 0
         self.cart_storage.create_or_update_cart_item.assert_not_called()
 
-    def test_update_cart_item_raises_invalid_quantity_when_exceeds_limit(self):
+    def test_update_cart_item_with_invalid_quantity_when_exceeds_limit_raises_error(self):
         cart = CartDTOFactory(cart_id="cart-123")
         self.cart_storage.get_cart.return_value = cart
         self.restaurant_storage.get_menu_item.return_value = MenuItemDTOFactory()
@@ -126,7 +126,7 @@ class TestCartItemInteractor:
         assert exc.value.quantity == 11
         self.cart_storage.create_or_update_cart_item.assert_not_called()
 
-    def test_update_cart_item_with_max_valid_quantity(self):
+    def test_update_cart_item_with_max_valid_quantity_success(self):
         menu_item = MenuItemDTOFactory(id="item-123", price=350.0)
         cart_item = CartItemDTOFactory(
             cart_id="cart-123",
@@ -148,7 +148,7 @@ class TestCartItemInteractor:
 
         assert result.quantity == 9
 
-    def test_remove_cart_item_successfully(self):
+    def test_remove_cart_item_with_valid_data_success(self):
         cart = CartDTOFactory(cart_id="cart-123", customer_id="customer_id")
         self.cart_storage.get_cart_item_by_id.return_value = CartItemDTOFactory(
             cart_item_id=1, cart_id=cart.cart_id
@@ -160,7 +160,7 @@ class TestCartItemInteractor:
 
         self.cart_storage.remove_cart_item.assert_called_once_with(cart_item_id=1)
 
-    def test_remove_cart_item_raises_cart_item_not_found(self):
+    def test_remove_cart_item_with_cart_item_not_found_raises_error(self):
         self.cart_storage.get_cart_item_by_id.return_value = None
 
         with pytest.raises(CartItemNotFound) as exc:
@@ -169,7 +169,7 @@ class TestCartItemInteractor:
         assert exc.value.cart_item_id == 999
         self.cart_storage.remove_cart_item.assert_not_called()
 
-    def test_clear_cart_items_successfully(self):
+    def test_clear_cart_items_with_valid_data_success(self):
         cart = CartDTOFactory(cart_id="cart-123")
         self.cart_storage.get_cart.return_value = cart
         self.cart_storage.clear_cart_items.return_value = None
@@ -178,7 +178,7 @@ class TestCartItemInteractor:
 
         self.cart_storage.clear_cart_items.assert_called_once_with(cart_id="cart-123")
 
-    def test_clear_cart_items_raises_cart_not_found(self):
+    def test_clear_cart_items_with_cart_not_found_raises_error(self):
         self.cart_storage.get_cart.return_value = None
 
         with pytest.raises(CartNotFound) as exc:
@@ -187,7 +187,7 @@ class TestCartItemInteractor:
         assert exc.value.cart_id == "invalid-cart"
         self.cart_storage.clear_cart_items.assert_not_called()
 
-    def test_update_cart_item_with_min_valid_quantity(self):
+    def test_update_cart_item_with_min_valid_quantity_success(self):
         menu_item = MenuItemDTOFactory(id="item-123", price=350.0)
         cart_item = CartItemDTOFactory(
             cart_id="cart-123",
@@ -215,7 +215,7 @@ class TestCartItemInteractor:
             item_price=menu_item.price,
         )
 
-    def test_update_cart_item_with_max_valid_quantity_10(self):
+    def test_update_cart_item_with_max_valid_quantity_10_success(self):
         menu_item = MenuItemDTOFactory(id="item-123", price=350.0)
         cart_item = CartItemDTOFactory(
             cart_id="cart-123",
@@ -244,7 +244,7 @@ class TestCartItemInteractor:
             item_price=menu_item.price,
         )
 
-    def test_get_cart_items_successfully(self):
+    def test_get_cart_items_with_valid_data_success(self):
         # Test get_cart_items() method
         cart_items = [
             CartItemDTOFactory(
@@ -276,7 +276,7 @@ class TestCartItemInteractor:
         assert result[1].quantity == 1
         self.cart_storage.get_cart_items.assert_called_once_with(cart_id="cart-123")
 
-    def test_get_cart_items_raises_cart_not_found(self):
+    def test_get_cart_items_with_cart_not_found_raises_error(self):
         self.cart_storage.get_cart.return_value = None
 
         with pytest.raises(CartNotFound) as exc:
@@ -285,7 +285,7 @@ class TestCartItemInteractor:
         assert exc.value.cart_id == "invalid-cart"
         self.cart_storage.get_cart_items.assert_not_called()
 
-    def test_get_customer_cart_id(self):
+    def test_get_customer_cart_id_with_valid_data_success(self):
         self.cart_storage.get_customer_cart_id.return_value = "cart-123"
 
         result = self.interactor.get_customer_cart_id(customer_id="customer-1")

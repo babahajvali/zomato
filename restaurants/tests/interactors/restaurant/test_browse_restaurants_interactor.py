@@ -1,5 +1,5 @@
 from datetime import datetime, time
-from unittest.mock import Mock, create_autospec
+from unittest.mock import create_autospec
 
 import pytest
 
@@ -37,7 +37,7 @@ class TestBrowseRestaurantsInteractor:
             review_storage=self.review_storage,
         )
 
-    def test_browse_restaurants_maps_review_summary(self):
+    def test_browse_restaurants_with_review_summary_success(self):
         restaurant = RestaurantDTOFactory(id="restaurant-1")
         timing = RestaurantTimingDTOFactory(
             restaurant_id="restaurant-1",
@@ -69,7 +69,7 @@ class TestBrowseRestaurantsInteractor:
             restaurant_ids=["restaurant-1"]
         )
 
-    def test_browse_restaurants_with_invalid_min_rating(self):
+    def test_browse_restaurants_with_invalid_min_rating_raises_error(self):
         filters_dto = BrowseRestaurantFiltersDTOFactory(min_rating=6.0)  # Invalid rating > 5
 
         with pytest.raises(InvalidMinRating) as exc:
@@ -78,9 +78,7 @@ class TestBrowseRestaurantsInteractor:
         assert exc.value.min_rating == 6.0
         self.restaurant_storage.get_restaurants.assert_not_called()
 
-    def test_browse_restaurants_restaurant_is_open(self):
-        from datetime import datetime
-        current_time = datetime.now().time()
+    def test_browse_restaurants_with_open_restaurant_success(self):
         restaurant = RestaurantDTOFactory(id="restaurant-1")
         timing = RestaurantTimingDTOFactory(
             restaurant_id="restaurant-1",
@@ -104,7 +102,7 @@ class TestBrowseRestaurantsInteractor:
         assert len(result) == 1
         assert result[0].is_open is True
 
-    def test_browse_restaurants_restaurant_is_closed_outside_hours(self):
+    def test_browse_restaurants_with_closed_restaurant_outside_hours_success(self):
         from datetime import datetime
         restaurant = RestaurantDTOFactory(id="restaurant-1")
         timing = RestaurantTimingDTOFactory(
@@ -129,7 +127,7 @@ class TestBrowseRestaurantsInteractor:
         assert len(result) == 1
         assert result[0].is_open is False
 
-    def test_browse_restaurants_restaurant_has_no_timing(self):
+    def test_browse_restaurants_with_restaurant_without_timing_success(self):
 
         restaurant = RestaurantDTOFactory(id="restaurant-1")
         review_summary = RestaurantReviewSummaryDTOFactory(
@@ -148,7 +146,7 @@ class TestBrowseRestaurantsInteractor:
         assert len(result) == 1
         assert result[0].is_open is False
 
-    def test_browse_restaurants_empty_results(self):
+    def test_browse_restaurants_with_empty_results_success(self):
         # Test short-circuit with empty restaurant list
         filters_dto = BrowseRestaurantFiltersDTOFactory(min_rating=None)
 
@@ -165,7 +163,7 @@ class TestBrowseRestaurantsInteractor:
             restaurant_ids=[]
         )
 
-    def test_browse_restaurants_with_min_rating_filter(self):
+    def test_browse_restaurants_with_min_rating_filter_success(self):
         restaurant = RestaurantDTOFactory(id="restaurant-1")
         timing = RestaurantTimingDTOFactory(
             restaurant_id="restaurant-1",

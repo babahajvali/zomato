@@ -63,14 +63,6 @@ class DeliveryUnavailableForAddress(Exception):
         return f"This {self.restaurant_id} not delivered at this zone {self.pin_code}"
 
 
-class AddressNotFound(Exception):
-    def __init__(self, address_id: int):
-        self.address_id = address_id
-
-    def __str__(self):
-        return f"Invalid address {self.address_id}"
-
-
 class RestaurantNotOpen(Exception):
     def __init__(self, restaurant_id: str, day_of_week: int):
         self.restaurant_id = restaurant_id

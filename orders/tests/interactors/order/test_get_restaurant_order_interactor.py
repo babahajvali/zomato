@@ -25,7 +25,7 @@ class TestGetRestaurantOrderInteractor:
         )
         self.interactor.restaurant_adapter = MagicMock()
 
-    def test_get_restaurant_order_successfully(self):
+    def test_get_restaurant_order_with_valid_data_success(self):
         order_dtos = [
             OrderDTOFactory(order_id="orders-1", restaurant_id="restaurants-1"),
             OrderDTOFactory(order_id="orders-2", restaurant_id="restaurants-1"),
@@ -47,7 +47,7 @@ class TestGetRestaurantOrderInteractor:
             restaurant_id="restaurants-1", limit=10, offset=0
         )
 
-    def test_get_restaurant_order_raises_user_is_not_restaurant_owner(self):
+    def test_get_restaurant_order_with_user_is_not_restaurant_owner_raises_error(self):
         self.interactor.restaurant_adapter.get_restaurant_owner_id.return_value = (
             "owner-1"
         )
@@ -63,7 +63,7 @@ class TestGetRestaurantOrderInteractor:
         assert exc.value.user_id == "other-user"
         self.order_storage.get_restaurant_orders.assert_not_called()
 
-    def test_get_today_restaurant_orders_successfully(self):
+    def test_get_today_restaurant_orders_with_valid_data_success(self):
         old_order = OrderDTOFactory(
             order_id="orders-1",
             restaurant_id="restaurants-1",
@@ -71,7 +71,7 @@ class TestGetRestaurantOrderInteractor:
             status=OrderStatus.PLACED,
             placed_at=timezone.now() - timezone.timedelta(minutes=2),
         )
-        recent_order = OrderDTOFactory(
+        OrderDTOFactory(
             order_id="orders-2",
             restaurant_id="restaurants-1",
             customer_id="customer-2",
@@ -105,8 +105,8 @@ class TestGetRestaurantOrderInteractor:
             order_ids=["orders-1"]
         )
 
-    def test_get_today_restaurant_orders_returns_empty_for_recent_orders(self):
-        recent_order = OrderDTOFactory(
+    def test_get_today_restaurant_orders_with_recent_orders_success(self):
+        OrderDTOFactory(
             order_id="orders-1",
             restaurant_id="restaurants-1",
             placed_at=timezone.now(),
@@ -126,7 +126,7 @@ class TestGetRestaurantOrderInteractor:
         assert result == []
         self.order_storage.get_orders_items.assert_not_called()
 
-    def test_get_today_restaurant_orders_raises_user_is_not_restaurant_owner(self):
+    def test_get_today_restaurant_orders_with_user_is_not_restaurant_owner_raises_error(self):
         self.interactor.restaurant_adapter.get_restaurant_owner_id.return_value = (
             "owner-1"
         )
@@ -142,8 +142,8 @@ class TestGetRestaurantOrderInteractor:
         assert exc.value.user_id == "other-user"
         self.order_storage.get_today_restaurant_orders.assert_not_called()
 
-    def test_get_today_restaurant_orders_filters_cancellation_window(self):
-        order_within_window = OrderDTOFactory(
+    def test_get_today_restaurant_orders_with_cancellation_window_filter_success(self):
+        OrderDTOFactory(
             order_id="orders-1",
             restaurant_id="restaurants-1",
             customer_id="customer-1",

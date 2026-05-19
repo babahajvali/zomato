@@ -22,7 +22,7 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
         cache.clear()
 
     @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
-    def test_update_order_status_successfully(self, snapshot):
+    def test_update_order_status_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -48,7 +48,7 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
             user_id=user_id,
         )
 
-    def test_order_not_found(self, snapshot):
+    def test_update_order_status_with_order_not_found_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
 
@@ -66,7 +66,7 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
             user_id=user_id,
         )
 
-    def test_user_is_not_restaurant_owner(self, snapshot):
+    def test_update_order_status_with_user_not_restaurant_owner_raises_error(self, snapshot):
         owner_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7ce"
         UserFactory(id=owner_id)
@@ -93,7 +93,7 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
             user_id=user_id,
         )
 
-    def test_invalid_order_status_transition(self, snapshot):
+    def test_update_order_status_with_invalid_transition_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -119,7 +119,7 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
         )
 
     @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
-    def test_update_status_confirmed_to_preparing(self, snapshot):
+    def test_update_order_status_with_confirmed_to_preparing_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -146,7 +146,7 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
         )
 
     @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
-    def test_update_status_preparing_to_out_of_delivery(self, snapshot):
+    def test_update_order_status_with_preparing_to_out_for_delivery_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -173,7 +173,7 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
         )
 
     @patch("orders.interactors.order.update_order_interactor.redis_lock", no_op_lock)
-    def test_update_status_out_of_delivery_to_delivered(self, snapshot):
+    def test_update_order_status_with_out_for_delivery_to_delivered_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
@@ -199,7 +199,7 @@ class TestUpdateOrderStatusApi(BaseUpdateOrderStatusTestCase):
             user_id=user_id,
         )
 
-    def test_update_status_on_cancelled_order(self, snapshot):
+    def test_update_order_status_with_cancelled_order_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
         restaurant_id = "49bb508e-c6d1-4882-95fd-1991d103f7df"
