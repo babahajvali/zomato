@@ -64,6 +64,7 @@ class TestUpdateMenuItemApi(BaseUpdateMenuItemTestCase):
                 "preparationTimeInMinutes": 15,
                 "price": 200,
                 "tags": ["updated"],
+                "description": "Test item",
             }
         }
 
@@ -101,6 +102,7 @@ class TestUpdateMenuItemApi(BaseUpdateMenuItemTestCase):
                 "preparationTimeInMinutes": 15,
                 "price": 200,
                 "tags": ["updated"],
+                "description": "Test item",
             }
         }
 

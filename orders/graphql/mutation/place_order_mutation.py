@@ -22,6 +22,7 @@ from orders.graphql.types.types import OrderSummaryType, OrderItemType
 from orders.interactors.dtos import PlaceOrderDTO, OrderSummaryDTO
 from orders.interactors.order.place_order_interactor import PlaceOrderInteractor
 from orders.storages.order_storage import OrderStorage
+from utils import exceptions
 from utils.auth_decorators import require_auth
 
 from orders.storages.promo_code_storage import PromoCodeStorage
@@ -64,7 +65,7 @@ class PlaceOrderMutation(graphene.Mutation):
                 items_total=exc.items_total,
             )
 
-        except custom_exceptions.AddressNotFound as exc:
+        except exceptions.AddressNotFound as exc:
             return AddressIdNotFound(address_id=exc.address_id)
 
         except custom_exceptions.DeliveryUnavailableForAddress as exc:

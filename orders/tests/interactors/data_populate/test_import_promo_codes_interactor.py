@@ -12,7 +12,7 @@ from orders.interactors.populate_data.import_promo_codes import ImportPromoCodes
 from orders.interactors.storage_interface.promo_code_storage_interface import (
     PromoCodeStorageInterface,
 )
-from orders.tests.factories import CreatePromoCodeDTOFactory, PromoCodeDTOFactory
+from orders.tests.factories import PromoCodeDTOFactory
 
 
 READ_CSV = "orders.interactors.populate_data.import_promo_codes.read_csv"
@@ -35,7 +35,7 @@ class TestImportPromoCodes:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(READ_CSV)
-    def test_import_promo_codes_success(self, mock_read_csv):
+    def test_import_promo_codes_with_single_promo_code_success(self, mock_read_csv):
         rows = [
             {
                 "id": "1",
@@ -48,15 +48,6 @@ class TestImportPromoCodes:
                 "valid_until": "2026-04-30T23:59:59Z",
             }
         ]
-        expected_dto = CreatePromoCodeDTOFactory(
-            code="SAVE50",
-            discount_type="FLAT",
-            discount_value=50.0,
-            min_order_value=299.0,
-            max_usage=100,
-            valid_from="2026-04-17T10:30:00Z",
-            valid_until="2026-04-30T23:59:59Z",
-        )
         mock_read_csv.return_value = rows
 
         self.promo_code_storage.get_existing_promo_codes.return_value = []
@@ -71,7 +62,7 @@ class TestImportPromoCodes:
         )
 
     @patch(READ_CSV)
-    def test_import_promo_codes_duplicate_codes(self, mock_read_csv):
+    def test_import_promo_codes_with_duplicate_codes_raises_error(self, mock_read_csv):
         rows = [
             {
                 "id": "1",
@@ -103,7 +94,7 @@ class TestImportPromoCodes:
 
     @patch(TRANSACTION_ATOMIC, no_op_lock)
     @patch(READ_CSV)
-    def test_import_promo_codes_updates_existing(self, mock_read_csv):
+    def test_import_promo_codes_with_existing_promo_code_success(self, mock_read_csv):
         rows = [
             {
                 "id": "1",
@@ -130,14 +121,14 @@ class TestImportPromoCodes:
         self.promo_code_storage.create_bulk_promo_codes.assert_not_called()
         self.promo_code_storage.update_bulk_promo_codes.assert_called_once()
 
-    def test_check_empty_promo_codes_raises_exception(self):
+    def test_import_promo_codes_with_empty_code_raises_error(self):
         with pytest.raises(EmptyPromoCode) as exc:
             self.interactor._validate_empty_promo_codes(["SAVE50", ""])
 
         assert str(exc.value) == "1 Empty promo codes found"
 
     @patch(READ_CSV)
-    def test_import_promo_codes_invalid_date_range(self, mock_read_csv):
+    def test_import_promo_codes_with_invalid_date_range_raises_error(self, mock_read_csv):
         rows = [
             {
                 "id": "1",

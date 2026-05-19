@@ -14,7 +14,6 @@ from orders.mixin.order_mixin import OrderMixin
 
 class ReleaseScheduledOrdersInteractor(OrderMixin):
     def __init__(self, order_storage: OrderStorageInterface):
-        super().__init__(order_storage=order_storage)
         self.restaurant_adapter = RestaurantAdapter()
         self.order_storage = order_storage
 

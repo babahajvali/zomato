@@ -1,7 +1,7 @@
 from typing import List
 
-from restaurants.exception.custom_exceptions import DuplicateRestaurants
-from restaurants.interactors.dtos import CreateRestaurantDTO, UpdateRestaurantDTO
+from restaurants.interactors.dtos import CreateRestaurantDTO
+from restaurants.interactors.restaurant.restaurant_interactor import RestaurantInteractor
 from restaurants.interactors.storage_interface.restaurant_storage_interface import (
     RestaurantStorageInterface,
 )
@@ -15,91 +15,18 @@ class ImportRestaurants:
     def import_restaurants(self, file_path="./sample_data/restaurants.csv"):
         rows = list(read_csv(file_path=file_path))
 
-        names = self._parse_and_normalize_rows(rows=rows)
-
-        self._validate_duplicate_names(names)
+        self._validate_rows(rows=rows)
 
         restaurants_dto = self._build_restaurant_dtos(rows=rows)
 
-        to_create, to_update = self._split_new_and_existing(
-            restaurant_dtos=restaurants_dto,
-            names=names,
-        )
+        interactor = RestaurantInteractor(restaurant_storage=self.restaurant_storage)
 
-        created = (
-            self.restaurant_storage.create_bulk_restaurants(to_create)
-            if to_create
-            else []
-        )
-        updated = (
-            self.restaurant_storage.update_bulk_restaurants(to_update)
-            if to_update
-            else []
-        )
-
-        return f"{len(created)} restaurants created, {len(updated)} restaurants updated"
-
-    def _split_new_and_existing(
-        self,
-        restaurant_dtos: List[CreateRestaurantDTO],
-        names: List[str],
-    ) -> tuple[List[CreateRestaurantDTO], List[UpdateRestaurantDTO]]:
-        existing_restaurants = self.restaurant_storage.get_existing_restaurant_dtos(
-            names
-        )
-
-        existing_lookup = {
-            restaurant.name: restaurant.id for restaurant in existing_restaurants
-        }
-
-        to_create = []
-        to_update = []
-
-        for dto in restaurant_dtos:
-            if dto.name in existing_lookup:
-                to_update.append(
-                    self._build_update_restaurant_dto(
-                        restaurant_dto=dto,
-                        restaurant_id=existing_lookup[dto.name],
-                    )
-                )
-            else:
-                to_create.append(dto)
-
-        return to_create, to_update
-
-    @staticmethod
-    def _build_update_restaurant_dto(
-        restaurant_dto: CreateRestaurantDTO,
-        restaurant_id: str,
-    ) -> UpdateRestaurantDTO:
-        return UpdateRestaurantDTO(
-            id=restaurant_id,
-            name=restaurant_dto.name,
-            owner_id=restaurant_dto.owner_id,
-            description=restaurant_dto.description,
-            cuisine_type=restaurant_dto.cuisine_type,
-            address=restaurant_dto.address,
-            pin_code=restaurant_dto.pin_code,
-            is_veg_only=restaurant_dto.is_veg_only,
-            is_deleted=restaurant_dto.is_deleted,
+        return interactor.create_or_update_restaurants(
+            restaurant_dtos=restaurants_dto
         )
 
     @staticmethod
-    def _validate_duplicate_names(names: List[str]):
-        seen = set()
-        duplicates = []
-        for name in names:
-            if name in seen:
-                duplicates.append(name)
-            seen.add(name)
-
-        if duplicates:
-            raise DuplicateRestaurants(names=duplicates)
-
-    @staticmethod
-    def _parse_and_normalize_rows(rows) -> List[str]:
-        names = []
+    def _validate_rows(rows):
         for index, row in enumerate(rows, start=1):
             validate_row(
                 row,
@@ -109,8 +36,13 @@ class ImportRestaurants:
             row["id"] = row["id"].strip()
             row["name"] = row["name"].strip()
             row["owner_id"] = row["owner_id"].strip()
-            names.append(row["name"])
-        return names
+            row["description"] = (row.get("description") or "").strip()
+            if hasattr(row["cuisine_type"], "strip"):
+                row["cuisine_type"] = row["cuisine_type"].strip()
+            row["address"] = row["address"].strip()
+            row["pin_code"] = row["pin_code"].strip()
+            row["is_veg_only"] = row.get("is_veg_only", "").strip()
+            row["is_deleted"] = row.get("is_deleted", "").strip()
 
     @staticmethod
     def _build_restaurant_dtos(rows) -> List[CreateRestaurantDTO]:
@@ -119,12 +51,12 @@ class ImportRestaurants:
                 id=row["id"],
                 name=row["name"],
                 owner_id=row["owner_id"],
-                description=row.get("description") or "",
+                description=row["description"],
                 cuisine_type=row["cuisine_type"],
                 address=row["address"],
                 pin_code=row["pin_code"],
-                is_veg_only=row["is_veg_only"].strip().lower() == "true",
-                is_deleted=row["is_deleted"].strip().lower() == "true",
+                is_veg_only=row["is_veg_only"].lower() == "true",
+                is_deleted=row["is_deleted"].lower() == "true",
             )
             for row in rows
         ]

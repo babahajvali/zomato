@@ -16,7 +16,7 @@ class TestDeliveryZoneInteractor:
             delivery_zone_storage=self.delivery_zone_storage
         )
 
-    def test_get_delivery_zone_by_restaurant_and_pin_code_success(self):
+    def test_get_delivery_zone_by_restaurant_and_pin_code_with_valid_zone_success(self):
         delivery_zone = DeliveryZoneDTOFactory(
             restaurant_id="restaurant-1",
             pin_code="500001",
@@ -38,7 +38,7 @@ class TestDeliveryZoneInteractor:
             pin_code="500001",
         )
 
-    def test_get_delivery_zone_by_restaurant_and_pin_code_returns_none(self):
+    def test_get_delivery_zone_by_restaurant_and_pin_code_with_missing_zone_success(self):
         self.delivery_zone_storage.get_restaurant_delivery_zones.return_value = None
 
         result = self.interactor.get_delivery_zone_by_restaurant_and_pin_code(

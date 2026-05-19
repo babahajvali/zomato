@@ -26,7 +26,7 @@ class UserStorage(UserStorageInterface):
         )
 
     @transaction.atomic
-    def create_bulk_users(self, create_user_dtos: List[CreateUserDTO]):
+    def create_bulk_users(self, create_user_dtos: List[CreateUserDTO]) -> List[UserDTO]:
         users = [
             User(
                 id=dto.id,
@@ -40,7 +40,9 @@ class UserStorage(UserStorageInterface):
 
         created_users = User.objects.bulk_create(users)
 
-        return created_users
+        return [
+            self._convert_to_user_dto(user_obj=user_obj) for user_obj in created_users
+        ]
 
     def get_users_by_emails(self, emails: List[str]) -> List[UserDTO]:
 
@@ -48,7 +50,7 @@ class UserStorage(UserStorageInterface):
 
         return [self._convert_to_user_dto(user_obj=user_obj) for user_obj in user_objs]
 
-    def check_user_exists(self, user_id: str) -> bool:
+    def is_user_exists(self, user_id: str) -> bool:
         return User.objects.filter(id=user_id).exists()
 
     def get_user_by_email(self, email: str) -> UserDTO | None:
@@ -96,10 +98,10 @@ class UserStorage(UserStorageInterface):
 
         return self.get_user(user_id=update_user_dto.user_id)
 
-    def update_bulk_users(self, bulk_update_user_dtos: List[UpdateUserDTO]):
+    def update_bulk_users(self, update_user_dtos: List[UpdateUserDTO]):
 
         users = []
-        for update_user_dto in bulk_update_user_dtos:
+        for update_user_dto in update_user_dtos:
             user = User(
                 id=update_user_dto.user_id,
                 name=update_user_dto.name,
@@ -110,4 +112,9 @@ class UserStorage(UserStorageInterface):
 
         User.objects.bulk_update(users, ["name", "phone_number"])
 
-        return users
+        return [self._convert_to_user_dto(user_obj=user_obj) for user_obj in users]
+
+    def get_users_by_user_ids(self, user_ids: List[str]) -> List[UserDTO]:
+        user_objs = User.objects.filter(id__in=user_ids)
+
+        return [self._convert_to_user_dto(user_obj=user_obj) for user_obj in user_objs]

@@ -16,13 +16,12 @@ from restaurants.interactors.storage_interface.restaurant_storage_interface impo
 
 
 class RestaurantMixin:
-    def __init__(self, restaurant_storage: RestaurantStorageInterface, **kwargs):
-        self.restaurant_storage = restaurant_storage
-        super().__init__(**kwargs)
+    @staticmethod
+    def validate_user_is_restaurant_owner(
+        user_id: str, restaurant_id: str, restaurant_storage: RestaurantStorageInterface
+    ):
 
-    def validate_user_is_restaurant_owner(self, user_id: str, restaurant_id: str):
-
-        owner_id = self.restaurant_storage.get_restaurant_owner_id(
+        owner_id = restaurant_storage.get_restaurant_owner_id(
             restaurant_id=restaurant_id
         )
 
@@ -41,9 +40,12 @@ class RestaurantMixin:
         if invalid_categories:
             raise InvalidCategories(categories=invalid_categories)
 
-    def validate_restaurant_exists(self, restaurant_id: str):
+    @staticmethod
+    def validate_restaurant_exists(
+        restaurant_id: str, restaurant_storage: RestaurantStorageInterface
+    ):
 
-        is_restaurant_exists = self.restaurant_storage.check_restaurant_is_exist(
+        is_restaurant_exists = restaurant_storage.check_restaurant_is_exist(
             restaurant_id=restaurant_id
         )
 
@@ -55,9 +57,12 @@ class RestaurantMixin:
         if not (0.0 <= min_rating <= 5.0):
             raise InvalidMinRating(min_rating=min_rating)
 
-    def validate_menu_item_exists(self, menu_item_id: str):
+    @staticmethod
+    def validate_menu_item_exists(
+        menu_item_id: str, restaurant_storage: RestaurantStorageInterface
+    ):
 
-        menu_item_dto = self.restaurant_storage.get_menu_item(menu_item_id=menu_item_id)
+        menu_item_dto = restaurant_storage.get_menu_item(menu_item_id=menu_item_id)
 
         if not menu_item_dto:
             raise MenuItemNotFound(menu_item_id=menu_item_id)

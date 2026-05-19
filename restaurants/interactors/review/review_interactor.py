@@ -25,14 +25,16 @@ class ReviewInteractor(RestaurantMixin):
         review_storage: ReviewStorageInterface,
         restaurant_storage: RestaurantStorageInterface,
     ):
-        super().__init__(restaurant_storage=restaurant_storage)
         self.review_storage = review_storage
         self.restaurant_storage = restaurant_storage
 
     @invalidate_interactor_cache(cache_name="user_review")
     def create_review(self, create_review_dto: CreateReviewDTO) -> ReviewDTO:
 
-        self.validate_restaurant_exists(restaurant_id=create_review_dto.restaurant_id)
+        self.validate_restaurant_exists(
+            restaurant_id=create_review_dto.restaurant_id,
+            restaurant_storage=self.restaurant_storage,
+        )
         self._validate_rating(rating=create_review_dto.rating)
         self._validate_user_has_not_reviewed(
             user_id=create_review_dto.customer_id,
@@ -43,7 +45,9 @@ class ReviewInteractor(RestaurantMixin):
 
     @interactor_cache(cache_name="user_review")
     def get_user_restaurant_review(self, user_id: str, restaurant_id: str) -> ReviewDTO:
-        self.validate_restaurant_exists(restaurant_id=restaurant_id)
+        self.validate_restaurant_exists(
+            restaurant_id=restaurant_id, restaurant_storage=self.restaurant_storage
+        )
 
         return self.review_storage.get_user_restaurant_review(
             user_id=user_id, restaurant_id=restaurant_id

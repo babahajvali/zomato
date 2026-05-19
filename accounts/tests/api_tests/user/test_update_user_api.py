@@ -6,7 +6,7 @@ from accounts.tests.factories.storage_factories import UserFactory
 
 @pytest.mark.django_db
 class TestUpdateUserApi(BaseUpdateUserTestCase):
-    def test_update_user_successfully(self, snapshot):
+    def test_update_user_with_valid_data_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(
             id=user_id,
@@ -26,7 +26,7 @@ class TestUpdateUserApi(BaseUpdateUserTestCase):
             query=self.QUERY, variables=variables, snapshot=snapshot, user_id=user_id
         )
 
-    def test_update_user_with_phone_number_only(self, snapshot):
+    def test_update_user_with_phone_number_only_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(
             id=user_id,
@@ -45,7 +45,7 @@ class TestUpdateUserApi(BaseUpdateUserTestCase):
             query=self.QUERY, variables=variables, snapshot=snapshot, user_id=user_id
         )
 
-    def test_update_user_not_found(self, snapshot):
+    def test_update_user_with_user_not_found_raises_error(self, snapshot):
         variables = {
             "params": {
                 "userId": "49bb508e-c6d1-4882-95fd-1991d103f7cd",
@@ -60,7 +60,7 @@ class TestUpdateUserApi(BaseUpdateUserTestCase):
             user_id="49bb508e-c6d1-4882-95fd-1991d103f7cd",
         )
 
-    def test_update_user_with_empty_name(self, snapshot):
+    def test_update_user_with_empty_name_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id, email="sample@gmail.com")
         variables = {
@@ -74,7 +74,7 @@ class TestUpdateUserApi(BaseUpdateUserTestCase):
             query=self.QUERY, variables=variables, snapshot=snapshot, user_id=user_id
         )
 
-    def test_update_user_with_no_properties(self, snapshot):
+    def test_update_user_with_nothing_to_update_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id, email="sample@gmail.com")
         variables = {

@@ -19,9 +19,6 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
         cart_storage: CartStorageInterface,
         restaurant_storage: RestaurantStorageInterface,
     ):
-        super().__init__(
-            cart_storage=cart_storage, restaurant_storage=restaurant_storage
-        )
         self.cart_storage = cart_storage
         self.restaurant_storage = restaurant_storage
 
@@ -29,11 +26,15 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
         self, cart_id: str, menu_item_id: str, quantity: int, user_id: str
     ) -> CartItemDTO:
 
-        cart_dto = self.validate_cart_exists(cart_id=cart_id)
+        cart_dto = self.validate_cart_exists(
+            cart_id=cart_id, cart_storage=self.cart_storage
+        )
         self._validate_cart_is_users(
             cart_id=cart_id, cart_owner_id=cart_dto.customer_id, user_id=user_id
         )
-        menu_item_dto = self.validate_menu_item_exists(menu_item_id=menu_item_id)
+        menu_item_dto = self.validate_menu_item_exists(
+            menu_item_id=menu_item_id, restaurant_storage=self.restaurant_storage
+        )
         self._validate_quantity(quantity=quantity)
 
         return self.cart_storage.create_or_update_cart_item(
@@ -44,8 +45,12 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
         )
 
     def remove_cart_item(self, cart_item_id: int, user_id: str):
-        cart_item_dto = self.validate_cart_item_exists(cart_item_id=cart_item_id)
-        cart_dto = self.validate_cart_exists(cart_id=cart_item_dto.cart_id)
+        cart_item_dto = self.validate_cart_item_exists(
+            cart_item_id=cart_item_id, cart_storage=self.cart_storage
+        )
+        cart_dto = self.validate_cart_exists(
+            cart_id=cart_item_dto.cart_id, cart_storage=self.cart_storage
+        )
         self._validate_cart_is_users(
             cart_id=cart_dto.cart_id,
             user_id=user_id,
@@ -55,7 +60,9 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
         return self.cart_storage.remove_cart_item(cart_item_id=cart_item_id)
 
     def clear_cart_items(self, cart_id: str, user_id: str):
-        cart_dto = self.validate_cart_exists(cart_id=cart_id)
+        cart_dto = self.validate_cart_exists(
+            cart_id=cart_id, cart_storage=self.cart_storage
+        )
         self._validate_cart_is_users(
             cart_id=cart_id, user_id=user_id, cart_owner_id=cart_dto.customer_id
         )
@@ -63,7 +70,9 @@ class CartItemInteractor(CartMixin, RestaurantMixin):
         return self.cart_storage.clear_cart_items(cart_id=cart_id)
 
     def get_cart_items(self, cart_id: str, user_id: str):
-        cart_dto = self.validate_cart_exists(cart_id=cart_id)
+        cart_dto = self.validate_cart_exists(
+            cart_id=cart_id, cart_storage=self.cart_storage
+        )
         self._validate_cart_is_users(
             cart_owner_id=cart_dto.customer_id, cart_id=cart_id, user_id=user_id
         )

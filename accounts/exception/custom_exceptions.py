@@ -56,3 +56,11 @@ class InvalidCredentials(Exception):
 
     def __str__(self):
         return f"Invalid credentials: {self.email}"
+
+
+class InvalidUsersFound(Exception):
+    def __init__(self, user_ids: List[str]):
+        self.user_ids = user_ids
+
+    def __str__(self):
+        return f"Users not found: {', '.join([f'{user_id}' for user_id in self.user_ids])}"

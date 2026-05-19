@@ -10,7 +10,7 @@ class TestAddressStorage(TestCase):
     def setUp(self):
         self.storage = AddressStorage()
 
-    def test_create_bulk_addresses_success(self):
+    def test_create_bulk_addresses_with_valid_addresses_success(self):
         user = UserFactory(id="00000000-0000-0000-0000-000000000001")
         addresses_dto = [
             CreateAddressDTO(
@@ -30,13 +30,13 @@ class TestAddressStorage(TestCase):
         assert created.full_address == "12 MG Road"
         assert created.pincode == 560001
 
-    def test_get_existing_addresses(self):
+    def test_get_existing_addresses_with_matching_addresses_success(self):
         user = UserFactory(email="alice@example.com")
         AddressFactory(user=user, label="Home", pincode="500001")
         AddressFactory(user=user, label="Office", pincode="500002")
 
         result = self.storage.get_existing_addresses(
-            pairs=[
+            address_pairs=[
                 AddressLookupDTO(
                     user_id=str(user.id),
                     label="Home",

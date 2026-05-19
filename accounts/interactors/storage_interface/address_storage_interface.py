@@ -11,7 +11,9 @@ from accounts.interactors.dtos import (
 
 class AddressStorageInterface(ABC):
     @abstractmethod
-    def get_existing_addresses(self, pairs: List[AddressLookupDTO]) -> List[AddressDTO]:
+    def get_existing_addresses(
+        self, address_pairs: List[AddressLookupDTO]
+    ) -> List[AddressDTO]:
         pass
 
     @abstractmethod
@@ -19,7 +21,7 @@ class AddressStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def get_address_by_id(self, address_id: int, user_id: str) -> Optional[AddressDTO]:
+    def get_address_by_id(self, address_id: int) -> Optional[AddressDTO]:
         pass
 
     @abstractmethod
@@ -27,5 +29,7 @@ class AddressStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def update_bulk_addresses(self, address_dtos: List[UpdateAddressDTO]):
+    def update_bulk_addresses(
+        self, address_dtos: List[UpdateAddressDTO]
+    ) -> List[AddressDTO]:
         pass

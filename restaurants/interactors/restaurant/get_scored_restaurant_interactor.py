@@ -25,7 +25,6 @@ class GetScoredRestaurantInteractor(RestaurantMixin):
         restaurant_storage: RestaurantStorageInterface,
         review_storage: ReviewStorageInterface,
     ):
-        super().__init__(restaurant_storage=restaurant_storage)
         self.restaurant_storage = restaurant_storage
         self.review_storage = review_storage
         self.order_adapter = OrderAdapter()

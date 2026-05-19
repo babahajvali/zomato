@@ -12,7 +12,7 @@ MOCK_TOKEN = "mocked.jwt.token"
 
 @pytest.mark.django_db
 class TestUserLoginApi(BaseUserLoginTestCase):
-    def test_user_login_successfully(self, snapshot):
+    def test_user_login_with_valid_credentials_success(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(
             id=user_id,
@@ -33,7 +33,7 @@ class TestUserLoginApi(BaseUserLoginTestCase):
                 user_id=user_id,
             )
 
-    def test_email_not_found(self, snapshot):
+    def test_user_login_with_missing_email_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id, email="sample@gmail.com", password="Ravi1234")
 
@@ -46,7 +46,7 @@ class TestUserLoginApi(BaseUserLoginTestCase):
             user_id=user_id,
         )
 
-    def test_invalid_credentials(self, snapshot):
+    def test_user_login_with_invalid_password_raises_error(self, snapshot):
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id, email="sample@gmail.com", password="Ravi1234")
 

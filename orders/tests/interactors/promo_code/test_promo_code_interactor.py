@@ -14,7 +14,7 @@ class TestPromoCodeInteractor:
             promo_code_storage=self.promo_code_storage
         )
 
-    def test_get_available_promo_codes_success(self):
+    def test_get_available_promo_codes_with_multiple_codes_success(self):
         promo_codes = [
             PromoCodeDTOFactory(promo_code_id=1, code="WELCOME50"),
             PromoCodeDTOFactory(promo_code_id=2, code="SAVE10"),
@@ -26,7 +26,7 @@ class TestPromoCodeInteractor:
         assert result == promo_codes
         self.promo_code_storage.get_available_promo_codes.assert_called_once_with()
 
-    def test_get_available_promo_codes_returns_empty_list(self):
+    def test_get_available_promo_codes_with_no_codes_success(self):
         self.promo_code_storage.get_available_promo_codes.return_value = []
 
         result = self.interactor.get_available_promo_codes()

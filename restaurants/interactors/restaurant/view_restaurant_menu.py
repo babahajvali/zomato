@@ -15,13 +15,14 @@ from utils.caching_decorators import interactor_cache
 
 class ViewRestaurantMenuInteractor(RestaurantMixin):
     def __init__(self, restaurant_storage: RestaurantStorageInterface):
-        super().__init__(restaurant_storage=restaurant_storage)
         self.restaurant_storage = restaurant_storage
 
     @interactor_cache(cache_name="menu_items")
     def view_restaurant_menu(self, restaurant_id: str) -> RestaurantMenuDTO:
 
-        self.validate_restaurant_exists(restaurant_id=restaurant_id)
+        self.validate_restaurant_exists(
+            restaurant_id=restaurant_id, restaurant_storage=self.restaurant_storage
+        )
 
         items = self.restaurant_storage.get_available_menu_items_by_restaurant(
             restaurant_id=restaurant_id

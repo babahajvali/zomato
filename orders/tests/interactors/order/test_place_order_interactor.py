@@ -12,7 +12,6 @@ from orders.adapter.dtos import (
     RestaurantTimingDTO,
 )
 from orders.exception.custom_exceptions import (
-    AddressNotFound,
     CustomerCartNotFound,
     DeliveryUnavailableForAddress,
     CartIsEmpty,
@@ -25,6 +24,7 @@ from orders.exception.custom_exceptions import (
     RestaurantClosed,
     RestaurantNotOpen,
 )
+from utils.exceptions import AddressNotFound
 from orders.interactors.order.place_order_interactor import PlaceOrderInteractor
 from orders.interactors.storage_interface.order_storage_interface import (
     OrderStorageInterface,

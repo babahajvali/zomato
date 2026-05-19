@@ -89,6 +89,7 @@ class UpdateMenuItemInputParams(graphene.InputObjectType):
     is_available = graphene.Boolean()
     preparation_time_in_minutes = graphene.Int()
     tags = graphene.List(graphene.String)
+    description = graphene.String()
 
 
 class DeleteMenuItemInputParams(graphene.InputObjectType):

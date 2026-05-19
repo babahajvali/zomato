@@ -25,10 +25,7 @@ class BrowseRestaurantsInteractor(RestaurantMixin, TimingMixin):
         restaurant_timing_storage: RestaurantTimingStorageInterface,
         review_storage: ReviewStorageInterface,
     ):
-        super().__init__(
-            restaurant_storage=restaurant_storage,
-            restaurant_timing_storage=restaurant_timing_storage,
-        )
+
         self.restaurant_storage = restaurant_storage
         self.restaurant_timing_storage = restaurant_timing_storage
         self.review_storage = review_storage

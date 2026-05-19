@@ -6,7 +6,7 @@ from accounts.tests.factories.storage_factories import UserFactory
 
 @pytest.mark.django_db
 class TestCreateUserApi(BaseCreateUserTestCase):
-    def test_create_user_successfully(self, snapshot):
+    def test_create_user_with_valid_data_success(self, snapshot):
         variables = {
             "params": {
                 "name": "Sample User",
@@ -19,7 +19,7 @@ class TestCreateUserApi(BaseCreateUserTestCase):
 
         self.execute_schema(query=self.QUERY, variables=variables, snapshot=snapshot)
 
-    def test_create_user_with_existing_email(self, snapshot):
+    def test_create_user_with_duplicate_email_raises_error(self, snapshot):
         UserFactory(email="sample@gmail.com")
         variables = {
             "params": {
@@ -33,7 +33,7 @@ class TestCreateUserApi(BaseCreateUserTestCase):
 
         self.execute_schema(query=self.QUERY, variables=variables, snapshot=snapshot)
 
-    def test_create_user_with_empty_name(self, snapshot):
+    def test_create_user_with_empty_name_raises_error(self, snapshot):
         variables = {
             "params": {
                 "name": "   ",

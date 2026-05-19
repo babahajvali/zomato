@@ -18,7 +18,6 @@ class RestaurantDashboardInteractor(RestaurantMixin):
         restaurant_storage: RestaurantStorageInterface,
         review_storage: ReviewStorageInterface,
     ):
-        super().__init__(restaurant_storage=restaurant_storage)
         self.review_storage = review_storage
         self.restaurant_storage = restaurant_storage
         self.order_adapter = OrderAdapter()
@@ -28,11 +27,13 @@ class RestaurantDashboardInteractor(RestaurantMixin):
     ) -> RestaurantDashboardDTO:
 
         self.validate_restaurant_exists(
-            restaurant_id=dashboard_filter_dto.restaurant_id
+            restaurant_id=dashboard_filter_dto.restaurant_id,
+            restaurant_storage=self.restaurant_storage,
         )
         self.validate_user_is_restaurant_owner(
             restaurant_id=dashboard_filter_dto.restaurant_id,
             user_id=dashboard_filter_dto.owner_id,
+            restaurant_storage=self.restaurant_storage,
         )
         self._validate_date_range(
             date_from=dashboard_filter_dto.date_from,

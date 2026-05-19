@@ -6,6 +6,9 @@ from restaurants.exception.custom_exceptions import DuplicateRestaurantTimings
 from restaurants.interactors.populate_data.import_restaurant_timings import (
     ImportRestaurantTimings,
 )
+from restaurants.interactors.storage_interface.restaurant_storage_interface import (
+    RestaurantStorageInterface,
+)
 from restaurants.interactors.storage_interface.restaurant_timing_storage_interface import (
     RestaurantTimingStorageInterface,
 )
@@ -26,13 +29,17 @@ class TestImportRestaurantTimings:
         self.restaurant_timing_storage = create_autospec(
             RestaurantTimingStorageInterface
         )
+        self.restaurant_storage = create_autospec(RestaurantStorageInterface)
         self.interactor = ImportRestaurantTimings(
-            restaurant_timing_storage=self.restaurant_timing_storage
+            restaurant_timing_storage=self.restaurant_timing_storage,
+            restaurant_storage=self.restaurant_storage,
         )
 
     @patch(VALIDATE_ROW)
     @patch(READ_CSV)
-    def test_import_restaurant_timings_success(self, mock_read_csv, mock_validate_row):
+    def test_import_restaurant_timings_with_single_timing_success(
+        self, mock_read_csv, mock_validate_row
+    ):
         rows = [
             {
                 "restaurant": " restaurants-1 ",
@@ -71,7 +78,7 @@ class TestImportRestaurantTimings:
 
     @patch(VALIDATE_ROW)
     @patch(READ_CSV)
-    def test_import_restaurant_timings_updates_existing(
+    def test_import_restaurant_timings_with_existing_timing_success(
         self, mock_read_csv, mock_validate_row
     ):
         rows = [
@@ -105,7 +112,7 @@ class TestImportRestaurantTimings:
 
     @patch(VALIDATE_ROW)
     @patch(READ_CSV)
-    def test_import_restaurant_timings_duplicate_combination(
+    def test_import_restaurant_timings_with_duplicate_combination_raises_error(
         self, mock_read_csv, mock_validate_row
     ):
         rows = [

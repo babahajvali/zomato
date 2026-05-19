@@ -7,7 +7,6 @@ from orders.adapter.account import AccountAdapter
 from orders.adapter.dtos import CartItemDTO
 from orders.adapter.restaurant import RestaurantAdapter
 from orders.exception.custom_exceptions import (
-    AddressNotFound,
     CartIsEmpty,
     CustomerCartNotFound,
     DeliveryUnavailableForAddress,
@@ -29,6 +28,7 @@ from orders.interactors.storage_interface.promo_code_storage_interface import (
 )
 from orders.mixin.order_mixin import OrderMixin
 from orders.mixin.promocode_mixin import PromoCodeMixin
+from utils.exceptions import AddressNotBelongsToUser, AddressNotFound
 
 
 class OrderPlacementBase(PromoCodeMixin, OrderMixin):
@@ -37,10 +37,6 @@ class OrderPlacementBase(PromoCodeMixin, OrderMixin):
         promo_code_storage: PromoCodeStorageInterface,
         order_storage: OrderStorageInterface,
     ):
-        super().__init__(
-            promo_code_storage=promo_code_storage,
-            order_storage=order_storage,
-        )
         self.promo_code_storage = promo_code_storage
         self.order_storage = order_storage
         self.account_adapter = AccountAdapter()
@@ -56,12 +52,16 @@ class OrderPlacementBase(PromoCodeMixin, OrderMixin):
         )
 
     def _get_validated_pincode(self, address_id: int, user_id: str) -> str:
-        address_dto = self.account_adapter.get_address_by_id(
-            address_id=address_id, user_id=user_id
-        )
-        if address_dto is None:
+        try:
+            address_dto = self.account_adapter.get_address_by_id(
+                address_id=address_id, user_id=user_id
+            )
+            return address_dto.pincode
+
+        except AddressNotFound:
             raise AddressNotFound(address_id=address_id)
-        return address_dto.pincode
+        except AddressNotBelongsToUser:
+            raise AddressNotBelongsToUser(address_id=address_id, user_id=user_id)
 
     def _get_validated_delivery_fee(
         self,
@@ -109,7 +109,9 @@ class OrderPlacementBase(PromoCodeMixin, OrderMixin):
         promo_code_id: int,
         items_total: Decimal,
     ):
-        self.validate_promo_code_exist(promo_code_id=promo_code_id)
+        self.validate_promo_code_exist(
+            promo_code_id=promo_code_id, promo_code_storage=self.promo_code_storage
+        )
 
         promo_code_dto = self.promo_code_storage.get_promo_code_by_id(
             promo_code_id=promo_code_id

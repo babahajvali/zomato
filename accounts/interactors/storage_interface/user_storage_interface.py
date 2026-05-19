@@ -19,7 +19,7 @@ class UserStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def check_user_exists(self, user_id: str) -> bool:
+    def is_user_exists(self, user_id: str) -> bool:
         pass
 
     @abstractmethod
@@ -43,5 +43,11 @@ class UserStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def update_bulk_users(self, bulk_update_user_dtos: List[UpdateUserDTO]):
+    def update_bulk_users(self, update_user_dtos: List[UpdateUserDTO]):
         pass
+
+    @abstractmethod
+    def get_users_by_user_ids(self, user_ids: List[str]) -> List[UserDTO]:
+        pass
+
+

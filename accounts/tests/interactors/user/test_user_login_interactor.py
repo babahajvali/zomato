@@ -7,7 +7,7 @@ from accounts.tests.factories.interactor_factories import UserDTOFactory
 
 
 class TestUserLoginInteractor:
-    def test_user_login_success(self):
+    def test_user_login_with_valid_credentials_success(self):
         # Arrange
         user_storage = Mock()
 
@@ -25,7 +25,7 @@ class TestUserLoginInteractor:
         assert response == user_dto
         user_storage.get_user_by_email.assert_called_once_with(email="test@gmail.com")
 
-    def test_user_login_with_invalid_email_raises_exception(self):
+    def test_user_login_with_invalid_email_raises_error(self):
         # Arrange
         user_storage = Mock()
 
@@ -41,7 +41,7 @@ class TestUserLoginInteractor:
             email="invalid@gmail.com"
         )
 
-    def test_user_login_with_invalid_password_raises_exception(self):
+    def test_user_login_with_invalid_password_raises_error(self):
         # Arrange
         user_storage = Mock()
 

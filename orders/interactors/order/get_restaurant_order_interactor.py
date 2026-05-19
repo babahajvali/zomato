@@ -16,7 +16,6 @@ from orders.mixin.order_mixin import OrderMixin
 
 class GetRestaurantOrderInteractor(OrderMixin):
     def __init__(self, order_storage: OrderStorageInterface):
-        super().__init__(order_storage=order_storage)
         self.order_storage = order_storage
         self.restaurant_adapter = RestaurantAdapter()
 

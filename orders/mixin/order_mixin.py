@@ -32,21 +32,24 @@ VALID_TRANSITIONS = {
 
 
 class OrderMixin:
-    def __init__(self, order_storage: OrderStorageInterface, **kwargs):
-        self.order_storage = order_storage
-        super().__init__(**kwargs)
+    @staticmethod
+    def validate_order_exists(
+        order_id: str, order_storage: OrderStorageInterface
+    ) -> OrderDTO:
 
-    def validate_order_exists(self, order_id: str) -> OrderDTO:
-
-        order_dto = self.order_storage.get_order(order_id=order_id)
+        order_dto = order_storage.get_order(order_id=order_id)
 
         if order_dto is None:
             raise OrderNotFound(order_id=order_id)
 
         return order_dto
 
-    def validate_order_belongs_to_user(self, order_id: str, user_id: str) -> OrderDTO:
-        order_dto = self.validate_order_exists(order_id=order_id)
+    def validate_order_belongs_to_user(
+        self, order_id: str, user_id: str, order_storage: OrderStorageInterface
+    ) -> OrderDTO:
+        order_dto = self.validate_order_exists(
+            order_id=order_id, order_storage=order_storage
+        )
 
         if order_dto.customer_id != user_id:
             raise OrderNotOwnedByUser(order_id=order_id, user_id=user_id)

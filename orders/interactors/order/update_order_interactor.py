@@ -15,7 +15,6 @@ from utils.redis_util import redis_lock
 @invalidate_interactor_cache(cache_name="user_orders")
 class UpdateOrderInteractor(OrderMixin):
     def __init__(self, order_storage: OrderStorageInterface):
-        super().__init__(order_storage=order_storage)
         self.order_storage = order_storage
         self.restaurant_adapter = RestaurantAdapter()
 
@@ -33,7 +32,9 @@ class UpdateOrderInteractor(OrderMixin):
                 return self._revalidate_and_update(order_id=order_id, status=status)
 
     def _get_validated_order(self, order_id: str) -> OrderDTO:
-        order_dto = self.validate_order_exists(order_id=order_id)
+        order_dto = self.validate_order_exists(
+            order_id=order_id, order_storage=self.order_storage
+        )
 
         return order_dto
 
@@ -44,7 +45,9 @@ class UpdateOrderInteractor(OrderMixin):
         self.validate_user_is_restaurant_owner(user_id=user_id, owner_id=owner_id)
 
     def _revalidate_and_update(self, order_id: str, status: OrderStatus) -> OrderDTO:
-        order_dto = self.validate_order_exists(order_id=order_id)
+        order_dto = self.validate_order_exists(
+            order_id=order_id, order_storage=self.order_storage
+        )
         self.validate_order_status_transition(
             current_status=order_dto.status,
             new_status=status,

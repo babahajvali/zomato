@@ -1,12 +1,16 @@
 from typing import List, Optional
 
-from django.db import transaction
 from django.db.models import Q
 
 from accounts.interactors.storage_interface.address_storage_interface import (
     AddressStorageInterface,
 )
-from accounts.interactors.dtos import CreateAddressDTO, AddressDTO, AddressLookupDTO
+from accounts.interactors.dtos import (
+    CreateAddressDTO,
+    AddressDTO,
+    AddressLookupDTO,
+    UpdateAddressDTO,
+)
 from accounts.models import Address
 
 
@@ -23,7 +27,6 @@ class AddressStorage(AddressStorageInterface):
             is_default=address_obj.is_default,
         )
 
-    @transaction.atomic
     def create_bulk_addresses(self, address_dtos: List[CreateAddressDTO]):
         addresses = []
 
@@ -42,13 +45,15 @@ class AddressStorage(AddressStorageInterface):
 
         return created_addresses
 
-    def get_existing_addresses(self, pairs: List[AddressLookupDTO]) -> List[AddressDTO]:
+    def get_existing_addresses(
+        self, address_pairs: List[AddressLookupDTO]
+    ) -> List[AddressDTO]:
 
-        if not pairs:
+        if not address_pairs:
             return []
 
         query = Q()
-        for pair in pairs:
+        for pair in address_pairs:
             query |= Q(
                 user_id=pair.user_id,
                 label=pair.label,
@@ -59,8 +64,8 @@ class AddressStorage(AddressStorageInterface):
 
         return [self._convert_to_address_dto(address_obj=addr) for addr in addresses]
 
-    def get_address_by_id(self, address_id: int, user_id: str) -> Optional[AddressDTO]:
-        address_obj = Address.objects.filter(id=address_id, user_id=user_id).first()
+    def get_address_by_id(self, address_id: int) -> Optional[AddressDTO]:
+        address_obj = Address.objects.filter(pk=address_id).first()
 
         if address_obj is None:
             return None
@@ -75,7 +80,9 @@ class AddressStorage(AddressStorageInterface):
             for address_obj in address_objs
         ]
 
-    def update_bulk_addresses(self, address_dtos: List[CreateAddressDTO]):
+    def update_bulk_addresses(
+        self, address_dtos: List[UpdateAddressDTO]
+    ) -> List[AddressDTO]:
 
         addresses = []
 

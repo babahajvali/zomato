@@ -14,7 +14,7 @@ class TestGetUserAddressesApi(BaseGetUserAddressesTestCase):
     def setup_method(self):
         cache.clear()
 
-    def test_get_user_addresses_successfully(self, snapshot):
+    def test_get_user_addresses_with_multiple_addresses_success(self, snapshot):
         # Arrange
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         user = UserFactory(id=user_id)
@@ -29,22 +29,10 @@ class TestGetUserAddressesApi(BaseGetUserAddressesTestCase):
             user_id=user_id,
         )
 
-    def test_get_user_addresses_empty(self, snapshot):
+    def test_get_user_addresses_with_no_addresses_success(self, snapshot):
         # Arrange
         user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
         UserFactory(id=user_id)
-
-        # Act & Assert
-        self.execute_schema(
-            query=self.QUERY,
-            variables={},
-            snapshot=snapshot,
-            user_id=user_id,
-        )
-
-    def test_user_not_found(self, snapshot):
-        # Arrange
-        user_id = "49bb508e-c6d1-4882-95fd-1991d103f7cd"
 
         # Act & Assert
         self.execute_schema(

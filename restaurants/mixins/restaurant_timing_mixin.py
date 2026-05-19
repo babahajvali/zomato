@@ -3,8 +3,6 @@ from typing import List, Optional
 
 from django.utils import timezone
 
-# from django.utils import timezone
-
 from restaurants.interactors.dtos import (
     BrowseRestaurantDTO,
     RestaurantReviewSummaryDTO,
@@ -23,14 +21,11 @@ from restaurants.exception.custom_exceptions import (
 
 
 class TimingMixin:
-    def __init__(
-        self, restaurant_timing_storage: RestaurantTimingStorageInterface, **kwargs
-    ):
-        self.restaurant_timing_storage = restaurant_timing_storage
-        super().__init__(**kwargs)
-
-    def validate_restaurant_timing_exists(self, timing_id: int) -> RestaurantTimingDTO:
-        timing_data = self.restaurant_timing_storage.get_restaurant_timing(
+    @staticmethod
+    def validate_restaurant_timing_exists(
+        timing_id: int, restaurant_timing_storage: RestaurantTimingStorageInterface
+    ) -> RestaurantTimingDTO:
+        timing_data = restaurant_timing_storage.get_restaurant_timing(
             timing_id=timing_id
         )
 
@@ -39,11 +34,14 @@ class TimingMixin:
 
         return timing_data
 
+    @staticmethod
     def validate_user_is_restaurant_owner_through_timing_id(
-        self, timing_id: int, user_id: str
+        timing_id: int,
+        user_id: str,
+        restaurant_timing_storage: RestaurantTimingStorageInterface,
     ):
 
-        owner_id = self.restaurant_timing_storage.get_restaurant_owner_id(
+        owner_id = restaurant_timing_storage.get_restaurant_owner_id(
             timing_id=timing_id
         )
         if owner_id != user_id:

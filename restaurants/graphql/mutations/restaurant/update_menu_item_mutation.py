@@ -34,6 +34,7 @@ class UpdateMenuItemMutation(graphene.Mutation):
             preparation_time_in_minutes=params.preparation_time_in_minutes,
             is_available=params.is_available,
             tags=params.tags,
+            description=params.description,
         )
 
         try:

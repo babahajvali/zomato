@@ -33,7 +33,6 @@ from utils.redis_util import redis_lock
 
 class OrderInteractor(OrderMixin):
     def __init__(self, order_storage: OrderStorageInterface):
-        super().__init__(order_storage=order_storage)
         self.order_storage = order_storage
 
     @invalidate_interactor_cache(cache_name="user_scheduled_orders")
@@ -46,7 +45,7 @@ class OrderInteractor(OrderMixin):
         ):
             with transaction.atomic():
                 order_dto = self.validate_order_belongs_to_user(
-                    order_id=order_id, user_id=user_id
+                    order_id=order_id, user_id=user_id, order_storage=self.order_storage
                 )
 
                 self._validate_order_is_not_already_cancelled(order_dto=order_dto)
@@ -67,7 +66,9 @@ class OrderInteractor(OrderMixin):
         )
 
     def get_order(self, order_id: str) -> OrderSummaryDTO:
-        order_dto = self.validate_order_exists(order_id=order_id)
+        order_dto = self.validate_order_exists(
+            order_id=order_id, order_storage=self.order_storage
+        )
 
         order_items = self.order_storage.get_order_items(order_id=order_id)
 

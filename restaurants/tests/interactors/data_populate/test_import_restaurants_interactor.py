@@ -28,7 +28,7 @@ class TestImportRestaurants:
 
     @patch(VALIDATE_ROW)
     @patch(READ_CSV)
-    def test_import_restaurants_success(self, mock_read_csv, mock_validate_row):
+    def test_import_restaurants_with_single_restaurant_success(self, mock_read_csv, mock_validate_row):
         rows = [
             {
                 "id": "restaurant-1",
@@ -66,7 +66,7 @@ class TestImportRestaurants:
 
     @patch(VALIDATE_ROW)
     @patch(READ_CSV)
-    def test_import_restaurants_duplicate_names(self, mock_read_csv, mock_validate_row):
+    def test_import_restaurants_with_duplicate_names_raises_error(self, mock_read_csv, mock_validate_row):
         rows = [
             {
                 "id": "restaurant-1",
@@ -102,7 +102,7 @@ class TestImportRestaurants:
 
     @patch(VALIDATE_ROW)
     @patch(READ_CSV)
-    def test_import_restaurants_updates_existing(
+    def test_import_restaurants_with_existing_restaurant_success(
         self, mock_read_csv, mock_validate_row
     ):
         rows = [

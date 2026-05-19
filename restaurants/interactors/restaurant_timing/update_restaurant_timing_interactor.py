@@ -12,7 +12,6 @@ from utils.caching_decorators import invalidate_interactor_cache
 
 class UpdateRestaurantTimingInteractor(TimingMixin):
     def __init__(self, restaurant_timing_storage: RestaurantTimingStorageInterface):
-        super().__init__(restaurant_timing_storage=restaurant_timing_storage)
         self.restaurant_timing_storage = restaurant_timing_storage
 
     @invalidate_interactor_cache(cache_name="restaurant_timings")
@@ -21,11 +20,13 @@ class UpdateRestaurantTimingInteractor(TimingMixin):
     ) -> RestaurantTimingDTO:
 
         timing_data = self.validate_restaurant_timing_exists(
-            timing_id=update_restaurant_timing_dto.timing_id
+            timing_id=update_restaurant_timing_dto.timing_id,
+            restaurant_timing_storage=self.restaurant_timing_storage,
         )
         self.validate_user_is_restaurant_owner_through_timing_id(
             timing_id=update_restaurant_timing_dto.timing_id,
             user_id=update_restaurant_timing_dto.user_id,
+            restaurant_timing_storage=self.restaurant_timing_storage,
         )
         self._validate_update_properties(
             open_time=update_restaurant_timing_dto.open_time,

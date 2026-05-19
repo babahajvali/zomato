@@ -14,7 +14,7 @@ class TestUserStorage(TestCase):
     def setUp(self):
         self.storage = UserStorage()
 
-    def test_create_bulk_users_success(self):
+    def test_create_bulk_users_with_valid_users_success(self):
         users_dto = [
             CreateUserDTOFactory(
                 name="Alice",
@@ -36,7 +36,7 @@ class TestUserStorage(TestCase):
         assert User.objects.filter(email="alice@example.com").exists()
         assert User.objects.filter(email="bob@example.com").exists()
 
-    def test_get_existing_emails(self):
+    def test_get_users_by_emails_with_matching_emails_success(self):
         UserFactory(email="alice@example.com")
         UserFactory(email="bob@example.com")
 
@@ -47,18 +47,16 @@ class TestUserStorage(TestCase):
         assert len(result) == 1
         assert result[0].email == "alice@example.com"
 
-    def test_check_user_exists(self):
+    def test_is_user_exists_with_existing_user_success(self):
         user = UserFactory()
 
-        assert self.storage.check_user_exists(user_id=str(user.id)) is True
+        assert self.storage.is_user_exists(user_id=str(user.id)) is True
         assert (
-            self.storage.check_user_exists(
-                user_id="00000000-0000-0000-0000-000000000000"
-            )
+            self.storage.is_user_exists(user_id="00000000-0000-0000-0000-000000000000")
             is False
         )
 
-    def test_get_user_by_email_success(self):
+    def test_get_user_by_email_with_existing_email_success(self):
         user = UserFactory(email="sample@gmail.com")
 
         result = self.storage.get_user_by_email(email="sample@gmail.com")
@@ -66,12 +64,12 @@ class TestUserStorage(TestCase):
         assert result.id == str(user.id)
         assert result.email == "sample@gmail.com"
 
-    def test_get_user_by_email_returns_none_when_user_not_found(self):
+    def test_get_user_by_email_with_missing_email_success(self):
         result = self.storage.get_user_by_email(email="missing@gmail.com")
 
         assert result is None
 
-    def test_get_user_success(self):
+    def test_get_user_with_existing_user_success(self):
         user = UserFactory(name="Sample User")
 
         result = self.storage.get_user(user_id=str(user.id))
@@ -79,12 +77,12 @@ class TestUserStorage(TestCase):
         assert result.id == str(user.id)
         assert result.name == "Sample User"
 
-    def test_get_user_returns_none_when_user_not_found(self):
+    def test_get_user_with_missing_user_success(self):
         result = self.storage.get_user(user_id="00000000-0000-0000-0000-000000000000")
 
         assert result is None
 
-    def test_create_user_success(self):
+    def test_create_user_with_valid_data_success(self):
         create_user_dto = UserCreateDTOFactory(
             name="Sample User",
             email="sample@gmail.com",
@@ -99,7 +97,7 @@ class TestUserStorage(TestCase):
         assert result.phone_number == "9876543210"
         assert User.objects.filter(email="sample@gmail.com").exists()
 
-    def test_update_user_success(self):
+    def test_update_user_with_valid_data_success(self):
         user = UserFactory(name="Old Name", phone_number="9000000000")
         update_user_dto = UpdateUserDTOFactory(
             user_id=str(user.id), name="New Name", phone_number="9999999999"

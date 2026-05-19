@@ -1,17 +1,8 @@
 {
-  "errors": [
-    {
-      "message": "UpdateMenuItemDTO.__init__() missing 1 required positional argument: 'description'",
-      "locations": [
-        {
-          "line": 3,
-          "column": 7
-        }
-      ],
-      "path": [
-        "updateMenuItem"
-      ]
+  "data": {
+    "updateMenuItem": {
+      "__typename": "MenuItemNotFound",
+      "menuItemId": "49bb508e-c6d1-4882-95fd-1991d103f7aa"
     }
-  ],
-  "data": null
+  }
 }

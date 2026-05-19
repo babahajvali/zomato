@@ -15,7 +15,6 @@ from utils.caching_decorators import invalidate_interactor_cache
 
 class MenuItemInteractor(RestaurantMixin):
     def __init__(self, restaurant_storage: RestaurantStorageInterface):
-        super().__init__(restaurant_storage=restaurant_storage)
         self.restaurant_storage = restaurant_storage
 
     @invalidate_interactor_cache(cache_name="menu_items")
@@ -26,9 +25,13 @@ class MenuItemInteractor(RestaurantMixin):
         restaurant_id: str,
     ) -> List[MenuItemDTO]:
 
-        self.validate_restaurant_exists(restaurant_id=restaurant_id)
+        self.validate_restaurant_exists(
+            restaurant_id=restaurant_id, restaurant_storage=self.restaurant_storage
+        )
         self.validate_user_is_restaurant_owner(
-            user_id=user_id, restaurant_id=restaurant_id
+            user_id=user_id,
+            restaurant_id=restaurant_id,
+            restaurant_storage=self.restaurant_storage,
         )
 
         categories = [each.category.value for each in create_items_dto]
@@ -45,11 +48,14 @@ class MenuItemInteractor(RestaurantMixin):
     ) -> MenuItemDTO:
 
         menu_item_dto = self.validate_menu_item_exists(
-            menu_item_id=update_menu_item_dto.menu_item_id
+            menu_item_id=update_menu_item_dto.menu_item_id,
+            restaurant_storage=self.restaurant_storage,
         )
 
         self.validate_user_is_restaurant_owner(
-            user_id=user_id, restaurant_id=menu_item_dto.restaurant_id
+            user_id=user_id,
+            restaurant_id=menu_item_dto.restaurant_id,
+            restaurant_storage=self.restaurant_storage,
         )
         self._validate_menu_item_update_properties(
             update_menu_item_dto=update_menu_item_dto
@@ -62,10 +68,14 @@ class MenuItemInteractor(RestaurantMixin):
     @invalidate_interactor_cache(cache_name="menu_items")
     def delete_menu_item(self, menu_item_id: str, user_id: str):
 
-        menu_item_dto = self.validate_menu_item_exists(menu_item_id=menu_item_id)
+        menu_item_dto = self.validate_menu_item_exists(
+            menu_item_id=menu_item_id, restaurant_storage=self.restaurant_storage
+        )
 
         self.validate_user_is_restaurant_owner(
-            user_id=user_id, restaurant_id=menu_item_dto.restaurant_id
+            user_id=user_id,
+            restaurant_id=menu_item_dto.restaurant_id,
+            restaurant_storage=self.restaurant_storage,
         )
 
         return self.restaurant_storage.delete_menu_item(menu_item_id=menu_item_id)
@@ -75,6 +85,22 @@ class MenuItemInteractor(RestaurantMixin):
         return self.restaurant_storage.get_unavailable_menu_items(
             menu_item_ids=menu_item_ids
         )
+
+    def import_menu_items(self, create_item_dtos: List[CreateMenuItemDTO]) -> str:
+        restaurant_ids = list({item.restaurant_id for item in create_item_dtos})
+        for restaurant_id in restaurant_ids:
+            self.validate_restaurant_exists(
+                restaurant_id=restaurant_id, restaurant_storage=self.restaurant_storage
+            )
+
+        categories = [item.category.value for item in create_item_dtos]
+        self.validate_categories(categories=categories)
+
+        created_items = self.restaurant_storage.create_menu_items(
+            create_item_dtos, restaurant_id=restaurant_ids[0]
+        )
+
+        return f"{len(created_items)} menu items created, 0 menu items updated"
 
     @staticmethod
     def _validate_menu_item_update_properties(update_menu_item_dto: UpdateMenuItemDTO):

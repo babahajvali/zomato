@@ -28,7 +28,6 @@ class GetScoredItemsInteractor(RestaurantMixin):
         restaurant_storage: RestaurantStorageInterface,
         review_storage: ReviewStorageInterface,
     ):
-        super().__init__(restaurant_storage=restaurant_storage)
         self.restaurant_storage = restaurant_storage
         self.review_storage = review_storage
         self.order_adapter = OrderAdapter()
@@ -38,7 +37,9 @@ class GetScoredItemsInteractor(RestaurantMixin):
         restaurant_id: str,
         user_id: str,
     ) -> List[MenuItemScoredDTO]:
-        self.validate_restaurant_exists(restaurant_id=restaurant_id)
+        self.validate_restaurant_exists(
+            restaurant_id=restaurant_id, restaurant_storage=self.restaurant_storage
+        )
 
         item_dtos = self.restaurant_storage.get_available_menu_items_by_restaurant(
             restaurant_id=restaurant_id
