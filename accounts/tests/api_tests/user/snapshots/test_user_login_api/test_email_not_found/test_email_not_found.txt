@@ -1,8 +1,0 @@
-{
-  "data": {
-    "userLogin": {
-      "__typename": "EmailNotFound",
-      "email": "sample1@gmail.com"
-    }
-  }
-}

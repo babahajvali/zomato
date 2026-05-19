@@ -1,6 +1,5 @@
 from typing import List
 
-from django.db import transaction
 
 from accounts.interactors.storage_interface.user_storage_interface import (
     UserStorageInterface,
@@ -25,7 +24,6 @@ class UserStorage(UserStorageInterface):
             role=user_obj.role,
         )
 
-    @transaction.atomic
     def create_bulk_users(self, create_user_dtos: List[CreateUserDTO]) -> List[UserDTO]:
         users = [
             User(

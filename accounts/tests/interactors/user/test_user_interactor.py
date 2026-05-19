@@ -2,6 +2,7 @@ from unittest.mock import create_autospec
 
 import pytest
 
+from accounts.constants.enums import Role
 from accounts.exception.custom_exceptions import (
     DuplicateEmails,
     EmailAlreadyExists,
@@ -293,5 +294,5 @@ def _create_user_dto(user_id: str, email: str) -> CreateUserDTO:
         name=NAME,
         email=email,
         phone_number=PHONE_NUMBER,
-        role="CUSTOMER",
+        role=Role.CUSTOMER,
     )

@@ -1,0 +1,1 @@
+RestaurantTimingDTO(timing_id=1, restaurant_id='restaurant-1', day_of_week=1, open_time=datetime.time(10, 0), close_time=datetime.time(21, 0))

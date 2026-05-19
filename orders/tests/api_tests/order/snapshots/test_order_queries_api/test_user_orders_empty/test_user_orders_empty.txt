@@ -1,8 +1,0 @@
-{
-  "data": {
-    "userOrders": {
-      "__typename": "OrdersType",
-      "orders": []
-    }
-  }
-}

@@ -3,7 +3,6 @@ from decimal import Decimal
 
 from django.utils import timezone
 
-from accounts.exception import custom_exceptions
 from orders.exception import custom_exceptions, account_exception
 from orders.graphql.types.error_types import (
     PromoCodeUsageLimitReached,

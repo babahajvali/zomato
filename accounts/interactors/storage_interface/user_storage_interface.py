@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
 from accounts.interactors.dtos import (
     CreateUserDTO,
@@ -31,7 +31,7 @@ class UserStorageInterface(ABC):
         pass
 
     @abstractmethod
-    def get_user(self, user_id: str) -> UserDTO | None:
+    def get_user(self, user_id: str) -> Optional[UserDTO]:
         pass
 
     @abstractmethod
@@ -49,5 +49,3 @@ class UserStorageInterface(ABC):
     @abstractmethod
     def get_users_by_user_ids(self, user_ids: List[str]) -> List[UserDTO]:
         pass
-
-
