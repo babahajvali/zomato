@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "restaurants",
     "orders",
     "django_crontab",
+    "django_elasticsearch_dsl",
 ]
 
 MIDDLEWARE = [
@@ -209,3 +210,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://zomato-frontend-2026.s3-website.ap-south-1.amazonaws.com",
 ]
+
+ELASTICSEARCH_DSL = {"default": {"hosts": "http://localhost:9200"}}
