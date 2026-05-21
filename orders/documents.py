@@ -9,6 +9,8 @@ class OrderDocument(Document):
     restaurant_id = fields.KeywordField()
     customer_id = fields.KeywordField()
     restaurant_name = fields.KeywordField()
+    promo_code = fields.KeywordField()
+    restaurant_suggest = fields.CompletionField()
 
     class Index:
         name = "orders"
@@ -29,7 +31,6 @@ class OrderDocument(Document):
         ]
 
     def prepare_restaurant_name(self, instance):
-        # Replace this with your actual Restaurant model lookup
         from restaurants.models import Restaurant
 
         try:
@@ -37,3 +38,18 @@ class OrderDocument(Document):
             return restaurant.name
         except:
             return instance.restaurant_id
+
+    def prepare_restaurant_suggest(self, instance):
+        from restaurants.models import Restaurant
+
+        try:
+            restaurant = Restaurant.objects.get(id=instance.restaurant_id)
+            return restaurant.name
+        except Exception:
+            return instance.restaurant_id
+
+    def prepare_promo_code(self, instance):
+        if instance.promo_code:
+            return instance.promo_code.code
+
+        return None

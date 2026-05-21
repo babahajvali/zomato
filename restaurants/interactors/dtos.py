@@ -340,3 +340,14 @@ class MenuItemOrderStatsDTO:
     item_id: str
     order_count: int
     total_order_count: int
+
+
+@dataclass
+class RestaurantSuggestionDTO:
+    name: str
+    cuisine_type: str
+
+
+@dataclass
+class RestaurantSuggestionsDTO:
+    suggestions: List[RestaurantSuggestionDTO]

@@ -205,3 +205,13 @@ class ScoreItemType(graphene.ObjectType):
 
 class ScoredItemsType(graphene.ObjectType):
     menu_items = graphene.List(ScoreItemType)
+
+
+class RestaurantSuggestionType(graphene.ObjectType):
+    name = graphene.String(required=True)
+    cuisine_type = graphene.String(required=True)
+
+class RestaurantSuggestionsType(graphene.ObjectType):
+    suggestions = graphene.List(RestaurantSuggestionType, required=True)
+
+    

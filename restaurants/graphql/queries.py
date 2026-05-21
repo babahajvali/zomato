@@ -30,6 +30,10 @@ from restaurants.graphql.resolvers.get_owner_restaurants_resolver import (
 from restaurants.graphql.resolvers.restaurant_menu_resolver import (
     get_restaurant_menu_resolver,
 )
+from restaurants.graphql.resolvers.search_restaurant_resolver import (
+    get_restaurant_suggestions_resolver,
+    get_restaurant_search_resolver,
+)
 from restaurants.graphql.types.input_types import (
     BrowseRestaurantsInputParams,
     ViewRestaurantMenuInputParams,
@@ -39,6 +43,7 @@ from restaurants.graphql.types.input_types import (
     GetUserRestaurantReviewInputParams,
     GetScoredRestaurantsInputParams,
     GetScoredRestaurantItemsInputParams,
+    SearchRestaurantsInputParams,
 )
 from restaurants.graphql.types.response_types import (
     BrowseRestaurantsResponse,
@@ -51,6 +56,7 @@ from restaurants.graphql.types.response_types import (
     GetCustomerCartIdResponse,
     GetuserScoredRestaurantsResponse,
     GetScoredItemsResponse,
+    SearchRestaurantsResponse,
 )
 
 
@@ -106,4 +112,15 @@ class RestaurantQueries(graphene.ObjectType):
         GetScoredItemsResponse,
         params=GetScoredRestaurantItemsInputParams(required=True),
         resolver=get_scored_restaurant_menu_items,
+    )
+
+    get_restaurant_suggestions = graphene.Field(
+        SearchRestaurantsResponse,
+        params=SearchRestaurantsInputParams(required=True),
+        resolver=get_restaurant_suggestions_resolver,
+    )
+    search_restaurants = graphene.Field(
+        SearchRestaurantsResponse,
+        params=SearchRestaurantsInputParams(required=True),
+        resolver=get_restaurant_search_resolver,
     )

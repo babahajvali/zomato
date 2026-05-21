@@ -108,3 +108,9 @@ class GetScoredRestaurantsInputParams(graphene.InputObjectType):
 
 class GetScoredRestaurantItemsInputParams(graphene.InputObjectType):
     restaurant_id = graphene.String(required=True)
+
+
+class SearchRestaurantsInputParams(graphene.InputObjectType):
+    query = graphene.String(required=True)
+
+    
