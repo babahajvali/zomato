@@ -23,3 +23,8 @@ class EmptyUserNameFound(graphene.ObjectType):
 
 class NothingToUpdateUserProperties(graphene.ObjectType):
     user_id = graphene.String(required=True)
+
+
+class AddressAlreadyExists(graphene.ObjectType):
+    label = graphene.String(required=True)
+    pincode = graphene.String(required=True)

@@ -3,6 +3,7 @@ from unittest.mock import create_autospec
 import pytest
 
 from accounts.exception.custom_exceptions import (
+    AddressAlreadyExists,
     UserNotFound,
 )
 from accounts.interactors.address.address_interactor import AddressInteractor
@@ -95,6 +96,56 @@ class TestGetUserAddresses:
 
         assert exc.value.user_id == USER_ID
         address_storage.get_user_addresses.assert_not_called()
+
+
+class TestCreateAddress:
+    def test_create_address_with_valid_data_success(
+        self, address_interactor, address_storage, user_storage
+    ):
+        # Arrange
+        address_dto = _create_address_dto(label=LABEL_HOME, pincode=PINCODE)
+        expected_address = AddressDTOFactory(address_id=ADDRESS_ID, user_id=USER_ID)
+        user_storage.is_user_exists.return_value = True
+        address_storage.get_existing_addresses.return_value = []
+        address_storage.create_address.return_value = expected_address
+
+        # Act
+        result = address_interactor.create_address(create_address_dto=address_dto)
+
+        # Assert
+        assert result == expected_address
+        address_storage.create_address.assert_called_once_with(address_dto=address_dto)
+
+    def test_create_address_with_user_not_found_raises_error(
+        self, address_interactor, address_storage, user_storage
+    ):
+        # Arrange
+        address_dto = _create_address_dto(label=LABEL_HOME, pincode=PINCODE)
+        user_storage.is_user_exists.return_value = False
+
+        # Act / Assert
+        with pytest.raises(UserNotFound) as exc:
+            address_interactor.create_address(create_address_dto=address_dto)
+
+        assert exc.value.user_id == USER_ID
+        address_storage.create_address.assert_not_called()
+
+    def test_create_address_with_duplicate_address_raises_error(
+        self, address_interactor, address_storage, user_storage
+    ):
+        # Arrange
+        address_dto = _create_address_dto(label=LABEL_HOME, pincode=PINCODE)
+        user_storage.is_user_exists.return_value = True
+        address_storage.get_existing_addresses.return_value = [
+            AddressDTOFactory(label=LABEL_HOME, pincode=PINCODE, user_id=USER_ID)
+        ]
+
+        # Act / Assert
+        with pytest.raises(AddressAlreadyExists) as exc:
+            address_interactor.create_address(create_address_dto=address_dto)
+
+        assert exc.value.addresses == [(LABEL_HOME, PINCODE)]
+        address_storage.create_address.assert_not_called()
 
 
 def _create_address_dto(label: str, pincode: int) -> CreateAddressDTO:

@@ -18,3 +18,11 @@ class UpdateUserInputParams(graphene.InputObjectType):
     user_id = graphene.String(required=True)
     name = graphene.String()
     phone_number = graphene.String()
+
+
+class CreateAddressInputParams(graphene.InputObjectType):
+    label = graphene.String(required=True)
+    full_address = graphene.String(required=True)
+    city = graphene.String(required=True)
+    pincode = graphene.Int(required=True)
+    is_default = graphene.Boolean()

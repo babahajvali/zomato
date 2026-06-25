@@ -3,6 +3,7 @@ from typing import List
 from django.db import transaction
 
 from accounts.exception.custom_exceptions import (
+    AddressAlreadyExists,
     DuplicateAddresses,
     InvalidUsersFound,
     AddressNotBelongsToUser,
@@ -21,7 +22,7 @@ from accounts.interactors.storage_interface.user_storage_interface import (
     UserStorageInterface,
 )
 from accounts.mixin.user_mixin import UserMixin
-from utils.caching_decorators import interactor_cache
+from utils.caching_decorators import interactor_cache, invalidate_interactor_cache
 
 
 class AddressInteractor(UserMixin):
@@ -38,6 +39,15 @@ class AddressInteractor(UserMixin):
         self.validate_user_exists(user_id=user_id, user_storage=self.user_storage)
 
         return self.address_storage.get_user_addresses(user_id=user_id)
+
+    @invalidate_interactor_cache(cache_name="get_user_addresses")
+    def create_address(self, create_address_dto: CreateAddressDTO) -> AddressDTO:
+        self.validate_user_exists(
+            user_id=create_address_dto.user_id, user_storage=self.user_storage
+        )
+        self._validate_address_not_exists(create_address_dto=create_address_dto)
+
+        return self.address_storage.create_address(address_dto=create_address_dto)
 
     def get_address(self, address_id: int, user_id: str) -> AddressDTO:
         self.validate_user_exists(user_id=user_id, user_storage=self.user_storage)
@@ -82,6 +92,19 @@ class AddressInteractor(UserMixin):
         if address_dto.user_id != user_id:
             raise AddressNotBelongsToUser(
                 user_id=user_id, address_id=address_dto.address_id
+            )
+
+    def _validate_address_not_exists(self, create_address_dto: CreateAddressDTO):
+        address_pairs = self._get_user_label_pincode_pairs(
+            address_dtos=[create_address_dto]
+        )
+        existing_addresses = self.address_storage.get_existing_addresses(
+            address_pairs=address_pairs
+        )
+
+        if existing_addresses:
+            raise AddressAlreadyExists(
+                addresses=[(create_address_dto.label, create_address_dto.pincode)]
             )
 
     def _validate_address(self, address_id: int) -> AddressDTO:

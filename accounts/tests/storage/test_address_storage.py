@@ -33,6 +33,27 @@ class TestAddressStorage(TestCase):
         assert created.full_address == "12 MG Road"
         assert created.pincode == 560001
 
+    def test_create_address_with_valid_address_success(self):
+        user = UserFactory(id="00000000-0000-0000-0000-000000000002")
+        address_dto = CreateAddressDTO(
+            user_id=str(user.id),
+            label="Home",
+            full_address="12 MG Road",
+            city="Bangalore",
+            pincode=560001,
+            is_default=True,
+        )
+
+        result = self.storage.create_address(address_dto=address_dto)
+
+        created = Address.objects.get(user_id=user.id, label="Home")
+        assert result.address_id == created.pk
+        assert result.full_address == "12 MG Road"
+        assert result.city == "Bangalore"
+        assert result.pincode == 560001
+        assert result.is_default is True
+        assert result.user_id == str(user.id)
+
     def test_get_existing_addresses_with_matching_addresses_success(self):
         user = UserFactory(email="alice@example.com")
         AddressFactory(user=user, label="Home", pincode="500001")

@@ -1,6 +1,7 @@
 import graphene
 
 from accounts.graphql.types.error_types import (
+    AddressAlreadyExists,
     UserNotFound,
     InvalidCredentials,
     EmailNotFound,
@@ -8,7 +9,12 @@ from accounts.graphql.types.error_types import (
     EmptyUserNameFound,
     NothingToUpdateUserProperties,
 )
-from accounts.graphql.types.types import UserAddressesType, UserLoginType, UserType
+from accounts.graphql.types.types import (
+    AddressType,
+    UserAddressesType,
+    UserLoginType,
+    UserType,
+)
 from utils.graphql_types import UnauthorizedFound
 
 
@@ -25,6 +31,11 @@ class UserLoginResponse(graphene.Union):
 class CreateUserResponse(graphene.Union):
     class Meta:
         types = (UserType, EmailAlreadyExists, EmptyUserNameFound)
+
+
+class CreateAddressResponse(graphene.Union):
+    class Meta:
+        types = (AddressType, UserNotFound, AddressAlreadyExists, UnauthorizedFound)
 
 
 class UpdateUserResponse(graphene.Union):

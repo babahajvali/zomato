@@ -27,6 +27,18 @@ class AddressStorage(AddressStorageInterface):
             is_default=address_obj.is_default,
         )
 
+    def create_address(self, address_dto: CreateAddressDTO) -> AddressDTO:
+        address = Address.objects.create(
+            user_id=address_dto.user_id,
+            label=address_dto.label,
+            full_address=address_dto.full_address,
+            city=address_dto.city,
+            pincode=address_dto.pincode,
+            is_default=address_dto.is_default,
+        )
+
+        return self._convert_to_address_dto(address_obj=address)
+
     def create_bulk_addresses(self, address_dtos: List[CreateAddressDTO]):
         addresses = []
 
